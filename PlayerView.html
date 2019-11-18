@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<Html>
+    <Head>
+        <title>Stats Portal Home page</title>
+        <link rel="stylesheet" type="text/css" href="PlayerViewStyle.css"/>
+        <script src="PlayerView.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+    </Head>
+    <body>
+        <div class='title-bar'>
+            <div class='title-bar-item'>
+                <a href="TeamView.html">HOME</a>
+            </div>
+            <div class='title-bar-item'>
+                <a href="Login.html"> Sign In</a>
+            </div>
+            <div class="title-bar-item"> 
+                <p>WEBSITE NAME</p>
+            </div>
+        </div>
+        <div class="main">
+            <div class="simple-border user-info">
+                <p><label> First Name: </label></p><br>
+                <p><label> Last Name: </label></p><br>
+                <p><label> Class: </label></p><br>
+                <p><label> Position(s): </label></p>
+            </div>
+            <div class="simple-border raw-measurables">
+                <input type="button" id="input-measurables-button" value="input">
+                <table class="stats-table">
+                    <tr>
+                        <td>Year</td>
+                    </tr>
+                    <tr>
+                        <td>60 time</td>
+                    </tr>
+                    <tr>
+                        <td>30 time</td>
+                    </tr>
+                    <tr>
+                        <td>10 time</td>
+                    </tr>
+                    <tr>
+                        <td>Broad Jump</td>
+                    </tr>
+                    <tr>
+                        <td>Vertical Jump</td>
+                    </tr>
+                    <tr>
+                        <td>5-10-5 time</td>
+                    </tr>
+                    <tr>
+                        <td>Outfield Velo's</td>
+                    </tr>
+                    <tr>
+                        <td>Infield Velo's</td>
+                    </tr>
+                    <tr>
+                        <td>Catcher Velo</td>
+                    </tr>
+                    <tr>
+                        <td>Pop Time</td>
+                    </tr>
+                    <tr>
+                        <td>Exit Velo</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="simple-border pitcher-stats">
+                <p>PITCHING STATS ON CAREER BY SEASON</p>
+                <table class="stats-table">
+                    <tr>
+                        <td>Year</td>
+                        <td>link</td>
+                        <td>ip</td>
+                        <td>r</td>
+                        <td>er</td>
+                        <td>era</td>
+                        <td>h</td>
+                        <td>2b</td>
+                        <td>3b</td>
+                        <td>hr</td>
+                        <td>k</td>
+                        <td>bb</td>
+                        <td>hbp</td>
+                    </tr>
+                    <tr>
+                        <td>2018</td>
+                    </tr>
+                    <tr>
+                        <td>2019</td>
+                    </tr>
+                </table>
+                <p>GAME BY GAME SPREAD</p>
+                <table class="stats-table">
+                    <tr>
+                        <td>Oponent</td>
+                        <td>Date</td>
+                        <td>link</td>
+                        <td>ip</td>
+                        <td>r</td>
+                        <td>er</td>
+                        <td>era</td>
+                        <td>h</td>
+                        <td>2b</td>
+                        <td>3b</td>
+                        <td>hr</td>
+                        <td>k</td>
+                        <td>bb</td>
+                        <td>hbp</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Game 1</td>
+                    </tr>
+                    <tr>
+                        <td>Game 2</td>
+                    </tr>
+                    <tr>
+                        <td>Totals</td>
+                    </tr>
+                </table>
+                <p>PITCH SPECIFIC STATS ON SEASON</p>
+                <table class="stats-table">
+                    <tr>
+                        <td>Pitch type</td>
+                        <td>4SEAM(1)</td>
+                        <td>2SEAM(7)</td>
+                        <td>CB(2)</td>
+                        <td>SL(3)</td>
+                        <td>CH(4)</td>
+                        <td>SPL/CUT/SINK(5)</td>
+                        <td>totals</td>
+                    </tr>
+                    <tr>
+                        <td>n</td>
+                    </tr>
+                    <tr>
+                        <td>AVG</td>
+                    </tr>
+                    <tr>
+                        <td>MAX</td>
+                    </tr>
+                    <tr>
+                        <td>MIN</td>
+                    </tr>
+                    <tr>
+                        <td>MED</td>
+                    </tr>
+                    <tr>
+                        <td>% THROWN</td>
+                    </tr>
+                    <tr>
+                        <td>STRIKE %</td>
+                    </tr>
+                    <tr>
+                        <td>SWING %</td>
+                    </tr>
+                    <tr>
+                        <td>TAKE %</td>
+                    </tr>
+                    <tr>
+                        <td>SWING MISS %</td>
+                    </tr>
+                    <tr>
+                        <td>FOUL %</td>
+                    </tr>
+                    <tr>
+                        <td>IN PLAY %</td>
+                    </tr>
+                    <tr>
+                        <td>TAKES(S)%</td>
+                    </tr>
+                    <tr>
+                        <td>TAKES(B)%</td>
+                    </tr>
+                    <tr>
+                        <td>WHIF%</td>
+                    </tr>
+                    <tr>
+                        <td>GB%</td>
+                    </tr>
+                    <tr>
+                        <td>FB%</td>
+                    </tr>
+                    <tr>
+                        <td>LD%</td>
+                    </tr>
+                    <tr>
+                        <td>HIT%</td>
+                    </tr>
+                </table>
+                <p>PITCH USAGE BY COUNT ON SEASON</p>
+                <table class="stats-table">
+                    <tr>
+                        <td>count</td>
+                        <td>n</td>
+                        <td>4SEAM</td>
+                        <td>2SEAM</td>
+                        <td>CB</td>
+                        <td>SL</td>
+                        <td>CH</td>
+                        <td>CUT/SPL/SINK</td>
+                        <td>HITS</td>
+                    </tr>
+                    <tr>
+                        <td>0-0</td>
+                    </tr>
+                    <tr>
+                        <td>0-1</td>
+                    </tr>
+                    <tr>
+                        <td>0-2</td>
+                    </tr>
+                    <tr>
+                        <td>1-0</td>
+                    </tr>
+                    <tr>
+                        <td>1-1</td>
+                    </tr>
+                    <tr>
+                        <td>1-2</td>
+                    </tr>
+                    <tr>
+                        <td>2-0</td>
+                    </tr>
+                    <tr>
+                        <td>2-1</td>
+                    </tr>
+                    <tr>
+                        <td>2-2</td>
+                    </tr>
+                    <tr>
+                        <td>3-0</td>
+                    </tr>
+                    <tr>
+                        <td>3-1</td>
+                    </tr>
+                    <tr>
+                        <td>3-2</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="simple-border hitter-stats">
+                <p>OFFENSIVE STATS ON CAREER BY SEASON</p>
+                <table class="stats-table">
+                    <tr>
+                        <td>year</td>
+                        <td>link</td>
+                        <td>pa</td>
+                        <td>ab</td>
+                        <td>h</td>
+                        <td>2b</td>
+                        <td>3b</td>
+                        <td>hr</td>
+                        <td>bb</td>
+                        <td>k</td>
+                        <td>hbp</td>
+                        <td>avg</td>
+                        <td>slg</td>
+                        <td>obp</td>
+                        <td>ops</td>
+                        <td>r</td>
+                     </tr>
+                </table>
+                <p>GAME BY GAME SPREAD</p>
+                <table class="stats-table">
+                    <tr>
+                        <td>Opponent</td>
+                        <td>Date</td>
+                        <td>link</td>
+                        <td>pa</td>
+                        <td>ab</td>
+                        <td>h</td>
+                        <td>2b</td>
+                        <td>3b</td>
+                        <td>hr</td>
+                        <td>bb</td>
+                        <td>k</td>
+                        <td>hbp</td>
+                        <td>avg</td>
+                        <td>slg</td>
+                        <td>obp</td>
+                        <td>ops</td>
+                        <td>r</td>
+                    </tr>
+                </table>
+                <p>ADVANGED MATCHUP STATS BY SEASON</p>
+                <table class="stats-table">
+                    <tr>
+                        <td>year</td>
+                        <td>link</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="simple-border defensive-stats">
+                <p>DEFENSIVE STATS BY ON CAREER BY SEASON</p>
+                <table>
+                    <tr>
+                        <td>year</td>
+                        <td>link</td>
+                        <td>chances</td>
+                        <td>NEED TO REMEMBER REST</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </body>
+</Html>

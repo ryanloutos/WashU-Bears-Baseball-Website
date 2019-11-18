@@ -1,0 +1,13 @@
+.simple-border{
+    border-style: solid;
+    border-radius: 5px;
+    border-width: 0.5px;
+    margin: 5px;
+    padding: 5px;
+}
+
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+    padding: 2px;
+}

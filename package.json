@@ -1,0 +1,14 @@
+{
+  "name": "baseball",
+  "version": "1.0.0",
+  "description": "baseball statportal and more",
+  "main": "Baseball.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Mitchell Black",
+  "license": "ISC",
+  "dependencies": {
+    "mysql": "^2.17.1"
+  }
+}
