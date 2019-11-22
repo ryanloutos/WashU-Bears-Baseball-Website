@@ -40,7 +40,7 @@ def index_page():
     return "index page"
 
 
-# FIX....CURRENT LOGINS: ryanloutos ryanloutos, mitchellblack mitchellblack
+# CURRENT LOGINS: ryanloutos ryanloutos, mitchellblack mitchellblack
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
@@ -48,12 +48,20 @@ def login():
         cur = db.cursor()
         cur.execute("SELECT (password) FROM Login_Info WHERE username='{}'".format(form.username.data))
         result = cur.fetchall()
-        if result[0][0] == form.password.data:
-            flash('Login requested for user {}, remember_me={}'.format(form.username.data, form.remember_me.data))
-            return render_template('index.html')
-        else
+        if (result):
+            if result[0][0] == form.password.data:
+                flash('Login requested for user {}, remember_me={}'.format(form.username.data, form.remember_me.data))
+                cur.close()
+                return render_template('index.html')
+            else:
+                flash('Incorrect username or password')
+                cur.close()
+                return render_template('login.html', title='Sign In', form=form)
+        else: 
             flash('Incorrect username or password')
+            cur.close()
             return render_template('login.html', title='Sign In', form=form)
+
     return render_template('login.html', title='Sign In', form=form)
 
 @app.route("/hello")
