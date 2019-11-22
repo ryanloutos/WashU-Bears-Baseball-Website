@@ -1,7 +1,22 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, url_for
+import mysql.connector
 
 app = Flask(__name__)
 
+db = mysql.connector.connect(
+    host="localhost",
+    user="root",
+    password="rootuserpassword",
+    database="WashU_Pitching"
+)
+
+cur = db.cursor()
+
+cur.execute("SELECT * FROM Roster")
+players = ""
+
+for row in cur.fetchall() :
+    players = players + row[0]
 
 @app.route("/")
 def index_page():
@@ -10,7 +25,7 @@ def index_page():
 
 @app.route("/hello")
 def hello_world():
-    return "Hello World!"
+    return "Hello"+players
 
 
 @app.route("/user/<username>")
@@ -20,7 +35,7 @@ def show_user(username):
 
 @app.route("/template")
 def show_template():
-    return render_template("hello.html")
+    return render_template("index.html")
 
 
 if __name__ == "__main__":
