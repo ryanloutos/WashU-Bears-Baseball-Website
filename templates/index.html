@@ -1,10 +1,16 @@
 {% extends 'base.html' %}
 
 {% block head %} 
-<title>HELLO WORLD</title>
+
 {% endblock %}
 
 {% block body %} 
-<h1>HELLO WORLD</h1>
+    <h1>Select Data</h1>
+    <form action="http://localhost:3456/index" method="post">
+        {{ form.player_name }}
+        {{ form.player_outing }}
+        <!-- {{ form.which_statistic }} -->
+        {{ form.go }}
+    </form>
 {% endblock %}
 
