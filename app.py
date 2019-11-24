@@ -14,25 +14,11 @@ db = mysql.connector.connect(
     database="WashU_Pitching"
 )
 
-cur = db.cursor()
-
-cur.execute("SELECT * FROM Roster")
-
-
-players = ""
-
-for row in cur.fetchall() :
-    players = players + row[0]
-
-cur.close()
-
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     remember_me = BooleanField('Remember Me')
     submit = SubmitField('Sign In')
-
-
 
 # App routes
 @app.route("/")
@@ -50,7 +36,7 @@ def login():
         result = cur.fetchall()
         if (result):
             if result[0][0] == form.password.data:
-                flash('Login requested for user {}, remember_me={}'.format(form.username.data, form.remember_me.data))
+                # flash('Login requested for user {}, remember_me={}'.format(form.username.data, form.remember_me.data))
                 cur.close()
                 return render_template('index.html')
             else:
@@ -74,7 +60,7 @@ def show_user(username):
     return f"Hello {username}"
 
 
-@app.route("/template")
+@app.route("/index")
 def show_template():
     return render_template("index.html")
 
