@@ -3,9 +3,11 @@ import mysql.connector
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField
 from wtforms.validators import DataRequired
+from flask_login import LoginManager, UserMixin
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret-key'
+login = LoginManager(app)
 
 db = mysql.connector.connect(
     host="localhost",
@@ -14,9 +16,8 @@ db = mysql.connector.connect(
     database="WashU_Pitching"
 )
 
+#sets up PLAYERS variable
 players = []
-
-
 cur = db.cursor()
 cur.execute("SELECT firstname, lastname FROM Roster")
 result = cur.fetchall()
@@ -26,9 +27,9 @@ for player in result:
     # players.append(fullname)
 cur.close()
 
+#sets up OUTINGS variable
 outings = [dict() for x in range(0)]
 outings_dropdown = []
-
 cur = db.cursor()
 cur.execute("SELECT * FROM Outings")
 result = cur.fetchall()
@@ -62,12 +63,6 @@ class SelectPlayer(FlaskForm):
     go = SubmitField('Go')
 
 
-# App routes
-@app.route("/")
-def index_page():
-    return "index page"
-
-
 # CURRENT LOGINS: ryanloutos ryanloutos, mitchellblack mitchellblack
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -80,34 +75,35 @@ def login():
             if result[0][0] == form.password.data:
                 # flash('Login requested for user {}, remember_me={}'.format(form.username.data, form.remember_me.data))
                 cur.close()
-                return render_template('index.html', form=SelectPlayer())
+                return redirect(url_for('outing'))
             else:
                 flash('Incorrect username or password')
                 cur.close()
-                return render_template('login.html', title='Sign In', form=form)
+                return redirect(url_for('login'))
         else: 
             flash('Incorrect username or password')
             cur.close()
             return render_template('login.html', title='Sign In', form=form)
     return render_template('login.html', title='Sign In', form=form)
 
+
 @app.route("/hello")
 def hello_world():
     return "Hello"+players
 
 
-@app.route("/user/<username>")
-def show_user(username):
-    return f"Hello {username}"
-
-
-@app.route("/index", methods=['GET', 'POST'])
+@app.route("/home", methods=['GET', 'POST'])
 def outing():
     form = SelectPlayer()
     if form.validate_on_submit():
         #do something here
-        return render_template("index.html", form=SelectPlayer())
-    return render_template("index.html", form=SelectPlayer())
+        return render_template("home.html", form=SelectPlayer())
+    return render_template("home.html", form=SelectPlayer())
+
+
+@app.route("/logout", methods=['GET', 'POST'])
+def logout():
+    return redirect(url_for('login'))
 
 
 if __name__ == "__main__":
