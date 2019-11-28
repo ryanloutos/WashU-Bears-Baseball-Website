@@ -9,14 +9,14 @@ CSE 330S
 
 Module 7 Creative Project: Rubric
 Idea: Make an app that houses pitcher velocity/outing data that can be easily accessed 
-5pt - Turned in rubric on time 
+DONE 5pt - Turned in rubric on time 
 5pt - Best Practices
   2pt - Code passes HTML W3C
   2pt - Code follows PEP 8 standard
   1pt - Code well commented
-10pt - Learned/Used Flask
+DONE 10pt - Learned/Used Flask
 65pt - Functionality
-  10pt - Only members of team can log in and access database
+  DONE 10pt - Only members of team can log in and access database
   15pt - Data entry for velo tracking sheet is functional and intuitive
   15pt - Users can choose what statistics they want to see from their outings and it displays in a readable manner (minimum 5 statistics calculated)
   10pt - Coach, team manager, and pitcher himself can enter data for a specific pitcher
