@@ -5,12 +5,14 @@ from app import app, db
 from app.forms import LoginForm, RegistrationForm
 from app.models import User
 
+
 @app.route('/')
 @app.route('/index')
 @login_required
 def index():
     users = User.query.all()
     return render_template('index.html', title='Home', users=users)
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -29,10 +31,12 @@ def login():
         return redirect(next_page)
     return render_template('login.html', title='Sign In', form=form)
 
+
 @app.route('/logout')
 def logout():
     logout_user()
     return redirect(url_for('index'))
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -40,11 +44,11 @@ def register():
         return redirect(url_for('index'))
     form = RegistrationForm()
     if form.validate_on_submit():
-        user = User(firstname=form.firstname.data, 
-                    lastname=form.lastname.data, 
-                    year=form.year.data, 
+        user = User(firstname=form.firstname.data,
+                    lastname=form.lastname.data,
+                    year=form.year.data,
                     throws=form.throws.data,
-                    username=form.username.data, 
+                    username=form.username.data,
                     email=form.email.data)
         user.set_password(form.password.data)
         db.session.add(user)
@@ -53,9 +57,14 @@ def register():
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
 
+
 @app.route('/user/<username>')
 @login_required
 def user(username):
     user = User.query.filter_by(username=username).first_or_404()
     outings = user.outings
-    return render_template('user.html', title='User', user=user, outings=outings)
+    return render_template(
+        'user.html',
+        title='User',
+        user=user,
+        outings=outings)
