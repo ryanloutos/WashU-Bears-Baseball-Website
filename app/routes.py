@@ -2,8 +2,8 @@ from flask import render_template, flash, redirect, url_for, request
 from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.urls import url_parse
 from app import app, db
-from app.forms import LoginForm, RegistrationForm
-from app.models import User
+from app.forms import LoginForm, RegistrationForm, OutingForm
+from app.models import User, Outing, Pitch
 
 
 @app.route('/')
@@ -68,3 +68,9 @@ def user(username):
         title='User',
         user=user,
         outings=outings)
+
+@app.route('/new_outing/<username>', methods=['GET', 'POST'])
+@login_required
+def new_outing(username):
+    form = OutingForm()
+    return render_template('new_outing.html', title='New Outing', form=form)
