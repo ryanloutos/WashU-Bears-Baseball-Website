@@ -6,7 +6,7 @@
     <div>
         {% for o in outings %}
         <p>
-            <a href="">{{ o }}</a>
+            <a href="{{ url_for('outing',outing_id=o.id) }}">{{ o }}</a>
         </p>
         {% endfor %}
     </div>

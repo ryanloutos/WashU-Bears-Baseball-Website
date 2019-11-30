@@ -11,92 +11,48 @@
             </div>
             <table class="table">
                 <tr>
-                    <th>{{ form.pitch_num.label }}</th>
-                    <th>{{ form.batter_id.label }}</th>
-                    <th>{{ form.batter_hand.label }}</th>
-                    <th>{{ form.velocity.label }}</th>
-                    <th>{{ form.lead_runner.label }}</th>
-                    <th>{{ form.time_to_plate.label }}</th>
-                    <th>{{ form.pitch_type.label }}</th>
-                    <th>{{ form.pitch_result.label }}</th>
-                    <th>{{ form.hit_spot.label }}</th>
-                    <th>{{ form.count_balls.label }}</th>
-                    <th>{{ form.count_strikes.label }}</th>
-                    <th>{{ form.result.label }}</th>
-                    <th>{{ form.fielder.label }}</th>
-                    <th>{{ form.hit.label }}</th>
-                    <th>{{ form.out.label }}</th>
-                    <th>{{ form.inning.label }}</th>
+                    <th>Pitch</th>
+                    <th>Batter</th>
+                    <th>RHH/LHH</th>
+                    <th>Velo</th>
+                    <th>Lead RNR</th>
+                    <th>Time to Plate</th>
+                    <th>Pitch Type</th>
+                    <th>Pitch Result</th>
+                    <th>Hit Spot?</th>
+                    <th>Balls</th>
+                    <th>Strikes</th>
+                    <th>Result</th>
+                    <th>Fielder</th>
+                    <th>Hit?</th>
+                    <th>Out #</th>
+                    <th>Inning</th>
                 </tr>
+                {% for subfield in form.pitch %}
                 <tr>
-                    <td>{{ form.pitch_num(size=6) }}</td>
-                    <td>{{ form.batter_id(size=6) }}</td>
-                    <td>{{ form.batter_hand(size=6) }}</td>
-                    <td>{{ form.velocity(size=6) }}</td>
-                    <td>{{ form.lead_runner(size=6) }}</td>
-                    <td>{{ form.time_to_plate(size=6) }}</td>
-                    <td>{{ form.pitch_type(size=6) }}</td>
-                    <td>{{ form.pitch_result(size=6) }}</td>
-                    <td>{{ form.hit_spot() }}</td>
-                    <td>{{ form.count_balls(size=6) }}</td>
-                    <td>{{ form.count_strikes(size=6) }}</td>
-                    <td>{{ form.result(size=6) }}</td>
-                    <td>{{ form.fielder(size=6) }}</td>
-                    <td>{{ form.hit() }}</td>
-                    <td>{{ form.out(size=6) }}</td>
-                    <td>{{ form.inning(size=6) }}</td>
+                    <td>{{ subfield.pitch_num(size=6) }}</td>
+                    <td>{{ subfield.batter_id(size=6) }}</td>
+                    <td>{{ subfield.batter_hand() }}</td>
+                    <td>{{ subfield.velocity(size=6) }}</td>
+                    <td>{{ subfield.lead_runner() }}</td>
+                    <td>{{ subfield.time_to_plate(size=6) }}</td>
+                    <td>{{ subfield.pitch_type() }}</td>
+                    <td>{{ subfield.pitch_result() }}</td>
+                    <td>{{ subfield.hit_spot() }}</td>
+                    <td>{{ subfield.count_balls() }}</td>
+                    <td>{{ subfield.count_strikes() }}</td>
+                    <td>{{ subfield.result() }}</td>
+                    <td>{{ subfield.fielder() }}</td>
+                    <td>{{ subfield.hit() }}</td>
+                    <td>{{ subfield.out() }}</td>
+                    <td>{{ subfield.inning(size=6) }}</td>
                 </tr>
+                {% for error in subfield.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+                {% endfor %}
             </table>
         </div>
         <p>{{ form.submit() }}</p>
-
-        {% for error in form.pitch_num.errors %}
-        <span style="color: red;">Pitch Num[{{ error }}]</span>
-        {% endfor %}
-        {% for error in form.batter_id.errors %}
-        <span style="color: red;">Batter Id[{{ error }}]</span>
-        {% endfor %}
-        {% for error in form.batter_hand.errors %}
-        <span style="color: red;">Batter hand[{{ error }}]</span>
-        {% endfor %}
-        {% for error in form.velocity.errors %}
-        <span style="color: red;">Velocity[{{ error }}]</span>
-        {% endfor %}
-        {% for error in form.lead_runner.errors %}
-        <span style="color: red;">lead runner[{{ error }}]</span>
-        {% endfor %}
-        {% for error in form.time_to_plate.errors %}
-        <span style="color: red;">time to plate[{{ error }}]</span>
-        {% endfor %}
-        {% for error in form.pitch_type.errors %}
-        <span style="color: red;">pitch type[{{ error }}]</span>
-        {% endfor %}
-        {% for error in form.pitch_result.errors %}
-        <span style="color: red;">pitch result[{{ error }}]</span>
-        {% endfor %}
-        {% for error in form.hit_spot.errors %}
-        <span style="color: red;">hit spot[{{ error }}]</span>
-        {% endfor %}
-        {% for error in form.count_balls.errors %}
-        <span style="color: red;">count balls[{{ error }}]</span>
-        {% endfor %}
-        {% for error in form.count_strikes.errors %}
-        <span style="color: red;">count strikes[{{ error }}]</span>
-        {% endfor %}
-        {% for error in form.result.errors %}
-        <span style="color: red;">result[{{ error }}]</span>
-        {% endfor %}
-        {% for error in form.fielder.errors %}
-        <span style="color: red;">fielder[{{ error }}]</span>
-        {% endfor %}
-        {% for error in form.hit.errors %}
-        <span style="color: red;">hit[{{ error }}]</span>
-        {% endfor %}
-        {% for error in form.out.errors %}
-        <span style="color: red;">outs[{{ error }}]</span>
-        {% endfor %}
-        {% for error in form.inning.errors %}
-        <span style="color: red;">lead runner[{{ error }}]</span>
-        {% endfor %}
     </form>
 {% endblock %}

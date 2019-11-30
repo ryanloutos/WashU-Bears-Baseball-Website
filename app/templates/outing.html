@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    <h1>{{ outing }}</h1>
+        <div class="panel panel-default">
+            <div class="panel-heading">Pitches</div>
+            <div class="panel-body">
+                <p>{{ outing }}</p>
+            </div>
+            <table class="table">
+                <tr>
+                    <th>Pitch</th>
+                    <th>Batter</th>
+                    <th>RHH/LHH</th>
+                    <th>Velo</th>
+                    <th>Lead RNR</th>
+                    <th>Time to Plate</th>
+                    <th>Pitch Type</th>
+                    <th>Pitch Result</th>
+                    <th>Hit Spot?</th>
+                    <th>Balls</th>
+                    <th>Strikes</th>
+                    <th>Result</th>
+                    <th>Fielder</th>
+                    <th>Hit?</th>
+                    <th>Out #</th>
+                    <th>Inning</th>
+                </tr>
+                {% for pitch in outing.pitches %}
+                <tr>
+                    <td>{{ pitch.pitch_num }}</td>
+                    <td>{{ pitch.batter_id }}</td>
+                    <td>{{ pitch.batter_hand }}</td>
+                    <td>{{ pitch.velocity }}</td>
+                    <td>{{ pitch.lead_runner }}</td>
+                    <td>{{ pitch.time_to_plate }}</td>
+                    <td>{{ pitch.pitch_type }}</td>
+                    <td>{{ pitch.pitch_result }}</td>
+                    <td>{{ pitch.hit_spot }}</td>
+                    <td>{{ pitch.count_balls }}</td>
+                    <td>{{ pitch.count_strikes }}</td>
+                    <td>{{ pitch.result }}</td>
+                    <td>{{ pitch.fielder }}</td>
+                    <td>{{ pitch.hit }}</td>
+                    <td>{{ pitch.out }}</td>
+                    <td>{{ pitch.inning }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+{% endblock %}

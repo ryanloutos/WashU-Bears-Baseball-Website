@@ -2,7 +2,7 @@ from flask import render_template, flash, redirect, url_for, request
 from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.urls import url_parse
 from app import app, db
-from app.forms import LoginForm, RegistrationForm, OutingForm, PitchForm
+from app.forms import LoginForm, RegistrationForm, OutingForm, PitchForm, AllPitchForm
 from app.models import User, Outing, Pitch
 
 
@@ -87,30 +87,34 @@ def new_outing(username):
 @app.route('/new_outing_pitches/<outing>', methods=['GET', 'POST'])
 @login_required
 def new_outing_pitches(outing):
-    form = PitchForm()
+    form = AllPitchForm()
     if form.validate_on_submit():
-        flash("YES")
-        pitch = Pitch(outing_id = outing,
-                      pitch_num = form.pitch_num.data,
-                      batter_id = form.batter_id.data,
-                      batter_hand = form.batter_hand.data,
-                      velocity = form.velocity.data,
-                      lead_runner = form.lead_runner.data,
-                      time_to_plate = form.time_to_plate.data,
-                      pitch_type = form.pitch_type.data,
-                      pitch_result = form.pitch_result.data,
-                      hit_spot = form.hit_spot.data,
-                      count_balls = form.count_balls.data,
-                      count_strikes = form.count_strikes.data,
-                      result = form.result.data,
-                      fielder = form.fielder.data,
-                      hit = form.hit.data,
-                      out = form.out.data,
-                      inning = form.inning.data)
-        db.session.add(pitch)
-        db.session.commit()
-        flash("YES")
+        flash("New Outing Created!")
+        for subform in form.pitch:
+            pitch = Pitch(outing_id = outing,
+                        pitch_num = subform.pitch_num.data,
+                        batter_id = subform.batter_id.data,
+                        batter_hand = subform.batter_hand.data,
+                        velocity = subform.velocity.data,
+                        lead_runner = subform.lead_runner.data,
+                        time_to_plate = subform.time_to_plate.data,
+                        pitch_type = subform.pitch_type.data,
+                        pitch_result = subform.pitch_result.data,
+                        hit_spot = subform.hit_spot.data,
+                        count_balls = subform.count_balls.data,
+                        count_strikes = subform.count_strikes.data,
+                        result = subform.result.data,
+                        fielder = subform.fielder.data,
+                        hit = subform.hit.data,
+                        out = subform.out.data,
+                        inning = subform.inning.data)
+            db.session.add(pitch)
+            db.session.commit()
         return redirect(url_for('index'))
-    else:
-        flash("NO GO")
-        return render_template('new_outing_pitches.html', form=form, outing=outing)
+    return render_template('new_outing_pitches.html', form=form, outing=outing)
+
+@app.route('/outing/<outing_id>', methods=['GET', 'POST'])
+@login_required
+def outing(outing_id):
+    outing = Outing.query.filter_by(id=outing_id).first_or_404()
+    return render_template('outing.html', outing=outing)

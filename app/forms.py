@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, RadioField, IntegerField, IntegerField, DecimalField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, RadioField, IntegerField, DecimalField, SelectField, FieldList, FormField
 from wtforms.fields.html5 import DateField
-from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
+from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, Optional
 from app.models import User
 
 #Basic form for users to login, must type in both username and a password
@@ -45,18 +45,25 @@ class OutingForm(FlaskForm):
 class PitchForm(FlaskForm):
     pitch_num = IntegerField('Pitch', validators=[DataRequired()])
     batter_id = StringField('Batter', validators=[DataRequired()])
-    batter_hand = StringField('RHH/LHH', validators=[DataRequired()])
-    velocity = IntegerField('Velo')
-    lead_runner = IntegerField('Lean RNR')
-    time_to_plate = DecimalField('Time to Plate')
-    pitch_type = IntegerField('Pitch Type', validators=[DataRequired()])
-    pitch_result = StringField('Pitch Result', validators=[DataRequired()])
-    hit_spot = BooleanField('Hit Spot?', validators=[DataRequired()])
-    count_balls = IntegerField('Balls', validators=[DataRequired()])
-    count_strikes = IntegerField('Strikes', validators=[DataRequired()])
-    result =  StringField('Result')
-    fielder = IntegerField('Fielder')
-    hit = BooleanField('Hit?')
-    out = IntegerField('Outs')
-    inning = IntegerField('Inning')
-    submit = SubmitField('Finish Outing')
+    batter_hand = SelectField('RHH/LHH', choices=[('RHH','RHH'), ('LHH','LHH')], validators=[DataRequired()])
+    velocity = IntegerField('Velo', validators=[Optional()])
+    lead_runner = SelectField('Lead RNR', choices=[('Empty','Empty'), ('1','1'), ('2','2'), ('3','3')], validators=[DataRequired()])
+    time_to_plate = DecimalField('Time to Plate', places=2, validators=[Optional()])
+    pitch_type = SelectField('Pitch Type', choices=[('1','1'), ('2','2'), ('3','3'), ('4','4'), ('5','5'), ('7','7')], validators=[DataRequired()])
+    pitch_result = SelectField('Pitch Result', choices=[('B','B'),('CS','CS'),('SS','SS'),('F','F'),('IP','IP')], validators=[DataRequired()])
+    hit_spot = BooleanField('Hit Spot?', validators=[Optional()])
+    count_balls = SelectField('Balls', choices=[('0','0'),('1','1'),('2','2'),('3','3')], validators=[DataRequired()])
+    count_strikes = SelectField('Strikes', choices=[('0','0'),('1','1'),('2','2')], validators=[DataRequired()])
+    result =  SelectField('Result', choices=[('',''),('GB','GB'),('FB','FB'),('LD','LD'),('K','K'),('KL','KL')], validators=[Optional()])
+    fielder = SelectField('Fielder', choices=[('',''),('P','P'),('C','C'),('1B','1B'),('2B','2B'),('3B','3B'),('SS','SS'),('LF','LF'),('CF','CF'),('RF','RF')], validators=[Optional()])
+    hit = BooleanField('Hit?', validators=[Optional()])
+    out = SelectField('Out #', choices=[('',''),('1','1'),('2','2'),('3','3')], validators=[Optional()])
+    inning = IntegerField('Inning', validators=[Optional()])
+
+    def __init__(self, *args, **kwargs):
+        kwargs['csrf_enabled'] = False
+        FlaskForm.__init__(self, *args, **kwargs)
+
+class AllPitchForm(FlaskForm):
+    pitch = FieldList(FormField(PitchForm), min_entries=14, validators=[DataRequired()])
+    submit = SubmitField("Finish Outing")
