@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, RadioField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, RadioField, IntegerField, IntegerField, DecimalField
 from wtforms.fields.html5 import DateField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
 from app.models import User
@@ -41,3 +41,22 @@ class OutingForm(FlaskForm):
     opponent = StringField('Opponent', validators=[DataRequired()])
     season = StringField('Season', validators=[DataRequired()])
     submit = SubmitField('Create Outing')
+
+class PitchForm(FlaskForm):
+    pitch_num = IntegerField('Pitch', validators=[DataRequired()])
+    batter_id = StringField('Batter', validators=[DataRequired()])
+    batter_hand = StringField('RHH/LHH', validators=[DataRequired()])
+    velocity = IntegerField('Velo')
+    lead_runner = IntegerField('Lean RNR')
+    time_to_plate = DecimalField('Time to Plate')
+    pitch_type = IntegerField('Pitch Type', validators=[DataRequired()])
+    pitch_result = StringField('Pitch Result', validators=[DataRequired()])
+    hit_spot = BooleanField('Hit Spot?', validators=[DataRequired()])
+    count_balls = IntegerField('Balls', validators=[DataRequired()])
+    count_strikes = IntegerField('Strikes', validators=[DataRequired()])
+    result =  StringField('Result')
+    fielder = IntegerField('Fielder')
+    hit = BooleanField('Hit?')
+    out = IntegerField('Outs')
+    inning = IntegerField('Inning')
+    submit = SubmitField('Finish Outing')

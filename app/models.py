@@ -39,6 +39,9 @@ class Outing(db.Model):
         day = self.date.day
         return '{}/{} {}'.format(month, day, self.opponent)
 
+    def get_id(self):
+        return self.id
+
 class Pitch(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     outing_id = db.Column(db.Integer, db.ForeignKey('outing.id'), index=True)
@@ -47,7 +50,7 @@ class Pitch(db.Model):
     batter_hand = db.Column(db.String(16), index=True)
     velocity = db.Column(db.Integer, index=True)
     lead_runner = db.Column(db.Integer, index=True)
-    time_to_plate = db.Column(db.Numeric, index=True)
+    time_to_plate = db.Column(db.Float, index=True)
     pitch_type = db.Column(db.Integer, index=True)
     pitch_result = db.Column(db.String(16), index=True)
     hit_spot = db.Column(db.Boolean, index=True)
