@@ -7,7 +7,7 @@ from app.models import User, Outing, Pitch
 
 
 @app.route('/')
-@app.route('/index')
+@app.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
     users = User.query.all()
@@ -89,24 +89,28 @@ def new_outing(username):
 def new_outing_pitches(outing):
     form = PitchForm()
     if form.validate_on_submit():
-        pitch = Pitch(outing_id=outing,
-                      pitch_num=form.pitch_num.data,
-                      batter_id=form.batter_id.data,
-                      batter_hand=form.batter_hand.data,
-                      velocity=form.velocity.data,
-                      lead_runner=form.lead_runner.data,
-                      time_to_plate=form.time_to_plate.data,
-                      pitch_type=form.pitch_type.data,
-                      pitch_result=form.pitch_result.data,
-                      hit_spot=form.hit_spot.data,
-                      count_balls=form.count_balls.data,
-                      count_strikes=form.count_strikes.data,
-                      result=form.result.data,
-                      fielder=form.fielder.data,
-                      hit=form.hit.data,
-                      out=form.out.data,
-                      inning=form.inning.data)
+        flash("YES")
+        pitch = Pitch(outing_id = outing,
+                      pitch_num = form.pitch_num.data,
+                      batter_id = form.batter_id.data,
+                      batter_hand = form.batter_hand.data,
+                      velocity = form.velocity.data,
+                      lead_runner = form.lead_runner.data,
+                      time_to_plate = form.time_to_plate.data,
+                      pitch_type = form.pitch_type.data,
+                      pitch_result = form.pitch_result.data,
+                      hit_spot = form.hit_spot.data,
+                      count_balls = form.count_balls.data,
+                      count_strikes = form.count_strikes.data,
+                      result = form.result.data,
+                      fielder = form.fielder.data,
+                      hit = form.hit.data,
+                      out = form.out.data,
+                      inning = form.inning.data)
         db.session.add(pitch)
         db.session.commit()
+        flash("YES")
         return redirect(url_for('index'))
-    return render_template('new_outing_pitches.html', form=form, outing=outing)
+    else:
+        flash("NO GO")
+        return render_template('new_outing_pitches.html', form=form, outing=outing)

@@ -16,7 +16,7 @@ class User(UserMixin, db.Model):
     outings = db.relationship('Outing', backref='pitcher', lazy='dynamic')
 
     def __repr__(self):
-        return '{} {}'.format(self.firstname, self.lastname) 
+        return f'{self.firstname} {self.lastname}'
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -37,7 +37,7 @@ class Outing(db.Model):
         year = self.date.year
         month = self.date.month
         day = self.date.day
-        return '{}/{} {}'.format(month, day, self.opponent)
+        return f'{month}/{day} {self.opponent}'
 
     def get_id(self):
         return self.id
@@ -63,7 +63,7 @@ class Pitch(db.Model):
     inning = db.Column(db.Integer, index=True)
 
     def __repr__(self):
-        return '<outing_id: {}, pitch_num: {}>'.format(outing_id, pitch_num)
+        return f'<outing: {self.outing_id}, pitch: {self.pitch_num}>'
 
 
 @login.user_loader

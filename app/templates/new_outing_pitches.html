@@ -3,6 +3,7 @@
 {% block app_content %}
     <h1>New Outing</h1>
     <form action="" method="post" novalidate>
+        {{ form.hidden_tag() }}
         <div class="panel panel-default">
             <div class="panel-heading">Pitches</div>
             <div class="panel-body">
@@ -65,39 +66,37 @@
         <span style="color: red;">lead runner[{{ error }}]</span>
         {% endfor %}
         {% for error in form.time_to_plate.errors %}
-        <span style="color: red;">lead runner[{{ error }}]</span>
+        <span style="color: red;">time to plate[{{ error }}]</span>
         {% endfor %}
         {% for error in form.pitch_type.errors %}
-        <span style="color: red;">lead runner[{{ error }}]</span>
+        <span style="color: red;">pitch type[{{ error }}]</span>
         {% endfor %}
         {% for error in form.pitch_result.errors %}
-        <span style="color: red;">lead runner[{{ error }}]</span>
+        <span style="color: red;">pitch result[{{ error }}]</span>
         {% endfor %}
         {% for error in form.hit_spot.errors %}
-        <span style="color: red;">lead runner[{{ error }}]</span>
+        <span style="color: red;">hit spot[{{ error }}]</span>
         {% endfor %}
         {% for error in form.count_balls.errors %}
-        <span style="color: red;">lead runner[{{ error }}]</span>
+        <span style="color: red;">count balls[{{ error }}]</span>
         {% endfor %}
         {% for error in form.count_strikes.errors %}
-        <span style="color: red;">lead runner[{{ error }}]</span>
+        <span style="color: red;">count strikes[{{ error }}]</span>
         {% endfor %}
         {% for error in form.result.errors %}
-        <span style="color: red;">lead runner[{{ error }}]</span>
+        <span style="color: red;">result[{{ error }}]</span>
         {% endfor %}
         {% for error in form.fielder.errors %}
-        <span style="color: red;">lead runner[{{ error }}]</span>
+        <span style="color: red;">fielder[{{ error }}]</span>
         {% endfor %}
         {% for error in form.hit.errors %}
-        <span style="color: red;">lead runner[{{ error }}]</span>
+        <span style="color: red;">hit[{{ error }}]</span>
         {% endfor %}
         {% for error in form.out.errors %}
-        <span style="color: red;">lead runner[{{ error }}]</span>
+        <span style="color: red;">outs[{{ error }}]</span>
         {% endfor %}
         {% for error in form.inning.errors %}
         <span style="color: red;">lead runner[{{ error }}]</span>
         {% endfor %}
-        
-
     </form>
 {% endblock %}
