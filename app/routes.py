@@ -88,29 +88,34 @@ def new_outing(username):
 @login_required
 def new_outing_pitches(outing):
     form = AllPitchForm()
+    form.pitch.append_entry()  # attempt to add addtional row to form
     if form.validate_on_submit():
         flash("New Outing Created!")
-        for subform in form.pitch:
-            pitch = Pitch(outing_id = outing,
-                        pitch_num = subform.pitch_num.data,
-                        batter_id = subform.batter_id.data,
-                        batter_hand = subform.batter_hand.data,
-                        velocity = subform.velocity.data,
-                        lead_runner = subform.lead_runner.data,
-                        time_to_plate = subform.time_to_plate.data,
-                        pitch_type = subform.pitch_type.data,
-                        pitch_result = subform.pitch_result.data,
-                        hit_spot = subform.hit_spot.data,
-                        count_balls = subform.count_balls.data,
-                        count_strikes = subform.count_strikes.data,
-                        result = subform.result.data,
-                        fielder = subform.fielder.data,
-                        hit = subform.hit.data,
-                        out = subform.out.data,
-                        inning = subform.inning.data)
-            db.session.add(pitch)
-            db.session.commit()
-        return redirect(url_for('index'))
+        if "Add Row" in request.form:
+            form.pitch.append_entry()
+        else:
+            for subform in form.pitch:
+                pitch = Pitch(
+                    outing_id=outing,
+                    pitch_num=subform.pitch_num.data,
+                    batter_id=subform.batter_id.data,
+                    batter_hand=subform.batter_hand.data,
+                    velocity=subform.velocity.data,
+                    lead_runner=subform.lead_runner.data,
+                    time_to_plate=subform.time_to_plate.data,
+                    pitch_type=subform.pitch_type.data,
+                    pitch_result=subform.pitch_result.data,
+                    hit_spot=subform.hit_spot.data,
+                    count_balls=subform.count_balls.data,
+                    count_strikes=subform.count_strikes.data,
+                    result=subform.result.data,
+                    fielder=subform.fielder.data,
+                    hit=subform.hit.data,
+                    out=subform.out.data,
+                    inning=subform.inning.data)
+                db.session.add(pitch)
+                db.session.commit()
+            return redirect(url_for('index'))
     return render_template('new_outing_pitches.html', form=form, outing=outing)
 
 @app.route('/outing/<outing_id>', methods=['GET', 'POST'])

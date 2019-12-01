@@ -4,23 +4,25 @@ from wtforms.fields.html5 import DateField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, Optional
 from app.models import User
 
-#Basic form for users to login, must type in both username and a password
+
+# Basic form for users to login, must type in both username and a password
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     remember_me = BooleanField('Remember Me')
     submit = SubmitField('Sign In')
 
-#Creating a new account. 
+
+# Creating a new account.
 class RegistrationForm(FlaskForm):
     firstname = StringField('Firstname', validators=[DataRequired()])
     lastname = StringField('Lastname', validators=[DataRequired()])
-    year = RadioField('Year', choices=[('FR','FR'),('SO','SO'),('JR','JR'),('SR','SR')], validators=[DataRequired()])
-    throws = RadioField('Throws', choices=[('R','R'),('L','L')], validators=[DataRequired()])
+    year = RadioField('Year', choices=[('FR', 'FR'),('SO', 'SO'),('JR', 'JR'),('SR', 'SR')], validators=[DataRequired()])
+    throws = RadioField('Throws', choices=[('R', 'R'),('L', 'L')], validators=[DataRequired()])
     username = StringField('Username', validators=[DataRequired()])
-    email = StringField('Email', validators=[DataRequired(), Email()]) #Email() validator makes sure it's in email form
+    email = StringField('Email', validators=[DataRequired(), Email()])  # Email() validator makes sure it's in email form
     password = PasswordField('Password', validators=[DataRequired()])
-    password2 = PasswordField(#make sure passwords match
+    password2 = PasswordField(  # make sure passwords match
         'Repeat Password', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Register')
 
@@ -35,12 +37,14 @@ class RegistrationForm(FlaskForm):
         if user is not None:
             raise ValidationError('Please use a different email address.')
 
-#Creating a new outing
+
+# Creating a new outing
 class OutingForm(FlaskForm):
     date = DateField('Date', validators=[DataRequired()], format='%Y-%m-%d')
     opponent = StringField('Opponent', validators=[DataRequired()])
     season = StringField('Season', validators=[DataRequired()])
     submit = SubmitField('Create Outing')
+
 
 class PitchForm(FlaskForm):
     pitch_num = IntegerField('Pitch', validators=[DataRequired()])
@@ -64,6 +68,8 @@ class PitchForm(FlaskForm):
         kwargs['csrf_enabled'] = False
         FlaskForm.__init__(self, *args, **kwargs)
 
+
 class AllPitchForm(FlaskForm):
-    pitch = FieldList(FormField(PitchForm), min_entries=14, validators=[DataRequired()])
+    pitch = FieldList(FormField(PitchForm), min_entries=1, max_entries=150, validators=[DataRequired()])
     submit = SubmitField("Finish Outing")
+    add = SubmitField("Add Row")
