@@ -1,6 +1,47 @@
 {% extends "base.html" %}
 
 {% block app_content %}
+{#https://www.rmedgar.com/blog/dynamic_fields_flask_wtf#}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script> 
+        $(document).ready(function() {
+            $('#add').click(function addForm() {
+                //Get Last index
+                var $lastForm = $('.subform').last();
+
+                if ($lastForm.length > 0) {
+                    newIndex = parseInt($lastForm.data('index')) + 1;
+                }
+                else {
+                    newIndex=0;
+                }
+
+                // Maximum of 150 subforms
+                if (newIndex > 150) {
+                    console.log('[WARNING] Reached maximum number of elements');
+                    return;
+                }
+                var $newForm = $('#pitch-0-form').clone();
+                $newForm.attr('id', 'pitch-'+newIndex+'-form');
+                $newForm.attr('data-index', newIndex);
+                $newForm.find('input').each(function(idx) {
+                    var $item = $(this);
+                    console.log(newIndex);
+                    $item.attr('id', $item.attr('id').replace('0', newIndex));
+                    $item.attr('name', $item.attr('name').replace('0', newIndex));
+                });
+                $newForm.find('select').each(function(idx) {
+                    var $item = $(this);
+                    console.log(newIndex);
+                    $item.attr('id', $item.attr('id').replace('0', newIndex));
+                    $item.attr('name', $item.attr('name').replace('0', newIndex));
+                });
+                $("#table > tbody").append($newForm);
+                $newForm.addClass('subform');
+                newIndex++;
+            });
+        });
+    </script>
     <h1>New Outing</h1>
     <form action="" method="post" novalidate>
         {{ form.hidden_tag() }}
@@ -25,7 +66,53 @@
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
         </p><br>
+        <div class="panel panel-default">
+            <div class="panel-heading">Pitches</div>
+            <div class="panel-body">
+                <p>This is where you can enter in the pitches for the outing</p>
+            </div>
+            <table class='table' id="table">
+                <tr>
+                    <th>Pitch</th>
+                    <th>Batter</th>
+                    <th>RHH/LHH</th>
+                    <th>Velo</th>
+                    <th>Lead RNR</th>
+                    <th>Time to Plate</th>
+                    <th>Pitch Type</th>
+                    <th>Pitch Result</th>
+                    <th>Hit Spot?</th>
+                    <th>Balls</th>
+                    <th>Strikes</th>
+                    <th>Result</th>
+                    <th>Fielder</th>
+                    <th>Hit?</th>
+                    <th>Out #</th>
+                    <th>Inning</th>
+                </tr>
+                {% for subform in form.pitch %}
+                <tr class='subform' id="pitch-{{ loop.index0 }}-form" data-index='{{ loop.index0 }}'>
+                    <td>{{ subform.pitch_num(size=4) }}</td>
+                    <td>{{ subform.batter_id(size=4) }}</td>
+                    <td>{{ subform.batter_hand() }}</td>
+                    <td>{{ subform.velocity(size=4) }}</td>
+                    <td>{{ subform.lead_runner() }}</td>
+                    <td>{{ subform.time_to_plate(size=4) }}</td>
+                    <td>{{ subform.pitch_type() }}</td>
+                    <td>{{ subform.pitch_result() }}</td>
+                    <td>{{ subform.hit_spot() }}</td>
+                    <td>{{ subform.count_balls() }}</td>
+                    <td>{{ subform.count_strikes() }}</td>
+                    <td>{{ subform.result() }}</td>
+                    <td>{{ subform.fielder() }}</td>
+                    <td>{{ subform.hit() }}</td>
+                    <td>{{ subform.out() }}</td>
+                    <td>{{ subform.inning(size=4) }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
         <p>{{ form.submit() }}</p>
-
     </form>
+    <button id="add">Add Row</button>
 {% endblock %}

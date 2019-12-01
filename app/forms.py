@@ -37,15 +37,6 @@ class RegistrationForm(FlaskForm):
         if user is not None:
             raise ValidationError('Please use a different email address.')
 
-
-# Creating a new outing
-class OutingForm(FlaskForm):
-    date = DateField('Date', validators=[DataRequired()], format='%Y-%m-%d')
-    opponent = StringField('Opponent', validators=[DataRequired()])
-    season = StringField('Season', validators=[DataRequired()])
-    submit = SubmitField('Create Outing')
-
-
 class PitchForm(FlaskForm):
     pitch_num = IntegerField('Pitch', validators=[DataRequired()])
     batter_id = StringField('Batter', validators=[DataRequired()])
@@ -68,8 +59,15 @@ class PitchForm(FlaskForm):
         kwargs['csrf_enabled'] = False
         FlaskForm.__init__(self, *args, **kwargs)
 
-
-class AllPitchForm(FlaskForm):
+# Creating a new outing
+class OutingForm(FlaskForm):
+    date = DateField('Date', validators=[DataRequired()], format='%Y-%m-%d')
+    opponent = StringField('Opponent', validators=[DataRequired()])
+    season = StringField('Season', validators=[DataRequired()])
     pitch = FieldList(FormField(PitchForm), min_entries=1, max_entries=150, validators=[DataRequired()])
-    submit = SubmitField("Finish Outing")
-    add = SubmitField("Add Row")
+    submit = SubmitField('Create Outing')
+
+
+# class AllPitchForm(FlaskForm):
+#     pitch = FieldList(FormField(PitchForm), min_entries=1, max_entries=150, validators=[DataRequired()])
+#     submit = SubmitField("Finish Outing")
