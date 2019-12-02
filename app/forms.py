@@ -62,6 +62,7 @@ class PitchForm(FlaskForm):
 
 # Creating a new outing
 class OutingForm(FlaskForm):
+    pitcher = SelectField('Pitcher', validators=[DataRequired()])
     date = DateField('Date', validators=[DataRequired()], format='%Y-%m-%d')
     opponent = StringField('Opponent', validators=[DataRequired()])
     season = StringField('Season', validators=[DataRequired()])

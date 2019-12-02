@@ -26,25 +26,33 @@
                 $newForm.attr('data-index', newIndex);
                 $newForm.find('input').each(function(idx) {
                     var $item = $(this);
-                    console.log(newIndex);
                     $item.attr('id', $item.attr('id').replace('0', newIndex));
                     $item.attr('name', $item.attr('name').replace('0', newIndex));
                 });
                 $newForm.find('select').each(function(idx) {
                     var $item = $(this);
-                    console.log(newIndex);
                     $item.attr('id', $item.attr('id').replace('0', newIndex));
                     $item.attr('name', $item.attr('name').replace('0', newIndex));
                 });
                 $("#table > tbody").append($newForm);
                 $newForm.addClass('subform');
-                newIndex++;
+            });
+            $('#delete').click(function deleteForm() {
+                var $lastForm = $('.subform').last();
+                $lastForm.remove();
             });
         });
     </script>
     <h1>New Outing</h1>
     <form action="" method="post" novalidate>
         {{ form.hidden_tag() }}
+        <p>
+            {{ form.pitcher.label }}<br>
+            {{ form.pitcher }}<br>
+            {% for error in form.pitcher.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
         <p>
             {{ form.date.label }}<br>
             {{ form.date(class='datepicker') }}<br>
@@ -115,4 +123,5 @@
         <p>{{ form.submit() }}</p>
     </form>
     <button id="add">Add Row</button>
+    <button id="delete">Delete Last Row</button>
 {% endblock %}
