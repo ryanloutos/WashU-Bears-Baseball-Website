@@ -6,12 +6,13 @@ from flask_login import UserMixin
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    admin = db.Column(db.Boolean, index=True)
     username = db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
     firstname = db.Column(db.String(64))
     lastname = db.Column(db.String(64))
-    year = db.Column(db.String(8), index=True)
+    year = db.Column(db.String(32), index=True)
     throws = db.Column(db.String(8), index=True)
     outings = db.relationship('Outing', backref='pitcher', lazy='dynamic')
 
@@ -23,6 +24,9 @@ class User(UserMixin, db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+    
+    def is_admin(self):
+        return self.admin
 
 
 class Outing(db.Model):

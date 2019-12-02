@@ -17,13 +17,14 @@ class LoginForm(FlaskForm):
 class RegistrationForm(FlaskForm):
     firstname = StringField('Firstname', validators=[DataRequired()])
     lastname = StringField('Lastname', validators=[DataRequired()])
-    year = RadioField('Year', choices=[('FR', 'FR'),('SO', 'SO'),('JR', 'JR'),('SR', 'SR')], validators=[DataRequired()])
-    throws = RadioField('Throws', choices=[('R', 'R'),('L', 'L')], validators=[DataRequired()])
+    year = RadioField('Year/Position', choices=[('FR', 'FR'),('SO', 'SO'),('JR', 'JR'),('SR', 'SR'),('Coach/Manager','Coach/Manager')], validators=[DataRequired()])
+    throws = RadioField('Throws', choices=[('R', 'R'),('L', 'L')], validators=[Optional()])
     username = StringField('Username', validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired(), Email()])  # Email() validator makes sure it's in email form
     password = PasswordField('Password', validators=[DataRequired()])
     password2 = PasswordField(  # make sure passwords match
         'Repeat Password', validators=[DataRequired(), EqualTo('password')])
+    admin = BooleanField('Admin?', validators=[Optional()])
     submit = SubmitField('Register')
 
     #these two functions will run automatically when a new user is trying to be created

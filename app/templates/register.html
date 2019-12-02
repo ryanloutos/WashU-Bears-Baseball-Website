@@ -31,7 +31,7 @@
             {% endfor %}
         </p>
         <p>
-            {{ form.throws.label }}<br>
+            {{ form.throws.label }} (If player)<br>
             {% for subfield in form.throws %}
                 <tr>
                     <td>{{ subfield }}</td>
@@ -70,6 +70,13 @@
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
         </p>
+        <p>{{ form.admin.label }} <br>
+           {{ form.admin }} <br>
+           {% for error in form.password2.errors %}
+           <span style="color: red;">[{{ error }}]</span>
+           {% endfor %}
+        </p>
+
         <p>{{ form.submit() }}</p>
     </form>
 {% endblock %}

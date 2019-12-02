@@ -49,7 +49,8 @@ def register():
                     year=form.year.data,
                     throws=form.throws.data,
                     username=form.username.data,
-                    email=form.email.data)
+                    email=form.email.data,
+                    admin=form.admin.data)
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
