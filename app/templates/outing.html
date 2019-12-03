@@ -1,6 +1,25 @@
 {% extends "base.html" %}
 
 {% block app_content %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#pitch-usage').hide();
+            $('#pitch-usage-by-count').hide();
+            $('#pitch-avg-velo').hide();
+            $('#pitch-strike-percentage').hide();
+            $('#pitch-whiff-rate').hide();
+            $('#choose-stat').click(function() {
+                $('#pitch-avg-velo').hide();
+                $('#pitch-usage').hide();
+                $('#pitch-usage-by-count').hide();
+                $('#pitch-strike-percentage').hide();
+                $('#pitch-whiff-rate').hide();
+                which_statistic = $('#statistic-choice').val();
+                $('#'+which_statistic).show();
+            });
+        });
+    </script>
     <h1>
         {{ outing }}
         {% if current_user.admin or current_user.id==outing.user_id %}
@@ -54,13 +73,25 @@
             </table>
         </div>
         <div class="panel panel-default">
-            <div class="panel-heading">Stats</div>
+            <div class="panel-heading">Stats
+                <select id='statistic-choice'>
+                    <option>CHOOSE STATISTIC</option>
+                    <option value='pitch-usage'>Pitch Usage</option>
+                    <option value='pitch-usage-by-count'>Pitch Usage by Count</option>
+                    <option value='pitch-avg-velo'>Pitch Average Velocity</option>
+                    <option value='pitch-strike-percentage'>Pitch Strike Percentage</option>
+                    <option value='pitch-whiff-rate'>Pitch Whiff Rate</option>
+                </select>
+                <button id='choose-stat'>GO</button>
+            </div>
             <div class="panel-body">
+                <div id='pitch-usage'>
+                <h3>Pitch Usage</h3>
                 <table class="table">
                     <tr>
                         <th></th>
                         <th>FB</th>
-                        <th>2-SEAM</th>
+                        <th>2S</th>
                         <th>CB</th>
                         <th>SL</th>
                         <th>CH</th>
@@ -85,19 +116,19 @@
                         <td>{{usage_percentages["CT"]}}</td>
                     </tr>
                 </table>
-                <br>
-                <div>Pitch Usage by Count</div>
-                <br>
+                </div>
+                <div id='pitch-usage-by-count'>
+                <h3>Pitch Usage by Count</h3>
                 <table class="table">
                     <tr>
                         <th>Count</th>
                         <th>FB</th>
-                        <th>2-SEAM</th>
+                        <th>2S</th>
                         <th>CB</th>
                         <th>SL</th>
                         <th>CH</th>
                         <th>CT</th>
-                        <th>total</th>
+                        <th>Total</th>
                     </tr>
                     {% for count, value in counts.items() %}
                         <tr>
@@ -112,6 +143,80 @@
                         </tr>
                     {% endfor%}
                 </table>
+                </div>
+                <div id='pitch-avg-velo'>
+                    <h3>Average Velocity By Pitch</h3>
+                    <table class="table">
+                        <tr>
+                            <th></th>
+                            <th>FB</th>
+                            <th>2S</th>
+                            <th>CB</th>
+                            <th>SL</th>
+                            <th>CH</th>
+                            <th>CT</th>
+                        </tr>
+                        <tr>
+                            <th>Velo</th>
+                            <td>{{pitch_avg_velo["FB"]}}</td>
+                            <td>{{pitch_avg_velo["SM"]}}</td>
+                            <td>{{pitch_avg_velo["CB"]}}</td>
+                            <td>{{pitch_avg_velo["SL"]}}</td>
+                            <td>{{pitch_avg_velo["CH"]}}</td>
+                            <td>{{pitch_avg_velo["CT"]}}</td>
+                        </tr>
+                    </table>
+                </div>
+                <div id='pitch-strike-percentage'>
+                    <h3>Strike Percentage by Pitch</h3>
+                    <table class="table">
+                        <tr>
+                            <th></th>
+                            <th>FB</th>
+                            <th>2S</th>
+                            <th>CB</th>
+                            <th>SL</th>
+                            <th>CH</th>
+                            <th>CT</th>
+                            <th>Total</th>
+                        </tr>
+                        <tr>
+                            <th>Velo</th>
+                            <td>{{pitch_strike_percentage["FB"]}}</td>
+                            <td>{{pitch_strike_percentage["SM"]}}</td>
+                            <td>{{pitch_strike_percentage["CB"]}}</td>
+                            <td>{{pitch_strike_percentage["SL"]}}</td>
+                            <td>{{pitch_strike_percentage["CH"]}}</td>
+                            <td>{{pitch_strike_percentage["CT"]}}</td>
+                            <td>{{pitch_strike_percentage["total"]}}</td>
+                        </tr>
+                    </table>
+                </div>
+                <div id='pitch-whiff-rate'>
+                    <h3>Whiff Rate by Pitch</h3>
+                    <table class="table">
+                        <tr>
+                            <th></th>
+                            <th>FB</th>
+                            <th>2S</th>
+                            <th>CB</th>
+                            <th>SL</th>
+                            <th>CH</th>
+                            <th>CT</th>
+                            <th>Total</th>
+                        </tr>
+                        <tr>
+                            <th>Velo</th>
+                            <td>{{pitch_whiff["FB"]}}</td>
+                            <td>{{pitch_whiff["SM"]}}</td>
+                            <td>{{pitch_whiff["CB"]}}</td>
+                            <td>{{pitch_whiff["SL"]}}</td>
+                            <td>{{pitch_whiff["CH"]}}</td>
+                            <td>{{pitch_whiff["CT"]}}</td>
+                            <td>{{pitch_whiff["total"]}}</td>
+                        </tr>
+                    </table>
+                </div>
             </div>
         </div>
 {% endblock %}
