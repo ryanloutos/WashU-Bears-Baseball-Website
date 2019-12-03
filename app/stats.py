@@ -83,7 +83,7 @@ def calcPitchPercentages(outing):
     # Will be in form {"FB":0.0, "CB":0.0, "SL":0.0, "CH":0.0, "CT":0.0, "SM":0.0}
     # With each value being 0<=val<=100
 
-# calculate 
+# calculate pitch usage by batter count
 def pitchUsageByCount(outing):
     num_pitches = outing.pitches.count()
     # PLEASE COLLAPSE THIS VARIABLE IT'S DUMB
@@ -199,7 +199,7 @@ def pitchUsageByCount(outing):
         total = value["total"]
         if total != 0:
             for pitch in value["pitches"].keys():
-                counts_percentages[key]["pitches"][pitch] = value["pitches"][pitch]/total
+                counts_percentages[key]["pitches"][pitch] = value["pitches"][pitch]/total * 100
                 counts_percentages[key]["total"] = total/num_pitches
         else:  # case in which there were no pitches thrown in a count
             counts_percentages[key]["pitches"] = counts[key]["pitches"]

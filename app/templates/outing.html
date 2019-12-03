@@ -6,6 +6,7 @@
         $(document).ready(function() {
             $('#pitch-usage').hide();
             $('#pitch-usage-by-count').hide();
+            $('#pitch-usage-by-count-percentage').hide();
             $('#pitch-avg-velo').hide();
             $('#pitch-strike-percentage').hide();
             $('#pitch-whiff-rate').hide();
@@ -13,6 +14,7 @@
                 $('#pitch-avg-velo').hide();
                 $('#pitch-usage').hide();
                 $('#pitch-usage-by-count').hide();
+                $('#pitch-usage-by-count-percentage').hide();
                 $('#pitch-strike-percentage').hide();
                 $('#pitch-whiff-rate').hide();
                 which_statistic = $('#statistic-choice').val();
@@ -78,6 +80,7 @@
                     <option>CHOOSE STATISTIC</option>
                     <option value='pitch-usage'>Pitch Usage</option>
                     <option value='pitch-usage-by-count'>Pitch Usage by Count</option>
+                    <option value='pitch-usage-by-count-percentage'>Pitch Usage by Count Percentage</option>
                     <option value='pitch-avg-velo'>Pitch Average Velocity</option>
                     <option value='pitch-strike-percentage'>Pitch Strike Percentage</option>
                     <option value='pitch-whiff-rate'>Pitch Whiff Rate</option>
@@ -131,6 +134,33 @@
                         <th>Total</th>
                     </tr>
                     {% for count, value in counts.items() %}
+                        <tr>
+                            <th>{{count}}</th>
+                            <td>{{value["pitches"]["FB"]}}</td>
+                            <td>{{value["pitches"]["SM"]}}</td>
+                            <td>{{value["pitches"]["CB"]}}</td>
+                            <td>{{value["pitches"]["SL"]}}</td>
+                            <td>{{value["pitches"]["CH"]}}</td>
+                            <td>{{value["pitches"]["CT"]}}</td>
+                            <td>{{value["total"]}}</tr>
+                        </tr>
+                    {% endfor%}
+                </table>
+                </div>
+                <div id='pitch-usage-by-count-percentage'>
+                <h3>Pitch Usage by Count Percentage</h3>
+                <table class="table">
+                    <tr>
+                        <th>Count</th>
+                        <th>FB</th>
+                        <th>2S</th>
+                        <th>CB</th>
+                        <th>SL</th>
+                        <th>CH</th>
+                        <th>CT</th>
+                        <th>Total</th>
+                    </tr>
+                    {% for count, value in counts_percentages.items() %}
                         <tr>
                             <th>{{count}}</th>
                             <td>{{value["pitches"]["FB"]}}</td>
