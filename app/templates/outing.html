@@ -53,4 +53,65 @@
                 {% endfor %}
             </table>
         </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">Stats</div>
+            <div class="panel-body">
+                <table class="table">
+                    <tr>
+                        <th></th>
+                        <th>FB</th>
+                        <th>2-SEAM</th>
+                        <th>CB</th>
+                        <th>SL</th>
+                        <th>CH</th>
+                        <th>CT</th>
+                    </tr>
+                    <tr>
+                        <th>Num</th>
+                        <td>{{usages["FB"]}}</td>
+                        <td>{{usages["SM"]}}</td>
+                        <td>{{usages["CB"]}}</td>
+                        <td>{{usages["SL"]}}</td>
+                        <td>{{usages["CH"]}}</td>
+                        <td>{{usages["CT"]}}</td>
+                    </tr>
+                    <tr>
+                        <th>Percent</th>
+                        <td>{{usage_percentages["FB"]}}</td>
+                        <td>{{usage_percentages["SM"]}}</td>
+                        <td>{{usage_percentages["CB"]}}</td>
+                        <td>{{usage_percentages["SL"]}}</td>
+                        <td>{{usage_percentages["CH"]}}</td>
+                        <td>{{usage_percentages["CT"]}}</td>
+                    </tr>
+                </table>
+                <br>
+                <div>Pitch Usage by Count</div>
+                <br>
+                <table class="table">
+                    <tr>
+                        <th>Count</th>
+                        <th>FB</th>
+                        <th>2-SEAM</th>
+                        <th>CB</th>
+                        <th>SL</th>
+                        <th>CH</th>
+                        <th>CT</th>
+                        <th>total</th>
+                    </tr>
+                    {% for count, value in counts.items() %}
+                        <tr>
+                            <th>{{count}}</th>
+                            <td>{{value["pitches"]["FB"]}}</td>
+                            <td>{{value["pitches"]["SM"]}}</td>
+                            <td>{{value["pitches"]["CB"]}}</td>
+                            <td>{{value["pitches"]["SL"]}}</td>
+                            <td>{{value["pitches"]["CH"]}}</td>
+                            <td>{{value["pitches"]["CT"]}}</td>
+                            <td>{{value["total"]}}</tr>
+                        </tr>
+                    {% endfor%}
+                </table>
+            </div>
+        </div>
 {% endblock %}

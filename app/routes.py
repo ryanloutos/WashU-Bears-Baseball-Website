@@ -4,6 +4,7 @@ from werkzeug.urls import url_parse
 from app import app, db
 from app.forms import LoginForm, RegistrationForm, OutingForm, PitchForm
 from app.models import User, Outing, Pitch
+from app.stats import calcPitchPercentages, pitchUsageByCount
 
 
 @app.route('/')
@@ -124,7 +125,19 @@ def new_outing():
 @login_required
 def outing(outing_id):
     outing = Outing.query.filter_by(id=outing_id).first_or_404()
-    return render_template('outing.html', outing=outing)
+
+    # Get statistical data
+    usages,usage_percentages = calcPitchPercentages(outing)
+    counts, counts_percentages = pitchUsageByCount(outing)
+
+    return render_template(
+        'outing.html',
+        outing=outing,
+        usages=usages,
+        usage_percentages=usage_percentages,
+        counts=counts,
+        counts_percentages=counts_percentages
+        )
 
 @app.route('/edit_outing/<outing_id>', methods=['GET', 'POST'])
 @login_required
