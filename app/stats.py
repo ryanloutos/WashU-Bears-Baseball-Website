@@ -213,7 +213,7 @@ def pitchUsageByCount(outing):
 def createPitchPercentagePieChart(data):
     pie_chart = pygal.Pie(
         title="Pitch Usage Percentages",
-        style=DefaultStyle(
+        style=DarkSolarizedStyle(
             value_font_family='googlefont:Raleway',
             value_font_size=30,
             value_colors=('white')
@@ -228,3 +228,17 @@ def createPitchPercentagePieChart(data):
         pie_chart.add(pitch, value)
     
     return pie_chart
+
+def velocityOverTimeLineChart(outing):
+    line_chart = pygal.Line(
+        style=DarkSolarizedStyle,
+        title="Velocity changes over time"
+    )
+
+    velocities = []
+    for pitch in outing.pitches:
+        velocities.append(pitch.velocity)
+
+    line_chart.add("pitches", velocities)
+
+    return line_chart

@@ -10,6 +10,8 @@
             $('#pitch-avg-velo').hide();
             $('#pitch-strike-percentage').hide();
             $('#pitch-whiff-rate').hide();
+            $('#velocity-over-time-chart').hide();
+
             $('#choose-stat').click(function() {
                 $('#pitch-avg-velo').hide();
                 $('#pitch-usage').hide();
@@ -17,6 +19,8 @@
                 $('#pitch-usage-by-count-percentage').hide();
                 $('#pitch-strike-percentage').hide();
                 $('#pitch-whiff-rate').hide();
+                $('#velocity-over-time-chart').hide();
+
                 which_statistic = $('#statistic-choice').val();
                 $('#'+which_statistic).show();
             });
@@ -87,6 +91,8 @@
                     <option value='pitch-avg-velo'>Pitch Average Velocity</option>
                     <option value='pitch-strike-percentage'>Pitch Strike Percentage</option>
                     <option value='pitch-whiff-rate'>Pitch Whiff Rate</option>
+                    <option value='velocity-over-time-chart'>Velocity Over Time Chart</option>
+
                 </select>
                 <button id='choose-stat'>GO</button>
             </div>
@@ -152,8 +158,8 @@
                 </table>
                 </div>
                 <div id='pitch-usage-by-count-percentage'>
-                <h3>Pitch Usage by Count Percentage</h3>
-                <table class="table">
+                    <h3>Pitch Usage by Count Percentage</h3>
+                    <table class="table">
                     <tr>
                         <th>Count</th>
                         <th>FB</th>
@@ -176,8 +182,8 @@
                             <td>{{value["total"]}}</tr>
                         </tr>
                     {% endfor%}
-                </table>
-                </div>
+                    </table>
+                    </div>
                 <div id='pitch-avg-velo'>
                     <h3>Average Velocity By Pitch</h3>
                     <table class="table">
@@ -251,6 +257,11 @@
                         </tr>
                     </table>
                 </div>
+                <div id="velocity-over-time-chart">
+                    <h3>Velocity Over Time Chart</h3>
+                    {{ velocity_over_time_line_chart.render()|safe}}
+                </div>
+
             </div>
         </div>
 {% endblock %}
