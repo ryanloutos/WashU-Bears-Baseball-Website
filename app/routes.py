@@ -152,9 +152,9 @@ def edit_outing(outing_id):
     outing = Outing.query.filter_by(id=outing_id).first_or_404()
     pitcher = User.query.filter_by(id=outing.user_id).first_or_404()
     form.pitcher.choices = [(pitcher.firstname+" "+pitcher.lastname, pitcher.firstname+" "+pitcher.lastname)]
-    for p in outing.pitches:
-        if p.pitch_num != 1:
-            form.pitch.append_entry()
+    # for p in outing.pitches:
+    #     if p.pitch_num != 1:
+    #         form.pitch.append_entry()
     if form.validate_on_submit():
         user = User.query.filter_by(id=outing.user_id).first_or_404()
         for p in outing.pitches:

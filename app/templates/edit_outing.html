@@ -100,7 +100,13 @@
                 </tr>
                 {% for subform in form.pitch %}
                 <tr class='subform' id="pitch-{{ loop.index0 }}-form" data-index='{{ loop.index0 }}'>
-                    <td>{{ subform.pitch_num(size=4, value=outing.pitches[loop.index0].pitch_num) }}</td>
+                    <td>
+                        {% if outing.pitches[loop.index0].pitch_num == None %}
+                            {{ subform.pitch_num(size=4) }}
+                        {% else %}
+                            {{ subform.pitch_num(size=4, value=outing.pitches[loop.index0].pitch_num) }}
+                        {% endif %}
+                    </td>
                     <td>{{ subform.batter_id(size=4, value=outing.pitches[loop.index0].batter_id) }}</td>
                     <td>
                         <select id="pitch-{{loop.index0}}-batter_hand" name="pitch-{{loop.index0}}-batter_hand" required>
@@ -108,7 +114,13 @@
                             <option value="LHH" {% if outing.pitches[loop.index0].batter_hand=='LHH' %} selected='selected' {% endif %}>LHH</option>
                         </select>
                     </td>
-                    <td>{{ subform.velocity(size=4, value=outing.pitches[loop.index0].velocity) }}</td>
+                    <td>
+                        {% if outing.pitches[loop.index0].velocity == None %}
+                            {{ subform.velocity(size=4) }}
+                        {% else %}
+                            {{ subform.velocity(size=4, value=outing.pitches[loop.index0].velocity) }}
+                        {% endif %}
+                    </td>
                     <td>
                         <select id="pitch-{{loop.index0}}-lead_runner" name="pitch-{{loop.index0}}-lead_runner" required>
                             <option value="Empty" {% if outing.pitches[loop.index0].lead_runner=='Empty' %} selected='selected' {% endif %}>Empty</option>
@@ -117,7 +129,13 @@
                             <option value="3" {% if outing.pitches[loop.index0].lead_runner==3 %} selected='selected' {% endif %}>3</option>
                         </select>
                     </td>
-                    <td>{{ subform.time_to_plate(size=4, value=outing.pitches[loop.index0].time_to_plate) }}</td>
+                    <td>
+                        {% if outing.pitches[loop.index0].time_to_plate == None %}
+                            {{ subform.time_to_plate(size=4) }}
+                        {% else %}
+                            {{ subform.time_to_plate(size=4, value=outing.pitches[loop.index0].time_to_plate) }}
+                        {% endif %}
+                    </td>
                     <td>
                         <select id="pitch-{{loop.index0}}-pitch_type" name="pitch-{{loop.index0}}-pitch_type" required>
                             <option value="1" {% if outing.pitches[loop.index0].pitch_type==1 %} selected='selected' {% endif %}>1</option>
@@ -194,7 +212,13 @@
                             <option value="3" {% if outing.pitches[loop.index0].out==3 %} selected='selected' {% endif %}>3</option>
                         </select>
                     </td>
-                    <td>{{ subform.inning(size=4, value=outing.pitches[loop.index0].inning) }}</td>
+                    <td>
+                        {% if outing.pitches[loop.index0].inning == None %}
+                            {{ subform.inning(size=4) }}
+                        {% else %}
+                            {{ subform.inning(size=4, value=outing.pitches[loop.index0].inning) }}
+                        {% endif %}
+                    </td>
                 </tr>
                 {% endfor %}
             </table>
