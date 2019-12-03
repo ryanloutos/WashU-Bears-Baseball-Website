@@ -22,6 +22,9 @@
             });
         });
     </script>
+    <!-- Required for data visualization -->
+    <script type="text/javascript" src="http://kozea.github.com/pygal.js/javascripts/svg.jquery.js"></script>
+    <script type="text/javascript" src="http://kozea.github.com/pygal.js/javascripts/pygal-tooltips.js"></script>
     <h1>
         {{ outing }}
         {% if current_user.admin or current_user.id==outing.user_id %}
@@ -119,6 +122,7 @@
                         <td>{{usage_percentages["CT"]}}</td>
                     </tr>
                 </table>
+                {{ usage_percentages_pie_chart.render()|safe}}
                 </div>
                 <div id='pitch-usage-by-count'>
                 <h3>Pitch Usage by Count</h3>

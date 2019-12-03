@@ -1,5 +1,7 @@
 from app import db
 from enum import Enum
+import pygal
+from pygal.style import DarkSolarizedStyle, DefaultStyle
 
 # enum for tranlating pitch types into categories easier
 class PitchType(Enum):
@@ -76,8 +78,9 @@ def calcPitchPercentages(outing):
         pitches[PitchType(pitch.pitch_type).name] += 1
 
     pitch_percentages = {"FB":0, "CB":0, "SL":0, "CH":0, "CT":0, "SM":0}
-    for key,val in pitches.items():
-        pitch_percentages[key] = pitches[key]/num_pitches * 100
+    if num_pitches != 0:
+        for key,val in pitches.items():
+            pitch_percentages[key] = pitches[key]/num_pitches * 100
 
     return (pitches, pitch_percentages)
     # Will be in form {"FB":0.0, "CB":0.0, "SL":0.0, "CH":0.0, "CT":0.0, "SM":0.0}
@@ -207,4 +210,21 @@ def pitchUsageByCount(outing):
 
     return (counts, counts_percentages)
 
+def createPitchPercentagePieChart(data):
+    pie_chart = pygal.Pie(
+        title="Pitch Usage Percentages",
+        style=DefaultStyle(
+            value_font_family='googlefont:Raleway',
+            value_font_size=30,
+            value_colors=('white')
+        ),
+        height=600,
+        width=600,
+        explicit_size=True,
+        print_values=True
+    )
+
+    for pitch,value in data.items():
+        pie_chart.add(pitch, value)
     
+    return pie_chart
