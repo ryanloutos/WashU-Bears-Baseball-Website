@@ -125,3 +125,50 @@ def new_outing():
 def outing(outing_id):
     outing = Outing.query.filter_by(id=outing_id).first_or_404()
     return render_template('outing.html', outing=outing)
+
+@app.route('/edit_outing/<outing_id>', methods=['GET', 'POST'])
+@login_required
+def edit_outing(outing_id):
+    form = OutingForm()
+    outing = Outing.query.filter_by(id=outing_id).first_or_404()
+    pitcher = User.query.filter_by(id=outing.user_id).first_or_404()
+    form.pitcher.choices = [(pitcher.firstname+" "+pitcher.lastname, pitcher.firstname+" "+pitcher.lastname)]
+    for p in outing.pitches:
+        if p.pitch_num != 1:
+            form.pitch.append_entry()
+    if form.validate_on_submit():
+        user = User.query.filter_by(id=outing.user_id).first_or_404()
+        for p in outing.pitches:
+            db.session.delete(p)
+        db.session.delete(outing)
+        db.session.commit()
+        outing_edited = Outing(date = form.date.data,
+                               opponent = form.opponent.data,
+                               season = form.season.data,
+                               user_id = user.id)
+        db.session.add(outing_edited)
+        db.session.commit()
+        for subform in form.pitch:
+            pitch = Pitch(
+                outing_id=outing.id,
+                pitch_num=subform.pitch_num.data,
+                batter_id=subform.batter_id.data,
+                batter_hand=subform.batter_hand.data,
+                velocity=subform.velocity.data,
+                lead_runner=subform.lead_runner.data,
+                time_to_plate=subform.time_to_plate.data,
+                pitch_type=subform.pitch_type.data,
+                pitch_result=subform.pitch_result.data,
+                hit_spot=subform.hit_spot.data,
+                count_balls=subform.count_balls.data,
+                count_strikes=subform.count_strikes.data,
+                result=subform.result.data,
+                fielder=subform.fielder.data,
+                hit=subform.hit.data,
+                out=subform.out.data,
+                inning=subform.inning.data)
+            db.session.add(pitch)
+            db.session.commit()
+        flash('The outing has been adjusted!')
+        return redirect(url_for('user', username=user.username))
+    return render_template('edit_outing.html', outing=outing, form=form)

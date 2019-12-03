@@ -20,8 +20,8 @@ DONE 10pt - Learned/Used Flask
   DONE 15pt - Data entry for velo tracking sheet is functional and intuitive
   15pt - Users can choose what statistics they want to see from their outings and it displays in a readable manner (minimum 5 statistics calculated)
   DONE 10pt - Coach, team manager, and pitcher himself can enter data for a specific pitcher
-  5pt - Any user can look at anyone’s data but can only edit their own
-  10pt - Users that have write access can go back and make changes to the data from a specific outing
+  DONE 5pt - Any user can look at anyone’s data but can only edit their own
+  DONE 10pt - Users that have write access can go back and make changes to the data from a specific outing
 15pt - Creative Portion
 
 Approved By: Connor Stevens

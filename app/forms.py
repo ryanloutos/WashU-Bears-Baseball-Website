@@ -68,8 +68,3 @@ class OutingForm(FlaskForm):
     season = StringField('Season', validators=[DataRequired()])
     pitch = FieldList(FormField(PitchForm), min_entries=1, max_entries=150, validators=[DataRequired()])
     submit = SubmitField('Create Outing')
-
-
-# class AllPitchForm(FlaskForm):
-#     pitch = FieldList(FormField(PitchForm), min_entries=1, max_entries=150, validators=[DataRequired()])
-#     submit = SubmitField("Finish Outing")
