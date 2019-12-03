@@ -21,7 +21,8 @@
                     console.log('[WARNING] Reached maximum number of elements');
                     return;
                 }
-                var $newForm = $('#pitch-0-form').clone();
+                lastIndex = newIndex-1;
+                var $newForm = $('#pitch-'+lastIndex+'-form').clone();
                 $newForm.attr('id', 'pitch-'+newIndex+'-form');
                 $newForm.attr('data-index', newIndex);
                 $newForm.find('input').each(function(idx) {

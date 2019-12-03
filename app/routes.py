@@ -155,13 +155,9 @@ def outing(outing_id):
 def edit_outing(outing_id):
     form = OutingForm()
     outing = Outing.query.filter_by(id=outing_id).first_or_404()
-    pitcher = User.query.filter_by(id=outing.user_id).first_or_404()
-    form.pitcher.choices = [(pitcher.firstname+" "+pitcher.lastname, pitcher.firstname+" "+pitcher.lastname)]
-    # for p in outing.pitches:
-    #     if p.pitch_num != 1:
-    #         form.pitch.append_entry()
+    user = User.query.filter_by(id=outing.user_id).first_or_404()
+    form.pitcher.choices = [(user.firstname+" "+user.lastname, user.firstname+" "+user.lastname)]
     if form.validate_on_submit():
-        user = User.query.filter_by(id=outing.user_id).first_or_404()
         for p in outing.pitches:
             db.session.delete(p)
         db.session.delete(outing)
@@ -174,7 +170,7 @@ def edit_outing(outing_id):
         db.session.commit()
         for subform in form.pitch:
             pitch = Pitch(
-                outing_id=outing.id,
+                outing_id=outing_edited.id,
                 pitch_num=subform.pitch_num.data,
                 batter_id=subform.batter_id.data,
                 batter_hand=subform.batter_hand.data,
@@ -195,4 +191,6 @@ def edit_outing(outing_id):
             db.session.commit()
         flash('The outing has been adjusted!')
         return redirect(url_for('user', username=user.username))
+    for p in range(0, outing.pitches.count()-1):
+        form.pitch.append_entry()
     return render_template('edit_outing.html', outing=outing, form=form)
