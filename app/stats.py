@@ -2,6 +2,7 @@ from app import db
 from enum import Enum
 import pygal
 from pygal.style import DarkSolarizedStyle, DefaultStyle
+import lxml
 
 # enum for tranlating pitch types into categories easier
 class PitchType(Enum):
@@ -220,25 +221,38 @@ def createPitchPercentagePieChart(data):
         ),
         height=600,
         width=600,
-        explicit_size=True,
-        print_values=True
+        explicit_size=True
     )
+    pie_chart.dyanamic_print_values=True
 
     for pitch,value in data.items():
+        insert_value = {"value":value,"label":pitch}
         pie_chart.add(pitch, value)
     
     return pie_chart
 
 def velocityOverTimeLineChart(outing):
+    num_pitches = outing.pitches.count()
     line_chart = pygal.Line(
         style=DarkSolarizedStyle,
         title="Velocity changes over time"
     )
+    line_chart.x_labels=map(str, range(1, num_pitches+1))
+    line_chart.dyanamic_print_values=True
 
-    velocities = []
+    velocities = {"FB":[], "CB":[], "SL":[], "CH":[], "CT":[], "SM":[]}
     for pitch in outing.pitches:
-        velocities.append(pitch.velocity)
+        pitch_type = PitchType(pitch.pitch_type).name
+        for key in velocities.keys():
+            if key is pitch_type:
+                velocities[key].append(pitch.velocity)
+            else:
+                velocities[key].append(None)
 
-    line_chart.add("pitches", velocities)
+    for pitch_type,pitch_values in velocities.items():
+        if pitch_type == "SM":
+            line_chart.add("2-SEAM", pitch_values)
+        else:
+            line_chart.add(pitch_type, pitch_values)
 
     return line_chart

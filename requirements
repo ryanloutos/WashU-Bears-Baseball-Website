@@ -13,6 +13,7 @@ gitdb2==2.0.5
 GitPython==3.0.2
 itsdangerous==1.1.0
 Jinja2==2.10.3
+lxml==4.4.2
 Mako==1.1.0
 MarkupSafe==1.1.1
 pbr==5.4.3

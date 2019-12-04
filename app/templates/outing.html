@@ -128,7 +128,7 @@
                         <td>{{usage_percentages["CT"]}}</td>
                     </tr>
                 </table>
-                {{ usage_percentages_pie_chart.render()|safe}}
+                <embed type="image/svg+xml" src= {{ usage_percentages_pie_chart.render_data_uri()|safe }} />
                 </div>
                 <div id='pitch-usage-by-count'>
                 <h3>Pitch Usage by Count</h3>
@@ -259,7 +259,7 @@
                 </div>
                 <div id="velocity-over-time-chart">
                     <h3>Velocity Over Time Chart</h3>
-                    {{ velocity_over_time_line_chart.render()|safe}}
+                    <embed type="image/svg+xml" src= {{ velocity_over_time_line_chart.render_data_uri()|safe }} />
                 </div>
 
             </div>
