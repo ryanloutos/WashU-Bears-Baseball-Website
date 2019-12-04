@@ -82,8 +82,8 @@ def calcPitchStrikePercentage(outing):
     for pitch in outing.pitches:
         pitches[PitchType(pitch.pitch_type).name] += 1
         pitches['total'] += 1
-        if pitch.pitch_result == 'SS' or pitch.pitch_result == 'CS' or
-        pitch.pitch_result == 'F' or pitch.pitch_result == 'IP':
+        if (pitch.pitch_result == 'SS' or pitch.pitch_result == 'CS' or
+                pitch.pitch_result == 'F' or pitch.pitch_result == 'IP'):
             pitches_strikes[PitchType(pitch.pitch_type).name] += 1
             pitches_strikes['total'] += 1
 
