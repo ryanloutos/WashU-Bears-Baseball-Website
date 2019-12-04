@@ -27,13 +27,13 @@
                 $newForm.attr('data-index', newIndex);
                 $newForm.find('input').each(function(idx) {
                     var $item = $(this);
-                    $item.attr('id', $item.attr('id').replace('0', newIndex));
-                    $item.attr('name', $item.attr('name').replace('0', newIndex));
+                    $item.attr('id', $item.attr('id').replace(lastIndex, newIndex));
+                    $item.attr('name', $item.attr('name').replace(lastIndex, newIndex));
                 });
                 $newForm.find('select').each(function(idx) {
                     var $item = $(this);
-                    $item.attr('id', $item.attr('id').replace('0', newIndex));
-                    $item.attr('name', $item.attr('name').replace('0', newIndex));
+                    $item.attr('id', $item.attr('id').replace(lastIndex, newIndex));
+                    $item.attr('name', $item.attr('name').replace(lastIndex, newIndex));
                 });
                 $("#table > tbody").append($newForm);
                 $newForm.addClass('subform');

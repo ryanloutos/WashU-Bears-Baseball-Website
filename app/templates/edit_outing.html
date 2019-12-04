@@ -183,6 +183,8 @@
                             <option value="LD" {% if outing.pitches[loop.index0].result=='LD' %} selected='selected' {% endif %}>LD</option>
                             <option value="K" {% if outing.pitches[loop.index0].result=='K' %} selected='selected' {% endif %}>K</option>
                             <option value="KL" {% if outing.pitches[loop.index0].result=='KL' %} selected='selected' {% endif %}>KL</option>
+                            <option value="BB" {% if outing.pitches[loop.index0].result=='BB' %} selected='selected' {% endif %}>BB</option>
+                            <option value="HBP" {% if outing.pitches[loop.index0].result=='HBP' %} selected='selected' {% endif %}>HBP</option>
                         </select>
                     </td>
                     <td>
@@ -227,4 +229,5 @@
     </form>
     <button id="add">Add Row</button>
     <button id="delete">Delete Last Row</button>
+    <a href="{{ url_for('delete_outing', outing_id=outing.id) }}">Delete Outing</a>
 {% endblock %}

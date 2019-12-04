@@ -196,3 +196,15 @@ def edit_outing(outing_id):
     for p in range(0, outing.pitches.count()-1):
         form.pitch.append_entry()
     return render_template('edit_outing.html', outing=outing, form=form)
+
+@app.route('/delete_outing/<outing_id>', methods=['GET', 'POST'])
+@login_required
+def delete_outing(outing_id):
+    outing = Outing.query.filter_by(id=outing_id).first()
+    user = User.query.filter_by(id=outing.user_id).first()
+    for p in outing.pitches:
+            db.session.delete(p)
+    db.session.delete(outing)
+    db.session.commit()
+    flash('Outing has been deleted')
+    return redirect(url_for('user', username=user.username))

@@ -50,7 +50,7 @@ class PitchForm(FlaskForm):
     hit_spot = BooleanField('Hit Spot?', validators=[Optional()])
     count_balls = SelectField('Balls', choices=[('0','0'),('1','1'),('2','2'),('3','3')], validators=[DataRequired()])
     count_strikes = SelectField('Strikes', choices=[('0','0'),('1','1'),('2','2')], validators=[DataRequired()])
-    result =  SelectField('Result', choices=[('',''),('GB','GB'),('FB','FB'),('LD','LD'),('K','K'),('KL','KL')], validators=[Optional()])
+    result =  SelectField('Result', choices=[('',''),('GB','GB'),('FB','FB'),('LD','LD'),('K','K'),('KL','KL'),('BB','BB'),('HBP','HBP')], validators=[Optional()])
     fielder = SelectField('Fielder', choices=[('',''),('P','P'),('C','C'),('1B','1B'),('2B','2B'),('3B','3B'),('SS','SS'),('LF','LF'),('CF','CF'),('RF','RF')], validators=[Optional()])
     hit = BooleanField('Hit?', validators=[Optional()])
     out = SelectField('Out #', choices=[('',''),('1','1'),('2','2'),('3','3')], validators=[Optional()])
@@ -67,4 +67,4 @@ class OutingForm(FlaskForm):
     opponent = StringField('Opponent', validators=[DataRequired()])
     season = StringField('Season', validators=[DataRequired()])
     pitch = FieldList(FormField(PitchForm), min_entries=1, max_entries=150, validators=[DataRequired()])
-    submit = SubmitField('Create Outing')
+    submit = SubmitField('Create Outing')\
