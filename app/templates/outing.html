@@ -11,6 +11,7 @@
             $('#pitch-strike-percentage').hide();
             $('#pitch-whiff-rate').hide();
             $('#velocity-over-time-chart').hide();
+            $('#strike-percentage-bar-chart').hide();
 
             $('#choose-stat').click(function() {
                 $('#pitch-avg-velo').hide();
@@ -20,6 +21,7 @@
                 $('#pitch-strike-percentage').hide();
                 $('#pitch-whiff-rate').hide();
                 $('#velocity-over-time-chart').hide();
+                $('#strike-percentage-bar-chart').hide();
 
                 which_statistic = $('#statistic-choice').val();
                 $('#'+which_statistic).show();
@@ -92,6 +94,7 @@
                     <option value='pitch-strike-percentage'>Pitch Strike Percentage</option>
                     <option value='pitch-whiff-rate'>Pitch Whiff Rate</option>
                     <option value='velocity-over-time-chart'>Velocity Over Time Chart</option>
+                    <option value='strike-percentage-bar-chart'>Strike percentage bar chart</option>
 
                 </select>
                 <button id='choose-stat'>GO</button>
@@ -260,6 +263,10 @@
                 <div id="velocity-over-time-chart">
                     <h3>Velocity Over Time Chart</h3>
                     <embed type="image/svg+xml" src= {{ velocity_over_time_line_chart.render_data_uri()|safe }} />
+                </div>
+                <div id="strike-percentage-bar-chart">
+                    <h3>Strike Percentage Bar Chart</h3>
+                    <embed type="image/svg+xml" src= {{ strike_percentage_bar_chart.render_data_uri()|safe }} />
                 </div>
 
             </div>
