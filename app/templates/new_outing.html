@@ -70,6 +70,7 @@
         <p>
             {{ form.date.label }}<br>
             {{ form.date(class='datepicker') }}<br>
+            If in safari, enter date as YYYY-MM-DD
             {% for error in form.date.errors %}
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}

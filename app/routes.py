@@ -236,7 +236,7 @@ def edit_outing(outing_id):
     user = User.query.filter_by(id=outing.user_id).first_or_404()
 
     # only admins and players themselves can go back and edit outing data
-    if (not current_user.admin) and (current_user != user.username):
+    if (not current_user.admin) and (current_user.username != user.username):
         flash("You are not an admin and cannot edit someone else's outing")
         return redirect(url_for('index'))
 
