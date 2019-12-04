@@ -23,6 +23,7 @@ DONE 65pt - Functionality
   DONE 5pt - Any user can look at anyone’s data but can only edit their own
   DONE 10pt - Users that have write access can go back and make changes to the data from a specific outing
 15pt - Creative Portion
-
+  Learned and used pygal (data visualization package) and created useful charts
+  
 Approved By: Connor Stevens
 

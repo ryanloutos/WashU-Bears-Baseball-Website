@@ -29,6 +29,9 @@
                     {% if current_user.is_anonymous %}
                     <li><a href="{{ url_for('login') }}">Login</a></li>
                     {% else %}
+                        {% if current_user.admin %}
+                        <li><a href="{{ url_for('register') }}">Create New User</a></li>
+                        {% endif %}
                     <li><a href="{{ url_for('new_outing') }}">New Outing</a></li>
                     <li><a href="{{ url_for('user', username=current_user.username) }}">{{ current_user.username }}</a></li>
                     <li><a href="{{ url_for('logout') }}">Logout</a></li>
@@ -51,5 +54,5 @@
 
         {# application content needs to be provided in the app_content block #}
         {% block app_content %}{% endblock %}
-    </div>
+    </div><br><br><br><br><br><br><br><br>
 {% endblock %}

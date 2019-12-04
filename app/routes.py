@@ -42,7 +42,8 @@ def logout():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    if current_user.is_authenticated:
+    if not current_user.admin:
+        flash('You are not an admin and cannot create a user')
         return redirect(url_for('index'))
     form = RegistrationForm()
     if form.validate_on_submit():
@@ -155,6 +156,9 @@ def outing(outing_id):
 @app.route('/edit_outing/<outing_id>', methods=['GET', 'POST'])
 @login_required
 def edit_outing(outing_id):
+    if not current_user.admin:
+        flash("You are not an admin and cannot edit someone else's outing")
+        return redirect(url_for('index'))
     form = OutingForm()
     outing = Outing.query.filter_by(id=outing_id).first_or_404()
     user = User.query.filter_by(id=outing.user_id).first_or_404()
