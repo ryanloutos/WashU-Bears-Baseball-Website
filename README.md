@@ -16,5 +16,8 @@ Ideas for improvement
 - Make num_pitches automatic
 - Make count_balls and count_strikes automatic
 - Improve little data entry things
-- 
+- Figure out way to make data entry fast and easy
+- Make default seasons to choose from
+- Create a filter so you can choose to see cumulative data for team and/or individual pitchers over a certain time, season, etc.
+- Make a neat, clean, easy to read summary page for any outing(s)
 
