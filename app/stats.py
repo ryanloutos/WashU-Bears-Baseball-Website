@@ -13,6 +13,7 @@ class PitchType(Enum):
     CT = 5
     SM = 7
 
+# Does math to calculate pitch whiff rate and returns dictionary
 def calcPitchWhiffRate(outing):
     pitches_swung_at = {"FB":0, "CB":0, "SL":0, "CH":0, "CT":0, "SM":0, "total":0}
     pitches_missed = {"FB":0, "CB":0, "SL":0, "CH":0, "CT":0, "SM":0, "total":0}
@@ -33,7 +34,7 @@ def calcPitchWhiffRate(outing):
     
     return (pitches_whiff)
 
-
+# Calculates strike percentage per pitch and returns dictionary
 def calcPitchStrikePercentage(outing):
     num_pitches = outing.pitches.count()
     pitches = {"FB":0, "CB":0, "SL":0, "CH":0, "CT":0, "SM":0, "total":0}
@@ -53,6 +54,7 @@ def calcPitchStrikePercentage(outing):
 
     return (pitch_strike_percentage)
 
+# Calculates the average velocity of each pitch and returns a dictionary
 def calcAverageVelo(outing):
     num_pitches = outing.pitches.count()
     pitches = {"FB":0, "CB":0, "SL":0, "CH":0, "CT":0, "SM":0}
@@ -211,6 +213,7 @@ def pitchUsageByCount(outing):
 
     return (counts, counts_percentages)
 
+# creates the pitch distribution pie chart
 def createPitchPercentagePieChart(data):
     pie_chart = pygal.Pie(
         title="Pitch Usage Percentages",
@@ -231,6 +234,7 @@ def createPitchPercentagePieChart(data):
     
     return pie_chart
 
+# creates the velocity over time line chart and returns the chart object
 def velocityOverTimeLineChart(outing):
     num_pitches = outing.pitches.count()
     line_chart = pygal.Line(
