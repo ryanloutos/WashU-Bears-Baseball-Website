@@ -260,3 +260,15 @@ def velocityOverTimeLineChart(outing):
             line_chart.add(pitch_type, pitch_values)
 
     return line_chart
+
+def pitchStrikePercentageBarChart(data):
+    bar_chart = pygal.Bar(
+        title="Stike Percentage by Pitch",
+        style=DarkSolarizedStyle
+    )
+
+    for pitch_type,values in data.items():
+        bar_chart.add(pitch_type,values)
+    
+    return bar_chart
+

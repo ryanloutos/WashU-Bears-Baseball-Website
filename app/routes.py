@@ -5,7 +5,7 @@ from app import app, db
 from app.forms import LoginForm, RegistrationForm, OutingForm, PitchForm
 from app.models import User, Outing, Pitch
 from app.stats import calcPitchPercentages, pitchUsageByCount, calcAverageVelo, calcPitchStrikePercentage, calcPitchWhiffRate
-from app.stats import createPitchPercentagePieChart, velocityOverTimeLineChart
+from app.stats import createPitchPercentagePieChart, velocityOverTimeLineChart, pitchStrikePercentageBarChart
 
 
 @app.route('/')
@@ -137,6 +137,7 @@ def outing(outing_id):
     # Get statistical graphics
     usage_percentages_pie_chart = createPitchPercentagePieChart(usage_percentages)
     velocity_over_time_line_chart = velocityOverTimeLineChart(outing)
+    strike_percentage_bar_chart = pitchStrikePercentageBarChart(pitch_strike_percentage)
 
     return render_template(
         'outing.html',
@@ -149,7 +150,8 @@ def outing(outing_id):
         pitch_avg_velo = pitch_avg_velo,
         pitch_strike_percentage = pitch_strike_percentage,
         pitch_whiff = pitch_whiff,
-        velocity_over_time_line_chart=velocity_over_time_line_chart
+        velocity_over_time_line_chart=velocity_over_time_line_chart,
+        strike_percentage_bar_chart=strike_percentage_bar_chart
         )
 
 @app.route('/edit_outing/<outing_id>', methods=['GET', 'POST'])
