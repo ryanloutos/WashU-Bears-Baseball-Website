@@ -4,6 +4,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script>
         $(document).ready(function() {
+            //hides all the statistics initiatally
             $('#pitch-usage').hide();
             $('#pitch-usage-by-count').hide();
             $('#pitch-usage-by-count-percentage').hide();
@@ -13,6 +14,7 @@
             $('#velocity-over-time-chart').hide();
             $('#strike-percentage-bar-chart').hide();
 
+            //shows the statistic or graph you want to see
             $('#choose-stat').click(function() {
                 $('#pitch-avg-velo').hide();
                 $('#pitch-usage').hide();
@@ -28,12 +30,12 @@
             });
         });
     </script>
-    <!-- Required for data visualization -->
-    <script type="text/javascript" src="http://kozea.github.com/pygal.js/javascripts/svg.jquery.js"></script>
-    <script type="text/javascript" src="http://kozea.github.com/pygal.js/javascripts/pygal-tooltips.js"></script>
+    {# Required for data visualization #}
+    <script src="http://kozea.github.com/pygal.js/javascripts/svg.jquery.js"></script>
+    <script src="http://kozea.github.com/pygal.js/javascripts/pygal-tooltips.js"></script>
     <h1>
         {{ outing }}
-        {% if current_user.admin or current_user.id==outing.user_id %}
+        {% if current_user.admin or current_user.id==outing.user_id %} {# making sure user has write access #}
             <a href="{{ url_for('edit_outing', outing_id=outing.id) }}">Edit Outing</a>
         {% endif %}
     </h1>
@@ -101,64 +103,64 @@
             </div>
             <div class="panel-body">
                 <div id='pitch-usage'>
-                <h3>Pitch Usage</h3>
-                <table class="table">
-                    <tr>
-                        <th></th>
-                        <th>FB</th>
-                        <th>2S</th>
-                        <th>CB</th>
-                        <th>SL</th>
-                        <th>CH</th>
-                        <th>CT</th>
-                    </tr>
-                    <tr>
-                        <th>Num</th>
-                        <td>{{usages["FB"]}}</td>
-                        <td>{{usages["SM"]}}</td>
-                        <td>{{usages["CB"]}}</td>
-                        <td>{{usages["SL"]}}</td>
-                        <td>{{usages["CH"]}}</td>
-                        <td>{{usages["CT"]}}</td>
-                    </tr>
-                    <tr>
-                        <th>Percent</th>
-                        <td>{{usage_percentages["FB"]}}</td>
-                        <td>{{usage_percentages["SM"]}}</td>
-                        <td>{{usage_percentages["CB"]}}</td>
-                        <td>{{usage_percentages["SL"]}}</td>
-                        <td>{{usage_percentages["CH"]}}</td>
-                        <td>{{usage_percentages["CT"]}}</td>
-                    </tr>
-                </table>
-                <embed type="image/svg+xml" src= {{ usage_percentages_pie_chart.render_data_uri()|safe }} />
+                    <h3>Pitch Usage</h3>
+                    <table class="table">
+                        <tr>
+                            <th></th>
+                            <th>FB</th>
+                            <th>2S</th>
+                            <th>CB</th>
+                            <th>SL</th>
+                            <th>CH</th>
+                            <th>CT</th>
+                        </tr>
+                        <tr>
+                            <th>Num</th>
+                            <td>{{usages["FB"]}}</td>
+                            <td>{{usages["SM"]}}</td>
+                            <td>{{usages["CB"]}}</td>
+                            <td>{{usages["SL"]}}</td>
+                            <td>{{usages["CH"]}}</td>
+                            <td>{{usages["CT"]}}</td>
+                        </tr>
+                        <tr>
+                            <th>Percent</th>
+                            <td>{{usage_percentages["FB"]}}</td>
+                            <td>{{usage_percentages["SM"]}}</td>
+                            <td>{{usage_percentages["CB"]}}</td>
+                            <td>{{usage_percentages["SL"]}}</td>
+                            <td>{{usage_percentages["CH"]}}</td>
+                            <td>{{usage_percentages["CT"]}}</td>
+                        </tr>
+                    </table>
+                    <embed type="image/svg+xml" src= "{{ usage_percentages_pie_chart.render_data_uri()|safe }}" />
                 </div>
                 <div id='pitch-usage-by-count'>
-                <h3>Pitch Usage by Count</h3>
-                <table class="table">
-                    <tr>
-                        <th>Count</th>
-                        <th>FB</th>
-                        <th>2S</th>
-                        <th>CB</th>
-                        <th>SL</th>
-                        <th>CH</th>
-                        <th>CT</th>
-                        <th>Total</th>
-                    </tr>
-                    {% for count, value in counts.items() %}
+                    <h3>Pitch Usage by Count</h3>
+                    <table class="table">
                         <tr>
-                            <th>{{count}}</th>
-                            <td>{{value["pitches"]["FB"]}}</td>
-                            <td>{{value["pitches"]["SM"]}}</td>
-                            <td>{{value["pitches"]["CB"]}}</td>
-                            <td>{{value["pitches"]["SL"]}}</td>
-                            <td>{{value["pitches"]["CH"]}}</td>
-                            <td>{{value["pitches"]["CT"]}}</td>
-                            <td>{{value["total"]}}</tr>
+                            <th>Count</th>
+                            <th>FB</th>
+                            <th>2S</th>
+                            <th>CB</th>
+                            <th>SL</th>
+                            <th>CH</th>
+                            <th>CT</th>
+                            <th>Total</th>
                         </tr>
-                    {% endfor%}
-                </table>
+                        {% for count, value in counts.items() %}
+                            <tr>
+                                <th>{{count}}</th>
+                                <td>{{value["pitches"]["FB"]}}</td>
+                                <td>{{value["pitches"]["SM"]}}</td>
+                                <td>{{value["pitches"]["CB"]}}</td>
+                                <td>{{value["pitches"]["SL"]}}</td>
+                                <td>{{value["pitches"]["CH"]}}</td>
+                                <td>{{value["pitches"]["CT"]}}</td>
+                                <td>{{value["total"]}}</td>
+                            </tr>
+                        {% endfor%}
+                    </table>
                 </div>
                 <div id='pitch-usage-by-count-percentage'>
                     <h3>Pitch Usage by Count Percentage</h3>
@@ -182,7 +184,7 @@
                             <td>{{value["pitches"]["SL"]}}</td>
                             <td>{{value["pitches"]["CH"]}}</td>
                             <td>{{value["pitches"]["CT"]}}</td>
-                            <td>{{value["total"]}}</tr>
+                            <td>{{value["total"]}}</td>
                         </tr>
                     {% endfor%}
                     </table>
@@ -262,11 +264,11 @@
                 </div>
                 <div id="velocity-over-time-chart">
                     <h3>Velocity Over Time Chart</h3>
-                    <embed type="image/svg+xml" src= {{ velocity_over_time_line_chart.render_data_uri()|safe }} />
+                    <embed type="image/svg+xml" src= "{{ velocity_over_time_line_chart.render_data_uri()|safe }}" />
                 </div>
                 <div id="strike-percentage-bar-chart">
                     <h3>Strike Percentage Bar Chart</h3>
-                    <embed type="image/svg+xml" src= {{ strike_percentage_bar_chart.render_data_uri()|safe }} />
+                    <embed type="image/svg+xml" src= "{{ strike_percentage_bar_chart.render_data_uri()|safe }}" />
                 </div>
 
             </div>

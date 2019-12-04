@@ -2,7 +2,7 @@
 
 {% block app_content %}
     <h1>Register</h1>
-    <form action="" method="post">
+    <form method="post">
         {{ form.hidden_tag() }}
         <p>
             {{ form.firstname.label }}<br>
@@ -19,24 +19,20 @@
             {% endfor %}
         </p>
         <p>
-            {{ form.year.label }}<br>
+            <label>Year</label><br>
             {% for subfield in form.year %}
-                <tr>
-                    <td>{{ subfield }}</td>
-                    <td>{{ subfield.label }}</td>
-                </tr>
+                {{ subfield }}
+                {{ subfield.label }} <br>
             {% endfor %}
             {% for error in form.year.errors %}
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
         </p>
         <p>
-            {{ form.throws.label }} (If player)<br>
+            <label>Throws </label>(If player)<br>
             {% for subfield in form.throws %}
-                <tr>
-                    <td>{{ subfield }}</td>
-                    <td>{{ subfield.label }}</td>
-                </tr>
+                {{ subfield }}
+                {{ subfield.label }} <br>
             {% endfor %}
             {% for error in form.throws.errors %}
             <span style="color: red;">[{{ error }}]</span>

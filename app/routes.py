@@ -8,45 +8,60 @@ from app.stats import calcPitchPercentages, pitchUsageByCount, calcAverageVelo, 
 from app.stats import createPitchPercentagePieChart, velocityOverTimeLineChart, pitchStrikePercentageBarChart
 
 
+#home page for portal, displays the roster
 @app.route('/')
 @app.route('/index', methods=['GET', 'POST'])
 @login_required
-def index():
+def index(): 
     users = User.query.filter(User.year != 'Coach/Manager').all()
     return render_template('index.html', title='Home', users=users)
 
-
+#login page for portal, only team members, coaches, etc. have logins 
 @app.route('/login', methods=['GET', 'POST'])
-def login():
-    if current_user.is_authenticated:
+def login(): 
+    if current_user.is_authenticated: #if the user is already signed in then send to home page
         return redirect(url_for('index'))
     form = LoginForm()
-    if form.validate_on_submit():
+    if form.validate_on_submit(): #when the Login button is pressed
+
+        #get the user object from the username that was typed in
         user = User.query.filter_by(username=form.username.data).first()
+
+        #if the username doesn't exist or passwords don't match, redirect back to login page
         if user is None or not user.check_password(form.password.data):
             flash('Invalid username or password')
             return redirect(url_for('login'))
+        
+        #login the user if nothing failed above
         login_user(user, remember=form.remember_me.data)
+
+        #send user to the page they were trying to get to without logging in
         next_page = request.args.get('next')
         if not next_page or url_parse(next_page).netloc != '':
             next_page = url_for('index')
         return redirect(next_page)
+
     return render_template('login.html', title='Sign In', form=form)
 
-
+# Doesn't have a template associated. Just lets the user logout
 @app.route('/logout')
 def logout():
     logout_user()
     return redirect(url_for('index'))
 
-
+# Registration page if an admin wants to add someone to roster
 @app.route('/register', methods=['GET', 'POST'])
+@login_required
 def register():
+    #if user is not an admin, they can't add player/coach to portal
     if not current_user.admin:
         flash('You are not an admin and cannot create a user')
         return redirect(url_for('index'))
+
+    #when the 'register' button is pressed
     form = RegistrationForm()
-    if form.validate_on_submit():
+    if form.validate_on_submit(): 
+        #takes in the data from the form and creates a User object (row)
         user = User(firstname=form.firstname.data,
                     lastname=form.lastname.data,
                     year=form.year.data,
@@ -54,50 +69,83 @@ def register():
                     username=form.username.data,
                     email=form.email.data,
                     admin=form.admin.data)
+        
+        #sets the password based on what was entered
         user.set_password(form.password.data)
+
+        #adds new user to database
         db.session.add(user)
         db.session.commit()
+
+        #redirects to login page
         flash('Congratulations, you are now a registered user!')
         return redirect(url_for('login'))
+
     return render_template('register.html', title='Register', form=form)
 
-
+# User page where the outings that a player has thrown will show up
 @app.route('/user/<username>')
 @login_required
 def user(username):
+    #get the user object associated with the username in the url
     user = User.query.filter_by(username=username).first_or_404()
+
+    #get the outings associated with that player
     outings = user.outings
+
     return render_template(
         'user.html',
         title='User',
         user=user,
         outings=outings)
 
+# Page for someone to create a new outing either for themself or for another player if admin
 @app.route('/new_outing', methods=['GET', 'POST'])
 @login_required
 def new_outing():
     form = OutingForm()
+
+    #gets all the User objects that are players on the team
     pitchers_objects = User.query.filter(User.year != 'Coach/Manager').all()
+
+    #set the available choices that someone can create an outing for 
     available_pitchers = []
-    if (current_user.admin):
+    #admins can create outings for anyone
+    if (current_user.admin): 
         for p in pitchers_objects:
             available_pitchers.append((p.username, p.firstname + " " + p.lastname))
+    #if not an admin then can only create outing for yourself
     else:
         available_pitchers.append((current_user.username, current_user.firstname+" "+current_user.lastname))
+    
+    #set the choices made above
     form.pitcher.choices = available_pitchers
+
+    #when the 'Create Outing' button is pressed
     if form.validate_on_submit():
+
+        #sets the username variable accordingly
         if (current_user.admin):
             username = form.pitcher.data
         else:  
             username = current_user.username
+        
+        #gets the user associated the username of the pitcher the outing is being created for
         user = User.query.filter_by(username=username).first_or_404()
+
+        #creates a new outing object based on form data and user
         outing = Outing(date = form.date.data,
                         opponent = form.opponent.data,
                         season = form.season.data,
                         user_id = user.id)
+
+        #add the new outing to the database before pitches so pitches have a outing_id associated with them
         db.session.add(outing)
         db.session.commit()
+
+        #add each individual pitch to the database
         for subform in form.pitch:
+            #creates Pitch object based on subform data
             pitch = Pitch(
                 outing_id=outing.id,
                 pitch_num=subform.pitch_num.data,
@@ -116,16 +164,22 @@ def new_outing():
                 hit=subform.hit.data,
                 out=subform.out.data,
                 inning=subform.inning.data)
+            
+            #adds pitch to database
             db.session.add(pitch)
             db.session.commit()
+
+        #redirects back to home page after outing was successfully created
         flash("New Outing Created!")
         return redirect(url_for('index'))
+    
     return render_template('new_outing.html', title='New Outing', form=form)
 
-
+#Displays the pitches and statistics from a certain outing
 @app.route('/outing/<outing_id>', methods=['GET', 'POST'])
 @login_required
 def outing(outing_id):
+    #get the outing object associated by the id in the url
     outing = Outing.query.filter_by(id=outing_id).first_or_404()
 
     # Get statistical data
@@ -142,6 +196,7 @@ def outing(outing_id):
 
     return render_template(
         'outing.html',
+        title='Outing',
         outing=outing,
         usages=usages,
         usage_percentages=usage_percentages,
@@ -155,28 +210,46 @@ def outing(outing_id):
         strike_percentage_bar_chart=strike_percentage_bar_chart
         )
 
+#Page to edit an outing already stored in database
 @app.route('/edit_outing/<outing_id>', methods=['GET', 'POST'])
 @login_required
 def edit_outing(outing_id):
-    if not current_user.admin:
-        flash("You are not an admin and cannot edit someone else's outing")
-        return redirect(url_for('index'))
-    form = OutingForm()
+    #get the outing and user objects associated with this outing
     outing = Outing.query.filter_by(id=outing_id).first_or_404()
     user = User.query.filter_by(id=outing.user_id).first_or_404()
+
+    #only admins and players themselves can go back and edit outing data
+    if (not current_user.admin) and (current_user != user.username):
+        flash("You are not an admin and cannot edit someone else's outing")
+        return redirect(url_for('index'))
+    
+    #get correct form and don't allow a change to be made to pitcher of outing
+    form = OutingForm()
     form.pitcher.choices = [(user.firstname+" "+user.lastname, user.firstname+" "+user.lastname)]
+
+    #when edit wants to be made
     if form.validate_on_submit():
+        
+        #delete all of the pitche associated with the outing
         for p in outing.pitches:
             db.session.delete(p)
+
+        #delete the outing itself and commit changes
         db.session.delete(outing)
         db.session.commit()
+
+        #create a new Outing object based on the form and put in database
         outing_edited = Outing(date = form.date.data,
                                opponent = form.opponent.data,
                                season = form.season.data,
                                user_id = user.id)
         db.session.add(outing_edited)
         db.session.commit()
+
+        #add each individual pitch to the database
         for subform in form.pitch:
+
+            #creates Pitch object based on subform data
             pitch = Pitch(
                 outing_id=outing_edited.id,
                 pitch_num=subform.pitch_num.data,
@@ -195,22 +268,42 @@ def edit_outing(outing_id):
                 hit=subform.hit.data,
                 out=subform.out.data,
                 inning=subform.inning.data)
+
+            #adds pitch to database
             db.session.add(pitch)
             db.session.commit()
+        
+        #redirect to user page
         flash('The outing has been adjusted!')
         return redirect(url_for('user', username=user.username))
+    
+    #sets up subforms so they are visible in edit_outing.html 
     for p in range(0, outing.pitches.count()-1):
         form.pitch.append_entry()
-    return render_template('edit_outing.html', outing=outing, form=form)
 
+    return render_template('edit_outing.html', title='Edit Outing' ,outing=outing, form=form)
+
+#page to delete outing. No template associated. Just allows user to delete an outing
 @app.route('/delete_outing/<outing_id>', methods=['GET', 'POST'])
 @login_required
 def delete_outing(outing_id):
-    outing = Outing.query.filter_by(id=outing_id).first()
-    user = User.query.filter_by(id=outing.user_id).first()
+    #get the outing and user objects associated with this outing
+    outing = Outing.query.filter_by(id=outing_id).first_or_404()
+    user = User.query.filter_by(id=outing.user_id).first_or_404()
+
+    #only admins and players themselves to delete an outing
+    if (not current_user.admin) and (current_user != user.username):
+        flash("You are not an admin and cannot edit someone else's outing")
+        return redirect(url_for('index'))
+
+    #deletes the pitches associated with outing
     for p in outing.pitches:
             db.session.delete(p)
+    
+    #deletes the outing iteself and commits changes to database
     db.session.delete(outing)
     db.session.commit()
+
+    #redirects to user page associated with deletion
     flash('Outing has been deleted')
     return redirect(url_for('user', username=user.username))
