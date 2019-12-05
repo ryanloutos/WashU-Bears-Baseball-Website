@@ -21,3 +21,4 @@ Ideas for improvement
 - Create a filter so you can choose to see cumulative data for team and/or individual pitchers over a certain time, season, etc.
 - Make a neat, clean, easy to read summary page for any outing(s)
 
+Cool README.md style stuff [here](https://help.github.com/en/github/writing-on-github/basic-writing-and-formatting-syntax)
