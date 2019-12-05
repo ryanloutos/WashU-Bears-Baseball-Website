@@ -5,8 +5,10 @@ from pygal.style import DarkSolarizedStyle, DefaultStyle
 import lxml
 
 
-# enum for tranlating pitch types into categories easier
 class PitchType(Enum):
+    '''
+    Enum that is helpful in translating pitch types easier.
+    '''
     FB = 1
     CB = 2
     SL = 3
@@ -15,8 +17,17 @@ class PitchType(Enum):
     SM = 7
 
 
-# Does math to calculate pitch whiff rate and returns dictionary
 def calcPitchWhiffRate(outing):
+    '''
+    Calculates the whiff rate by pitch.
+
+    PARAM:
+        -outing: Data to be parsed into stats. Should be an
+            Outing.query.filter(...) object
+
+    RETURN:
+        -Dictionary containing whiff rate by pitch
+    '''
     pitches_swung_at = {
         "FB": 0,
         "CB": 0,
@@ -61,6 +72,16 @@ def calcPitchWhiffRate(outing):
 
 # Calculates strike percentage per pitch and returns dictionary
 def calcPitchStrikePercentage(outing):
+    '''
+    Calculates the strike percentage of each pitch.
+
+    PARAM:
+        -outing: the outing to be parsed for data. Should be an
+            Outing.query.filter(...) object
+
+    RETURN:
+        -dictionary containing strike percentage by pitch
+    '''
     num_pitches = outing.pitches.count()
     pitches = {
         "FB": 0,
@@ -103,8 +124,17 @@ def calcPitchStrikePercentage(outing):
     return (pitch_strike_percentage)
 
 
-# Calculates the average velocity of each pitch and returns a dictionary
 def calcAverageVelo(outing):
+    '''
+    Calculates the average velocity of each pitch.
+
+    PARAM:
+        -outing: The data to be parsed. Should be an
+            Outing.query.filter(...) object.
+
+    RETURN:
+        -dictionary containing decimal average velo by pitch
+    '''
     num_pitches = outing.pitches.count()
     pitches = {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0}
     pitches_total_velo = {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0}
@@ -125,6 +155,20 @@ def calcAverageVelo(outing):
 
 # Caculate the percentage of each pitch thrown
 def calcPitchPercentages(outing):
+    '''
+    Function to calculate percent of time each pitch was thrown.
+
+    PARAM:
+        -outing: The outing to be parsed for data. Should be an
+            Outing.query.filter(...) object.
+
+    RETURN:
+        -Tuple of (pitches, pitch_percentages).
+            "pitches" is a dictionary containing the integer value of each
+                pitch throw.
+            "pitch_percentages" is a dictionary containing the percent each
+                pitch was thrown.
+    '''
     num_pitches = outing.pitches.count()
     pitches = {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0}
 
@@ -144,6 +188,19 @@ def calcPitchPercentages(outing):
 
 # calculate pitch usage by batter count
 def pitchUsageByCount(outing):
+    '''
+    Creates pitch usage by count statistic sheet.
+
+    PARAM:
+        -outing: Outing object to be parsed. Should come from
+            Outing.query.filter(...)
+    RETURN:
+        -tuple object containing (counts, counts_percentages).
+            "counts" is a dictionary representing the number of times a pitch
+                was thrown.
+            "counts_percentages" is a dictionary that represents the
+                percentage of time a pitch was thrown by count
+    '''
     num_pitches = outing.pitches.count()
     # PLEASE COLLAPSE THIS VARIABLE IT'S DUMB
     counts = {
@@ -270,6 +327,15 @@ def pitchUsageByCount(outing):
 
 # creates the pitch distribution pie chart
 def createPitchPercentagePieChart(data):
+    '''
+    Function to create pitch percentage pie chart.
+
+    PARAM:
+        -data: Data to be transformed into pie chart. Should be percentage
+            return from calcPitchPercentages(...)
+    RETURN:
+        -pygal pie chart object complete with data
+    '''
     pie_chart = pygal.Pie(
         title="Pitch Usage Percentages",
         style=DarkSolarizedStyle(
@@ -292,6 +358,15 @@ def createPitchPercentagePieChart(data):
 
 # creates the velocity over time line chart and returns the chart object
 def velocityOverTimeLineChart(outing):
+    '''
+    Function to create the velocity over time line chart from statistics
+
+    PARAM:
+        -outing: the single outing to be parsed over. Should come from
+            Outing.query.filter()...
+    RETURN:
+        - pygal line chart object complete with data
+    '''
     num_pitches = outing.pitches.count()
     line_chart = pygal.Line(
         style=DarkSolarizedStyle,
@@ -319,6 +394,16 @@ def velocityOverTimeLineChart(outing):
 
 
 def pitchStrikePercentageBarChart(data):
+    '''
+    Function to create the pitch by pitch strike percentage bar chart.
+
+    PARAM:
+        -data: Data to be parsed over and turned to chart. Should be
+            return data from calcPitchStrikePercentage(...)
+
+    RETURN:
+        - pygal bar chart object complete with data
+    '''
     bar_chart = pygal.Bar(
         title="Stike Percentage by Pitch",
         style=DarkSolarizedStyle
