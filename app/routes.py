@@ -3,11 +3,14 @@ from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.urls import url_parse
 from app import app, db
 from app.forms import LoginForm, RegistrationForm, OutingForm, PitchForm
+from app.forms import NewOutingFromCSV
 from app.models import User, Outing, Pitch
 from app.stats import calcPitchPercentages, pitchUsageByCount, calcAverageVelo
 from app.stats import calcPitchStrikePercentage, calcPitchWhiffRate
 from app.stats import createPitchPercentagePieChart, velocityOverTimeLineChart
 from app.stats import pitchStrikePercentageBarChart
+import csv
+import os
 
 
 # home page for portal, displays the roster
@@ -329,3 +332,68 @@ def delete_outing(outing_id):
     # redirects to user page associated with deletion
     flash('Outing has been deleted')
     return redirect(url_for('user', username=user.username))
+
+
+@app.route('/new_outing_csv', methods=['GET', 'POST'])
+@login_required
+def new_outing_csv():
+    form = NewOutingFromCSV()
+
+    # get the pitcehes that this user is allowed to make outings for
+    form.pitcher.choices = getAvailablePitchers()
+
+    if form.validate_on_submit():
+
+        # sets username variable
+        username = form.pitcher.data
+        user = User.query.filter_by(username=username).first_or_404()
+
+        # Get upload filename and save it to a temp file we can work with
+        file_name = form.file.data.filename
+        form.file.data.save(
+            os.path.join(
+                os.path.dirname(os.path.realpath(__file__)),
+                "csv_files",
+                file_name
+            )
+        )
+
+        # Analyze *.csv file for errors and discrepencies
+
+        return redirect(url_for('new_outing_csv'))
+    else:
+        print("failed to validate")
+
+    return render_template("upload_csv.html", form=form)
+
+
+# BEGIN UTILITY FUNCTIONS FOR ROUTES
+# -------------------------------------------------------------------------------
+def getAvailablePitchers():
+    """Gets all of the string names you are allowed to create outings for
+
+    Returns:
+        [array] -- [strings of pitchers names]
+    """
+
+    # gets all the User objects that are players on the team
+    pitchers_objects = User.query.filter(User.year != 'Coach/Manager').all()
+
+    # set the available choices that someone can create an outing for
+    available_pitchers = []
+    # admins can create outings for anyone
+    if (current_user.admin):
+        for p in pitchers_objects:
+            available_pitchers.append(
+                (p.username, p.firstname + " " + p.lastname)
+                )
+    # if not an admin then can only create outing for yourself
+    else:
+        available_pitchers.append(
+            (
+                current_user.username,
+                current_user.firstname+" "+current_user.lastname
+                )
+            )
+
+    return available_pitchers
