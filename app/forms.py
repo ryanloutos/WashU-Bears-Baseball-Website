@@ -146,16 +146,8 @@ class NewOutingFromCSV(FlaskForm):
         FlaskForm {[FlaskFrom]} -- [inheritance of form]
 
     Fields:
-        pitcher {string} -- string name of pitcher
-        date {string} -- date of the outing to enter as YYYY-MM-DD
-        opponent {string} -- string name of outing opponent
-        season {string} -- string name of season of outing
         file {file} -- csv file to be parsed with outing information
     """
-    pitcher = SelectField('Pitcher', validators=[Optional()])
-    date = DateField('Date', validators=[DataRequired()])
-    opponent = StringField('Opponent', validators=[DataRequired()])
-    season = StringField('Season', validators=[DataRequired()])
     file = FileField(
         'Outing File',
         validators=[FileRequired()]

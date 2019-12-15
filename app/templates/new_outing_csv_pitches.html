@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+{#https://www.rmedgar.com/blog/dynamic_fields_flask_wtf#}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script> 
+    $(document).ready(function() {
+
+        //this function copies the form and appends a new one with the appropriate attributes
+        $('#add').click(function addForm() {
+            //Get Last index
+            var $lastForm = $('.subform').last();
+
+            //sets newIndex 
+            if ($lastForm.length > 0) {
+                newIndex = parseInt($lastForm.data('index')) + 1;
+            }
+            else {
+                newIndex=0;
+            }
+
+            // Maximum of 150 subforms
+            if (newIndex > 150) {
+                console.log('[WARNING] Reached maximum number of elements');
+                return;
+            }
+
+            //clone the first subform which will always be there
+            var $newForm = $('#pitch-0-form').clone();
+
+            //set the appropriate attributes so subform works
+            $newForm.attr('id', 'pitch-'+newIndex+'-form');
+            $newForm.attr('data-index', newIndex);
+
+            // looks for the different DOM form elements and updates attributes
+            $newForm.find('input').each(function(idx) {
+                var $item = $(this);
+                $item.attr('id', $item.attr('id').replace('0', newIndex));
+                $item.attr('name', $item.attr('name').replace('0', newIndex));
+            });
+            $newForm.find('select').each(function(idx) {
+                var $item = $(this);
+                $item.attr('id', $item.attr('id').replace('0', newIndex));
+                $item.attr('name', $item.attr('name').replace('0', newIndex));
+            });
+
+            //append to the end of the table
+            $("#table > tbody").append($newForm);
+
+            $newForm.addClass('subform');
+        });
+
+        //this function deletes the last subform (last row)
+        $('#delete').click(function deleteForm() {
+            var $lastForm = $('.subform').last();
+            $lastForm.remove();
+        });
+    });
+</script>
+<h1>Create Outing From CSV</h1>
+<form method="POST" novalidate>
+    {{ form.hidden_tag() }} {# Preventing CSRF attacks #}
+    <p>
+        {{ form.pitcher.label }}<br>
+        {{ form.pitcher }}<br>
+        {% for error in form.pitcher.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.date.label }}<br>
+        {{ form.date(class='datepicker') }}<br>
+        If in safari, enter date as YYYY-MM-DD
+        {% for error in form.date.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.opponent.label }}<br>
+        {{ form.opponent(size=32) }}<br>
+        {% for error in form.opponent.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.season.label }}<br>
+        {{ form.season(size=32) }}<br>
+        {% for error in form.season.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </p>
+    <br>
+    <div class="panel, panel-default">
+        <div class="panel-heading">Pitches</div>
+        <div class="panel-body"> Check to see if pitch information is correct</div>
+        <table class='table' id='table'>
+            <tr>
+                <th>Pitch</th>
+                <th>Batter</th>
+                <th>RHH/LHH</th>
+                <th>Velo</th>
+                <th>Lead RNR</th>
+                <th>Time to Plate</th>
+                <th>Pitch Type</th>
+                <th>Pitch Result</th>
+                <th>Hit Spot?</th>
+                <th>Balls</th>
+                <th>Strikes</th>
+                <th>Result</th>
+                <th>Fielder</th>
+                <th>Hit?</th>
+                <th>Out #</th>
+                <th>Inning</th>
+            </tr>
+        </table>
+    </div>
+    <p>{{ form.submit() }}</p>
+</form>
+<button id="add">Add Row</button>
+<button id="delete">Delete Last Row</button>
+{% endblock %}

@@ -339,14 +339,7 @@ def delete_outing(outing_id):
 def new_outing_csv():
     form = NewOutingFromCSV()
 
-    # get the pitcehes that this user is allowed to make outings for
-    form.pitcher.choices = getAvailablePitchers()
-
     if form.validate_on_submit():
-
-        # sets username variable
-        username = form.pitcher.data
-        user = User.query.filter_by(username=username).first_or_404()
 
         # Get upload filename and save it to a temp file we can work with
         file_name = form.file.data.filename
@@ -358,14 +351,33 @@ def new_outing_csv():
         form.file.data.save(file_loc)
 
         # Analyze *.csv file for errors and discrepencies
-        with open(file_loc) as f:
-            csv_file = csv.DictReader(f)
-
-        return redirect(url_for('new_outing_csv'))
-    else:
-        print("failed to validate")
+        valid = validate_CSV(file_loc)
+        if valid:
+            return redirect(url_for('new_outing_csv_pitches', file_name=file_name))
+        else:  # delete invalid csv and refresh page
+            os.remove(file_loc)
+            return render_template("upload_csv.html", form=form)
 
     return render_template("upload_csv.html", form=form)
+
+
+@app.route('/new_outing_csv_pitches/<file_name>', methods=['GET', 'POST'])
+@login_required
+def new_outing_csv_pitches(file_name):
+
+    file_loc = os.path.join(
+                os.path.dirname(os.path.realpath(__file__)),
+                "csv_files",
+                file_name)
+
+    # extract pitches from CSV so they can be put in html form
+    with open(file_loc) as f:
+        csv_file = csv.DictReader(f)
+
+    form = OutingForm()
+    form.pitcher.choices = getAvailablePitchers()
+
+    return render_template("new_outing_csv_pitches.html", form=form)
 
 
 # BEGIN UTILITY FUNCTIONS FOR ROUTES
@@ -398,3 +410,29 @@ def getAvailablePitchers():
             )
 
     return available_pitchers
+
+
+def validate_CSV(file_loc):
+    pitch_attributes = [  # taken from Pitch class in models
+            "batter_id", "batter_hand", "velocity", "lead_runner",
+            "time_to_plate", "pitch_type", "pitch_result", "hit_spot",
+            "count_balls", "count_strikes", "result", "fielder", "hit", "out",
+            "inning"]
+    with open(file_loc) as f:
+        csv_file = csv.DictReader(f)
+        invalid_pitch_found = False  # Checks to see if pitches given are valid
+        for pitch_num, row in enumerate(csv_file):
+            keys = row.keys()
+            if set(pitch_attributes).issubset(set(keys)):
+                print("You have the necessary keys")
+
+            else:
+                invalid_pitch_found = True
+                for attr in pitch_attributes:
+                    if attr not in keys:
+                        print("missing: " + attr)
+                break
+        if invalid_pitch_found:
+            return False
+        else:
+            return True

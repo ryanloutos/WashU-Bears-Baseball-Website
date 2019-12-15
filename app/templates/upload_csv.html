@@ -4,36 +4,6 @@
     <form method="POST" enctype="multipart/form-data" novalidate>
         {{ form.hidden_tag() }}
         <p>
-            {{ form.pitcher.label }} <br>
-            {{ form.pitcher }} <br>
-            {% for error in form.pitcher.errors %}
-                <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.date.label }}<br>
-            {{ form.date(class='datepicker') }}<br>
-            If in safari, enter date as YYYY-MM-DD
-            {% for error in form.date.errors %}
-                <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.opponent.label }}<br>
-            {{ form.opponent(size=32) }}<br>
-            {% for error in form.opponent.errors %}
-                <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.season.label }}<br>
-            {{ form.season(size=32) }}<br>
-            {% for error in form.season.errors %}
-                <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <br>
-        <p>
             {{ form.file.label }} <br>
             {{ form.file }}
             {% for error in form.file.errors %}
