@@ -21,4 +21,13 @@ Ideas for improvement
 - Create a filter so you can choose to see cumulative data for team and/or individual pitchers over a certain time, season, etc.
 - Make a neat, clean, easy to read summary page for any outing(s)
 
+Currently being worked on:
+- Creating a csv entry point for pitch information
+  - read pitches into outing form
+  - more file validation points
+  - make sure temp files deleted at end
+  - make sure when saving that temp file names are not duplicated
+  - safety checks for file existence
+
+
 Cool README.md style stuff [here](https://help.github.com/en/github/writing-on-github/basic-writing-and-formatting-syntax)
