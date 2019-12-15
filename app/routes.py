@@ -350,15 +350,16 @@ def new_outing_csv():
 
         # Get upload filename and save it to a temp file we can work with
         file_name = form.file.data.filename
-        form.file.data.save(
-            os.path.join(
+        file_loc = os.path.join(
                 os.path.dirname(os.path.realpath(__file__)),
                 "csv_files",
                 file_name
             )
-        )
+        form.file.data.save(file_loc)
 
         # Analyze *.csv file for errors and discrepencies
+        with open(file_loc) as f:
+            csv_file = csv.DictReader(f)
 
         return redirect(url_for('new_outing_csv'))
     else:
