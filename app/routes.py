@@ -9,8 +9,11 @@ from app.stats import calcPitchPercentages, pitchUsageByCount, calcAverageVelo
 from app.stats import calcPitchStrikePercentage, calcPitchWhiffRate
 from app.stats import createPitchPercentagePieChart, velocityOverTimeLineChart
 from app.stats import pitchStrikePercentageBarChart
+# Handle CSV uploads
 import csv
 import os
+# for file naming duplication problem
+import random
 
 
 # home page for portal, displays the roster
@@ -374,7 +377,9 @@ def new_outing_csv():
                 "csv_files",
                 file_name
             )
-        form.file.data.save(file_loc)
+
+        while os.path.isfile(file_loc):
+            file_name = file_name + random.randint()
 
         # Analyze *.csv file for errors and discrepencies
         valid = validate_CSV(file_loc)
@@ -391,6 +396,7 @@ def new_outing_csv():
 @login_required
 def new_outing_csv_pitches(file_name):
 
+    # location of file name, passed from new_outing_csv via GET
     file_loc = os.path.join(
                 os.path.dirname(os.path.realpath(__file__)),
                 "csv_files",
@@ -529,25 +535,46 @@ def getAvailablePitchers():
 
 
 def validate_CSV(file_loc):
-    pitch_attributes = [  # taken from Pitch class in models
+    """Validates an uploaded outing csv file to see if we can create pitches
+from it.
+
+    Arguments:
+        file_loc {string} -- string location of the file to be validated
+
+    Returns:
+        [boolean] -- boolean for if the file is determined valid
+    """
+
+    # fields required to construct a pitch from Pitch class in modals. We need
+    # to check if all of these exist.
+    pitch_attributes = [
             "batter_id", "batter_hand", "velocity", "lead_runner",
             "time_to_plate", "pitch_type", "pitch_result", "hit_spot",
             "count_balls", "count_strikes", "result", "fielder", "hit", "out",
             "inning", "pitch_num"]
     with open(file_loc) as f:
+
         csv_file = csv.DictReader(f)
-        invalid_pitch_found = False  # Checks to see if pitches given are valid
+        invalid_pitch_found = False  # State var to see if pitches are valid
+
         for pitch_num, row in enumerate(csv_file):
             keys = row.keys()
+
+            # Check if the our necessary keys is contained within the csv
+            # keys provided.
             if set(pitch_attributes).issubset(set(keys)):
                 print("You have the necessary keys")
 
             else:
                 invalid_pitch_found = True
+
+                # Debug statement. Eventually move to user facing so they can
+                # adjust input.
                 for attr in pitch_attributes:
                     if attr not in keys:
                         print("Pitch num " + pitch_num + " missing: " + attr)
                 break
+
         if invalid_pitch_found:
             return False
         else:

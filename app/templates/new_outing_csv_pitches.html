@@ -117,7 +117,7 @@
                 <th>Inning</th>
             </tr>
             {% for pitch in pitches %}
-                {% for subform in form.pitch %}
+                {% for subform in form.pitch %} {# Had to make all fields manually because of index difference. #}
                     <tr class='subform' id="pitch-{{pitch['pitch_num']}}-form" data-index="{{pitch['pitch_num']}}">
                         <td>
                             <input id="pitch-{{pitch['pitch_num']}}-pitch_num" name="pitch-{{pitch['pitch_num']}}-pitch_num" required="" size="4" type="text" value="{{pitch['pitch_num']}}">
