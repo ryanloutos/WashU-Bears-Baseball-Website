@@ -371,13 +371,40 @@ def new_outing_csv_pitches(file_name):
                 file_name)
 
     # extract pitches from CSV so they can be put in html form
+    pitches = []
     with open(file_loc) as f:
         csv_file = csv.DictReader(f)
+        for index, row in enumerate(csv_file):
+            pitch = {
+                "pitch_num": row['pitch_num'],
+                "batter_id": row['batter_id'],
+                "batter_hand": row['batter_hand'],
+                "velocity": row['velocity'],
+                "lead_runner": row['lead_runner'],
+                "time_to_plate": row['time_to_plate'],
+                "pitch_type": row['pitch_type'],
+                "pitch_result": row['pitch_result'],
+                "hit_spot": row['hit_spot'],
+                "count_balls": row['count_balls'],
+                "count_strikes": row['count_strikes'],
+                "result": row['result'],
+                "fielder": row['fielder'],
+                "hit": row['hit'],
+                "out": row['out'],
+                "inning": row['inning']
+            }
+            pitches.append(pitch)
 
     form = OutingForm()
     form.pitcher.choices = getAvailablePitchers()
 
-    return render_template("new_outing_csv_pitches.html", form=form)
+    if form.validate_on_submit():
+        print("submit")
+
+    return render_template(
+        "new_outing_csv_pitches.html",
+        form=form,
+        pitches=pitches)
 
 
 # BEGIN UTILITY FUNCTIONS FOR ROUTES
@@ -417,7 +444,7 @@ def validate_CSV(file_loc):
             "batter_id", "batter_hand", "velocity", "lead_runner",
             "time_to_plate", "pitch_type", "pitch_result", "hit_spot",
             "count_balls", "count_strikes", "result", "fielder", "hit", "out",
-            "inning"]
+            "inning", "pitch_num"]
     with open(file_loc) as f:
         csv_file = csv.DictReader(f)
         invalid_pitch_found = False  # Checks to see if pitches given are valid
@@ -430,7 +457,7 @@ def validate_CSV(file_loc):
                 invalid_pitch_found = True
                 for attr in pitch_attributes:
                     if attr not in keys:
-                        print("missing: " + attr)
+                        print("Pitch num " + pitch_num + " missing: " + attr)
                 break
         if invalid_pitch_found:
             return False
