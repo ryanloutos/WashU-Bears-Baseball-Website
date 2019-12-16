@@ -185,7 +185,7 @@ def new_outing():
                 hit=subform.hit.data,
                 out=subform.out.data,
                 inning=subform.inning.data)
-            
+
             if pitch.result is not '':
                 balls = 0
                 strikes = 0
@@ -286,7 +286,7 @@ def edit_outing(outing_id):
 
             # creates Pitch object based on subform data
             pitchNum = index+1
-    
+
             pitch = Pitch(
                 outing_id=outing_edited.id,
                 pitch_num=pitchNum,
@@ -425,7 +425,70 @@ def new_outing_csv_pitches(file_name):
     form.pitcher.choices = getAvailablePitchers()
 
     if form.validate_on_submit():
-        print("submit")
+        # sets the username variable accordingly
+        if (current_user.admin):
+            username = form.pitcher.data
+        else:
+            username = current_user.username
+
+        # gets the user associated the username of the pitcher the outing
+        # is being created for
+        user = User.query.filter_by(username=username).first_or_404()
+
+        # creates a new outing object based on form data and user
+        outing = Outing(date=form.date.data,
+                        opponent=form.opponent.data,
+                        season=form.season.data,
+                        user_id=user.id)
+
+        # add the new outing to the database before pitches so pitches have a
+        # outing_id associated with them
+        db.session.add(outing)
+        db.session.commit()
+
+        balls = 0
+        strikes = 0
+        # add each individual pitch to the database
+        for index, subform in enumerate(form.pitch):
+
+            # creates Pitch object based on subform data
+            pitchNum = index+1
+
+            pitch = Pitch(
+                outing_id=outing.id,
+                pitch_num=pitchNum,
+                batter_id=subform.batter_id.data,
+                batter_hand=subform.batter_hand.data,
+                velocity=subform.velocity.data,
+                lead_runner=subform.lead_runner.data,
+                time_to_plate=subform.time_to_plate.data,
+                pitch_type=subform.pitch_type.data,
+                pitch_result=subform.pitch_result.data,
+                hit_spot=subform.hit_spot.data,
+                count_balls=balls,
+                count_strikes=strikes,
+                result=subform.result.data,
+                fielder=subform.fielder.data,
+                hit=subform.hit.data,
+                out=subform.out.data,
+                inning=subform.inning.data)
+
+            if pitch.result is not '':
+                balls = 0
+                strikes = 0
+            else:
+                if pitch.pitch_result is 'B':
+                    balls += 1
+                else:
+                    if strikes is not 2:
+                        strikes += 1
+
+            # adds pitch to database
+            db.session.add(pitch)
+            db.session.commit()
+
+        flash("New Outing Created!")
+        return redirect(url_for('index'))
 
     return render_template(
         "new_outing_csv_pitches.html",

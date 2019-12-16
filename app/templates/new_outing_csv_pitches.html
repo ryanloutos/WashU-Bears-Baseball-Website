@@ -4,8 +4,12 @@
 {#https://www.rmedgar.com/blog/dynamic_fields_flask_wtf#}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script> 
+// *****************IMPORTANT***************
+// the indexing for the CSV portion starts at 1 because it was easier
+// to set up in the start. the scripts have been adjusted to accomodate it.
+// -Mitchell
+// *****************IMPORTANT***************
     $(document).ready(function() {
-
         //this function copies the form and appends a new one with the appropriate attributes
         $('#add').click(function addForm() {
             //Get Last index
@@ -46,7 +50,7 @@
 
             //append to the end of the table
             $("#table > tbody").append($newForm);
-            $newForm.find("td:first-child").text(newIndex+1);
+            $newForm.find("td:first-child").text(newIndex);
             $newForm.addClass('subform');
         });
 
