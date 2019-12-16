@@ -23,10 +23,10 @@ def calcPitchWhiffRate(outing):
 
     PARAM:
         -outing: Data to be parsed into stats. Should be an
-            Outing.query.filter(...) object
+            Outing object
 
     RETURN:
-        -Dictionary containing whiff rate by pitch
+        -dictionary containing whiff rate by pitch
     '''
     pitches_swung_at = {
         "FB": 0,
@@ -70,19 +70,17 @@ def calcPitchWhiffRate(outing):
     return (pitches_whiff)
 
 
-# Calculates strike percentage per pitch and returns dictionary
 def calcPitchStrikePercentage(outing):
     '''
     Calculates the strike percentage of each pitch.
 
     PARAM:
         -outing: the outing to be parsed for data. Should be an
-            Outing.query.filter(...) object
+            Outing object
 
     RETURN:
         -dictionary containing strike percentage by pitch
     '''
-    num_pitches = outing.pitches.count()
     pitches = {
         "FB": 0,
         "CB": 0,
@@ -99,6 +97,14 @@ def calcPitchStrikePercentage(outing):
         "CT": 0,
         "SM": 0,
         "total": 0}
+    pitch_strike_percentage = {
+        "FB": 0,
+        "CB": 0,
+        "SL": 0,
+        "CH": 0,
+        "CT": 0,
+        "SM": 0,
+        "total": 0}
 
     for pitch in outing.pitches:
         pitches[PitchType(pitch.pitch_type).name] += 1
@@ -108,14 +114,6 @@ def calcPitchStrikePercentage(outing):
             pitches_strikes[PitchType(pitch.pitch_type).name] += 1
             pitches_strikes['total'] += 1
 
-    pitch_strike_percentage = {
-        "FB": 0,
-        "CB": 0,
-        "SL": 0,
-        "CH": 0,
-        "CT": 0,
-        "SM": 0,
-        "total": 0}
     for key, val in pitches.items():
         if pitches[key] != 0:
             pitch_strike_percentage[key] = (
@@ -130,14 +128,15 @@ def calcAverageVelo(outing):
 
     PARAM:
         -outing: The data to be parsed. Should be an
-            Outing.query.filter(...) object.
+            Outing object.
 
     RETURN:
         -dictionary containing decimal average velo by pitch
     '''
-    num_pitches = outing.pitches.count()
+
     pitches = {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0}
     pitches_total_velo = {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0}
+    pitch_avg_velo = {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0}
 
     for pitch in outing.pitches:
         pitches[PitchType(pitch.pitch_type).name] += 1
@@ -145,7 +144,6 @@ def calcAverageVelo(outing):
             pitches_total_velo[
                 PitchType(pitch.pitch_type).name] += pitch.velocity
 
-    pitch_avg_velo = {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0}
     for key, val in pitches.items():
         if pitches[key] != 0:
             pitch_avg_velo[key] = pitches_total_velo[key]/pitches[key]
@@ -153,14 +151,13 @@ def calcAverageVelo(outing):
     return (pitch_avg_velo)
 
 
-# Caculate the percentage of each pitch thrown
 def calcPitchPercentages(outing):
     '''
     Function to calculate percent of time each pitch was thrown.
 
     PARAM:
         -outing: The outing to be parsed for data. Should be an
-            Outing.query.filter(...) object.
+            Outing object.
 
     RETURN:
         -Tuple of (pitches, pitch_percentages).
@@ -186,7 +183,6 @@ def calcPitchPercentages(outing):
     # With each value being 0<=val<=100
 
 
-# calculate pitch usage by batter count
 def pitchUsageByCount(outing):
     '''
     Creates pitch usage by count statistic sheet.
@@ -303,6 +299,7 @@ def pitchUsageByCount(outing):
             "total": 0
             }
     }
+    
     for pitch in outing.pitches:
         count = f"{pitch.count_balls}-{pitch.count_strikes}"
         pitch_type = PitchType(pitch.pitch_type).name
@@ -325,7 +322,6 @@ def pitchUsageByCount(outing):
     return (counts, counts_percentages)
 
 
-# creates the pitch distribution pie chart
 def createPitchPercentagePieChart(data):
     '''
     Function to create pitch percentage pie chart.
@@ -356,7 +352,6 @@ def createPitchPercentagePieChart(data):
     return pie_chart
 
 
-# creates the velocity over time line chart and returns the chart object
 def velocityOverTimeLineChart(outing):
     '''
     Function to create the velocity over time line chart from statistics
