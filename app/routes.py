@@ -411,7 +411,6 @@ def new_outing_csv_pitches(file_name):
         csv_file = csv.DictReader(f)
         for index, row in enumerate(csv_file):
             pitch = {
-                "pitch_num": row['pitch_num'],
                 "batter_id": row['batter_id'],
                 "batter_hand": row['batter_hand'],
                 "velocity": row['velocity'],
@@ -420,8 +419,6 @@ def new_outing_csv_pitches(file_name):
                 "pitch_type": row['pitch_type'],
                 "pitch_result": row['pitch_result'],
                 "hit_spot": row['hit_spot'],
-                "count_balls": row['count_balls'],
-                "count_strikes": row['count_strikes'],
                 "result": row['result'],
                 "fielder": row['fielder'],
                 "hit": row['hit'],
@@ -556,8 +553,7 @@ from it.
     pitch_attributes = [
             "batter_id", "batter_hand", "velocity", "lead_runner",
             "time_to_plate", "pitch_type", "pitch_result", "hit_spot",
-            "count_balls", "count_strikes", "result", "fielder", "hit", "out",
-            "inning", "pitch_num"]
+            "result", "fielder", "hit", "out", "inning"]
     with open(file_loc) as f:
 
         csv_file = csv.DictReader(f)

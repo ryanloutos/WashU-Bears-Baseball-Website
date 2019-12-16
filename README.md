@@ -23,11 +23,17 @@ Ideas for improvement
 
 Currently being worked on:
 - Creating a csv entry point for pitch information
-  - read pitches into outing form
-  - more file validation points
-  - make sure temp files deleted at end
-  - make sure when saving that temp file names are not duplicated
-  - safety checks for file existence
+  - TODO:
+    - more file validation points
+    - make sure when saving that temp file names are not duplicated
+    - safety checks for file existence
+    - Add auto-index for outs
+    - account for user input mistakes (spaces, capitals, strings vs numbers)
+    - improve instruction set of upload file
+  - DONE:
+    - Auto index for pitches and counts
+    - It is possible to upload outings via CSV and have them saved to database
+
 
 
 Cool README.md style stuff [here](https://help.github.com/en/github/writing-on-github/basic-writing-and-formatting-syntax)
