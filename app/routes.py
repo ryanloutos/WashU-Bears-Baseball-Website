@@ -377,9 +377,12 @@ def new_outing_csv():
                 "csv_files",
                 file_name
             )
+        # save the file with its current name
+        form.file.data.save(file_loc)
 
-        while os.path.isfile(file_loc):
-            file_name = file_name + random.randint()
+        # WIP make it so that duplicate file names dont appear
+        # while os.path.isfile(file_loc):
+        #     file_name = file_name + random.randint()
 
         # Analyze *.csv file for errors and discrepencies
         valid = validate_CSV(file_loc)
@@ -492,6 +495,9 @@ def new_outing_csv_pitches(file_name):
             # adds pitch to database
             db.session.add(pitch)
             db.session.commit()
+
+        # delete temp file and be done with it
+        os.remove(file_loc)
 
         flash("New Outing Created!")
         return redirect(url_for('index'))
