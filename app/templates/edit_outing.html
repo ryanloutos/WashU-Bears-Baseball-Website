@@ -46,7 +46,7 @@
 
                 //append to the end of the table
                 $("#table > tbody").append($newForm);
-
+                $newForm.find("td:first-child").text(newIndex+1);
                 $newForm.addClass('subform');
             });
 
@@ -98,8 +98,6 @@
                         <th>Pitch Type</th>
                         <th>Pitch Result</th>
                         <th>Hit Spot?</th>
-                        <th>Balls</th>
-                        <th>Strikes</th>
                         <th>Result</th>
                         <th>Fielder</th>
                         <th>Hit?</th>
@@ -108,13 +106,7 @@
                     </tr>
                     {% for subform in form.pitch %} {# some of the subforms needed to be manually made due to lack of implementation in flask #}
                         <tr class='subform' id="pitch-{{ loop.index0 }}-form" data-index='{{ loop.index0 }}'>
-                            <td>
-                                {% if outing.pitches[loop.index0].pitch_num == None %}
-                                    {{ subform.pitch_num(size=4) }}
-                                {% else %}
-                                    {{ subform.pitch_num(size=4, value=outing.pitches[loop.index0].pitch_num) }}
-                                {% endif %}
-                            </td>
+                            <td>{{ loop.index0+1 }}</td>
                             <td>{{ subform.batter_id(size=4, value=outing.pitches[loop.index0].batter_id) }}</td>
                             <td>
                                 <select id="pitch-{{loop.index0}}-batter_hand" name="pitch-{{loop.index0}}-batter_hand" required>
@@ -172,23 +164,6 @@
                             {% else %}
                                 <td>{{ subform.hit_spot() }}</td>
                             {% endif %}
-                            <td>
-                                <select id="pitch-{{loop.index0}}-count_balls" name="pitch-{{loop.index0}}-count_balls" required>
-                                    <option value="">Select</option>
-                                    <option value="0" {% if outing.pitches[loop.index0].count_balls==0 %} selected='selected' {% endif %}>0</option>
-                                    <option value="1" {% if outing.pitches[loop.index0].count_balls==1 %} selected='selected' {% endif %}>1</option>
-                                    <option value="2" {% if outing.pitches[loop.index0].count_balls==2 %} selected='selected' {% endif %}>2</option>
-                                    <option value="3" {% if outing.pitches[loop.index0].count_balls==3 %} selected='selected' {% endif %}>3</option>
-                                </select>
-                            </td>
-                            <td>
-                                <select id="pitch-{{loop.index0}}-count_strikes" name="pitch-{{loop.index0}}-count_strikes" required>
-                                    <option value="">Select</option>
-                                    <option value="0" {% if outing.pitches[loop.index0].count_strikes==0 %} selected='selected' {% endif %}>0</option>
-                                    <option value="1" {% if outing.pitches[loop.index0].count_strikes==1 %} selected='selected' {% endif %}>1</option>
-                                    <option value="2" {% if outing.pitches[loop.index0].count_strikes==2 %} selected='selected' {% endif %}>2</option>
-                                </select>
-                            </td>
                             <td>
                                 <select id="pitch-{{loop.index0}}-result" name="pitch-{{loop.index0}}-result" required>
                                     <option value="" {% if outing.pitches[loop.index0].result==None %} selected='selected' {% endif %}>N/A</option>

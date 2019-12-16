@@ -46,7 +46,7 @@
 
             //append to the end of the table
             $("#table > tbody").append($newForm);
-
+            $newForm.find("td:first-child").text(newIndex+1);
             $newForm.addClass('subform');
         });
 

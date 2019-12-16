@@ -61,7 +61,6 @@ class RegistrationForm(FlaskForm):
 
 # each field is based on the baseball teams velocity tracking sheets
 class PitchForm(FlaskForm):
-    pitch_num = IntegerField('Pitch', validators=[DataRequired()])
     batter_id = StringField('Batter', validators=[DataRequired()])
     batter_hand = SelectField(
         'RHH/LHH',
@@ -89,14 +88,14 @@ class PitchForm(FlaskForm):
             ('F', 'F'), ('IP', 'IP')],
         validators=[Optional()])
     hit_spot = BooleanField('Hit Spot?', validators=[Optional()])
-    count_balls = SelectField(
-        'Balls',
-        choices=[('0', '0'), ('1', '1'), ('2', '2'), ('3', '3')],
-        validators=[Optional()])
-    count_strikes = SelectField(
-        'Strikes',
-        choices=[('0', '0'), ('1', '1'), ('2', '2')],
-        validators=[Optional()])
+    # count_balls = SelectField(
+    #     'Balls',
+    #     choices=[('0', '0'), ('1', '1'), ('2', '2'), ('3', '3')],
+    #     validators=[Optional()])
+    # count_strikes = SelectField(
+    #     'Strikes',
+    #     choices=[('0', '0'), ('1', '1'), ('2', '2')],
+    #     validators=[Optional()])
     result = SelectField(
         'Result',
         choices=[

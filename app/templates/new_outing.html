@@ -47,6 +47,7 @@
                 //append to the end of the table
                 $("#table > tbody").append($newForm);
 
+                $newForm.find("td:first-child").text(newIndex+1);
                 $newForm.addClass('subform');
             });
 
@@ -105,8 +106,6 @@
                     <th>Pitch Type</th>
                     <th>Pitch Result</th>
                     <th>Hit Spot?</th>
-                    <th>Balls</th>
-                    <th>Strikes</th>
                     <th>Result</th>
                     <th>Fielder</th>
                     <th>Hit?</th>
@@ -115,7 +114,7 @@
                 </tr>
                 {% for subform in form.pitch %}
                 <tr class='subform' id="pitch-{{ loop.index0 }}-form" data-index='{{ loop.index0 }}'>
-                    <td>{{ subform.pitch_num(size=4) }}</td>
+                    <td>{{ loop.index0+1 }}</td>
                     <td>{{ subform.batter_id(size=4) }}</td>
                     <td>{{ subform.batter_hand() }}</td>
                     <td>{{ subform.velocity(size=4) }}</td>
@@ -124,8 +123,6 @@
                     <td>{{ subform.pitch_type() }}</td>
                     <td>{{ subform.pitch_result() }}</td>
                     <td>{{ subform.hit_spot() }}</td>
-                    <td>{{ subform.count_balls() }}</td>
-                    <td>{{ subform.count_strikes() }}</td>
                     <td>{{ subform.result() }}</td>
                     <td>{{ subform.fielder() }}</td>
                     <td>{{ subform.hit() }}</td>

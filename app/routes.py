@@ -161,12 +161,15 @@ def new_outing():
         db.session.add(outing)
         db.session.commit()
 
+        balls = 0
+        strikes = 0
         # add each individual pitch to the database
-        for subform in form.pitch:
+        for index, subform in enumerate(form.pitch):
             # creates Pitch object based on subform data
+            pitchNum = index+1
             pitch = Pitch(
                 outing_id=outing.id,
-                pitch_num=subform.pitch_num.data,
+                pitch_num=pitchNum,
                 batter_id=subform.batter_id.data,
                 batter_hand=subform.batter_hand.data,
                 velocity=subform.velocity.data,
@@ -175,14 +178,23 @@ def new_outing():
                 pitch_type=subform.pitch_type.data,
                 pitch_result=subform.pitch_result.data,
                 hit_spot=subform.hit_spot.data,
-                count_balls=subform.count_balls.data,
-                count_strikes=subform.count_strikes.data,
+                count_balls=balls,
+                count_strikes=strikes,
                 result=subform.result.data,
                 fielder=subform.fielder.data,
                 hit=subform.hit.data,
                 out=subform.out.data,
                 inning=subform.inning.data)
-
+            
+            if pitch.result is not '':
+                balls = 0
+                strikes = 0
+            else:
+                if pitch.pitch_result is 'B':
+                    balls += 1
+                else:
+                    if strikes is not 2:
+                        strikes += 1
             # adds pitch to database
             db.session.add(pitch)
             db.session.commit()
@@ -267,13 +279,17 @@ def edit_outing(outing_id):
         db.session.add(outing_edited)
         db.session.commit()
 
+        balls = 0
+        strikes = 0
         # add each individual pitch to the database
-        for subform in form.pitch:
+        for index, subform in enumerate(form.pitch):
 
             # creates Pitch object based on subform data
+            pitchNum = index+1
+    
             pitch = Pitch(
                 outing_id=outing_edited.id,
-                pitch_num=subform.pitch_num.data,
+                pitch_num=pitchNum,
                 batter_id=subform.batter_id.data,
                 batter_hand=subform.batter_hand.data,
                 velocity=subform.velocity.data,
@@ -282,13 +298,23 @@ def edit_outing(outing_id):
                 pitch_type=subform.pitch_type.data,
                 pitch_result=subform.pitch_result.data,
                 hit_spot=subform.hit_spot.data,
-                count_balls=subform.count_balls.data,
-                count_strikes=subform.count_strikes.data,
+                count_balls=balls,
+                count_strikes=strikes,
                 result=subform.result.data,
                 fielder=subform.fielder.data,
                 hit=subform.hit.data,
                 out=subform.out.data,
                 inning=subform.inning.data)
+
+            if pitch.result is not '':
+                balls = 0
+                strikes = 0
+            else:
+                if pitch.pitch_result is 'B':
+                    balls += 1
+                else:
+                    if strikes is not 2:
+                        strikes += 1
 
             # adds pitch to database
             db.session.add(pitch)
