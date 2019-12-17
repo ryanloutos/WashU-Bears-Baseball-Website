@@ -139,8 +139,8 @@ def calcAverageVelo(outing):
     pitch_avg_velo = {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0}
 
     for pitch in outing.pitches:
-        pitches[PitchType(pitch.pitch_type).name] += 1
         if (pitch.velocity):
+            pitches[PitchType(pitch.pitch_type).name] += 1
             pitches_total_velo[
                 PitchType(pitch.pitch_type).name] += pitch.velocity
 

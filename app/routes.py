@@ -498,6 +498,10 @@ def new_outing_csv_pitches(file_name):
 
         flash("New Outing Created!")
         return redirect(url_for('index'))
+    else:
+        for fieldName, errorMessages in form.errors.items():
+            for err in errorMessages:
+                print(err)
 
     return render_template(
         "new_outing_csv_pitches.html",
