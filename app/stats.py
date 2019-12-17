@@ -65,7 +65,7 @@ def calcPitchWhiffRate(outing):
     for key, val in pitches_swung_at.items():
         if (pitches_swung_at[key] != 0):
             pitches_whiff[key] = (
-                pitches_missed[key]/pitches_swung_at[key] * 100)
+                truncate(pitches_missed[key]/pitches_swung_at[key] * 100))
 
     return (pitches_whiff)
 
@@ -117,7 +117,7 @@ def calcPitchStrikePercentage(outing):
     for key, val in pitches.items():
         if pitches[key] != 0:
             pitch_strike_percentage[key] = (
-                pitches_strikes[key]/pitches[key]*100)
+                truncate(pitches_strikes[key]/pitches[key]*100))
 
     return (pitch_strike_percentage)
 
@@ -146,7 +146,8 @@ def calcAverageVelo(outing):
 
     for key, val in pitches.items():
         if pitches[key] != 0:
-            pitch_avg_velo[key] = pitches_total_velo[key]/pitches[key]
+            pitch_avg_velo[key] = truncate(
+                pitches_total_velo[key]/pitches[key])
 
     return (pitch_avg_velo)
 
@@ -175,7 +176,7 @@ def calcPitchPercentages(outing):
     pitch_percentages = {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0}
     if num_pitches != 0:
         for key, val in pitches.items():
-            pitch_percentages[key] = pitches[key]/num_pitches * 100
+            pitch_percentages[key] = truncate(pitches[key]/num_pitches * 100)
 
     return (pitches, pitch_percentages)
     # Will be in form:
@@ -299,7 +300,7 @@ def pitchUsageByCount(outing):
             "total": 0
             }
     }
-    
+
     for pitch in outing.pitches:
         count = f"{pitch.count_balls}-{pitch.count_strikes}"
         pitch_type = PitchType(pitch.pitch_type).name
@@ -313,8 +314,9 @@ def pitchUsageByCount(outing):
         if total != 0:
             for pitch in value["pitches"].keys():
                 counts_percentages[key]["pitches"][pitch] = (
-                    value["pitches"][pitch]/total * 100)
-                counts_percentages[key]["total"] = total/num_pitches
+                    truncate(value["pitches"][pitch]/total * 100))
+                counts_percentages[key]["total"] = truncate(
+                    total/num_pitches * 100)
         else:  # case in which there were no pitches thrown in a count
             counts_percentages[key]["pitches"] = counts[key]["pitches"]
             counts_percentages[key]["total"] = 0
@@ -401,10 +403,28 @@ def pitchStrikePercentageBarChart(data):
     '''
     bar_chart = pygal.Bar(
         title="Stike Percentage by Pitch",
-        style=DarkSolarizedStyle
+        style=DarkSolarizedStyle,
+        range=(0, 100)
     )
 
     for pitch_type, values in data.items():
         bar_chart.add(pitch_type, values)
 
     return bar_chart
+
+
+# UTILITY STAT FUNCTIONS-------------------------------------------------------
+def truncate(n, decimals=2):
+    """Truncates the passed value to decimal places.
+
+    Arguments:
+        n {number} -- Number to be truncated
+
+    Keyword Arguments:
+        decimals {int} -- Number of decimal places to truncate to(default: {2})
+
+    Returns:
+        [int] -- truncated verison of passed value
+    """
+    multiplier = 10 ** decimals
+    return int(n * multiplier) / multiplier
