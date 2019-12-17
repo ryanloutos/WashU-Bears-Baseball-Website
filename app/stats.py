@@ -315,8 +315,8 @@ def pitchUsageByCount(outing):
             for pitch in value["pitches"].keys():
                 counts_percentages[key]["pitches"][pitch] = (
                     truncate(value["pitches"][pitch]/total * 100))
-                counts_percentages[key]["total"] = truncate(
-                    total/num_pitches * 100)
+                counts_percentages[key]["total"] = (
+                    truncate(total/num_pitches * 100))
         else:  # case in which there were no pitches thrown in a count
             counts_percentages[key]["pitches"] = counts[key]["pitches"]
             counts_percentages[key]["total"] = 0
@@ -367,9 +367,13 @@ def velocityOverTimeLineChart(outing):
     num_pitches = outing.pitches.count()
     line_chart = pygal.Line(
         style=DarkSolarizedStyle,
-        title="Velocity changes over time"
+        title="Velocity changes over time",
+        show_minor_x_labels=False,
+        truncate_label=3
     )
     line_chart.x_labels = map(str, range(1, num_pitches+1))
+    lst = list(range(num_pitches+1))
+    line_chart.x_labels_major = lst[0::10]
     line_chart.dyanamic_print_values = True
 
     velocities = {"FB": [], "CB": [], "SL": [], "CH": [], "CT": [], "SM": []}
@@ -412,6 +416,28 @@ def pitchStrikePercentageBarChart(data):
 
     return bar_chart
 
+
+def pitchUsageByCountLineCharts(data):
+    data_reformat = {
+        "FB": {}, "CB": {}, "SL": {}, "CH": {}, "CT": {}, "SM": {}
+    }
+    for count, dat in data.items():
+        for pitch, usage in dat['pitches'].items():
+            data_reformat[pitch][count] = usage
+    print(data_reformat)
+
+    line_chart = pygal.Line(
+        style=DarkSolarizedStyle,
+        title="Pitch Usage by Count"
+    )
+
+    line_chart.x_labels = data_reformat["FB"].keys()
+    line_chart.dyanamic_print_values = True
+
+    for pitch_type, pitch_data in data_reformat.items():
+        line_chart.add(pitch_type, pitch_data.values())
+
+    return line_chart
 
 # UTILITY STAT FUNCTIONS-------------------------------------------------------
 def truncate(n, decimals=2):

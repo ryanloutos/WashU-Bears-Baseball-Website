@@ -9,6 +9,7 @@ from app.stats import calcPitchPercentages, pitchUsageByCount, calcAverageVelo
 from app.stats import calcPitchStrikePercentage, calcPitchWhiffRate
 from app.stats import createPitchPercentagePieChart, velocityOverTimeLineChart
 from app.stats import pitchStrikePercentageBarChart
+from app.stats import pitchUsageByCountLineCharts
 # Handle CSV uploads
 import csv
 import os
@@ -223,11 +224,10 @@ def outing(outing_id):
     pitch_whiff = calcPitchWhiffRate(outing)
 
     # Get statistical graphics
-    usage_percentages_pie_chart = createPitchPercentagePieChart(
-        usage_percentages)
+    usage_percentages_pie_chart = createPitchPercentagePieChart(usage_percentages)
     velocity_over_time_line_chart = velocityOverTimeLineChart(outing)
-    strike_percentage_bar_chart = pitchStrikePercentageBarChart(
-        pitch_strike_percentage)
+    strike_percentage_bar_chart = pitchStrikePercentageBarChart(pitch_strike_percentage)
+    usage_percent_by_count_line_chart = pitchUsageByCountLineCharts(counts_percentages)
 
     return render_template(
         'outing.html',
@@ -242,7 +242,8 @@ def outing(outing_id):
         pitch_strike_percentage=pitch_strike_percentage,
         pitch_whiff=pitch_whiff,
         velocity_over_time_line_chart=velocity_over_time_line_chart,
-        strike_percentage_bar_chart=strike_percentage_bar_chart
+        strike_percentage_bar_chart=strike_percentage_bar_chart,
+        usage_percent_by_count_line_chart=usage_percent_by_count_line_chart
         )
 
 # Page to edit an outing already stored in database

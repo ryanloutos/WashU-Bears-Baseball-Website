@@ -165,30 +165,31 @@
                 <div id='pitch-usage-by-count-percentage'>
                     <h3>Pitch Usage by Count Percentage</h3>
                     <table class="table">
-                    <tr>
-                        <th>Count</th>
-                        <th>FB</th>
-                        <th>2S</th>
-                        <th>CB</th>
-                        <th>SL</th>
-                        <th>CH</th>
-                        <th>CT</th>
-                        <th>Total</th>
-                    </tr>
-                    {% for count, value in counts_percentages.items() %}
                         <tr>
-                            <th>{{count}}</th>
-                            <td>{{value["pitches"]["FB"]}}</td>
-                            <td>{{value["pitches"]["SM"]}}</td>
-                            <td>{{value["pitches"]["CB"]}}</td>
-                            <td>{{value["pitches"]["SL"]}}</td>
-                            <td>{{value["pitches"]["CH"]}}</td>
-                            <td>{{value["pitches"]["CT"]}}</td>
-                            <td>{{value["total"]}}</td>
+                            <th>Count</th>
+                            <th>FB</th>
+                            <th>2S</th>
+                            <th>CB</th>
+                            <th>SL</th>
+                            <th>CH</th>
+                            <th>CT</th>
+                            <th>Total</th>
                         </tr>
-                    {% endfor%}
+                        {% for count, value in counts_percentages.items() %}
+                            <tr>
+                                <th>{{count}}</th>
+                                <td>{{value["pitches"]["FB"]}}</td>
+                                <td>{{value["pitches"]["SM"]}}</td>
+                                <td>{{value["pitches"]["CB"]}}</td>
+                                <td>{{value["pitches"]["SL"]}}</td>
+                                <td>{{value["pitches"]["CH"]}}</td>
+                                <td>{{value["pitches"]["CT"]}}</td>
+                                <td>{{value["total"]}}</td>
+                            </tr>
+                        {% endfor%}
                     </table>
-                    </div>
+                    <embed type="image/svg+xml" src= "{{ usage_percent_by_count_line_chart.render_data_uri()|safe }}" />
+                </div>
                 <div id='pitch-avg-velo'>
                     <h3>Average Velocity By Pitch</h3>
                     <table class="table">
@@ -270,7 +271,6 @@
                     <h3>Strike Percentage Bar Chart</h3>
                     <embed type="image/svg+xml" src= "{{ strike_percentage_bar_chart.render_data_uri()|safe }}" />
                 </div>
-
             </div>
         </div>
 {% endblock %}
