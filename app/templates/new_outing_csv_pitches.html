@@ -115,115 +115,113 @@
                 <th>Inning</th>
             </tr>
             {% for pitch in pitches %}
-                {% set outer_loop = loop %}
-                {% for subform in form.pitch %} {# Had to make all fields manually because of index difference. #}
-                    <tr class='subform' id="pitch-{{outer_loop.index0+1}}-form" data-index="{{outer_loop.index0+1}}">
-                        <td>
-                            {{outer_loop.index0+1}}
-                        </td>
-                        <td>
-                            <input id="pitch-{{outer_loop.index0+1}}-batter_id" name="pitch-{{outer_loop.index0+1}}-batter_id" required="" size="4" type="text" value="{{pitch['batter_id']}}">
-                        </td>
-                        <td>
-                            <select id="pitch-{{outer_loop.index0+1}}-batter_hand" name="pitch-{{outer_loop.index0+1}}-batter_hand" required>
-                                <option value="" selected hidden disabled>Select</option>
-                                {% if pitch['batter_hand'] in ['R', 'RH', 'RHH', 'r', 'rh', 'rhh'] %}
-                                    <option value="RHH" selected>RHH</option>
-                                    <option value="LHH">LHH</option>
-                                {% else  %}
-                                    <option value="RHH">RHH</option>
-                                    <option value="RHH" selected>RHH</option>
-                                {% endif %}
-                            </select>
-                        </td>
-                        <td>
-                            <input id="pitch-{{outer_loop.index0+1}}-velocity" name="pitch-{{outer_loop.index0+1}}-velocity" size="4" type="text" value="{{pitch['velocity']}}">
-                        </td>
-                        <td>
-                            <select id="pitch-{{outer_loop.index0+1}}-lead_runner" name="pitch-{{outer_loop.index0+1}}-lead_runner" required>
-                                <option value="Empty" selected>Empty</option>
-                                <option value="1" {% if pitch['lead_runner']==1 %} selected='selected' {% endif %}>1</option>
-                                <option value="2" {% if pitch['lead_runner']==2 %} selected='selected' {% endif %}>2</option>
-                                <option value="3" {% if pitch['lead_runner']==3 %} selected='selected' {% endif %}>3</option>
-                            </select>
-                        </td>
-                        <td>
-                            <input id="pitch-{{outer_loop.index0+1}}-time_to_plate" name="pitch-{{outer_loop.index0+1}}-time_to_plate" size="4" type="text" value="{{pitch['time_to_plate']}}">
-                        </td>
-                        <td>
-                            <select id="pitch-{{outer_loop.index0+1}}-pitch_type" name="pitch-{{outer_loop.index0+1}}-pitch_type" required>
-                                <option value="" {% if pitch['pitch_type']=='' %} selected='selected' {% endif %}>Select</option>
-                                <option value="1" {% if pitch['pitch_type'] in [1, '1'] %} selected='selected' {% endif %}>1</option>
-                                <option value="2" {% if pitch['pitch_type'] in [2, '2'] %} selected='selected' {% endif %}>2</option>
-                                <option value="3" {% if pitch['pitch_type'] in [3, '3'] %} selected='selected' {% endif %}>3</option>
-                                <option value="4" {% if pitch['pitch_type'] in [4, '4'] %} selected='selected' {% endif %}>4</option>
-                                <option value="5" {% if pitch['pitch_type'] in [5, '5'] %} selected='selected' {% endif %}>5</option>
-                                <option value="7" {% if pitch['pitch_type'] in [7, '7'] %} selected='selected' {% endif %}>7</option>
-                            </select>
-                        </td>
-                        <td>
-                            <select id="pitch-{{outer_loop.index0+1}}-pitch_result" name="pitch-{{outer_loop.index0+1}}-pitch_result" required>
-                                <option value="" {% if pitch['pitch_result'].strip()=='' %} selected='selected' {% endif %}>Select</option>
-                                <option value="B" {% if pitch['pitch_result'].strip() in ['B', 'b'] %} selected='selected' {% endif %}>B</option>
-                                <option value="CS" {% if pitch['pitch_result'].strip() in ['CS', 'cs'] %} selected='selected' {% endif %}>CS</option>
-                                <option value="SS" {% if pitch['pitch_result'].strip() in ['SS', 'ss'] %} selected='selected' {% endif %}>SS</option>
-                                <option value="F" {% if pitch['pitch_result'].strip() in ['F', 'f'] %} selected='selected' {% endif %}>F</option>
-                                <option value="IP" {% if pitch['pitch_result'].strip() in ['IP', 'ip'] %} selected='selected' {% endif %}>IP</option>
-                            </select>
-                        </td>
-                        <td>
-                            {% if pitch['hit_spot'] in [1, 'Y', 'y', 'yes', 'Yes'] %}
-                                <input id="pitch-{{outer_loop.index0+1}}-hit_spot" name="pitch-{{outer_loop.index0+1}}-hit_spot" type="checkbox" value="y" checked>
-                            {% else %}
-                                <input id="pitch-{{outer_loop.index0+1}}-hit_spot" name="pitch-{{outer_loop.index0+1}}-hit_spot" type="checkbox" value="y">
+                {% set outer_loop = loop %} {# Had to make all fields manually because of index difference. #}
+                <tr class='subform' id="pitch-{{outer_loop.index0+1}}-form" data-index="{{outer_loop.index0+1}}">
+                    <td>
+                        {{outer_loop.index0+1}}
+                    </td>
+                    <td>
+                        <input id="pitch-{{outer_loop.index0+1}}-batter_id" name="pitch-{{outer_loop.index0+1}}-batter_id" required="" size="4" type="text" value="{{pitch['batter_id']}}">
+                    </td>
+                    <td>
+                        <select id="pitch-{{outer_loop.index0+1}}-batter_hand" name="pitch-{{outer_loop.index0+1}}-batter_hand" required>
+                            <option value="" selected hidden disabled>Select</option>
+                            {% if pitch['batter_hand'] in ['R', 'RH', 'RHH', 'r', 'rh', 'rhh'] %}
+                                <option value="RHH" selected>RHH</option>
+                                <option value="LHH">LHH</option>
+                            {% else  %}
+                                <option value="RHH">RHH</option>
+                                <option value="RHH" selected>RHH</option>
                             {% endif %}
-                        </td>
-                        <td>
-                            <select id="pitch-{{outer_loop.index0+1}}-result" name="pitch-{{outer_loop.index0+1}}-result" required>
-                                <option value="" {% if pitch["result"] in [None, ''] %} selected='selected' {% endif %}>N/A</option>
-                                <option value="GB" {% if pitch["result"] in ['GB', 'gb'] %} selected='selected' {% endif %}>GB</option>
-                                <option value="FB" {% if pitch["result"] in ['FB', 'fb'] %} selected='selected' {% endif %}>FB</option>
-                                <option value="LD" {% if pitch["result"] in ['LD', 'ld'] %} selected='selected' {% endif %}>LD</option>
-                                <option value="K" {% if pitch["result"] in ['K', 'k'] %} selected='selected' {% endif %}>K</option>
-                                <option value="KL" {% if pitch["result"] in ['KL', 'kl'] %} selected='selected' {% endif %}>KL</option>
-                                <option value="BB" {% if pitch["result"] in ['BB', 'bb'] %} selected='selected' {% endif %}>BB</option>
-                                <option value="HBP" {% if pitch["result"] in ['HBP', 'hbp'] %} selected='selected' {% endif %}>HBP</option>
-                            </select>
-                        </td>
-                        <td>
-                            <select id="pitch-{{outer_loop.index0+1}}-fielder" name="pitch-{{outer_loop.index0+1}}-fielder" required>
-                                <option value="" {% if pitch["fielder"]==None %} selected='selected' {% endif %}>N/A</option>
-                                <option value="P" {% if pitch["fielder"] in ['P', 'p'] %} selected='selected' {% endif %}>P</option>
-                                <option value="C" {% if pitch["fielder"] in ['C', 'c'] %} selected='selected' {% endif %}>C</option>
-                                <option value="1B" {% if pitch["fielder"] in ['1B', '1b'] %} selected='selected' {% endif %}>1B</option>
-                                <option value="2B" {% if pitch["fielder"] in ['2B', '2b'] %} selected='selected' {% endif %}>2B</option>
-                                <option value="3B" {% if pitch["fielder"] in ['3B', '3b'] %} selected='selected' {% endif %}>3B</option>
-                                <option value="SS" {% if pitch["fielder"] in ['SS', 'ss'] %} selected='selected' {% endif %}>SS</option>
-                                <option value="LF" {% if pitch["fielder"] in ['LF', 'lf'] %} selected='selected' {% endif %}>LF</option>
-                                <option value="CF" {% if pitch["fielder"] in ['CF', 'cf'] %} selected='selected' {% endif %}>CF</option>
-                                <option value="RF" {% if pitch["fielder"] in ['RF', 'rf'] %} selected='selected' {% endif %}>RF</option>
-                            </select>
-                        </td>
-                        <td>
-                            {% if pitch['hit'] in [1, 'yes', 'Yes', '1', 'Y', 'y'] %}
-                                <input id="pitch-{{outer_loop.index0+1}}-hit" name="pitch-{{outer_loop.index0+1}}-hit" type="checkbox" value="y" checked>
-                            {% else %}
-                                <input id="pitch-{{outer_loop.index0+1}}-hit" name="pitch-{{outer_loop.index0+1}}-hit" type="checkbox" value="y">
-                            {% endif %}
-                        </td>
-                        <td>
-                            <select id="pitch-{{outer_loop.index0+1}}-out" name="pitch-{{outer_loop.index0+1}}-out" required>
-                                <option value="" {% if pitch["out"] in [None, ''] %} selected='selected' {% endif %}>N/A</option>
-                                <option value="1" {% if pitch["out"] in [1, '1'] %} selected='selected' {% endif %}>1</option>
-                                <option value="2" {% if pitch["out"] in [2, '2'] %} selected='selected' {% endif %}>2</option>
-                                <option value="3" {% if pitch["out"] in [3, '3'] %} selected='selected' {% endif %}>3</option>
-                            </select>
-                        </td>
-                        <td>
-                            <input id="pitch-{{outer_loop.index0+1}}-inning" name="pitch-{{outer_loop.index0+1}}-inning" size="4" type="text" value="{{pitch['inning']}}">
-                        </td>
-                    </tr>
-                {% endfor %}
+                        </select>
+                    </td>
+                    <td>
+                        <input id="pitch-{{outer_loop.index0+1}}-velocity" name="pitch-{{outer_loop.index0+1}}-velocity" size="4" type="text" value="{{pitch['velocity']}}">
+                    </td>
+                    <td>
+                        <select id="pitch-{{outer_loop.index0+1}}-lead_runner" name="pitch-{{outer_loop.index0+1}}-lead_runner" required>
+                            <option value="Empty" selected>Empty</option>
+                            <option value="1" {% if pitch['lead_runner']==1 %} selected='selected' {% endif %}>1</option>
+                            <option value="2" {% if pitch['lead_runner']==2 %} selected='selected' {% endif %}>2</option>
+                            <option value="3" {% if pitch['lead_runner']==3 %} selected='selected' {% endif %}>3</option>
+                        </select>
+                    </td>
+                    <td>
+                        <input id="pitch-{{outer_loop.index0+1}}-time_to_plate" name="pitch-{{outer_loop.index0+1}}-time_to_plate" size="4" type="text" value="{{pitch['time_to_plate']}}">
+                    </td>
+                    <td>
+                        <select id="pitch-{{outer_loop.index0+1}}-pitch_type" name="pitch-{{outer_loop.index0+1}}-pitch_type" required>
+                            <option value="" {% if pitch['pitch_type']=='' %} selected='selected' {% endif %}>Select</option>
+                            <option value="1" {% if pitch['pitch_type'] in [1, '1'] %} selected='selected' {% endif %}>1</option>
+                            <option value="2" {% if pitch['pitch_type'] in [2, '2'] %} selected='selected' {% endif %}>2</option>
+                            <option value="3" {% if pitch['pitch_type'] in [3, '3'] %} selected='selected' {% endif %}>3</option>
+                            <option value="4" {% if pitch['pitch_type'] in [4, '4'] %} selected='selected' {% endif %}>4</option>
+                            <option value="5" {% if pitch['pitch_type'] in [5, '5'] %} selected='selected' {% endif %}>5</option>
+                            <option value="7" {% if pitch['pitch_type'] in [7, '7'] %} selected='selected' {% endif %}>7</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select id="pitch-{{outer_loop.index0+1}}-pitch_result" name="pitch-{{outer_loop.index0+1}}-pitch_result" required>
+                            <option value="" {% if pitch['pitch_result'].strip()=='' %} selected='selected' {% endif %}>Select</option>
+                            <option value="B" {% if pitch['pitch_result'].strip() in ['B', 'b'] %} selected='selected' {% endif %}>B</option>
+                            <option value="CS" {% if pitch['pitch_result'].strip() in ['CS', 'cs'] %} selected='selected' {% endif %}>CS</option>
+                            <option value="SS" {% if pitch['pitch_result'].strip() in ['SS', 'ss'] %} selected='selected' {% endif %}>SS</option>
+                            <option value="F" {% if pitch['pitch_result'].strip() in ['F', 'f'] %} selected='selected' {% endif %}>F</option>
+                            <option value="IP" {% if pitch['pitch_result'].strip() in ['IP', 'ip'] %} selected='selected' {% endif %}>IP</option>
+                        </select>
+                    </td>
+                    <td>
+                        {% if pitch['hit_spot'] in [1, 'Y', 'y', 'yes', 'Yes'] %}
+                            <input id="pitch-{{outer_loop.index0+1}}-hit_spot" name="pitch-{{outer_loop.index0+1}}-hit_spot" type="checkbox" value="y" checked>
+                        {% else %}
+                            <input id="pitch-{{outer_loop.index0+1}}-hit_spot" name="pitch-{{outer_loop.index0+1}}-hit_spot" type="checkbox" value="y">
+                        {% endif %}
+                    </td>
+                    <td>
+                        <select id="pitch-{{outer_loop.index0+1}}-result" name="pitch-{{outer_loop.index0+1}}-result" required>
+                            <option value="" {% if pitch["result"] in [None, ''] %} selected='selected' {% endif %}>N/A</option>
+                            <option value="GB" {% if pitch["result"] in ['GB', 'gb'] %} selected='selected' {% endif %}>GB</option>
+                            <option value="FB" {% if pitch["result"] in ['FB', 'fb'] %} selected='selected' {% endif %}>FB</option>
+                            <option value="LD" {% if pitch["result"] in ['LD', 'ld'] %} selected='selected' {% endif %}>LD</option>
+                            <option value="K" {% if pitch["result"] in ['K', 'k'] %} selected='selected' {% endif %}>K</option>
+                            <option value="KL" {% if pitch["result"] in ['KL', 'kl'] %} selected='selected' {% endif %}>KL</option>
+                            <option value="BB" {% if pitch["result"] in ['BB', 'bb'] %} selected='selected' {% endif %}>BB</option>
+                            <option value="HBP" {% if pitch["result"] in ['HBP', 'hbp'] %} selected='selected' {% endif %}>HBP</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select id="pitch-{{outer_loop.index0+1}}-fielder" name="pitch-{{outer_loop.index0+1}}-fielder" required>
+                            <option value="" {% if pitch["fielder"]==None %} selected='selected' {% endif %}>N/A</option>
+                            <option value="P" {% if pitch["fielder"] in ['P', 'p'] %} selected='selected' {% endif %}>P</option>
+                            <option value="C" {% if pitch["fielder"] in ['C', 'c'] %} selected='selected' {% endif %}>C</option>
+                            <option value="1B" {% if pitch["fielder"] in ['1B', '1b'] %} selected='selected' {% endif %}>1B</option>
+                            <option value="2B" {% if pitch["fielder"] in ['2B', '2b'] %} selected='selected' {% endif %}>2B</option>
+                            <option value="3B" {% if pitch["fielder"] in ['3B', '3b'] %} selected='selected' {% endif %}>3B</option>
+                            <option value="SS" {% if pitch["fielder"] in ['SS', 'ss'] %} selected='selected' {% endif %}>SS</option>
+                            <option value="LF" {% if pitch["fielder"] in ['LF', 'lf'] %} selected='selected' {% endif %}>LF</option>
+                            <option value="CF" {% if pitch["fielder"] in ['CF', 'cf'] %} selected='selected' {% endif %}>CF</option>
+                            <option value="RF" {% if pitch["fielder"] in ['RF', 'rf'] %} selected='selected' {% endif %}>RF</option>
+                        </select>
+                    </td>
+                    <td>
+                        {% if pitch['hit'] in [1, 'yes', 'Yes', '1', 'Y', 'y'] %}
+                            <input id="pitch-{{outer_loop.index0+1}}-hit" name="pitch-{{outer_loop.index0+1}}-hit" type="checkbox" value="y" checked>
+                        {% else %}
+                            <input id="pitch-{{outer_loop.index0+1}}-hit" name="pitch-{{outer_loop.index0+1}}-hit" type="checkbox" value="y">
+                        {% endif %}
+                    </td>
+                    <td>
+                        <select id="pitch-{{outer_loop.index0+1}}-out" name="pitch-{{outer_loop.index0+1}}-out" required>
+                            <option value="" {% if pitch["out"] in [None, ''] %} selected='selected' {% endif %}>N/A</option>
+                            <option value="1" {% if pitch["out"] in [1, '1'] %} selected='selected' {% endif %}>1</option>
+                            <option value="2" {% if pitch["out"] in [2, '2'] %} selected='selected' {% endif %}>2</option>
+                            <option value="3" {% if pitch["out"] in [3, '3'] %} selected='selected' {% endif %}>3</option>
+                        </select>
+                    </td>
+                    <td>
+                        <input id="pitch-{{outer_loop.index0+1}}-inning" name="pitch-{{outer_loop.index0+1}}-inning" size="4" type="text" value="{{pitch['inning']}}">
+                    </td>
+                </tr>
             {% endfor %}
         </table>
     </div>
