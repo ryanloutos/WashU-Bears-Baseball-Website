@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    <h1>{{ season }}</h1>
+    <br>
+    <div>
+        {% for o in outings %}
+        <p>
+            <a href="{{ url_for('outing',outing_id=o.id) }}">{{ o }}</a>
+        </p>
+        {% endfor %}
+    </div>
+{% endblock %}

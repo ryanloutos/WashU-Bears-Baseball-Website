@@ -33,9 +33,9 @@ class Outing(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.Date, index=True)
     opponent = db.Column(db.String(32), index=True)
-    season = db.Column(db.String(32), index=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), index=True)
     # represents which pitcher this outing belongs to
+    season_id = db.Column(db.Integer, db.ForeignKey('season.id'), index=True)
     pitches = db.relationship('Pitch', backref='outing', lazy='dynamic')
     # where all the pitches to the outing are stored
 
@@ -63,16 +63,24 @@ class Pitch(db.Model):
     pitch_type = db.Column(db.String(8), index=True)
     pitch_result = db.Column(db.String(8), index=True)
     hit_spot = db.Column(db.Boolean, index=True)
-    count_balls = db.Column(db.String(8), index=True)
-    count_strikes = db.Column(db.String(8), index=True)
-    result = db.Column(db.String(8), index=True)
+    count = db.Column(db.String(8), index=True)
+    ab_result = db.Column(db.String(32), index=True)
+    traj = db.Column(db.String(8), index=True)
     fielder = db.Column(db.String(8), index=True)
-    hit = db.Column(db.Boolean, index=True)
-    out = db.Column(db.String(8), index=True)
     inning = db.Column(db.Integer, index=True)
 
     def __repr__(self):
         return f'<outing: {self.outing_id}, pitch: {self.pitch_num}>'
+
+
+class Season(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    semester = db.Column(db.String(8), index=True)
+    year = db.Column(db.String(8), index=True)
+    outings = db.relationship('Outing', backref='season', lazy='dynamic')
+
+    def __repr__(self):
+        return f'{self.semester} {self.year}'
 
 
 @login.user_loader

@@ -55,12 +55,10 @@
                     <th>Pitch Type</th>
                     <th>Pitch Result</th>
                     <th>Hit Spot?</th>
-                    <th>Balls</th>
-                    <th>Strikes</th>
-                    <th>Result</th>
+                    <th>Count</th>
+                    <th>AB Result</th>
+                    <th>GB/FB/LD</th>
                     <th>Fielder</th>
-                    <th>Hit?</th>
-                    <th>Out #</th>
                     <th>Inning</th>
                 </tr>
                 {% for pitch in outing.pitches %}
@@ -74,12 +72,10 @@
                     <td>{{ pitch.pitch_type }}</td>
                     <td>{{ pitch.pitch_result }}</td>
                     <td>{{ pitch.hit_spot }}</td>
-                    <td>{{ pitch.count_balls }}</td>
-                    <td>{{ pitch.count_strikes }}</td>
-                    <td>{{ pitch.result }}</td>
+                    <td>{{ pitch.count }}</td>
+                    <td>{{ pitch.ab_result }}</td>
+                    <td>{{ pitch.traj }}</td>
                     <td>{{ pitch.fielder }}</td>
-                    <td>{{ pitch.hit }}</td>
-                    <td>{{ pitch.out }}</td>
                     <td>{{ pitch.inning }}</td>
                 </tr>
                 {% endfor %}

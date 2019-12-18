@@ -302,7 +302,7 @@ def pitchUsageByCount(outing):
     }
 
     for pitch in outing.pitches:
-        count = f"{pitch.count_balls}-{pitch.count_strikes}"
+        count = pitch.count
         pitch_type = PitchType(pitch.pitch_type).name
 
         counts[count]["total"] += 1
@@ -424,7 +424,7 @@ def pitchUsageByCountLineCharts(data):
     for count, dat in data.items():
         for pitch, usage in dat['pitches'].items():
             data_reformat[pitch][count] = usage
-    print(data_reformat)
+    # print(data_reformat)
 
     line_chart = pygal.Line(
         style=DarkSolarizedStyle,

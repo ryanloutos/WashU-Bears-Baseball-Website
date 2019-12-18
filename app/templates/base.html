@@ -30,7 +30,8 @@
                     <li><a href="{{ url_for('login') }}">Login</a></li>
                     {% else %}
                         {% if current_user.admin %}
-                        <li><a href="{{ url_for('register') }}">Create New User</a></li>
+                        <li><a href="{{ url_for('register') }}">New User</a></li>
+                        <li><a href="{{ url_for('new_season') }}">New Season</a></li>
                         {% endif %}
                     <li><a href="{{ url_for('new_outing') }}">New Outing</a></li>
                     <li><a href="{{ url_for('user', username=current_user.username) }}">{{ current_user.username }}</a></li>

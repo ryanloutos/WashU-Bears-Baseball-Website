@@ -3,8 +3,8 @@ from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.urls import url_parse
 from app import app, db
 from app.forms import LoginForm, RegistrationForm, OutingForm, PitchForm
-from app.forms import NewOutingFromCSV
-from app.models import User, Outing, Pitch
+from app.forms import NewOutingFromCSV, SeasonForm
+from app.models import User, Outing, Pitch, Season
 from app.stats import calcPitchPercentages, pitchUsageByCount, calcAverageVelo
 from app.stats import calcPitchStrikePercentage, calcPitchWhiffRate
 from app.stats import createPitchPercentagePieChart, velocityOverTimeLineChart
@@ -23,7 +23,12 @@ import random
 @login_required
 def index():
     users = User.query.filter(User.year != 'Coach/Manager').all()
-    return render_template('index.html', title='Home', users=users)
+    seasons = Season.query.all()
+    return render_template(
+        'index.html',
+        title='Home',
+        users=users,
+        seasons=seasons)
 
 
 # login page for portal, only team members, coaches, etc. have logins
@@ -90,10 +95,31 @@ def register():
         db.session.commit()
 
         # redirects to login page
-        flash('Congratulations, you are now a registered user!')
+        flash('Congratulations, you just created a new user!')
         return redirect(url_for('login'))
 
     return render_template('register.html', title='Register', form=form)
+
+@app.route('/new_season', methods=['GET', 'POST'])
+@login_required
+def new_season():
+    # if user is not an admin, they can't add player/coach to portal
+    if not current_user.admin:
+        flash('You are not an admin and cannot create a user')
+        return redirect(url_for('index'))
+    
+    form = SeasonForm()
+    if form.validate_on_submit():
+        season = Season(semester=form.semester.data,
+                        year=form.year.data)
+        db.session.add(season)
+        db.session.commit()
+
+        flash('Congratulations, you just made a new season!')
+        return redirect(url_for('login'))
+    
+    return render_template('new_season.html', title='New Sesason', form=form)
+
 
 # User page where the outings that a player has thrown will show up
 @app.route('/user/<username>')
@@ -111,6 +137,20 @@ def user(username):
         user=user,
         outings=outings)
 
+# Season page to view all of the outings in a season
+@app.route('/season/<id>')
+@login_required
+def season(id):
+    season = Season.query.filter_by(id=id).first_or_404()
+
+    outings = season.outings
+
+    return render_template(
+        'season.html',
+        title='Season',
+        season=season,
+        outings=outings)
+
 # Page for someone to create a new outing either for themself or for another
 # player if admin
 @app.route('/new_outing', methods=['GET', 'POST'])
@@ -120,9 +160,14 @@ def new_outing():
 
     # gets all the User objects that are players on the team
     pitchers_objects = User.query.filter(User.year != 'Coach/Manager').all()
-
+    # season_objects = Season.query.all()
     # set the available choices that someone can create an outing for
     available_pitchers = []
+    available_seasons = []
+
+    # for s in season_objects:
+    #     available_seasons.append((s.id, s))
+
     # admins can create outings for anyone
     if (current_user.admin):
         for p in pitchers_objects:
@@ -140,6 +185,7 @@ def new_outing():
 
     # set the choices made above
     form.pitcher.choices = available_pitchers
+    # form.season.choices = available_seasons
 
     # when the 'Create Outing' button is pressed
     if form.validate_on_submit():
@@ -153,11 +199,11 @@ def new_outing():
         # gets the user associated the username of the pitcher the outing
         # is being created for
         user = User.query.filter_by(username=username).first_or_404()
-
+        
         # creates a new outing object based on form data and user
         outing = Outing(date=form.date.data,
                         opponent=form.opponent.data,
-                        season=form.season.data,
+                        season_id=form.season.data.id,
                         user_id=user.id)
 
         # add the new outing to the database before pitches so pitches have a
@@ -167,6 +213,7 @@ def new_outing():
 
         balls = 0
         strikes = 0
+        count = '0-0'
         # add each individual pitch to the database
         for index, subform in enumerate(form.pitch):
             # creates Pitch object based on subform data
@@ -182,15 +229,13 @@ def new_outing():
                 pitch_type=subform.pitch_type.data,
                 pitch_result=subform.pitch_result.data,
                 hit_spot=subform.hit_spot.data,
-                count_balls=balls,
-                count_strikes=strikes,
-                result=subform.result.data,
+                count=count,
+                ab_result=subform.ab_result.data,
+                traj=subform.traj.data,
                 fielder=subform.fielder.data,
-                hit=subform.hit.data,
-                out=subform.out.data,
                 inning=subform.inning.data)
 
-            if pitch.result is not '':
+            if pitch.ab_result is not '':
                 balls = 0
                 strikes = 0
             else:
@@ -199,6 +244,8 @@ def new_outing():
                 else:
                     if strikes is not 2:
                         strikes += 1
+            count = f'{balls}-{strikes}'
+
             # adds pitch to database
             db.session.add(pitch)
             db.session.commit()
@@ -285,6 +332,7 @@ def edit_outing(outing_id):
 
         balls = 0
         strikes = 0
+        count = '0-0'
         # add each individual pitch to the database
         for index, subform in enumerate(form.pitch):
 
@@ -292,7 +340,7 @@ def edit_outing(outing_id):
             pitchNum = index+1
 
             pitch = Pitch(
-                outing_id=outing_edited.id,
+                outing_id=outing.id,
                 pitch_num=pitchNum,
                 batter_id=subform.batter_id.data,
                 batter_hand=subform.batter_hand.data,
@@ -302,15 +350,13 @@ def edit_outing(outing_id):
                 pitch_type=subform.pitch_type.data,
                 pitch_result=subform.pitch_result.data,
                 hit_spot=subform.hit_spot.data,
-                count_balls=balls,
-                count_strikes=strikes,
-                result=subform.result.data,
+                count=count,
+                ab_result=subform.ab_result.data,
+                traj=subform.traj.data,
                 fielder=subform.fielder.data,
-                hit=subform.hit.data,
-                out=subform.out.data,
                 inning=subform.inning.data)
 
-            if pitch.result is not '':
+            if pitch.ab_result is not '':
                 balls = 0
                 strikes = 0
             else:
@@ -320,6 +366,7 @@ def edit_outing(outing_id):
                     if strikes is not 2:
                         strikes += 1
 
+            count = f'{balls}-{strikes}'
             # adds pitch to database
             db.session.add(pitch)
             db.session.commit()

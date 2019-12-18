@@ -4,12 +4,21 @@
     <h1>
         WashU 2019-2020 Pitching Staff
     </h1>
-    <h2>You can view outings by players by clicking their name</h2>
+    <h2>Players:</h2>
     <br>
     <div>
         {% for u in users %}
         <p>
             <a href="{{ url_for('user', username=u.username) }}">{{ u }}</a>
+        </p>
+        {% endfor %}
+    </div>
+    <h2>Seasons:</h2>
+    <br>
+    <div>
+        {% for s in seasons %}
+        <p>
+            <a href="{{ url_for('season', id=s.id) }}">{{ s }}</a>
         </p>
         {% endfor %}
     </div>

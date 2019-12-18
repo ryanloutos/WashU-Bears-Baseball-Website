@@ -6,7 +6,8 @@ from wtforms import FieldList, FormField
 from wtforms.fields.html5 import DateField
 from wtforms.validators import ValidationError, DataRequired, Email
 from wtforms.validators import EqualTo, Optional
-from app.models import User
+from app.models import User, Season
+from wtforms.ext.sqlalchemy.fields import QuerySelectField
 
 
 # Basic form for users to login, must type in both username and a password
@@ -15,6 +16,15 @@ class LoginForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     remember_me = BooleanField('Remember Me')
     submit = SubmitField('Sign In')
+
+
+class SeasonForm(FlaskForm):
+    semester = SelectField(
+        'Semester',
+        choices=[('Fall', 'Fall'), ('Spring', 'Spring')],
+        validators=[DataRequired()])
+    year = StringField('Year', validators=[DataRequired()])
+    submit = SubmitField('Create New Season')
 
 
 # Creating a new account. Only admin users can access this page
@@ -29,9 +39,7 @@ class RegistrationForm(FlaskForm):
             ('JR', 'JR'),
             ('SR', 'SR'),
             ('Coach/Manager', 'Coach/Manager')],
-        validators=[DataRequired()
-                    ]
-                )
+        validators=[DataRequired()])
     throws = RadioField(
         'Throws',
         choices=[('R', 'R'), ('L', 'L')],
@@ -88,31 +96,26 @@ class PitchForm(FlaskForm):
             ('F', 'F'), ('IP', 'IP')],
         validators=[Optional()])
     hit_spot = BooleanField('Hit Spot?', validators=[Optional()])
-    # count_balls = SelectField(
-    #     'Balls',
-    #     choices=[('0', '0'), ('1', '1'), ('2', '2'), ('3', '3')],
-    #     validators=[Optional()])
-    # count_strikes = SelectField(
-    #     'Strikes',
-    #     choices=[('0', '0'), ('1', '1'), ('2', '2')],
-    #     validators=[Optional()])
-    result = SelectField(
+    ab_result = SelectField(
         'Result',
         choices=[
-            ('', 'Select'), ('GB', 'GB'), ('FB', 'FB'), ('LD', 'LD'),
-            ('K', 'K'), ('KL', 'KL'), ('BB', 'BB'), ('HBP', 'HBP')],
+            ('', 'Select'), ('IP->Out', 'IP->Out'), ('K', 'K'),
+            ('KL', 'KL'), ('BB', 'BB'), ('HBP', 'HBP'),
+            ('1B', '1B'), ('2B', '2B'), ('3B', '3B'),
+            ('HR', 'HR'), ('Error', 'Error'), ('CI', 'CI'), ('FC', 'FC'),
+            ('Drop3rd->Out', 'Drop3rd->Out'),
+            ('Drop3rd->Safe', 'Drop3rd->Safe')],
+        validators=[Optional()])
+    traj = SelectField(
+        'GB/LD/FB',
+        choices=[('', 'Select'), ('GB', 'GB'), ('LD', 'LD'), ('FB', 'FB')],
         validators=[Optional()])
     fielder = SelectField(
         'Fielder',
         choices=[
-            ('', 'Select'), ('P', 'P'), ('C', 'C'), ('1B', '1B'),
-            ('2B', '2B'), ('3B', '3B'), ('SS', 'SS'), ('LF', 'LF'),
-            ('CF', 'CF'), ('RF', 'RF')],
-        validators=[Optional()])
-    hit = BooleanField('Hit?', validators=[Optional()])
-    out = SelectField(
-        'Out #',
-        choices=[('', 'Select'), ('1', '1'), ('2', '2'), ('3', '3')],
+            ('', 'Select'), ('1', '1'), ('2', '2'), ('3', '3'),
+            ('4', '4'), ('5', '5'), ('6', '6'), ('7', '7'),
+            ('8', '8'), ('9', '9')],
         validators=[Optional()])
     inning = IntegerField('Inning', validators=[Optional()])
 
@@ -128,7 +131,11 @@ class OutingForm(FlaskForm):
     pitcher = SelectField('Pitcher', validators=[Optional()])
     date = DateField('Date', validators=[DataRequired()], format='%Y-%m-%d')
     opponent = StringField('Opponent', validators=[DataRequired()])
-    season = StringField('Season', validators=[DataRequired()])
+    # season = SelectField('Season', validators=[Optional()], coerce=int)
+    season = QuerySelectField(
+        query_factory=lambda: Season.query,
+        get_pk=lambda s: s,
+        get_label=lambda s: s)
     pitch = FieldList(
         FormField(PitchForm),
         min_entries=1,

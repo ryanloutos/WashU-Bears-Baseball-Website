@@ -85,7 +85,7 @@
         </p>
         <p>
             {{ form.season.label }}<br>
-            {{ form.season(size=32) }}<br>
+            {{ form.season() }}<br>
             {% for error in form.season.errors %}
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
@@ -106,10 +106,9 @@
                     <th>Pitch Type</th>
                     <th>Pitch Result</th>
                     <th>Hit Spot?</th>
-                    <th>Result</th>
+                    <th>AB Result</th>
+                    <th>GB/LD/FB</th>
                     <th>Fielder</th>
-                    <th>Hit?</th>
-                    <th>Out #</th>
                     <th>Inning</th>
                 </tr>
                 {% for subform in form.pitch %}
@@ -123,10 +122,9 @@
                     <td>{{ subform.pitch_type() }}</td>
                     <td>{{ subform.pitch_result() }}</td>
                     <td>{{ subform.hit_spot() }}</td>
-                    <td>{{ subform.result() }}</td>
+                    <td>{{ subform.ab_result() }}</td>
+                    <td>{{ subform.traj() }}</td>
                     <td>{{ subform.fielder() }}</td>
-                    <td>{{ subform.hit() }}</td>
-                    <td>{{ subform.out() }}</td>
                     <td>{{ subform.inning(size=4) }}</td>
                 </tr>
                 {% endfor %}
