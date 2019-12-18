@@ -10,7 +10,12 @@ To do
 - Go through code and make sure everything is neat and organized where it is at
 - Get debugger working for vscode
 - Make the function documentation things
-- 
+- Add basic baseball stat division(hits, walks, ...)
+- summary stats by game(player home page)
+- game selected summary stats(able to choose outings to compare/ over time)
+- whole team comparison and global tables
+- tracking individual pitches over a season
+
 
 Ideas for improvement
 - Make num_pitches automatic
