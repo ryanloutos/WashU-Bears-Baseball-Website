@@ -18,8 +18,6 @@ To do
 
 
 Ideas for improvement
-- Make num_pitches automatic
-- Make count_balls and count_strikes automatic
 - Improve little data entry things
 - Figure out way to make data entry fast and easy
 - Make default seasons to choose from
