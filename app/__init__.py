@@ -15,4 +15,4 @@ login.login_view = 'login'
 bootstrap = Bootstrap(app)
 
 # this position is required for flask to function
-from app import routes, models
+from app import routes, models, errors
