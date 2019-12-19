@@ -6,7 +6,7 @@ from wtforms import FieldList, FormField
 from wtforms.fields.html5 import DateField
 from wtforms.validators import ValidationError, DataRequired, Email
 from wtforms.validators import EqualTo, Optional
-from app.models import User, Season
+from app.models import User, Season, Opponent
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 
 
@@ -18,6 +18,7 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Sign In')
 
 
+# Creating a new season
 class SeasonForm(FlaskForm):
     semester = SelectField(
         'Semester',
@@ -25,6 +26,12 @@ class SeasonForm(FlaskForm):
         validators=[DataRequired()])
     year = StringField('Year', validators=[DataRequired()])
     submit = SubmitField('Create New Season')
+
+
+# Creating a new opponent
+class OpponentForm(FlaskForm):
+    name = StringField('Name', validators=[DataRequired()])
+    submit = SubmitField('Create New Opponent')
 
 
 # Creating a new account. Only admin users can access this page
@@ -130,8 +137,10 @@ class PitchForm(FlaskForm):
 class OutingForm(FlaskForm):
     pitcher = SelectField('Pitcher', validators=[Optional()])
     date = DateField('Date', validators=[DataRequired()], format='%Y-%m-%d')
-    opponent = StringField('Opponent', validators=[DataRequired()])
-    # season = SelectField('Season', validators=[Optional()], coerce=int)
+    opponent = QuerySelectField(
+        query_factory=lambda: Opponent.query,
+        get_pk=lambda o: o,
+        get_label=lambda o: o)
     season = QuerySelectField(
         query_factory=lambda: Season.query,
         get_pk=lambda s: s,

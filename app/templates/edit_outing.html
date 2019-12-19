@@ -70,14 +70,22 @@
         </p>
         <p>
             {{ form.opponent.label }}<br>
-            {{ form.opponent(size=32, value=outing.opponent) }}<br>
+            <select id="opponent" name="opponent" required>
+                {% for o in all_opponents %}
+                    <option value="{{o}}" {% if o.id == this_opponent.id %} selected='selected' {% endif %}>{{o}}</option>
+                {% endfor %}
+            </select>
             {% for error in form.opponent.errors %}
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
         </p>
         <p>
             {{ form.season.label }}<br>
-            {{ form.season(value=outing.season) }}<br>
+            <select id="season" name="season" required>
+                {% for s in all_seasons %}
+                    <option value="{{s}}" {% if s.id == this_season.id %} selected='selected' {% endif %}>{{s}}</option>
+                {% endfor %}
+            </select>
             {% for error in form.season.errors %}
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}

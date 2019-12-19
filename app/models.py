@@ -4,7 +4,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 
 
-# Setting up User table
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     admin = db.Column(db.Boolean, index=True)
@@ -28,11 +27,10 @@ class User(UserMixin, db.Model):
         return check_password_hash(self.password_hash, password)
 
 
-# Setting up Outing table
 class Outing(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.Date, index=True)
-    opponent = db.Column(db.String(32), index=True)
+    opponent_id = db.Column(db.Integer, db.ForeignKey('opponent.id'), index=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), index=True)
     # represents which pitcher this outing belongs to
     season_id = db.Column(db.Integer, db.ForeignKey('season.id'), index=True)
@@ -49,7 +47,6 @@ class Outing(db.Model):
         return self.id
 
 
-# Sets up Pitch table
 class Pitch(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     outing_id = db.Column(db.Integer, db.ForeignKey('outing.id'), index=True)
@@ -81,6 +78,15 @@ class Season(db.Model):
 
     def __repr__(self):
         return f'{self.semester} {self.year}'
+
+
+class Opponent(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64), index=True)
+    outings = db.relationship('Outing', backref='opponent', lazy='dynamic')
+
+    def __repr__(self):
+        return self.name
 
 
 @login.user_loader

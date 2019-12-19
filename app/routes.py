@@ -3,8 +3,8 @@ from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.urls import url_parse
 from app import app, db
 from app.forms import LoginForm, RegistrationForm, OutingForm, PitchForm
-from app.forms import NewOutingFromCSV, SeasonForm
-from app.models import User, Outing, Pitch, Season
+from app.forms import NewOutingFromCSV, SeasonForm, OpponentForm
+from app.models import User, Outing, Pitch, Season, Opponent
 from app.stats import calcPitchPercentages, pitchUsageByCount, calcAverageVelo
 from app.stats import calcPitchStrikePercentage, calcPitchWhiffRate
 from app.stats import createPitchPercentagePieChart, velocityOverTimeLineChart
@@ -275,7 +275,7 @@ def new_season():
     '''
     # if user is not an admin, they can't create a new season
     if not current_user.admin:
-        flash('You are not an admin and cannot create a user')
+        flash('You are not an admin and cannot create a season')
         return redirect(url_for('index'))
 
     # when the Create Season button is pressed...
@@ -295,6 +295,44 @@ def new_season():
         return redirect(url_for('index'))
 
     return render_template('new_season.html', form=form)
+
+# ***************-NEW OPPONENT-*************** #
+@app.route('/new_opponent', methods=['GET', 'POST'])
+@login_required
+def new_opponent():
+    '''
+    NEW OPPONENT
+    Can create a new opponent for outings to be associated
+    with
+
+    PARAM:
+        -None
+
+    RETURN:
+        -new_opponent.html and redirects to index page
+            once a new opponent was successfully created
+    '''
+    # if user is not an admin, they can't create a new season
+    if not current_user.admin:
+        flash('You are not an admin and cannot create a opponent')
+        return redirect(url_for('index'))
+
+    # when the Create Season button is pressed...
+    form = OpponentForm()
+    if form.validate_on_submit():
+
+        # insert data from form into season table
+        opponent = Opponent(name=form.name.data)
+
+        # send Season object to data table
+        db.session.add(opponent)
+        db.session.commit()
+
+        # redirect back to login page
+        flash('Congratulations, you just made a new opponent!')
+        return redirect(url_for('index'))
+
+    return render_template('new_opponent.html', form=form)
 
 # ***************-NEW OUTING-*************** #
 @app.route('/new_outing', methods=['GET', 'POST'])
@@ -317,7 +355,7 @@ def new_outing():
     form = OutingForm()
 
     # set the choices for all available pitchers
-    form.pitcher.choices = getAvailablePitchers
+    form.pitcher.choices = getAvailablePitchers()
 
     # when the 'Create Outing' button is pressed
     if form.validate_on_submit():
@@ -334,7 +372,7 @@ def new_outing():
 
         # creates a new outing object based on form data and user
         outing = Outing(date=form.date.data,
-                        opponent=form.opponent.data,
+                        opponent_id=form.opponent.data.id,
                         season_id=form.season.data.id,
                         user_id=user.id)
 
@@ -372,17 +410,12 @@ def new_outing():
                 fielder=subform.fielder.data,
                 inning=subform.inning.data)
 
-            # updates the count based on previous pitch
-            if pitch.ab_result is not '':
-                balls = 0
-                strikes = 0
-            else:
-                if pitch.pitch_result is 'B':
-                    balls += 1
-                else:
-                    if strikes is not 2:
-                        strikes += 1
-            count = f'{balls}-{strikes}'
+            # update count based on current count and pitch result
+            balls, strikes, count = updateCount(
+                balls,
+                strikes,
+                pitch.pitch_result,
+                pitch.ab_result)
 
             # adds pitch to database
             db.session.add(pitch)
@@ -395,7 +428,6 @@ def new_outing():
     return render_template('new_outing.html', title='New Outing', form=form)
 
 # ***************-EDIT OUTING-*************** #
-# FIXME update with new season update
 @app.route('/edit_outing/<outing_id>', methods=['GET', 'POST'])
 @login_required
 def edit_outing(outing_id):
@@ -416,8 +448,12 @@ def edit_outing(outing_id):
     # get the outing and user objects associated with this outing
     outing = Outing.query.filter_by(id=outing_id).first_or_404()
     user = User.query.filter_by(id=outing.user_id).first_or_404()
+    all_opponents = Opponent.query.all()
+    this_opponent = Opponent.query.filter_by(id=outing.opponent_id).first_or_404()
+    all_seasons = Season.query.all()
+    this_season = Season.query.filter_by(id=outing.season_id).first_or_404()
 
-    # only admins themselves can go back and edit outing data
+    # only admins can go back and edit outing data
     if not current_user.admin:
         flash("You are not an admin and cannot edit someone else's outing")
         return redirect(url_for('index'))
@@ -439,8 +475,8 @@ def edit_outing(outing_id):
 
         # create a new Outing object based on the form and put in database
         outing_edited = Outing(date=form.date.data,
-                               opponent=form.opponent.data,
-                               season=form.season.data,
+                               opponent_id=form.opponent.data.id,
+                               season_id=form.season.data.id,
                                user_id=user.id)
         db.session.add(outing_edited)
         db.session.commit()
@@ -458,7 +494,7 @@ def edit_outing(outing_id):
 
             # creates Pitch object based on subform data
             pitch = Pitch(
-                outing_id=outing.id,
+                outing_id=outing_edited.id,
                 pitch_num=pitch_num,
                 batter_id=subform.batter_id.data,
                 batter_hand=subform.batter_hand.data,
@@ -475,16 +511,11 @@ def edit_outing(outing_id):
                 inning=subform.inning.data)
 
             # updates the count based on previous pitch
-            if pitch.ab_result is not '':
-                balls = 0
-                strikes = 0
-            else:
-                if pitch.pitch_result is 'B':
-                    balls += 1
-                else:
-                    if strikes is not 2:
-                        strikes += 1
-            count = f'{balls}-{strikes}'
+            balls, strikes, count = updateCount(
+                balls,
+                strikes,
+                pitch.pitch_result,
+                pitch.ab_result)
 
             # adds pitch to database
             db.session.add(pitch)
@@ -501,7 +532,12 @@ def edit_outing(outing_id):
     return render_template(
         'edit_outing.html',
         title='Edit Outing',
-        outing=outing, form=form)
+        outing=outing,
+        all_opponents=all_opponents,
+        this_opponent=this_opponent,
+        all_seasons=all_seasons,
+        this_season=this_season,
+        form=form)
 
 # ***************-DELETE OUTING-*************** #
 @app.route('/delete_outing/<outing_id>', methods=['GET', 'POST'])
@@ -777,3 +813,17 @@ def validate_CSV(file_loc):
             return False
         else:
             return True
+
+
+def updateCount(balls, strikes, pitch_result, ab_result):
+    if ab_result is not '':
+        balls = 0
+        strikes = 0
+    else:
+        if pitch_result is 'B':
+            balls += 1
+        else:
+            if strikes is not 2:
+                strikes += 1
+    count = f'{balls}-{strikes}'
+    return (balls, strikes, count)

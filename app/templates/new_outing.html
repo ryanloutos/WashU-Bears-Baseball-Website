@@ -78,7 +78,7 @@
         </p>
         <p>
             {{ form.opponent.label }}<br>
-            {{ form.opponent(size=32) }}<br>
+            {{ form.opponent() }}<br>
             {% for error in form.opponent.errors %}
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
