@@ -7,20 +7,15 @@ The blog walks through setting up a flask app for someone with no experience and
 to get the ball rolling
 
 To do
-- Go through code and make sure everything is neat and organized where it is at
+- Go through code and make sure everything is neat and organized where it is at (need more docstrings still)
 - Get debugger working for vscode
-- Make the function documentation things
 - Add basic baseball stat division(hits, walks, ...)
 - summary stats by game(player home page)
 - game selected summary stats(able to choose outings to compare/ over time)
 - whole team comparison and global tables
 - tracking individual pitches over a season
-
-
-Ideas for improvement
 - Improve little data entry things
 - Figure out way to make data entry fast and easy
-- Make default seasons to choose from
 - Create a filter so you can choose to see cumulative data for team and/or individual pitchers over a certain time, season, etc.
 - Make a neat, clean, easy to read summary page for any outing(s)
 
@@ -34,8 +29,15 @@ Currently being worked on:
     - account for user input mistakes (spaces, capitals, strings vs numbers)
     - improve instruction set of upload file
   - DONE:
-    - Auto index for pitches and counts
     - It is possible to upload outings via CSV and have them saved to database
+- Getting data entry to a point to enter significant amount of data and doing statistical stuff with it
+  - TODO: 
+    - make innings entry more useful
+    - create ability to add/delete rows ANYWHERE in the table
+    - clean up edit_outing.html code using set choices saved somewhere that can be edited
+    - add Batter table to keep track of specific batters and sequences
+    - add more stuff here when I think of it
+
 
 
 
