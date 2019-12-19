@@ -30,7 +30,9 @@ class User(UserMixin, db.Model):
 class Outing(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.Date, index=True)
-    opponent_id = db.Column(db.Integer, db.ForeignKey('opponent.id'), index=True)
+    opponent_id = db.Column(db.Integer,
+                            db.ForeignKey('opponent.id'),
+                            index=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), index=True)
     # represents which pitcher this outing belongs to
     season_id = db.Column(db.Integer, db.ForeignKey('season.id'), index=True)

@@ -34,10 +34,9 @@ def index():
     '''
     users = User.query.filter(User.year != 'Coach/Manager').all()
     seasons = Season.query.all()
-    return render_template(
-        'index.html',
-        users=users,
-        seasons=seasons)
+    return render_template('index.html',
+                           users=users,
+                           seasons=seasons)
 
 # ***************-LOGIN-*************** #
 @app.route('/login', methods=['GET', 'POST'])
@@ -82,7 +81,8 @@ def login():
             next_page = url_for('index')
         return redirect(next_page)
 
-    return render_template('login.html', form=form)
+    return render_template('login.html',
+                           form=form)
 
 # ***************-LOGOUT-*************** #
 @app.route('/logout')
@@ -122,11 +122,10 @@ def user(username):
     # get the outings associated with that player
     outings = user.outings
 
-    return render_template(
-        'user.html',
-        title='User',
-        user=user,
-        outings=outings)
+    return render_template('user.html',
+                           title='User',
+                           user=user,
+                           outings=outings)
 
 # ***************-SEASON HOMEPAGE-*************** #
 @app.route('/season/<id>')
@@ -150,11 +149,10 @@ def season(id):
     # outings associated with the specific season
     outings = season.outings
 
-    return render_template(
-        'season.html',
-        title='Season',
-        season=season,
-        outings=outings)
+    return render_template('season.html',
+                           title='Season',
+                           season=season,
+                           outings=outings)
 
 # ***************-OUTING HOMEPAGE-*************** #
 @app.route('/outing/<outing_id>', methods=['GET', 'POST'])
@@ -182,33 +180,27 @@ def outing(outing_id):
     pitch_whiff = calcPitchWhiffRate(outing)
 
     # Get statistical graphics
-    usage_percentages_pie_chart = createPitchPercentagePieChart(
-        usage_percentages)
-    velocity_over_time_line_chart = velocityOverTimeLineChart(
-        outing)
-    strike_percentage_bar_chart = pitchStrikePercentageBarChart(
-        pitch_strike_percentage)
-    usage_percent_by_count_line_chart = pitchUsageByCountLineCharts(
-        counts_percentages)
+    usage_percentages_pie_chart = createPitchPercentagePieChart(usage_percentages)
+    velocity_over_time_line_chart = velocityOverTimeLineChart(outing)
+    strike_percentage_bar_chart = pitchStrikePercentageBarChart(pitch_strike_percentage)
+    usage_percent_by_count_line_chart = pitchUsageByCountLineCharts(counts_percentages)
 
     # render template with all the statistical data calculated from
     # the outing
-    return render_template(
-        'outing.html',
-        title='Outing',
-        outing=outing,
-        usages=usages,
-        usage_percentages=usage_percentages,
-        usage_percentages_pie_chart=usage_percentages_pie_chart,
-        counts=counts,
-        counts_percentages=counts_percentages,
-        pitch_avg_velo=pitch_avg_velo,
-        pitch_strike_percentage=pitch_strike_percentage,
-        pitch_whiff=pitch_whiff,
-        velocity_over_time_line_chart=velocity_over_time_line_chart,
-        strike_percentage_bar_chart=strike_percentage_bar_chart,
-        usage_percent_by_count_line_chart=usage_percent_by_count_line_chart
-        )
+    return render_template('outing.html',
+                           title='Outing',
+                           outing=outing,
+                           usages=usages,
+                           usage_percentages=usage_percentages,
+                           usage_percentages_pie_chart=usage_percentages_pie_chart,
+                           counts=counts,
+                           counts_percentages=counts_percentages,
+                           pitch_avg_velo=pitch_avg_velo,
+                           pitch_strike_percentage=pitch_strike_percentage,
+                           pitch_whiff=pitch_whiff,
+                           velocity_over_time_line_chart=velocity_over_time_line_chart,
+                           strike_percentage_bar_chart=strike_percentage_bar_chart,
+                           usage_percent_by_count_line_chart=usage_percent_by_count_line_chart)
 
 # ***************-NEW USER-*************** #
 @app.route('/register', methods=['GET', 'POST'])
@@ -255,7 +247,8 @@ def register():
         flash('Congratulations, you just created a new user!')
         return redirect(url_for('login'))
 
-    return render_template('register.html', form=form)
+    return render_template('register.html',
+                           form=form)
 
 # ***************-NEW SEASON-*************** #
 @app.route('/new_season', methods=['GET', 'POST'])
@@ -294,7 +287,8 @@ def new_season():
         flash('Congratulations, you just made a new season!')
         return redirect(url_for('index'))
 
-    return render_template('new_season.html', form=form)
+    return render_template('new_season.html',
+                           form=form)
 
 # ***************-NEW OPPONENT-*************** #
 @app.route('/new_opponent', methods=['GET', 'POST'])
@@ -332,7 +326,8 @@ def new_opponent():
         flash('Congratulations, you just made a new opponent!')
         return redirect(url_for('index'))
 
-    return render_template('new_opponent.html', form=form)
+    return render_template('new_opponent.html', 
+                           form=form)
 
 # ***************-NEW OUTING-*************** #
 @app.route('/new_outing', methods=['GET', 'POST'])
@@ -393,29 +388,27 @@ def new_outing():
             pitch_num = index+1
 
             # create Pitch object
-            pitch = Pitch(
-                outing_id=outing.id,
-                pitch_num=pitch_num,
-                batter_id=subform.batter_id.data,
-                batter_hand=subform.batter_hand.data,
-                velocity=subform.velocity.data,
-                lead_runner=subform.lead_runner.data,
-                time_to_plate=subform.time_to_plate.data,
-                pitch_type=subform.pitch_type.data,
-                pitch_result=subform.pitch_result.data,
-                hit_spot=subform.hit_spot.data,
-                count=count,
-                ab_result=subform.ab_result.data,
-                traj=subform.traj.data,
-                fielder=subform.fielder.data,
-                inning=subform.inning.data)
+            pitch = Pitch(outing_id=outing.id,
+                          pitch_num=pitch_num,
+                          batter_id=subform.batter_id.data,
+                          batter_hand=subform.batter_hand.data,
+                          velocity=subform.velocity.data,
+                          lead_runner=subform.lead_runner.data,
+                          time_to_plate=subform.time_to_plate.data,
+                          pitch_type=subform.pitch_type.data,
+                          pitch_result=subform.pitch_result.data,
+                          hit_spot=subform.hit_spot.data,
+                          count=count,
+                          ab_result=subform.ab_result.data,
+                          traj=subform.traj.data,
+                          fielder=subform.fielder.data,
+                          inning=subform.inning.data)
 
             # update count based on current count and pitch result
-            balls, strikes, count = updateCount(
-                balls,
-                strikes,
-                pitch.pitch_result,
-                pitch.ab_result)
+            balls, strikes, count = updateCount(balls,
+                                                strikes,
+                                                pitch.pitch_result,
+                                                pitch.ab_result)
 
             # adds pitch to database
             db.session.add(pitch)
@@ -425,7 +418,9 @@ def new_outing():
         flash("New Outing Created!")
         return redirect(url_for('index'))
 
-    return render_template('new_outing.html', title='New Outing', form=form)
+    return render_template('new_outing.html',
+                           title='New Outing',
+                           form=form)
 
 # ***************-EDIT OUTING-*************** #
 @app.route('/edit_outing/<outing_id>', methods=['GET', 'POST'])
@@ -493,29 +488,27 @@ def edit_outing(outing_id):
             pitch_num = index+1
 
             # creates Pitch object based on subform data
-            pitch = Pitch(
-                outing_id=outing_edited.id,
-                pitch_num=pitch_num,
-                batter_id=subform.batter_id.data,
-                batter_hand=subform.batter_hand.data,
-                velocity=subform.velocity.data,
-                lead_runner=subform.lead_runner.data,
-                time_to_plate=subform.time_to_plate.data,
-                pitch_type=subform.pitch_type.data,
-                pitch_result=subform.pitch_result.data,
-                hit_spot=subform.hit_spot.data,
-                count=count,
-                ab_result=subform.ab_result.data,
-                traj=subform.traj.data,
-                fielder=subform.fielder.data,
-                inning=subform.inning.data)
+            pitch = Pitch(outing_id=outing_edited.id,
+                          pitch_num=pitch_num,
+                          batter_id=subform.batter_id.data,
+                          batter_hand=subform.batter_hand.data,
+                          velocity=subform.velocity.data,
+                          lead_runner=subform.lead_runner.data,
+                          time_to_plate=subform.time_to_plate.data,
+                          pitch_type=subform.pitch_type.data,
+                          pitch_result=subform.pitch_result.data,
+                          hit_spot=subform.hit_spot.data,
+                          count=count,
+                          ab_result=subform.ab_result.data,
+                          traj=subform.traj.data,
+                          fielder=subform.fielder.data,
+                          inning=subform.inning.data)
 
             # updates the count based on previous pitch
-            balls, strikes, count = updateCount(
-                balls,
-                strikes,
-                pitch.pitch_result,
-                pitch.ab_result)
+            balls, strikes, count = updateCount(balls,
+                                                strikes,
+                                                pitch.pitch_result,
+                                                pitch.ab_result)
 
             # adds pitch to database
             db.session.add(pitch)
@@ -529,15 +522,14 @@ def edit_outing(outing_id):
     for p in range(0, outing.pitches.count()-1):
         form.pitch.append_entry()
 
-    return render_template(
-        'edit_outing.html',
-        title='Edit Outing',
-        outing=outing,
-        all_opponents=all_opponents,
-        this_opponent=this_opponent,
-        all_seasons=all_seasons,
-        this_season=this_season,
-        form=form)
+    return render_template('edit_outing.html',
+                           title='Edit Outing',
+                           outing=outing,
+                           all_opponents=all_opponents,
+                           this_opponent=this_opponent,
+                           all_seasons=all_seasons,
+                           this_season=this_season,
+                           form=form)
 
 # ***************-DELETE OUTING-*************** #
 @app.route('/delete_outing/<outing_id>', methods=['GET', 'POST'])
@@ -597,11 +589,10 @@ def new_outing_csv():
 
         # Get upload filename and save it to a temp file we can work with
         file_name = form.file.data.filename
-        file_loc = os.path.join(
-                os.path.dirname(os.path.realpath(__file__)),
-                "csv_files",
-                file_name
-            )
+        file_loc = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                                "csv_files",
+                                file_name)
+
         # save the file with its current name
         form.file.data.save(file_loc)
 
@@ -612,13 +603,14 @@ def new_outing_csv():
         # Analyze *.csv file for errors and discrepencies
         valid = validate_CSV(file_loc)
         if valid:
-            return redirect(
-                url_for('new_outing_csv_pitches', file_name=file_name))
+            return redirect(url_for('new_outing_csv_pitches', file_name=file_name))
         else:  # delete invalid csv and refresh page
             os.remove(file_loc)
-            return render_template("upload_csv.html", form=form)
+            return render_template("upload_csv.html",
+                                   form=form)
 
-    return render_template("upload_csv.html", form=form)
+    return render_template("upload_csv.html",
+                           form=form)
 
 # ***************-NEW OUTING CSV PITCHES-*************** #
 @app.route('/new_outing_csv_pitches/<file_name>', methods=['GET', 'POST'])
@@ -694,24 +686,23 @@ def new_outing_csv_pitches(file_name):
             # creates Pitch object based on subform data
             pitchNum = index+1
 
-            pitch = Pitch(
-                outing_id=outing.id,
-                pitch_num=pitchNum,
-                batter_id=subform.batter_id.data,
-                batter_hand=subform.batter_hand.data,
-                velocity=subform.velocity.data,
-                lead_runner=subform.lead_runner.data,
-                time_to_plate=subform.time_to_plate.data,
-                pitch_type=subform.pitch_type.data,
-                pitch_result=subform.pitch_result.data,
-                hit_spot=subform.hit_spot.data,
-                count_balls=balls,
-                count_strikes=strikes,
-                result=subform.result.data,
-                fielder=subform.fielder.data,
-                hit=subform.hit.data,
-                out=subform.out.data,
-                inning=subform.inning.data)
+            pitch = Pitch(outing_id=outing.id,
+                          pitch_num=pitchNum,
+                          batter_id=subform.batter_id.data,
+                          batter_hand=subform.batter_hand.data,
+                          velocity=subform.velocity.data,
+                          lead_runner=subform.lead_runner.data,
+                          time_to_plate=subform.time_to_plate.data,
+                          pitch_type=subform.pitch_type.data,
+                          pitch_result=subform.pitch_result.data,
+                          hit_spot=subform.hit_spot.data,
+                          count_balls=balls,
+                          count_strikes=strikes,
+                          result=subform.result.data,
+                          fielder=subform.fielder.data,
+                          hit=subform.hit.data,
+                          out=subform.out.data,
+                          inning=subform.inning.data)
 
             if pitch.result is not '':
                 balls = 0
@@ -737,10 +728,9 @@ def new_outing_csv_pitches(file_name):
             for err in errorMessages:
                 print(err)
 
-    return render_template(
-        "new_outing_csv_pitches.html",
-        form=form,
-        pitches=pitches)
+    return render_template("new_outing_csv_pitches.html",
+                           form=form,
+                           pitches=pitches)
 
 
 # ***************-HELPFUL FUNCTIONS-*************** #
