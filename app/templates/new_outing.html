@@ -3,61 +3,7 @@
 {% block app_content %}
 {#idea for add/delete row comes from: https://www.rmedgar.com/blog/dynamic_fields_flask_wtf#}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script> 
-        $(document).ready(function() {
-
-            //this function copies the form and appends a new one with the appropriate attributes
-            $('#add').click(function addForm() {
-                //Get Last index
-                var $lastForm = $('.subform').last();
-
-                //sets newIndex 
-                if ($lastForm.length > 0) {
-                    newIndex = parseInt($lastForm.data('index')) + 1;
-                }
-                else {
-                    newIndex=0;
-                }
-
-                // Maximum of 150 subforms
-                if (newIndex > 150) {
-                    console.log('[WARNING] Reached maximum number of elements');
-                    return;
-                }
-
-                //clone the first subform which will always be there
-                var $newForm = $('#pitch-0-form').clone();
-
-                //set the appropriate attributes so subform works
-                $newForm.attr('id', 'pitch-'+newIndex+'-form');
-                $newForm.attr('data-index', newIndex);
-
-                // looks for the different DOM form elements and updates attributes
-                $newForm.find('input').each(function(idx) {
-                    var $item = $(this);
-                    $item.attr('id', $item.attr('id').replace('0', newIndex));
-                    $item.attr('name', $item.attr('name').replace('0', newIndex));
-                });
-                $newForm.find('select').each(function(idx) {
-                    var $item = $(this);
-                    $item.attr('id', $item.attr('id').replace('0', newIndex));
-                    $item.attr('name', $item.attr('name').replace('0', newIndex));
-                });
-
-                //append to the end of the table
-                $("#table > tbody").append($newForm);
-
-                $newForm.find("td:first-child").text(newIndex+1);
-                $newForm.addClass('subform');
-            });
-
-            //this function deletes the last subform (last row)
-            $('#delete').click(function deleteForm() {
-                var $lastForm = $('.subform').last();
-                $lastForm.remove();
-            });
-        });
-    </script>
+    <script src="{{ url_for('static', filename='js/dynamic_table.js') }}"></script>
     <h1>New Outing</h1>
     <form method="post" novalidate>
         {{ form.hidden_tag() }}
@@ -126,6 +72,7 @@
                     <td>{{ subform.traj() }}</td>
                     <td>{{ subform.fielder() }}</td>
                     <td>{{ subform.inning(size=4) }}</td>
+                    <td><a class="delete" data-index="{{ loop.index0 }}">Delete</a></td>
                 </tr>
                 {% endfor %}
             </table>
@@ -133,5 +80,4 @@
         <p>{{ form.submit() }}</p>
     </form>
     <button id="add">Add Row</button>
-    <button id="delete">Delete Last Row</button>
 {% endblock %}

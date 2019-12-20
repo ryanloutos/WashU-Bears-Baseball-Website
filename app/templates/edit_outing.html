@@ -3,60 +3,7 @@
 {% block app_content %}
 {#https://www.rmedgar.com/blog/dynamic_fields_flask_wtf#}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script> 
-        $(document).ready(function() {
-
-            //this function copies the form and appends a new one with the appropriate attributes
-            $('#add').click(function addForm() {
-                //Get Last index
-                var $lastForm = $('.subform').last();
-
-                //sets newIndex 
-                if ($lastForm.length > 0) {
-                    newIndex = parseInt($lastForm.data('index')) + 1;
-                }
-                else {
-                    newIndex=0;
-                }
-
-                // Maximum of 150 subforms
-                if (newIndex > 150) {
-                    console.log('[WARNING] Reached maximum number of elements');
-                    return;
-                }
-
-                //clone the first subform which will always be there
-                var $newForm = $('#pitch-0-form').clone();
-
-                //set the appropriate attributes so subform works
-                $newForm.attr('id', 'pitch-'+newIndex+'-form');
-                $newForm.attr('data-index', newIndex);
-
-                // looks for the different DOM form elements and updates attributes
-                $newForm.find('input').each(function(idx) {
-                    var $item = $(this);
-                    $item.attr('id', $item.attr('id').replace('0', newIndex));
-                    $item.attr('name', $item.attr('name').replace('0', newIndex));
-                });
-                $newForm.find('select').each(function(idx) {
-                    var $item = $(this);
-                    $item.attr('id', $item.attr('id').replace('0', newIndex));
-                    $item.attr('name', $item.attr('name').replace('0', newIndex));
-                });
-
-                //append to the end of the table
-                $("#table > tbody").append($newForm);
-                $newForm.find("td:first-child").text(newIndex+1);
-                $newForm.addClass('subform');
-            });
-
-            //this function deletes the last subform (last row)
-            $('#delete').click(function deleteForm() {
-                var $lastForm = $('.subform').last();
-                $lastForm.remove();
-            });
-        });
-    </script>
+    <script src="{{ url_for('static', filename='js/dynamic_table.js') }}"></script>
 
     <h1>Edit Outing</h1>
     <form method="post" novalidate>
@@ -117,7 +64,6 @@
                             <td>{{ subform.batter_id(size=4, value=outing.pitches[loop.index0].batter_id) }}</td>
                             <td>
                                 <select id="pitch-{{loop.index0}}-batter_hand" name="pitch-{{loop.index0}}-batter_hand" required>
-                                    <option value="">Select</option>
                                     <option value="RHH" {% if outing.pitches[loop.index0].batter_hand=='RHH' %} selected='selected' {% endif %}>RHH</option>
                                     <option value="LHH" {% if outing.pitches[loop.index0].batter_hand=='LHH' %} selected='selected' {% endif %}>LHH</option>
                                 </select>
@@ -131,8 +77,7 @@
                             </td>
                             <td>
                                 <select id="pitch-{{loop.index0}}-lead_runner" name="pitch-{{loop.index0}}-lead_runner" required>
-                                    <option value="">Select</option>
-                                    <option value="Empty" {% if outing.pitches[loop.index0].lead_runner=='Empty' %} selected='selected' {% endif %}>Empty</option>
+                                    <option value="" {% if outing.pitches[loop.index0].lead_runner==None %} selected='selected' {% endif %}></option>
                                     <option value="1" {% if outing.pitches[loop.index0].lead_runner==1 %} selected='selected' {% endif %}>1</option>
                                     <option value="2" {% if outing.pitches[loop.index0].lead_runner==2 %} selected='selected' {% endif %}>2</option>
                                     <option value="3" {% if outing.pitches[loop.index0].lead_runner==3 %} selected='selected' {% endif %}>3</option>
@@ -147,7 +92,6 @@
                             </td>
                             <td>
                                 <select id="pitch-{{loop.index0}}-pitch_type" name="pitch-{{loop.index0}}-pitch_type" required>
-                                    <option value="">Select</option>
                                     <option value="1" {% if outing.pitches[loop.index0].pitch_type==1 %} selected='selected' {% endif %}>1</option>
                                     <option value="2" {% if outing.pitches[loop.index0].pitch_type==2 %} selected='selected' {% endif %}>2</option>
                                     <option value="3" {% if outing.pitches[loop.index0].pitch_type==3 %} selected='selected' {% endif %}>3</option>
@@ -158,7 +102,6 @@
                             </td>
                             <td>
                                 <select id="pitch-{{loop.index0}}-pitch_result" name="pitch-{{loop.index0}}-pitch_result" required>
-                                    <option value="">Select</option>
                                     <option value="B" {% if outing.pitches[loop.index0].pitch_result=='B' %} selected='selected' {% endif %}>B</option>
                                     <option value="CS" {% if outing.pitches[loop.index0].pitch_result=='CS' %} selected='selected' {% endif %}>CS</option>
                                     <option value="SS" {% if outing.pitches[loop.index0].pitch_result=='SS' %} selected='selected' {% endif %}>SS</option>
@@ -173,7 +116,7 @@
                             {% endif %}
                             <td>
                                 <select id="pitch-{{loop.index0}}-ab_result" name="pitch-{{loop.index0}}-ab_result" required>
-                                    <option value="" {% if outing.pitches[loop.index0].ab_result==None %} selected='selected' {% endif %}>N/A</option>
+                                    <option value="" {% if outing.pitches[loop.index0].ab_result==None %} selected='selected' {% endif %}></option>
                                     <option value="IP->Out" {% if outing.pitches[loop.index0].ab_result=='IP->Out' %} selected='selected' {% endif %}>IP->Out</option>
                                     <option value="K" {% if outing.pitches[loop.index0].ab_result=='K' %} selected='selected' {% endif %}>K</option>
                                     <option value="KL" {% if outing.pitches[loop.index0].ab_result=='KL' %} selected='selected' {% endif %}>KL</option>
@@ -186,13 +129,13 @@
                                     <option value="Error" {% if outing.pitches[loop.index0].ab_result=='Error' %} selected='selected' {% endif %}>Error</option>
                                     <option value="CI" {% if outing.pitches[loop.index0].ab_result=='CI' %} selected='selected' {% endif %}>CI</option>
                                     <option value="FC" {% if outing.pitches[loop.index0].ab_result=='FC' %} selected='selected' {% endif %}>FC</option>
-                                    <option value="Drop3rd->Out" {% if outing.pitches[loop.index0].ab_result=='Drop3rd->Out' %} selected='selected' {% endif %}>Drop3rd->Out</option>
-                                    <option value="Drop3rd->Safe" {% if outing.pitches[loop.index0].ab_result=='Drop3rd->Safe' %} selected='selected' {% endif %}>Drop3rd->Safe</option>
+                                    <option value="D3->Out" {% if outing.pitches[loop.index0].ab_result=='D3->Out' %} selected='selected' {% endif %}>D3->Out</option>
+                                    <option value="D3->Safe" {% if outing.pitches[loop.index0].ab_result=='D3->Safe' %} selected='selected' {% endif %}>D3->Safe</option>
                                 </select>
                             </td>
                             <td>
                                 <select id="pitch-{{loop.index0}}-traj" name="pitch-{{loop.index0}}-traj" required>
-                                    <option value="" {% if outing.pitches[loop.index0].fielder==None %} selected='selected' {% endif %}>N/A</option>
+                                    <option value="" {% if outing.pitches[loop.index0].fielder==None %} selected='selected' {% endif %}></option>
                                     <option value="GB" {% if outing.pitches[loop.index0].fielder=='GB' %} selected='selected' {% endif %}>GB</option>
                                     <option value="LD" {% if outing.pitches[loop.index0].fielder=='LD' %} selected='selected' {% endif %}>FB</option>
                                     <option value="FB" {% if outing.pitches[loop.index0].fielder=='FB' %} selected='selected' {% endif %}>LD</option>
@@ -200,7 +143,7 @@
                             </td>
                             <td>
                                 <select id="pitch-{{loop.index0}}-fielder" name="pitch-{{loop.index0}}-fielder" required>
-                                    <option value="" {% if outing.pitches[loop.index0].fielder==None %} selected='selected' {% endif %}>N/A</option>
+                                    <option value="" {% if outing.pitches[loop.index0].fielder==None %} selected='selected' {% endif %}></option>
                                     <option value="1" {% if outing.pitches[loop.index0].fielder==1 %} selected='selected' {% endif %}>1</option>
                                     <option value="2" {% if outing.pitches[loop.index0].fielder==2 %} selected='selected' {% endif %}>2</option>
                                     <option value="3" {% if outing.pitches[loop.index0].fielder==3 %} selected='selected' {% endif %}>3</option>
@@ -219,6 +162,7 @@
                                     {{ subform.inning(size=4, value=outing.pitches[loop.index0].inning) }}
                                 {% endif %}
                             </td>
+                            <td><a class="delete" data-index="{{ loop.index0 }}">Delete</a></td>
                         </tr>
                     {% endfor %}
                 </table>
@@ -226,6 +170,5 @@
         <p>{{ form.submit() }}</p>
     </form>
     <button id="add">Add Row</button>
-    <button id="delete">Delete Last Row</button>
     <a href="{{ url_for('delete_outing', outing_id=outing.id) }}">Delete Outing</a>
 {% endblock %}

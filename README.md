@@ -30,13 +30,7 @@ Currently being worked on:
     - improve instruction set of upload file
   - DONE:
     - It is possible to upload outings via CSV and have them saved to database
-- Getting data entry to a point to enter significant amount of data and doing statistical stuff with it
-  - TODO: 
-    - make innings entry more useful
-    - create ability to add/delete rows ANYWHERE in the table
-    - clean up edit_outing.html code using set choices saved somewhere that can be edited
-    - add Batter table to keep track of specific batters and sequences
-    - add more stuff here when I think of it
+
 
 
 

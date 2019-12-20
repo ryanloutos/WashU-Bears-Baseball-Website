@@ -38,18 +38,16 @@ class OpponentForm(FlaskForm):
 class RegistrationForm(FlaskForm):
     firstname = StringField('Firstname', validators=[DataRequired()])
     lastname = StringField('Lastname', validators=[DataRequired()])
-    year = RadioField(
-        'Year/Position',
-        choices=[
-            ('FR', 'FR'),
-            ('SO', 'SO'),
-            ('JR', 'JR'),
-            ('SR', 'SR'),
-            ('Coach/Manager', 'Coach/Manager')],
+    year = RadioField('Year/Position',
+        choices=[('FR', 'FR'),
+                 ('SO', 'SO'),
+                 ('JR', 'JR'),
+                 ('SR', 'SR'),
+                 ('Coach/Manager', 'Coach/Manager')],
         validators=[DataRequired()])
-    throws = RadioField(
-        'Throws',
-        choices=[('R', 'R'), ('L', 'L')],
+    throws = RadioField('Throws',
+        choices=[('R', 'R'), 
+                 ('L', 'L')],
         validators=[Optional()])
     username = StringField('Username', validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired(), Email()])
@@ -79,12 +77,12 @@ class PitchForm(FlaskForm):
     batter_id = StringField('Batter', validators=[DataRequired()])
     batter_hand = SelectField(
         'RHH/LHH',
-        choices=[('', 'Select'), ('RHH', 'RHH'), ('LHH', 'LHH')],
-        validators=[DataRequired()])
+        choices=[('RHH', 'RHH'), ('LHH', 'LHH')],
+        validators=[Optional()])
     velocity = IntegerField('Velo', validators=[Optional()])
     lead_runner = SelectField(
         'Lead RNR',
-        choices=[('Empty', 'Empty'), ('1', '1'), ('2', '2'), ('3', '3')],
+        choices=[('',''), ('1', '1'), ('2', '2'), ('3', '3')],
         validators=[Optional()])
     time_to_plate = DecimalField(
         'Time to Plate',
@@ -106,21 +104,21 @@ class PitchForm(FlaskForm):
     ab_result = SelectField(
         'Result',
         choices=[
-            ('', 'Select'), ('IP->Out', 'IP->Out'), ('K', 'K'),
+            ('', ''), ('IP->Out', 'IP->Out'), ('K', 'K'),
             ('KL', 'KL'), ('BB', 'BB'), ('HBP', 'HBP'),
             ('1B', '1B'), ('2B', '2B'), ('3B', '3B'),
             ('HR', 'HR'), ('Error', 'Error'), ('CI', 'CI'), ('FC', 'FC'),
-            ('Drop3rd->Out', 'Drop3rd->Out'),
-            ('Drop3rd->Safe', 'Drop3rd->Safe')],
+            ('D3->Out', 'D3->Out'),
+            ('D3->Safe', 'D3->Safe')],
         validators=[Optional()])
     traj = SelectField(
         'GB/LD/FB',
-        choices=[('', 'Select'), ('GB', 'GB'), ('LD', 'LD'), ('FB', 'FB')],
+        choices=[('', ''), ('GB', 'GB'), ('LD', 'LD'), ('FB', 'FB')],
         validators=[Optional()])
     fielder = SelectField(
         'Fielder',
         choices=[
-            ('', 'Select'), ('1', '1'), ('2', '2'), ('3', '3'),
+            ('', ''), ('1', '1'), ('2', '2'), ('3', '3'),
             ('4', '4'), ('5', '5'), ('6', '6'), ('7', '7'),
             ('8', '8'), ('9', '9')],
         validators=[Optional()])

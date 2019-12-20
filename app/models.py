@@ -91,6 +91,22 @@ class Opponent(db.Model):
         return self.name
 
 
+class Batter(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64), index=True)
+    short_name = db.Column(db.String(8), index=True)
+    bats = db.Column(db.String(8), index=True)
+    opponent_id = db.Column(db.Integer, db.ForeignKey('opponent.id'), index=True)
+    at_bats = db.relationship('AtBat', backref='batter', lazy='dynamic')
+
+
+class AtBat(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    batter_id = db.Column(db.Integer, db.ForeignKey('batter.id'), index=True)
+    outing_id = db.Column(db.Integer, db.ForeignKey('outing.id'), index=True)
+    pitches = db.relationship('Pitch', backref='at_bat', lazy='dynamic')
+
+
 @login.user_loader
 def load_user(id):
     return User.query.get(int(id))

@@ -448,6 +448,8 @@ def edit_outing(outing_id):
     all_seasons = Season.query.all()
     this_season = Season.query.filter_by(id=outing.season_id).first_or_404()
 
+    fielders = getPitchFormChoices()
+
     # only admins can go back and edit outing data
     if not current_user.admin:
         flash("You are not an admin and cannot edit someone else's outing")
@@ -529,6 +531,7 @@ def edit_outing(outing_id):
                            this_opponent=this_opponent,
                            all_seasons=all_seasons,
                            this_season=this_season,
+                           fielders=fielders,
                            form=form)
 
 # ***************-DELETE OUTING-*************** #
@@ -817,3 +820,9 @@ def updateCount(balls, strikes, pitch_result, ab_result):
                 strikes += 1
     count = f'{balls}-{strikes}'
     return (balls, strikes, count)
+
+
+def getPitchFormChoices():
+    fielders = [1,2,3,4,5,6,7,8,9]
+
+    return fielders

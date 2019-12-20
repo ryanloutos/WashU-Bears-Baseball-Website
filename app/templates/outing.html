@@ -66,12 +66,24 @@
                     <td>{{ pitch.pitch_num }}</td>
                     <td>{{ pitch.batter_id }}</td>
                     <td>{{ pitch.batter_hand }}</td>
-                    <td>{{ pitch.velocity }}</td>
+                    {% if pitch.velocity==None %}
+                        <td></td>
+                    {% else %}
+                        <td>{{ pitch.velocity }}</td>
+                    {% endif %}
                     <td>{{ pitch.lead_runner }}</td>
-                    <td>{{ pitch.time_to_plate }}</td>
+                    {% if pitch.time_to_plate==None %}
+                        <td></td>
+                    {% else %}
+                        <td>{{ pitch.time_to_plate }}</td>
+                    {% endif %}
                     <td>{{ pitch.pitch_type }}</td>
                     <td>{{ pitch.pitch_result }}</td>
-                    <td>{{ pitch.hit_spot }}</td>
+                    {% if pitch.hit_spot %}
+                        <td>X</td>
+                    {% else %}
+                        <td></td>
+                    {% endif %}
                     <td>{{ pitch.count }}</td>
                     <td>{{ pitch.ab_result }}</td>
                     <td>{{ pitch.traj }}</td>
