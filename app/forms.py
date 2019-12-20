@@ -87,11 +87,11 @@ class RegistrationForm(FlaskForm):
 
 # each field is based on the baseball teams velocity tracking sheets
 class PitchForm(FlaskForm):
-    batter_id = StringField('Batter', validators=[DataRequired()])
+    batter_id = SelectField('Batter', validators=[Optional()])
     batter_hand = SelectField(
         'RHH/LHH',
         choices=[('RHH', 'RHH'), ('LHH', 'LHH')],
-        validators=[Optional()])
+        validators=[DataRequired()])
     velocity = IntegerField('Velo', validators=[Optional()])
     lead_runner = SelectField(
         'Lead RNR',
@@ -144,10 +144,20 @@ class PitchForm(FlaskForm):
         FlaskForm.__init__(self, *args, **kwargs)
 
 
+# Fieldlist to input all pitches in an outing
+class OutingPitchForm(FlaskForm):
+    pitch = FieldList(
+        FormField(PitchForm),
+        min_entries=1,
+        max_entries=150,
+        validators=[Optional()])
+    submit = SubmitField('Add Pitches')
+
+
 # Creating a new outing
 class OutingForm(FlaskForm):
     pitcher = SelectField('Pitcher', validators=[Optional()])
-    date = DateField('Date', validators=[DataRequired()], format='%Y-%m-%d')
+    date = DateField('Date', validators=[Optional()], format='%Y-%m-%d')
     opponent = QuerySelectField(
         query_factory=lambda: Opponent.query,
         get_pk=lambda o: o,
@@ -156,11 +166,6 @@ class OutingForm(FlaskForm):
         query_factory=lambda: Season.query,
         get_pk=lambda s: s,
         get_label=lambda s: s)
-    pitch = FieldList(
-        FormField(PitchForm),
-        min_entries=1,
-        max_entries=150,
-        validators=[DataRequired()])
     submit = SubmitField('Create Outing')
 
 

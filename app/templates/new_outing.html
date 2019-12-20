@@ -36,48 +36,6 @@
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
         </p><br>
-        <div class="panel panel-default">
-            <div class="panel-heading">Pitches</div>
-            <div class="panel-body">
-                <p>This is where you can enter in the pitches for the outing</p>
-            </div>
-            <table class='table' id="table">
-                <tr>
-                    <th>Pitch</th>
-                    <th>Batter</th>
-                    <th>RHH/LHH</th>
-                    <th>Velo</th>
-                    <th>Lead RNR</th>
-                    <th>Time to Plate</th>
-                    <th>Pitch Type</th>
-                    <th>Pitch Result</th>
-                    <th>Hit Spot?</th>
-                    <th>AB Result</th>
-                    <th>GB/LD/FB</th>
-                    <th>Fielder</th>
-                    <th>Inning</th>
-                </tr>
-                {% for subform in form.pitch %}
-                <tr class='subform' id="pitch-{{ loop.index0 }}-form" data-index='{{ loop.index0 }}'>
-                    <td>{{ loop.index0+1 }}</td>
-                    <td>{{ subform.batter_id(size=4) }}</td>
-                    <td>{{ subform.batter_hand() }}</td>
-                    <td>{{ subform.velocity(size=4) }}</td>
-                    <td>{{ subform.lead_runner() }}</td>
-                    <td>{{ subform.time_to_plate(size=4) }}</td>
-                    <td>{{ subform.pitch_type() }}</td>
-                    <td>{{ subform.pitch_result() }}</td>
-                    <td>{{ subform.hit_spot() }}</td>
-                    <td>{{ subform.ab_result() }}</td>
-                    <td>{{ subform.traj() }}</td>
-                    <td>{{ subform.fielder() }}</td>
-                    <td>{{ subform.inning(size=4) }}</td>
-                    <td><a class="delete" data-index="{{ loop.index0 }}">Delete</a></td>
-                </tr>
-                {% endfor %}
-            </table>
-        </div>
         <p>{{ form.submit() }}</p>
     </form>
-    <button id="add">Add Row</button>
 {% endblock %}

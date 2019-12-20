@@ -37,6 +37,7 @@
         {{ outing }}
         {% if current_user.admin or current_user.id==outing.user_id %} {# making sure user has write access #}
             <a href="{{ url_for('edit_outing', outing_id=outing.id) }}">Edit Outing</a>
+            <a href="{{ url_for('edit_outing_pitches', outing_id=outing.id) }}">Edit Pitches</a>
         {% endif %}
     </h1>
         <div class="panel panel-default">

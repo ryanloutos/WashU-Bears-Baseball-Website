@@ -86,6 +86,7 @@ class Opponent(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), index=True)
     outings = db.relationship('Outing', backref='opponent', lazy='dynamic')
+    batters = db.relationship('Batter', backref='opponent', lazy='dynamic')
 
     def __repr__(self):
         return self.name
@@ -98,6 +99,9 @@ class Batter(db.Model):
     bats = db.Column(db.String(8), index=True)
     opponent_id = db.Column(db.Integer, db.ForeignKey('opponent.id'), index=True)
     at_bats = db.relationship('AtBat', backref='batter', lazy='dynamic')
+
+    def __repr__(self):
+        return self.short_name
 
 
 class AtBat(db.Model):

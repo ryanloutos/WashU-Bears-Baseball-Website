@@ -8,6 +8,19 @@
     <h1>Edit Outing</h1>
     <form method="post" novalidate>
         {{ form.hidden_tag() }} {# Preventing CSRF attacks #}
+        <p>You can't change the opponent because the batter_id's are based on the opponent</p>
+        <p>If you want to change the opponent, you have to delete the outing and start over</p>
+        <p>
+            {{ form.pitcher.label }}<br>
+            <select id="pitcher" name="pitcher">
+                {% for p in all_pitchers %}
+                    <option value="{{p.username}}" {% if p.id == this_pitcher.id %} selected='selected' {% endif %}>{{p}}</option>
+                {% endfor %}
+            </select>
+            {% for error in form.pitcher.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
         <p>
             {{ form.date.label }}<br>
             {{ form.date(class='datepicker', value=outing.date) }}<br>
@@ -15,20 +28,16 @@
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
         </p>
-        <p>
+        <p style="display: none">
             {{ form.opponent.label }}<br>
-            <select id="opponent" name="opponent" required>
-                {% for o in all_opponents %}
-                    <option value="{{o}}" {% if o.id == this_opponent.id %} selected='selected' {% endif %}>{{o}}</option>
-                {% endfor %}
-            </select>
+            {{ form.opponent() }}
             {% for error in form.opponent.errors %}
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
         </p>
         <p>
             {{ form.season.label }}<br>
-            <select id="season" name="season" required>
+            <select id="season" name="season">
                 {% for s in all_seasons %}
                     <option value="{{s}}" {% if s.id == this_season.id %} selected='selected' {% endif %}>{{s}}</option>
                 {% endfor %}
@@ -37,138 +46,7 @@
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
         </p><br>
-        <div class="panel panel-default">
-            <div class="panel-heading">Pitches</div>
-                <div class="panel-body">
-                    <p>This is where you can enter in the pitches for the outing</p>
-                </div>
-                <table class='table' id="table">
-                    <tr>
-                        <th>Pitch</th>
-                        <th>Batter</th>
-                        <th>RHH/LHH</th>
-                        <th>Velo</th>
-                        <th>Lead RNR</th>
-                        <th>Time to Plate</th>
-                        <th>Pitch Type</th>
-                        <th>Pitch Result</th>
-                        <th>Hit Spot?</th>
-                        <th>AB Result</th>
-                        <th>GB/LD/FB</th>
-                        <th>Fielder</th>
-                        <th>Inning</th>
-                    </tr>
-                    {% for subform in form.pitch %} {# some of the subforms needed to be manually made due to lack of implementation in flask #}
-                        <tr class='subform' id="pitch-{{ loop.index0 }}-form" data-index='{{ loop.index0 }}'>
-                            <td>{{ loop.index0+1 }}</td>
-                            <td>{{ subform.batter_id(size=4, value=outing.pitches[loop.index0].batter_id) }}</td>
-                            <td>
-                                <select id="pitch-{{loop.index0}}-batter_hand" name="pitch-{{loop.index0}}-batter_hand" required>
-                                    <option value="RHH" {% if outing.pitches[loop.index0].batter_hand=='RHH' %} selected='selected' {% endif %}>RHH</option>
-                                    <option value="LHH" {% if outing.pitches[loop.index0].batter_hand=='LHH' %} selected='selected' {% endif %}>LHH</option>
-                                </select>
-                            </td>
-                            <td>
-                                {% if outing.pitches[loop.index0].velocity == None %}
-                                    {{ subform.velocity(size=4) }}
-                                {% else %}
-                                    {{ subform.velocity(size=4, value=outing.pitches[loop.index0].velocity) }}
-                                {% endif %}
-                            </td>
-                            <td>
-                                <select id="pitch-{{loop.index0}}-lead_runner" name="pitch-{{loop.index0}}-lead_runner" required>
-                                    <option value="" {% if outing.pitches[loop.index0].lead_runner==None %} selected='selected' {% endif %}></option>
-                                    <option value="1" {% if outing.pitches[loop.index0].lead_runner==1 %} selected='selected' {% endif %}>1</option>
-                                    <option value="2" {% if outing.pitches[loop.index0].lead_runner==2 %} selected='selected' {% endif %}>2</option>
-                                    <option value="3" {% if outing.pitches[loop.index0].lead_runner==3 %} selected='selected' {% endif %}>3</option>
-                                </select>
-                            </td>
-                            <td>
-                                {% if outing.pitches[loop.index0].time_to_plate == None %}
-                                    {{ subform.time_to_plate(size=4) }}
-                                {% else %}
-                                    {{ subform.time_to_plate(size=4, value=outing.pitches[loop.index0].time_to_plate) }}
-                                {% endif %}
-                            </td>
-                            <td>
-                                <select id="pitch-{{loop.index0}}-pitch_type" name="pitch-{{loop.index0}}-pitch_type" required>
-                                    <option value="1" {% if outing.pitches[loop.index0].pitch_type==1 %} selected='selected' {% endif %}>1</option>
-                                    <option value="2" {% if outing.pitches[loop.index0].pitch_type==2 %} selected='selected' {% endif %}>2</option>
-                                    <option value="3" {% if outing.pitches[loop.index0].pitch_type==3 %} selected='selected' {% endif %}>3</option>
-                                    <option value="4" {% if outing.pitches[loop.index0].pitch_type==4 %} selected='selected' {% endif %}>4</option>
-                                    <option value="5" {% if outing.pitches[loop.index0].pitch_type==5 %} selected='selected' {% endif %}>5</option>
-                                    <option value="7" {% if outing.pitches[loop.index0].pitch_type==7 %} selected='selected' {% endif %}>7</option>
-                                </select>
-                            </td>
-                            <td>
-                                <select id="pitch-{{loop.index0}}-pitch_result" name="pitch-{{loop.index0}}-pitch_result" required>
-                                    <option value="B" {% if outing.pitches[loop.index0].pitch_result=='B' %} selected='selected' {% endif %}>B</option>
-                                    <option value="CS" {% if outing.pitches[loop.index0].pitch_result=='CS' %} selected='selected' {% endif %}>CS</option>
-                                    <option value="SS" {% if outing.pitches[loop.index0].pitch_result=='SS' %} selected='selected' {% endif %}>SS</option>
-                                    <option value="F" {% if outing.pitches[loop.index0].pitch_result=='F' %} selected='selected' {% endif %}>F</option>
-                                    <option value="IP" {% if outing.pitches[loop.index0].pitch_result=='IP' %} selected='selected' {% endif %}>IP</option>
-                                </select>
-                            </td>
-                            {% if outing.pitches[loop.index0].hit_spot%}
-                                <td>{{ subform.hit_spot(checked=True) }}</td>
-                            {% else %}
-                                <td>{{ subform.hit_spot() }}</td>
-                            {% endif %}
-                            <td>
-                                <select id="pitch-{{loop.index0}}-ab_result" name="pitch-{{loop.index0}}-ab_result" required>
-                                    <option value="" {% if outing.pitches[loop.index0].ab_result==None %} selected='selected' {% endif %}></option>
-                                    <option value="IP->Out" {% if outing.pitches[loop.index0].ab_result=='IP->Out' %} selected='selected' {% endif %}>IP->Out</option>
-                                    <option value="K" {% if outing.pitches[loop.index0].ab_result=='K' %} selected='selected' {% endif %}>K</option>
-                                    <option value="KL" {% if outing.pitches[loop.index0].ab_result=='KL' %} selected='selected' {% endif %}>KL</option>
-                                    <option value="BB" {% if outing.pitches[loop.index0].ab_result=='BB' %} selected='selected' {% endif %}>BB</option>
-                                    <option value="HBP" {% if outing.pitches[loop.index0].ab_result=='HBP' %} selected='selected' {% endif %}>HBP</option>
-                                    <option value="1B" {% if outing.pitches[loop.index0].ab_result=='1B' %} selected='selected' {% endif %}>1B</option>
-                                    <option value="2B" {% if outing.pitches[loop.index0].ab_result=='2B' %} selected='selected' {% endif %}>2B</option>
-                                    <option value="3B" {% if outing.pitches[loop.index0].ab_result=='3B' %} selected='selected' {% endif %}>3B</option>
-                                    <option value="HR" {% if outing.pitches[loop.index0].ab_result=='HR' %} selected='selected' {% endif %}>HR</option>
-                                    <option value="Error" {% if outing.pitches[loop.index0].ab_result=='Error' %} selected='selected' {% endif %}>Error</option>
-                                    <option value="CI" {% if outing.pitches[loop.index0].ab_result=='CI' %} selected='selected' {% endif %}>CI</option>
-                                    <option value="FC" {% if outing.pitches[loop.index0].ab_result=='FC' %} selected='selected' {% endif %}>FC</option>
-                                    <option value="D3->Out" {% if outing.pitches[loop.index0].ab_result=='D3->Out' %} selected='selected' {% endif %}>D3->Out</option>
-                                    <option value="D3->Safe" {% if outing.pitches[loop.index0].ab_result=='D3->Safe' %} selected='selected' {% endif %}>D3->Safe</option>
-                                </select>
-                            </td>
-                            <td>
-                                <select id="pitch-{{loop.index0}}-traj" name="pitch-{{loop.index0}}-traj" required>
-                                    <option value="" {% if outing.pitches[loop.index0].fielder==None %} selected='selected' {% endif %}></option>
-                                    <option value="GB" {% if outing.pitches[loop.index0].fielder=='GB' %} selected='selected' {% endif %}>GB</option>
-                                    <option value="LD" {% if outing.pitches[loop.index0].fielder=='LD' %} selected='selected' {% endif %}>FB</option>
-                                    <option value="FB" {% if outing.pitches[loop.index0].fielder=='FB' %} selected='selected' {% endif %}>LD</option>
-                                </select>
-                            </td>
-                            <td>
-                                <select id="pitch-{{loop.index0}}-fielder" name="pitch-{{loop.index0}}-fielder" required>
-                                    <option value="" {% if outing.pitches[loop.index0].fielder==None %} selected='selected' {% endif %}></option>
-                                    <option value="1" {% if outing.pitches[loop.index0].fielder==1 %} selected='selected' {% endif %}>1</option>
-                                    <option value="2" {% if outing.pitches[loop.index0].fielder==2 %} selected='selected' {% endif %}>2</option>
-                                    <option value="3" {% if outing.pitches[loop.index0].fielder==3 %} selected='selected' {% endif %}>3</option>
-                                    <option value="4" {% if outing.pitches[loop.index0].fielder==4 %} selected='selected' {% endif %}>4</option>
-                                    <option value="5" {% if outing.pitches[loop.index0].fielder==5 %} selected='selected' {% endif %}>5</option>
-                                    <option value="6" {% if outing.pitches[loop.index0].fielder==6 %} selected='selected' {% endif %}>6</option>
-                                    <option value="7" {% if outing.pitches[loop.index0].fielder==7 %} selected='selected' {% endif %}>7</option>
-                                    <option value="8" {% if outing.pitches[loop.index0].fielder==8 %} selected='selected' {% endif %}>8</option>
-                                    <option value="9" {% if outing.pitches[loop.index0].fielder==9 %} selected='selected' {% endif %}>9</option>
-                                </select>
-                            </td>
-                            <td>
-                                {% if outing.pitches[loop.index0].inning == None %}
-                                    {{ subform.inning(size=4) }}
-                                {% else %}
-                                    {{ subform.inning(size=4, value=outing.pitches[loop.index0].inning) }}
-                                {% endif %}
-                            </td>
-                            <td><a class="delete" data-index="{{ loop.index0 }}">Delete</a></td>
-                        </tr>
-                    {% endfor %}
-                </table>
-        </div>
         <p>{{ form.submit() }}</p>
     </form>
-    <button id="add">Add Row</button>
     <a href="{{ url_for('delete_outing', outing_id=outing.id) }}">Delete Outing</a>
 {% endblock %}
