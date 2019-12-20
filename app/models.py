@@ -104,7 +104,7 @@ class AtBat(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     batter_id = db.Column(db.Integer, db.ForeignKey('batter.id'), index=True)
     outing_id = db.Column(db.Integer, db.ForeignKey('outing.id'), index=True)
-    pitches = db.relationship('Pitch', backref='at_bat', lazy='dynamic')
+    # pitches = db.relationship('Pitch', backref='at_bat', lazy='dynamic')
 
 
 @login.user_loader

@@ -1,10 +1,10 @@
-from flask import render_template, flash, redirect, url_for, request
+from flask import render_template, flash, redirect, url_for, request, jsonify
 from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.urls import url_parse
 from app import app, db
 from app.forms import LoginForm, RegistrationForm, OutingForm, PitchForm
-from app.forms import NewOutingFromCSV, SeasonForm, OpponentForm
-from app.models import User, Outing, Pitch, Season, Opponent
+from app.forms import NewOutingFromCSV, SeasonForm, OpponentForm, BatterForm
+from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat
 from app.stats import calcPitchPercentages, pitchUsageByCount, calcAverageVelo
 from app.stats import calcPitchStrikePercentage, calcPitchWhiffRate
 from app.stats import createPitchPercentagePieChart, velocityOverTimeLineChart
@@ -320,6 +320,19 @@ def new_opponent():
 
         # send Season object to data table
         db.session.add(opponent)
+        db.session.commit()
+
+        #create the batter objects from the form and send to database
+        for subform in form.batter:
+            batter = Batter(
+                name=subform.fullname.data,
+                short_name=subform.nickname.data,
+                bats=subform.bats.data,
+                opponent_id=opponent.id
+            )
+            db.session.add(batter)
+        
+        #commit the batters to database
         db.session.commit()
 
         # redirect back to login page

@@ -28,9 +28,22 @@ class SeasonForm(FlaskForm):
     submit = SubmitField('Create New Season')
 
 
+# Creating a new batter
+class BatterForm(FlaskForm):
+    fullname = StringField('Name', validators=[Optional()])
+    nickname = StringField('Initials/Number', validators=[Optional()])
+    bats = SelectField('Bats', choices=[('R','R'),('L','L')], validators=[Optional()])
+
+
 # Creating a new opponent
 class OpponentForm(FlaskForm):
-    name = StringField('Name', validators=[DataRequired()])
+    name = StringField('Team Name', validators=[DataRequired()])
+    batter = FieldList(
+        FormField(BatterForm),
+        min_entries=2,
+        max_entries=50,
+        validators=[Optional()]
+    )
     submit = SubmitField('Create New Opponent')
 
 
