@@ -35,7 +35,7 @@ def index():
     '''
     users = User.query.filter(User.year != 'Coach/Manager').all()
     seasons = Season.query.all()
-    return render_template('index.html',
+    return render_template('main/index.html',
                            users=users,
                            seasons=seasons)
 
@@ -82,7 +82,7 @@ def login():
             next_page = url_for('index')
         return redirect(next_page)
 
-    return render_template('login.html',
+    return render_template('main/login.html',
                            form=form)
 
 # ***************-LOGOUT-*************** #
@@ -123,7 +123,7 @@ def user(username):
     # get the outings associated with that player
     outings = user.outings
 
-    return render_template('user.html',
+    return render_template('main/user.html',
                            title='User',
                            user=user,
                            outings=outings)
@@ -150,7 +150,7 @@ def season(id):
     # outings associated with the specific season
     outings = season.outings
 
-    return render_template('season.html',
+    return render_template('season/season.html',
                            title='Season',
                            season=season,
                            outings=outings)
@@ -188,7 +188,7 @@ def outing(outing_id):
 
     # render template with all the statistical data calculated from
     # the outing
-    return render_template('outing.html',
+    return render_template('outing/outing.html',
                            title='Outing',
                            outing=outing,
                            usages=usages,
@@ -248,7 +248,7 @@ def register():
         flash('Congratulations, you just created a new user!')
         return redirect(url_for('login'))
 
-    return render_template('register.html',
+    return render_template('main/register.html',
                            form=form)
 
 # ***************-NEW SEASON-*************** #
@@ -288,7 +288,7 @@ def new_season():
         flash('Congratulations, you just made a new season!')
         return redirect(url_for('index'))
 
-    return render_template('new_season.html',
+    return render_template('season/new_season.html',
                            form=form)
 
 # ***************-NEW OPPONENT-*************** #
@@ -340,7 +340,7 @@ def new_opponent():
         flash('Congratulations, you just made a new opponent!')
         return redirect(url_for('index'))
 
-    return render_template('new_opponent.html', 
+    return render_template('opponent/new_opponent.html', 
                            form=form)
 
 # ***************-NEW OUTING-*************** #
@@ -391,7 +391,7 @@ def new_outing():
         flash("New Outing Created!")
         return redirect(url_for('new_outing_pitches', outing_id=outing.id))
 
-    return render_template('new_outing.html',
+    return render_template('outing/new_outing.html',
                            title='New Outing',
                            form=form)
 
@@ -400,13 +400,16 @@ def new_outing():
 @login_required
 def new_outing_pitches(outing_id):
         
+        # get the form associated with entering in X number of pitches
         form = OutingPitchForm()
 
-        # set up batter choices here
+        # set up batter choices
         for subform in form.pitch:
             subform.batter_id.choices = getAvailableBatters(outing_id)
 
+        # if "add pitches" button was clicked
         if form.validate_on_submit():
+
             # sets up count for first pitch of outing
             balls = 0
             strikes = 0
@@ -414,6 +417,7 @@ def new_outing_pitches(outing_id):
 
             # add each individual pitch to the database
             for index, subform in enumerate(form.pitch):
+
                 # sets the pitch_num column automatically
                 pitch_num = index+1
 
@@ -447,7 +451,7 @@ def new_outing_pitches(outing_id):
             flash('Pitches added to outing!')
             return redirect(url_for('outing', outing_id=outing_id))
 
-        return render_template('new_outing_pitches.html',
+        return render_template('outing/new_outing_pitches.html',
                                form=form)
 
 # ***************-EDIT OUTING PITCHES-*************** #
@@ -456,19 +460,19 @@ def new_outing_pitches(outing_id):
 def edit_outing_pitches(outing_id):
     '''
     EDIT OUTING PITCHES
-    Can edit an existing outing through this function
+    Can edit pitches of an existing outing
 
     PARAM:
         -outing_id: the outing id (primary key) in which the user
             wants to access
 
     RETURN:
-        -edit_outing_pitches.html which allows user to edit an existing outing.
-            The function deletes the existing outing and inserts in a
-            new outing with the updated info/pitches
+        -edit_outing_pitches.html which allows user to edit the pitches of
+            the outing requested. The function deletes the existing pitches
+            and uploads the updated ones to the database.
     '''
 
-    # get the outing and user objects associated with this outing
+    # get the database objects needed for the function
     outing = Outing.query.filter_by(id=outing_id).first_or_404()
     user = User.query.filter_by(id=outing.user_id).first_or_404()
     opponent = Opponent.query.filter_by(id=outing.opponent_id).first_or_404()
@@ -478,7 +482,7 @@ def edit_outing_pitches(outing_id):
         flash("You are not an admin and cannot edit someone else's outing")
         return redirect(url_for('index'))
 
-    # get correct form and don't allow a change to be made to pitcher of outing
+    # get the correct form
     form = OutingPitchForm()
 
     # when edit wants to be made
@@ -503,7 +507,7 @@ def edit_outing_pitches(outing_id):
             pitch_num = index+1
 
             # creates Pitch object based on subform data
-            pitch = Pitch(outing_id=outing.id,
+            pitch = Pitch(outing_id=outing_id,
                           pitch_num=pitch_num,
                           batter_id=subform.batter_id.data,
                           batter_hand=subform.batter_hand.data,
@@ -534,15 +538,14 @@ def edit_outing_pitches(outing_id):
         return redirect(url_for('user', username=user.username))
 
     # sets up subforms so they are visible in edit_outing.html
-    if outing.pitches.count() is not 1:
-        for p in range(0, outing.pitches.count()-1):
-            form.pitch.append_entry()
+    for p in range(0, outing.pitches.count()-1):
+        form.pitch.append_entry()
 
     # set up batter choices here
     for subform in form.pitch:
         subform.batter_id.choices = getAvailableBatters(outing_id)
 
-    return render_template('edit_outing_pitches.html',
+    return render_template('outing/edit_outing_pitches.html',
                            title='Edit Outing',
                            outing=outing,
                            opponent=opponent,
@@ -553,21 +556,19 @@ def edit_outing_pitches(outing_id):
 @login_required
 def edit_outing(outing_id):
 
-    # get correct form and don't allow a change to be made to pitcher of outing
+    # get correct form
     form = OutingForm()
 
     # get the available pitchers to choose from
     form.pitcher.choices = getAvailablePitchers()
 
-    # get the outing and user objects associated with this outing
+    # get objects from database 
     outing = Outing.query.filter_by(id=outing_id).first_or_404()
     opponent = Opponent.query.filter_by(id=outing.opponent_id).first_or_404()
     this_season = Season.query.filter_by(id=outing.season_id).first_or_404()
     all_seasons = Season.query.all()
     this_pitcher = User.query.filter_by(id=outing.user_id).first_or_404()
     all_pitchers = User.query.filter(User.year != 'Coach/Manager').all()
-
-    form.opponent.choices = [("",opponent)]
 
     # only admins can go back and edit outing data
     if not current_user.admin:
@@ -594,27 +595,27 @@ def edit_outing(outing_id):
         strikes = 0
         count = '0-0'
 
-        # add each individual pitch to the database
+        # adjust the pitches with the new outing id
         for pitch in outing.pitches:
 
             # creates Pitch object based on subform data
-            new_pitch = Pitch(outing_id=pitch.outing_id,
-                            pitch_num=pitch.pitch_num,
-                            batter_id=pitch.batter_id,
-                            batter_hand=pitch.batter_hand,
-                            velocity=pitch.velocity,
-                            lead_runner=pitch.lead_runner,
-                            time_to_plate=pitch.time_to_plate,
-                            pitch_type=pitch.pitch_type,
-                            pitch_result=pitch.pitch_result,
-                            hit_spot=pitch.hit_spot,
-                            count=pitch.count,
-                            ab_result=pitch.ab_result,
-                            traj=pitch.traj,
-                            fielder=pitch.fielder,
-                            inning=pitch.inning)
+            new_pitch = Pitch(outing_id=outing_edited.id,
+                              pitch_num=pitch.pitch_num,
+                              batter_id=pitch.batter_id,
+                              batter_hand=pitch.batter_hand,
+                              velocity=pitch.velocity,
+                              lead_runner=pitch.lead_runner,
+                              time_to_plate=pitch.time_to_plate,
+                              pitch_type=pitch.pitch_type,
+                              pitch_result=pitch.pitch_result,
+                              hit_spot=pitch.hit_spot,
+                              count=pitch.count,
+                              ab_result=pitch.ab_result,
+                              traj=pitch.traj,
+                              fielder=pitch.fielder,
+                              inning=pitch.inning)
 
-            # adds pitch to database
+            # adds pitch to database and delete old pitch
             db.session.add(new_pitch)
             db.session.delete(pitch)
 
@@ -625,7 +626,7 @@ def edit_outing(outing_id):
         flash('The outing has been adjusted!')
         return redirect(url_for('user', username=user.username))
 
-    return render_template('edit_outing.html',
+    return render_template('outing/edit_outing.html',
                            title='Edit Outing',
                            outing=outing,
                            opponent=opponent,
@@ -713,7 +714,7 @@ def new_outing_csv():
             return render_template("upload_csv.html",
                                    form=form)
 
-    return render_template("upload_csv.html",
+    return render_template("csv/upload_csv.html",
                            form=form)
 
 # ***************-NEW OUTING CSV PITCHES-*************** #
@@ -832,7 +833,7 @@ def new_outing_csv_pitches(file_name):
             for err in errorMessages:
                 print(err)
 
-    return render_template("new_outing_csv_pitches.html",
+    return render_template("csv/new_outing_csv_pitches.html",
                            form=form,
                            pitches=pitches)
 
@@ -916,7 +917,6 @@ def validate_CSV(file_loc):
             return False
         else:
             return True
-
 
 def updateCount(balls, strikes, pitch_result, ab_result):
     if ab_result is not '':
