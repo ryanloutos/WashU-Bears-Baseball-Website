@@ -485,6 +485,10 @@ def edit_outing_pitches(outing_id):
     # get the correct form
     form = OutingPitchForm()
 
+    # set up batter choices here
+    for subform in form.pitch:
+        subform.batter_id.choices = getAvailableBatters(outing_id)
+
     # when edit wants to be made
     if form.validate_on_submit():
 
@@ -538,15 +542,20 @@ def edit_outing_pitches(outing_id):
         return redirect(url_for('user', username=user.username))
 
     # sets up subforms so they are visible in edit_outing.html
-    for p in range(0, outing.pitches.count()-1):
+    for p in range(1, outing.pitches.count()):
         form.pitch.append_entry()
 
     # set up batter choices here
     for subform in form.pitch:
         subform.batter_id.choices = getAvailableBatters(outing_id)
+    
+    batters = []
+    for b in opponent.batters:
+        batters.append(b)
 
     return render_template('outing/edit_outing_pitches.html',
                            title='Edit Outing',
+                           batters=batters,
                            outing=outing,
                            opponent=opponent,
                            form=form)

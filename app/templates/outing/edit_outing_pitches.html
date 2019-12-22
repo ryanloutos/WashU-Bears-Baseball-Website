@@ -34,7 +34,7 @@
                             <td>{{ loop.index0+1 }}</td>
                             <td>
                                 <select id="pitch-{{loop.index0}}-batter_id" name="pitch-{{loop.index0}}-batter_id" required>
-                                {% for batter in opponent.batters %}
+                                {% for batter in batters %}
                                     <option value="{{batter.id}}" {% if outing.pitches[loop.index0].batter_id==batter.id %} selected='selected' {% endif %}>{{batter}}</option>
                                 {% endfor %}
                                 </select>
