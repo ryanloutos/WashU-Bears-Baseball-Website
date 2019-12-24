@@ -33,7 +33,8 @@ class BatterForm(FlaskForm):
     fullname = StringField('Name', validators=[Optional()])
     nickname = StringField('Initials/Number', validators=[Optional()])
     bats = SelectField('Bats', choices=[('R','R'),('L','L')], validators=[Optional()])
-
+    grad_year = StringField('Grad Year', validators=[Optional()])
+    submit = SubmitField('Create Batter', validators=[Optional()])
 
 # Creating a new opponent
 class OpponentForm(FlaskForm):

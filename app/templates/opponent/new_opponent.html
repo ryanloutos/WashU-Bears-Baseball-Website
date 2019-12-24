@@ -25,6 +25,7 @@
                     <th>Name</th>
                     <th>Initials/Number</th>
                     <th>Bats (R/L)</th>
+                    <th>Graduation Year</th>
                 </tr>
                 {% for subform in form.batter %}
                 <tr class='subform' id='batter-{{ loop.index0 }}-form' data-index='{{ loop.index0 }}'>
@@ -43,6 +44,12 @@
                     <td>
                         {{ subform.bats() }}
                         {% for error in subform.bats.errors %}
+                            <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {{ subform.grad_year(size=8) }}
+                        {% for error in subform.grad_year.errors %}
                             <span style="color: red;">[{{ error }}]</span>
                         {% endfor %}
                     </td>

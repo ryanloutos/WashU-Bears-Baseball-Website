@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    <h1>Edit Batter</h1>
+    <form method="post" novalidate>
+        {{ form.hidden_tag() }} {# Preventing CSRF attacks #}
+        <p>
+            {{ form.fullname.label }}<br>
+            {{ form.fullname(size=32) }}
+            {% for error in form.fullname.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.nickname.label }}<br>
+            {{ form.nickname(size=32) }}
+            {% for error in form.nickname.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.bats.label }}<br>
+            {{ form.bats() }}
+            {% for error in form.bats.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.grad_year.label }}<br>
+            {{ form.grad_year(size=32) }}
+            {% for error in form.grad_year.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.submit() }}
+        </p>
+    </form>
+{% endblock %}

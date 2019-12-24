@@ -411,6 +411,7 @@ def new_opponent():
             batter = Batter(name=subform.fullname.data,
                             short_name=subform.nickname.data,
                             bats=subform.bats.data,
+                            grad_year=subform.grad_year.data,
                             opponent_id=opponent.id)
             
             # add before commit
@@ -427,12 +428,189 @@ def new_opponent():
                            title='New Opponent',
                            form=form)
 
-# ***************-NEW OUTING-*************** #
+# ***************-NEW BATTER-*************** # DONE
+@app.route('/new_batter/<opponent_id>', methods=['GET', 'POST'])
+@login_required
+def new_batter(opponent_id):
+    '''
+    NEW BATTER:
+    Can create a new batter for a specific opponent
+
+    PARAM:
+        -None
+
+    RETURN:
+        -new_batter.html
+    '''
+    # if user is not an admin, they can't create a new season
+    if not current_user.admin:
+        flash('You are not an admin and cannot create a season')
+        return redirect(url_for('index'))
+
+    # when the Create Season button is pressed...
+    form = BatterForm()
+    if form.validate_on_submit():
+
+        # insert data from form into season table
+        batter = Batter(name=form.fullname.data,
+                        short_name=form.nickname.data,
+                        bats=form.bats.data,
+                        grad_year=form.grad_year.data,
+                        opponent_id=opponent_id)
+
+        # send Season object to data table
+        db.session.add(batter)
+        db.session.commit()
+
+        # redirect back to login page
+        flash('Congratulations, you just made a new batter!')
+        return redirect(url_for('opponent', id=opponent_id))
+
+    return render_template('opponent/new_batter.html',
+                           title='New Batter',
+                           form=form)
+
+# ***************-EDIT OPPONENT-*************** # DONE
+@app.route('/edit_opponent/<id>', methods=['GET', 'POST'])
+@login_required
+def edit_opponent(id):
+    '''
+    EDIT OPPONENT:
+    Can edit an opponent for outings to be associated
+    with
+
+    PARAM:
+        -id: The outing id (primary key) that wants to be
+            edited
+
+    RETURN:
+        -edit_opponent.html and redirects to opponent page
+            once an opponent was successfully edited
+    '''
+
+    # if user is not an admin, they can't create a new opponent
+    if not current_user.admin:
+        flash('You are not an admin and cannot edit an opponent')
+        return redirect(url_for('index'))
+    
+    # get opponent object
+    opponent = Opponent.query.filter_by(id=id).first()
+
+    # either bug or admin trying to edit opponent that doesn't exist
+    if not opponent:
+        flash('URL does not exist')
+        return redirect(url_for('index'))
+
+    # once 'create opponent' button is pressed
+    form = OpponentForm()
+    if form.validate_on_submit():
+
+        # get the updated Opponent name and commit to database
+        opponent.name = form.name.data
+        db.session.commit()
+
+        # redirect back to opponent page
+        flash('Congratulations, you just edited the opponent!')
+        return redirect(url_for('opponent', id=opponent.id))
+
+    return render_template('opponent/edit_opponent.html',
+                           title='Edit Opponent',
+                           opponent=opponent,
+                           form=form)
+
+# ***************-EDIT BATTER-*************** # DONE
+@app.route('/edit_batter/<id>', methods=['GET', 'POST'])
+@login_required
+def edit_batter(id):
+    '''
+    EDIT BATTER:
+    Can edit an already existing batter 
+
+    PARAM:
+        -id: The batter id (primary key) that wants to be
+            edited
+
+    RETURN:
+        -edit_batter.html and redirects to opponent page
+            once an opponent was successfully edited
+    '''
+    # make sure user is admin
+    if not current_user.admin:
+        flash("You are not an admin and cannot edit someone else's outing")
+        return redirect(url_for('index'))
+    
+    # get the correct form
+    form = BatterForm()
+
+    # get the batter object
+    batter = Batter.query.filter_by(id=id).first()
+
+    # bug or trying to edit batter that doesn't exist
+    if not batter:
+        flash('URL does not exist')
+        return redirect(url_for('index'))
+
+    # submit is clicked
+    if form.validate_on_submit():
+
+        # update info with data from form
+        batter.name = form.fullname.data
+        batter.short_name = form.nickname.data
+        batter.bats = form.bats.data
+        batter.grad_year = form.grad_year.data
+
+        # commit the changes
+        db.session.commit()
+
+        flash('Batter has been adjusted')
+        return redirect(url_for('index'))
+    
+    return render_template('opponent/edit_batter.html',
+                           title='Edit Batter',
+                           batter=batter,
+                           form=form)
+
+# ***************-DELETE BATTER-*************** # DONE
+@app.route('/delete_batter/<id>', methods=['GET', 'POST'])
+@login_required
+def delete_batter(id):
+    '''
+    DELETE BATTER
+    Can delete an existing batter through this function
+
+    PARAM:
+        -id: the batter id (primary key) in which the user
+            wants to delete
+
+    RETURN:
+        -deletes the batter and redirects to opponent page which the outing
+            was associated with
+    '''
+    # only admins can go back and edit outing data
+    if not current_user.admin:
+        flash("You are not an admin and cannot edit someone else's outing")
+        return redirect(url_for('index'))
+    
+    # get the batter object associated with the id
+    batter = Batter.query.filter_by(id=id).first()
+
+    # bug of trying to delete batter that doesn't exist
+    if not batter:
+        flash("Can't delete a batter that doesn't exist")
+        return redirect(url_for('index'))
+    
+    # delete the batter from database
+    db.session.delete(batter)
+    db.session.commit()
+    
+    return redirect(url_for('opponent', id=batter.opponent_id))
+
+# ***************-NEW OUTING-*************** # DONE
 @app.route('/new_outing', methods=['GET', 'POST'])
 @login_required
 def new_outing():
     '''
-    NEW OUTING
+    NEW OUTING: 
     Can create a new outing and pitches associated with
     that outing
 
@@ -453,12 +631,9 @@ def new_outing():
     # when the 'Create Outing' button is pressed
     if form.validate_on_submit():
 
-        # sets the username variable accordingly
-        username = form.pitcher.data
-
         # gets the user associated the username of the pitcher the outing
         # is being created for
-        user = User.query.filter_by(username=username).first_or_404()
+        user = User.query.filter_by(username=form.pitcher.data).first_or_404()
 
         # creates a new outing object based on form data and user
         outing = Outing(date=form.date.data,
@@ -479,7 +654,7 @@ def new_outing():
                            title='New Outing',
                            form=form)
 
-# ***************-NEW OUTING PITCHES-*************** #
+# ***************-NEW OUTING PITCHES-*************** # DONE
 @app.route('/new_outing_pitches/<outing_id>', methods=['GET', 'POST'])
 @login_required
 def new_outing_pitches(outing_id):
@@ -562,9 +737,10 @@ def new_outing_pitches(outing_id):
                     new_at_bat = True
 
             flash('Pitches added to outing!')
-            return redirect(url_for('index'))
+            return redirect(url_for('outing', id=outing_id))
 
         return render_template('outing/new_outing_pitches.html',
+                               title='New Outing Pitches',
                                form=form)
 
 # ***************-EDIT OUTING PITCHES-*************** #
@@ -788,6 +964,7 @@ def delete_outing(id):
     for at_bat in outing.at_bats:
         for p in at_bat.pitches:
             db.session.delete(p)
+        db.session.delete(at_bat)
 
     # deletes the outing iteself and commits changes to database
     db.session.delete(outing)
