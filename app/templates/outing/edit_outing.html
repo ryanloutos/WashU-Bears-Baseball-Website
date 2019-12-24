@@ -48,5 +48,5 @@
         </p><br>
         <p>{{ form.submit() }}</p>
     </form>
-    <a href="{{ url_for('delete_outing', outing_id=outing.id) }}">Delete Outing</a>
+    <a href="{{ url_for('delete_outing', id=outing.id) }}">Delete Outing</a>
 {% endblock %}

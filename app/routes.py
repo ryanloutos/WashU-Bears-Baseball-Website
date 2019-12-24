@@ -17,33 +17,39 @@ import os
 # for file naming duplication problem
 import random
 
-# ***************-INDEX-*************** #
+# ***************-INDEX-*************** # DONE
 @app.route('/')
 @app.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
     '''
-    HOME PAGE
+    HOME PAGE:
     Returns the home page of the portal
 
     PARAM:
         -None
 
     RETURN:
-        -Displays index.html and passes the player names
-            along with the seasons
+        -Displays index.html and passes pitchers, opponents, 
+            seasons, and batters as a way to filter data
     '''
-    users = User.query.filter(User.year != 'Coach/Manager').all()
+    pitchers = User.query.filter(User.year != 'Coach/Manager').all()
     seasons = Season.query.all()
-    return render_template('main/index.html',
-                           users=users,
-                           seasons=seasons)
+    batters = Batter.query.all()
+    opponents = Opponent.query.all()
 
-# ***************-LOGIN-*************** #
+    return render_template('main/index.html',
+                           title='WashU',
+                           pitchers=pitchers,
+                           opponents=opponents,
+                           seasons=seasons,
+                           batters=batters)
+
+# ***************-LOGIN-*************** # DONE
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     '''
-    LOGIN PAGE
+    LOGIN PAGE:
     User enters username and password and gets
     redirected to index.html if successful
 
@@ -83,13 +89,14 @@ def login():
         return redirect(next_page)
 
     return render_template('main/login.html',
+                           title="Login",
                            form=form)
 
-# ***************-LOGOUT-*************** #
+# ***************-LOGOUT-*************** # DONE
 @app.route('/logout')
 def logout():
     '''
-    LOGOUT
+    LOGOUT:
     Logouts the current_user and redirects to login page
 
     PARAM:
@@ -101,114 +108,12 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
-# ***************-USER HOMEPAGE-*************** #
-@app.route('/user/<username>')
-@login_required
-def user(username):
-    '''
-    USER HOMEPAGE
-    Displays outings for a specific user
-
-    PARAM:
-        -username: the username of the player associated
-            with the outing that will displayed
-
-    RETURN:
-        -user.html which displays the outings to be viewed
-            that are associated with username
-    '''
-    # get the user object associated with the username in the url
-    user = User.query.filter_by(username=username).first_or_404()
-
-    # get the outings associated with that player
-    outings = user.outings
-
-    return render_template('main/user.html',
-                           title='User',
-                           user=user,
-                           outings=outings)
-
-# ***************-SEASON HOMEPAGE-*************** #
-@app.route('/season/<id>')
-@login_required
-def season(id):
-    '''
-    SEASON HOMEPAGE
-
-    PARAM:
-        -id: The season id (primary key) of the season
-            that is requested to be displayed
-
-    RETURN:
-        -season.html which displays all of the outings
-            associated with that season
-    '''
-
-    # gets the Season object associated with the id parameter
-    season = Season.query.filter_by(id=id).first_or_404()
-
-    # outings associated with the specific season
-    outings = season.outings
-
-    return render_template('season/season.html',
-                           title='Season',
-                           season=season,
-                           outings=outings)
-
-# ***************-OUTING HOMEPAGE-*************** #
-@app.route('/outing/<outing_id>', methods=['GET', 'POST'])
-@login_required
-def outing(outing_id):
-    '''
-    OUTING HOMEPAGE
-
-    PARAM:
-        -outing_id: The outing id (primary key) of the outing
-            that is requested to be displayed
-
-    RETURN:
-        -outing.html which displays all of the info/pitches
-            associated with that outing
-    '''
-    # get the outing object associated by the id in the url
-    outing = Outing.query.filter_by(id=outing_id).first_or_404()
-
-    # Get statistical data
-    usages, usage_percentages = calcPitchPercentages(outing)
-    counts, counts_percentages = pitchUsageByCount(outing)
-    pitch_avg_velo = calcAverageVelo(outing)
-    pitch_strike_percentage = calcPitchStrikePercentage(outing)
-    pitch_whiff = calcPitchWhiffRate(outing)
-
-    # Get statistical graphics
-    usage_percentages_pie_chart = createPitchPercentagePieChart(usage_percentages)
-    velocity_over_time_line_chart = velocityOverTimeLineChart(outing)
-    strike_percentage_bar_chart = pitchStrikePercentageBarChart(pitch_strike_percentage)
-    usage_percent_by_count_line_chart = pitchUsageByCountLineCharts(counts_percentages)
-
-    # render template with all the statistical data calculated from
-    # the outing
-    return render_template('outing/outing.html',
-                           title='Outing',
-                           outing=outing,
-                           usages=usages,
-                           usage_percentages=usage_percentages,
-                           usage_percentages_pie_chart=usage_percentages_pie_chart,
-                           counts=counts,
-                           counts_percentages=counts_percentages,
-                           pitch_avg_velo=pitch_avg_velo,
-                           pitch_strike_percentage=pitch_strike_percentage,
-                           pitch_whiff=pitch_whiff,
-                           velocity_over_time_line_chart=velocity_over_time_line_chart,
-                           strike_percentage_bar_chart=strike_percentage_bar_chart,
-                           usage_percent_by_count_line_chart=usage_percent_by_count_line_chart)
-
-# ***************-NEW USER-*************** #
+# ***************-REGISTER-*************** # DONE
 @app.route('/register', methods=['GET', 'POST'])
 @login_required
 def register():
     '''
-    REGISTER
+    REGISTER:
     Create a new user (player/coach/manager) if current user
     is an admin
 
@@ -249,14 +154,189 @@ def register():
         return redirect(url_for('login'))
 
     return render_template('main/register.html',
+                           title='Register',
                            form=form)
 
-# ***************-NEW SEASON-*************** #
+# ***************-PITCHER HOMEPAGE-*************** # DONE
+@app.route('/pitcher/<id>')
+@login_required
+def pitcher(id):
+    '''
+    PITCHER HOMEPAGE:
+    Displays outings for a specific pitcher
+
+    PARAM:
+        -id: the id (primary key) of the pitcher that wants
+            to be viewed
+
+    RETURN:
+        -pitcher.html which displays the outings to be viewed
+            that are associated with username
+    '''
+    # get the user object associated with the username in the url
+    pitcher = User.query.filter_by(id=id).first()
+
+    # either bug or user trying to access pitcher page that DNE
+    if not pitcher:
+        flash('URL does not exist')
+        return redirect(url_for('index'))
+
+    # if pitcher is a coach/manager, redirect to index page
+    if pitcher.year == 'Coach/Manager':
+        flash('Cannot show outings for Coach/Manager')
+        return redirect(url_for('index'))
+
+    # get the outings associated with that player
+    outings = pitcher.outings
+
+    return render_template('main/pitcher.html',
+                           title=pitcher,
+                           pitcher=pitcher)
+
+# ***************-SEASON HOMEPAGE-*************** # DONE
+@app.route('/season/<id>')
+@login_required
+def season(id):
+    '''
+    SEASON HOMEPAGE:
+
+    PARAM:
+        -id: The season id (primary key) of the season
+            that is requested to be displayed
+
+    RETURN:
+        -season.html which displays all of the outings
+            associated with that season
+    '''
+
+    # gets the Season object associated with the id parameter
+    season = Season.query.filter_by(id=id).first()
+
+    # either bug or user trying to access a season id that DNE
+    if not season:
+        flash('URL does not exist')
+        return redirect(url_for('index'))
+
+    # outings associated with the specific season
+    outings = season.outings
+
+    return render_template('season/season.html',
+                           title=season,
+                           season=season)
+
+# ***************-OUTING HOMEPAGE-*************** # DONE
+@app.route('/outing/<id>', methods=['GET', 'POST'])
+@login_required
+def outing(id):
+    '''
+    OUTING HOMEPAGE:
+
+    PARAM:
+        -outing_id: The outing id (primary key) of the outing
+            that is requested to be displayed
+
+    RETURN:
+        -outing.html which displays all of the info/pitches
+            associated with that outing
+    '''
+    # get the outing object associated by the id in the url
+    outing = Outing.query.filter_by(id=id).first()
+
+    # if bug or outing trying to be viewed DNE
+    if not outing:
+        flash("URL does not exits")
+        return redirect(url_for('index'))
+
+    # Get statistical data
+    usages, usage_percentages = calcPitchPercentages(outing)
+    counts, counts_percentages = pitchUsageByCount(outing)
+    pitch_avg_velo = calcAverageVelo(outing)
+    pitch_strike_percentage = calcPitchStrikePercentage(outing)
+    pitch_whiff = calcPitchWhiffRate(outing)
+
+    # Get statistical graphics
+    usage_percentages_pie_chart = createPitchPercentagePieChart(usage_percentages)
+    velocity_over_time_line_chart = velocityOverTimeLineChart(outing)
+    strike_percentage_bar_chart = pitchStrikePercentageBarChart(pitch_strike_percentage)
+    usage_percent_by_count_line_chart = pitchUsageByCountLineCharts(counts_percentages)
+
+    # render template with all the statistical data calculated from the outing
+    return render_template('outing/outing.html',
+                           title=outing,
+                           outing=outing,
+                           usages=usages,
+                           usage_percentages=usage_percentages,
+                           usage_percentages_pie_chart=usage_percentages_pie_chart,
+                           counts=counts,
+                           counts_percentages=counts_percentages,
+                           pitch_avg_velo=pitch_avg_velo,
+                           pitch_strike_percentage=pitch_strike_percentage,
+                           pitch_whiff=pitch_whiff,
+                           velocity_over_time_line_chart=velocity_over_time_line_chart,
+                           strike_percentage_bar_chart=strike_percentage_bar_chart,
+                           usage_percent_by_count_line_chart=usage_percent_by_count_line_chart)
+
+# ***************-BATTER HOMEPAGE-*************** # DONE
+@app.route('/batter/<id>', methods=['GET', 'POST'])
+@login_required
+def batter(id):
+    '''
+    BATTER HOMEPAGE:
+
+    PARAM:
+        -id: The batter id (primary key) for the batter 
+            that the user is trying to view
+
+    RETURN:
+        -batter.html which displays the homepage/info page
+            for that batter
+    '''
+
+    # get the Batter object associated with the id passed in
+    batter = Batter.query.filter_by(id=id).first()
+
+    # either bug or user trying to view a batter that DNE
+    if not batter:
+        flash("URL does not exist")
+        return redirect(url_for('index'))
+
+    return render_template('opponent/batter.html',
+                           title=batter,
+                           batter=batter)
+
+# ***************-OPPONENT HOMEPAGE-*************** # DONE
+@app.route('/opponent/<id>', methods=['GET', 'POST'])
+@login_required
+def opponent(id):
+    '''
+    OPPONENT HOMEPAGE:
+
+    PARAM:
+        -id: The opponent id (primary key) for the opponent 
+            that the user is trying to view
+
+    RETURN:
+        -opponent.html which displays the homepage/info page
+            for that opponent
+    '''
+    # get the Opponent object assicated with the id
+    opponent = Opponent.query.filter_by(id=id).first()
+
+    # bug or user trying to view opponent that DNE
+    if not opponent:
+        flash("URL does not exist")
+        return redirect(url_for('index'))
+
+    return render_template('opponent/opponent.html',
+                           title=opponent,
+                           opponent=opponent)
+
+# ***************-NEW SEASON-*************** # DONE
 @app.route('/new_season', methods=['GET', 'POST'])
 @login_required
 def new_season():
     '''
-    NEW SEASON
+    NEW SEASON:
     Can create a new season for outings to be associated
     with
 
@@ -289,14 +369,15 @@ def new_season():
         return redirect(url_for('index'))
 
     return render_template('season/new_season.html',
+                           title='New Season',
                            form=form)
 
-# ***************-NEW OPPONENT-*************** #
+# ***************-NEW OPPONENT-*************** # DONE
 @app.route('/new_opponent', methods=['GET', 'POST'])
 @login_required
 def new_opponent():
     '''
-    NEW OPPONENT
+    NEW OPPONENT:
     Can create a new opponent for outings to be associated
     with
 
@@ -307,33 +388,35 @@ def new_opponent():
         -new_opponent.html and redirects to index page
             once a new opponent was successfully created
     '''
-    # if user is not an admin, they can't create a new season
+    # if user is not an admin, they can't create a new opponent
     if not current_user.admin:
         flash('You are not an admin and cannot create a opponent')
         return redirect(url_for('index'))
 
-    # when the Create Season button is pressed...
+    # when the Create Opponent button is pressed...
     form = OpponentForm()
     if form.validate_on_submit():
 
-        # insert data from form into season table
+        # create Opponent object from form data
         opponent = Opponent(name=form.name.data)
 
-        # send Season object to data table
+        # send Opponent object to database
         db.session.add(opponent)
         db.session.commit()
 
-        #create the batter objects from the form and send to database
+        # create the batter objects from the form and send to database
         for subform in form.batter:
-            batter = Batter(
-                name=subform.fullname.data,
-                short_name=subform.nickname.data,
-                bats=subform.bats.data,
-                opponent_id=opponent.id
-            )
+
+            # create Batter object
+            batter = Batter(name=subform.fullname.data,
+                            short_name=subform.nickname.data,
+                            bats=subform.bats.data,
+                            opponent_id=opponent.id)
+            
+            # add before commit
             db.session.add(batter)
         
-        #commit the batters to database
+        # commit the batters to database
         db.session.commit()
 
         # redirect back to login page
@@ -341,6 +424,7 @@ def new_opponent():
         return redirect(url_for('index'))
 
     return render_template('opponent/new_opponent.html', 
+                           title='New Opponent',
                            form=form)
 
 # ***************-NEW OUTING-*************** #
@@ -415,16 +499,40 @@ def new_outing_pitches(outing_id):
             strikes = 0
             count = f'{balls}-{strikes}'
 
+            # Boolean variable to help with adding AtBat objects to the database
+            new_at_bat = True
+
+            # variable to hold the current AtBat object
+            current_at_bat = None
+
             # add each individual pitch to the database
             for index, subform in enumerate(form.pitch):
+                
+                # get the batter_id for the AtBat and Pitch objects
+                batter_id = subform.batter_id.data
+
+                # if a new at bat has started, make a new AtBat object
+                if new_at_bat: 
+                    at_bat = AtBat(batter_id=batter_id,
+                                   outing_id=outing_id)
+                    
+                    # Add the AtBat object to database
+                    db.session.add(at_bat)
+                    db.session.commit()
+
+                    # Set the current_at_bat for subsequent pitches accordingly
+                    current_at_bat = at_bat
+
+                    # So new at_bat variables aren't made every pitch
+                    new_at_bat = False
 
                 # sets the pitch_num column automatically
                 pitch_num = index+1
 
                 # create Pitch object
-                pitch = Pitch(outing_id=outing_id,
+                pitch = Pitch(atbat_id=current_at_bat.id,
                               pitch_num=pitch_num,
-                              batter_id=subform.batter_id.data,
+                              batter_id=batter_id,
                               batter_hand=subform.batter_hand.data,
                               velocity=subform.velocity.data,
                               lead_runner=subform.lead_runner.data,
@@ -448,8 +556,13 @@ def new_outing_pitches(outing_id):
                 db.session.add(pitch)
                 db.session.commit()
 
+                # after the pitch was made, if the at_bat ended, reset variable
+                # so a new at_bat starts during the next loop
+                if pitch.ab_result is not '':
+                    new_at_bat = True
+
             flash('Pitches added to outing!')
-            return redirect(url_for('outing', outing_id=outing_id))
+            return redirect(url_for('index'))
 
         return render_template('outing/new_outing_pitches.html',
                                form=form)
@@ -645,16 +758,16 @@ def edit_outing(outing_id):
                            all_pitchers=all_pitchers,
                            form=form)
 
-# ***************-DELETE OUTING-*************** #
-@app.route('/delete_outing/<outing_id>', methods=['GET', 'POST'])
+# ***************-DELETE OUTING-*************** # DONE
+@app.route('/delete_outing/<id>', methods=['GET', 'POST'])
 @login_required
-def delete_outing(outing_id):
+def delete_outing(id):
     '''
     DELETE OUTING
     Can delete an existing outing through this function
 
     PARAM:
-        -outing_id: the outing id (primary key) in which the user
+        -id: the outing id (primary key) in which the user
             wants to delete
 
     RETURN:
@@ -663,7 +776,7 @@ def delete_outing(outing_id):
     '''
 
     # get the outing and user objects associated with this outing
-    outing = Outing.query.filter_by(id=outing_id).first_or_404()
+    outing = Outing.query.filter_by(id=id).first_or_404()
     user = User.query.filter_by(id=outing.user_id).first_or_404()
 
     # only admins have permission to delete an outing
@@ -672,8 +785,9 @@ def delete_outing(outing_id):
         return redirect(url_for('index'))
 
     # deletes the pitches associated with outing
-    for p in outing.pitches:
-        db.session.delete(p)
+    for at_bat in outing.at_bats:
+        for p in at_bat.pitches:
+            db.session.delete(p)
 
     # deletes the outing iteself and commits changes to database
     db.session.delete(outing)
@@ -681,9 +795,9 @@ def delete_outing(outing_id):
 
     # redirects to user page associated with deletion
     flash('Outing has been deleted')
-    return redirect(url_for('user', username=user.username))
+    return redirect(url_for('pitcher', id=user.id))
 
-# ***************-NEW OUTING CSV-*************** #
+# ***************-NEW OUTING CSV-*************** # MITCH
 @app.route('/new_outing_csv', methods=['GET', 'POST'])
 @login_required
 def new_outing_csv():
@@ -726,7 +840,7 @@ def new_outing_csv():
     return render_template("csv/upload_csv.html",
                            form=form)
 
-# ***************-NEW OUTING CSV PITCHES-*************** #
+# ***************-NEW OUTING CSV PITCHES-*************** # MITCH
 @app.route('/new_outing_csv_pitches/<file_name>', methods=['GET', 'POST'])
 @login_required
 def new_outing_csv_pitches(file_name):

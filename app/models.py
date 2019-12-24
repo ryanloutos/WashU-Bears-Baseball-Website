@@ -36,7 +36,7 @@ class Outing(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), index=True)
     # represents which pitcher this outing belongs to
     season_id = db.Column(db.Integer, db.ForeignKey('season.id'), index=True)
-    pitches = db.relationship('Pitch', backref='outing', lazy='dynamic')
+    at_bats = db.relationship('AtBat', backref='outing', lazy='dynamic')
     # where all the pitches to the outing are stored
 
     def __repr__(self):
@@ -45,13 +45,10 @@ class Outing(db.Model):
         day = self.date.day
         return f'{month}/{day} {self.opponent}'
 
-    def get_id(self):
-        return self.id
-
 
 class Pitch(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    outing_id = db.Column(db.Integer, db.ForeignKey('outing.id'), index=True)
+    atbat_id = db.Column(db.Integer, db.ForeignKey('at_bat.id'), index=True)
     # which outing this pitch comes from
     pitch_num = db.Column(db.Integer, index=True)
     batter_id = db.Column(db.String(16), index=True)
@@ -108,7 +105,13 @@ class AtBat(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     batter_id = db.Column(db.Integer, db.ForeignKey('batter.id'), index=True)
     outing_id = db.Column(db.Integer, db.ForeignKey('outing.id'), index=True)
-    # pitches = db.relationship('Pitch', backref='at_bat', lazy='dynamic')
+    pitches = db.relationship('Pitch', backref='at_bat', lazy='dynamic')
+
+    def __repr__(self):
+        outing = Outing.query.filter_by(id=self.outing_id).first()
+        pitcher = User.query.filter_by(id=outing.user_id).first()
+        date = outing.date
+        return f"{date} vs. {pitcher}"
 
 
 @login.user_loader

@@ -7,9 +7,9 @@
     <h2>Players:</h2>
     <br>
     <div>
-        {% for u in users %}
+        {% for p in pitchers %}
         <p>
-            <a href="{{ url_for('user', username=u.username) }}">{{ u }}</a>
+            <a href="{{ url_for('pitcher', id=p.id) }}">{{ p }}</a>
         </p>
         {% endfor %}
     </div>
@@ -19,6 +19,24 @@
         {% for s in seasons %}
         <p>
             <a href="{{ url_for('season', id=s.id) }}">{{ s }}</a>
+        </p>
+        {% endfor %}
+    </div>
+    <h2>Batters:</h2>
+    <br>
+    <div>
+        {% for b in batters %}
+        <p>
+            <a href="{{ url_for('batter', id=b.id) }}">{{ b.name }}</a>
+        </p>
+        {% endfor %}
+    </div>
+    <h2>Opponents:</h2>
+    <br>
+    <div>
+        {% for o in opponents %}
+        <p>
+            <a href="{{ url_for('opponent', id=o.id) }}">{{ o }}</a>
         </p>
         {% endfor %}
     </div>

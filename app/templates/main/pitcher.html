@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-    <h1>{{ season }}</h1>
+    <h1>{{ pitcher }}</h1>
     <br>
     <div>
-        {% for o in season.outings %}
+        {% for o in pitcher.outings %}
         <p>
             <a href="{{ url_for('outing', id=o.id) }}">{{ o }}</a>
         </p>

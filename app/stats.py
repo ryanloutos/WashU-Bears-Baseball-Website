@@ -53,15 +53,16 @@ def calcPitchWhiffRate(outing):
         "SM": 0,
         "total": 0}
 
-    for pitch in outing.pitches:
-        if pitch.pitch_result == 'SS':
-            pitches_swung_at[PitchType(pitch.pitch_type).name] += 1
-            pitches_missed[PitchType(pitch.pitch_type).name] += 1
-            pitches_swung_at['total'] += 1
-            pitches_missed['total'] += 1
-        if pitch.pitch_result == 'F' or pitch.pitch_result == 'IP':
-            pitches_swung_at[PitchType(pitch.pitch_type).name] += 1
-            pitches_swung_at['total'] += 1
+    for at_bat in outing.at_bats:
+        for pitch in at_bat.pitches:
+            if pitch.pitch_result == 'SS':
+                pitches_swung_at[PitchType(pitch.pitch_type).name] += 1
+                pitches_missed[PitchType(pitch.pitch_type).name] += 1
+                pitches_swung_at['total'] += 1
+                pitches_missed['total'] += 1
+            if pitch.pitch_result == 'F' or pitch.pitch_result == 'IP':
+                pitches_swung_at[PitchType(pitch.pitch_type).name] += 1
+                pitches_swung_at['total'] += 1
     for key, val in pitches_swung_at.items():
         if (pitches_swung_at[key] != 0):
             pitches_whiff[key] = (
@@ -106,13 +107,14 @@ def calcPitchStrikePercentage(outing):
         "SM": 0,
         "total": 0}
 
-    for pitch in outing.pitches:
-        pitches[PitchType(pitch.pitch_type).name] += 1
-        pitches['total'] += 1
-        if (pitch.pitch_result == 'SS' or pitch.pitch_result == 'CS' or
-                pitch.pitch_result == 'F' or pitch.pitch_result == 'IP'):
-            pitches_strikes[PitchType(pitch.pitch_type).name] += 1
-            pitches_strikes['total'] += 1
+    for at_bat in outing.at_bats:
+        for pitch in at_bat.pitches:
+            pitches[PitchType(pitch.pitch_type).name] += 1
+            pitches['total'] += 1
+            if (pitch.pitch_result == 'SS' or pitch.pitch_result == 'CS' or
+                    pitch.pitch_result == 'F' or pitch.pitch_result == 'IP'):
+                pitches_strikes[PitchType(pitch.pitch_type).name] += 1
+                pitches_strikes['total'] += 1
 
     for key, val in pitches.items():
         if pitches[key] != 0:
@@ -138,11 +140,12 @@ def calcAverageVelo(outing):
     pitches_total_velo = {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0}
     pitch_avg_velo = {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0}
 
-    for pitch in outing.pitches:
-        if (pitch.velocity):
-            pitches[PitchType(pitch.pitch_type).name] += 1
-            pitches_total_velo[
-                PitchType(pitch.pitch_type).name] += pitch.velocity
+    for at_bat in outing.at_bats:
+        for pitch in at_bat.pitches:
+            if (pitch.velocity):
+                pitches[PitchType(pitch.pitch_type).name] += 1
+                pitches_total_velo[
+                    PitchType(pitch.pitch_type).name] += pitch.velocity
 
     for key, val in pitches.items():
         if pitches[key] != 0:
@@ -167,11 +170,13 @@ def calcPitchPercentages(outing):
             "pitch_percentages" is a dictionary containing the percent each
                 pitch was thrown.
     '''
-    num_pitches = outing.pitches.count()
+    num_pitches = 0
     pitches = {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0}
 
-    for pitch in outing.pitches:
-        pitches[PitchType(pitch.pitch_type).name] += 1
+    for at_bat in outing.at_bats:
+        for pitch in at_bat.pitches:
+            pitches[PitchType(pitch.pitch_type).name] += 1
+            num_pitches += 1
 
     pitch_percentages = {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0}
     if num_pitches != 0:
@@ -198,7 +203,7 @@ def pitchUsageByCount(outing):
             "counts_percentages" is a dictionary that represents the
                 percentage of time a pitch was thrown by count
     '''
-    num_pitches = outing.pitches.count()
+    num_pitches = 0
     # PLEASE COLLAPSE THIS VARIABLE IT'S DUMB
     counts = {
         "0-0": {
@@ -301,12 +306,15 @@ def pitchUsageByCount(outing):
             }
     }
 
-    for pitch in outing.pitches:
-        count = pitch.count
-        pitch_type = PitchType(pitch.pitch_type).name
+    for at_bat in outing.at_bats:
+        for pitch in at_bat.pitches:
+            count = pitch.count
+            pitch_type = PitchType(pitch.pitch_type).name
 
-        counts[count]["total"] += 1
-        counts[count]["pitches"][pitch_type] += 1
+            counts[count]["total"] += 1
+            counts[count]["pitches"][pitch_type] += 1
+
+            num_pitches += 1
 
     # create count percentages
     for key, value in counts.items():
@@ -364,7 +372,10 @@ def velocityOverTimeLineChart(outing):
     RETURN:
         - pygal line chart object complete with data
     '''
-    num_pitches = outing.pitches.count()
+    num_pitches = 0
+    for at_bat in outing.at_bats:
+        for pitch in at_bat.pitches:
+            num_pitches += 1
     line_chart = pygal.Line(
         style=DarkSolarizedStyle,
         title="Velocity changes over time",
@@ -377,13 +388,14 @@ def velocityOverTimeLineChart(outing):
     line_chart.dyanamic_print_values = True
 
     velocities = {"FB": [], "CB": [], "SL": [], "CH": [], "CT": [], "SM": []}
-    for pitch in outing.pitches:
-        pitch_type = PitchType(pitch.pitch_type).name
-        for key in velocities.keys():
-            if key is pitch_type:
-                velocities[key].append(pitch.velocity)
-            else:
-                velocities[key].append(None)
+    for at_bat in outing.at_bats:
+        for pitch in at_bat.pitches:
+            pitch_type = PitchType(pitch.pitch_type).name
+            for key in velocities.keys():
+                if key is pitch_type:
+                    velocities[key].append(pitch.velocity)
+                else:
+                    velocities[key].append(None)
 
     for pitch_type, pitch_values in velocities.items():
         if pitch_type == "SM":

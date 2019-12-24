@@ -1,12 +1,13 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-    <h1>{{ user }}</h1>
+    <h1>{{ batter.name }}</h1>
     <br>
+    <h2>At Bats</h2>
     <div>
-        {% for o in outings %}
+        {% for at_bat in batter.at_bats %}
         <p>
-            <a href="{{ url_for('outing',outing_id=o.id) }}">{{ o }}</a>
+            <a href="#">{{ at_bat }}</a>
         </p>
         {% endfor %}
     </div>

@@ -35,10 +35,8 @@
     <script src="http://kozea.github.com/pygal.js/javascripts/pygal-tooltips.js"></script>
     <h1>
         {{ outing }}
-        {% if current_user.admin or current_user.id==outing.user_id %} {# making sure user has write access #}
-            <a href="{{ url_for('edit_outing', outing_id=outing.id) }}">Edit Outing</a>
-            <a href="{{ url_for('edit_outing_pitches', outing_id=outing.id) }}">Edit Pitches</a>
-        {% endif %}
+        <a href="{{ url_for('edit_outing', outing_id=outing.id) }}">Edit Outing</a>
+        <a href="{{ url_for('edit_outing_pitches', outing_id=outing.id) }}">Edit Pitches</a>
     </h1>
         <div class="panel panel-default">
             <div class="panel-heading">Pitches</div>
@@ -62,35 +60,37 @@
                     <th>Fielder</th>
                     <th>Inning</th>
                 </tr>
-                {% for pitch in outing.pitches %}
-                <tr>
-                    <td>{{ pitch.pitch_num }}</td>
-                    <td>{{ pitch.batter_id }}</td>
-                    <td>{{ pitch.batter_hand }}</td>
-                    {% if pitch.velocity==None %}
-                        <td></td>
-                    {% else %}
-                        <td>{{ pitch.velocity }}</td>
-                    {% endif %}
-                    <td>{{ pitch.lead_runner }}</td>
-                    {% if pitch.time_to_plate==None %}
-                        <td></td>
-                    {% else %}
-                        <td>{{ pitch.time_to_plate }}</td>
-                    {% endif %}
-                    <td>{{ pitch.pitch_type }}</td>
-                    <td>{{ pitch.pitch_result }}</td>
-                    {% if pitch.hit_spot %}
-                        <td>X</td>
-                    {% else %}
-                        <td></td>
-                    {% endif %}
-                    <td>{{ pitch.count }}</td>
-                    <td>{{ pitch.ab_result }}</td>
-                    <td>{{ pitch.traj }}</td>
-                    <td>{{ pitch.fielder }}</td>
-                    <td>{{ pitch.inning }}</td>
-                </tr>
+                {% for at_bat in outing.at_bats %}
+                    {% for pitch in at_bat.pitches %}
+                        <tr>
+                            <td>{{ pitch.pitch_num }}</td>
+                            <td>{{ pitch.batter_id }}</td>
+                            <td>{{ pitch.batter_hand }}</td>
+                            {% if pitch.velocity==None %}
+                                <td></td>
+                            {% else %}
+                                <td>{{ pitch.velocity }}</td>
+                            {% endif %}
+                            <td>{{ pitch.lead_runner }}</td>
+                            {% if pitch.time_to_plate==None %}
+                                <td></td>
+                            {% else %}
+                                <td>{{ pitch.time_to_plate }}</td>
+                            {% endif %}
+                            <td>{{ pitch.pitch_type }}</td>
+                            <td>{{ pitch.pitch_result }}</td>
+                            {% if pitch.hit_spot %}
+                                <td>X</td>
+                            {% else %}
+                                <td></td>
+                            {% endif %}
+                            <td>{{ pitch.count }}</td>
+                            <td>{{ pitch.ab_result }}</td>
+                            <td>{{ pitch.traj }}</td>
+                            <td>{{ pitch.fielder }}</td>
+                            <td>{{ pitch.inning }}</td>
+                        </tr>
+                    {% endfor %}
                 {% endfor %}
             </table>
         </div>

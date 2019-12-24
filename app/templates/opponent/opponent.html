@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    <h1>{{ opponent }}</h1>
+    <br>
+    <h2>Batters</h2>
+    <div>
+        {% for b in opponent.batters %}
+        <p>
+            <a href="#">{{ b.name }}</a>
+        </p>
+        {% endfor %}
+    </div>
+    <h2>Outings</h2>
+    <div>
+        {% for o in opponent.outings %}
+        <p>
+            <a href="#">{{ o }}</a>
+        </p>
+        {% endfor %}
+    </div>
+{% endblock %}
