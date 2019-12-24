@@ -137,6 +137,7 @@ class PitchForm(FlaskForm):
             ('8', '8'), ('9', '9')],
         validators=[Optional()])
     inning = IntegerField('Inning', validators=[Optional()])
+    submit = SubmitField('Finish', validators=[Optional()])
 
     # disables CSRF tokens for subforms, but keeps it for the big
     # form (OutingForm) so it is still secured

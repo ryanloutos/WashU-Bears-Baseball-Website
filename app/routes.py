@@ -831,7 +831,11 @@ def edit_outing_pitches(outing_id):
         return redirect(url_for('user', username=user.username))
 
     # sets up subforms so they are visible in edit_outing.html
-    for p in range(1, outing.pitches.count()):
+    num_pitches = 0
+    for at_bat in outing.at_bats:
+        for pitch in at_bat.pitches:
+            num_pitches += 1
+    for p in range(1, num_pitches):
         form.pitch.append_entry()
 
     # set up batter choices here
@@ -848,8 +852,8 @@ def edit_outing_pitches(outing_id):
                            outing=outing,
                            opponent=opponent,
                            form=form)
-
-# ***************-EDIT OUTING-*************** #
+    
+# ***************-EDIT OUTING-*************** # DONE
 @app.route('/edit_outing/<outing_id>', methods=['GET', 'POST'])
 @login_required
 def edit_outing(outing_id):
@@ -876,53 +880,20 @@ def edit_outing(outing_id):
     # when edit wants to be made
     if form.validate_on_submit():
         
-        # get the user object associated with the pitcher submitted in form
-        user = User.query.filter_by(username=form.pitcher.data).first_or_404()
+        # get the user object from form
+        pitcher = User.query.filter_by(username=form.pitcher.data).first_or_404()
 
-        # commit the changes
-        db.session.delete(outing)
-        db.session.commit()
-
-        outing_edited = Outing(date=form.date.data,
-                               opponent_id=opponent.id,
-                               user_id=user.id,
-                               season_id=form.season.data.id)
-
-        # set up count variable to update with each pitch
-        balls = 0
-        strikes = 0
-        count = '0-0'
-
-        # adjust the pitches with the new outing id
-        for pitch in outing.pitches:
-
-            # creates Pitch object based on subform data
-            new_pitch = Pitch(outing_id=outing_edited.id,
-                              pitch_num=pitch.pitch_num,
-                              batter_id=pitch.batter_id,
-                              batter_hand=pitch.batter_hand,
-                              velocity=pitch.velocity,
-                              lead_runner=pitch.lead_runner,
-                              time_to_plate=pitch.time_to_plate,
-                              pitch_type=pitch.pitch_type,
-                              pitch_result=pitch.pitch_result,
-                              hit_spot=pitch.hit_spot,
-                              count=pitch.count,
-                              ab_result=pitch.ab_result,
-                              traj=pitch.traj,
-                              fielder=pitch.fielder,
-                              inning=pitch.inning)
-
-            # adds pitch to database and delete old pitch
-            db.session.add(new_pitch)
-            db.session.delete(pitch)
-
-        db.session.add(outing_edited)
+        # update data for outing object
+        outing.user_id = pitcher.id
+        outing.date = form.date.data
+        outing.season_id = form.season.data.id
+        
+        # commit changes to database
         db.session.commit()
 
         # redirect to user page
         flash('The outing has been adjusted!')
-        return redirect(url_for('user', username=user.username))
+        return redirect(url_for('pitcher', id=pitcher.id))
 
     return render_template('outing/edit_outing.html',
                            title='Edit Outing',
