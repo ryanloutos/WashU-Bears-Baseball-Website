@@ -51,8 +51,7 @@ class Pitch(db.Model):
     atbat_id = db.Column(db.Integer, db.ForeignKey('at_bat.id'), index=True)
     # which outing this pitch comes from
     pitch_num = db.Column(db.Integer, index=True)
-    batter_id = db.Column(db.String(16), index=True)
-    batter_hand = db.Column(db.String(8), index=True)
+    batter_id = db.Column(db.Integer, db.ForeignKey('batter.id'), index=True)
     velocity = db.Column(db.Integer, index=True)
     lead_runner = db.Column(db.String(8), index=True)
     time_to_plate = db.Column(db.Float, index=True)

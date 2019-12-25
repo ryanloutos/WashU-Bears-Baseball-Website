@@ -241,6 +241,7 @@ def outing(id):
     '''
     # get the outing object associated by the id in the url
     outing = Outing.query.filter_by(id=id).first()
+    opponent = Opponent.query.filter_by(id=outing.opponent_id).first()
 
     # if bug or outing trying to be viewed DNE
     if not outing:
@@ -264,6 +265,7 @@ def outing(id):
     return render_template('outing/outing.html',
                            title=outing,
                            outing=outing,
+                           opponent=opponent,
                            usages=usages,
                            usage_percentages=usage_percentages,
                            usage_percentages_pie_chart=usage_percentages_pie_chart,
@@ -708,7 +710,6 @@ def new_outing_pitches(outing_id):
                 pitch = Pitch(atbat_id=current_at_bat.id,
                               pitch_num=pitch_num,
                               batter_id=batter_id,
-                              batter_hand=subform.batter_hand.data,
                               velocity=subform.velocity.data,
                               lead_runner=subform.lead_runner.data,
                               time_to_plate=subform.time_to_plate.data,
@@ -781,9 +782,11 @@ def edit_outing_pitches(outing_id):
     # when edit wants to be made
     if form.validate_on_submit():
 
-        # delete all of the pitches associated with the outing
-        for p in outing.pitches:
-            db.session.delete(p)
+        # delete all of the pitches/at_bats associated with the outing
+        for at_bat in outing.at_bats:
+            for p in at_bat.pitches:
+                db.session.delete(p)
+            db.session.delete(at_bat)
 
         # commit the changes
         db.session.commit()
@@ -793,17 +796,40 @@ def edit_outing_pitches(outing_id):
         strikes = 0
         count = '0-0'
 
+        # Boolean variable to help with adding AtBat objects to the database
+        new_at_bat = True
+
+        # variable to hold the current AtBat object
+        current_at_bat = None
+
         # add each individual pitch to the database
         for index, subform in enumerate(form.pitch):
+            
+            # get the batter_id for the AtBat and Pitch objects
+            batter_id = subform.batter_id.data
 
-            # sets pitch_num automatically
+            # if a new at bat has started, make a new AtBat object
+            if new_at_bat: 
+                at_bat = AtBat(batter_id=batter_id,
+                               outing_id=outing_id)
+                
+                # Add the AtBat object to database
+                db.session.add(at_bat)
+                db.session.commit()
+
+                # Set the current_at_bat for subsequent pitches accordingly
+                current_at_bat = at_bat
+
+                # So new at_bat variables aren't made every pitch
+                new_at_bat = False
+
+            # sets the pitch_num column automatically
             pitch_num = index+1
 
-            # creates Pitch object based on subform data
-            pitch = Pitch(outing_id=outing_id,
+            # create Pitch object
+            pitch = Pitch(atbat_id=current_at_bat.id,
                           pitch_num=pitch_num,
-                          batter_id=subform.batter_id.data,
-                          batter_hand=subform.batter_hand.data,
+                          batter_id=batter_id,
                           velocity=subform.velocity.data,
                           lead_runner=subform.lead_runner.data,
                           time_to_plate=subform.time_to_plate.data,
@@ -816,7 +842,7 @@ def edit_outing_pitches(outing_id):
                           fielder=subform.fielder.data,
                           inning=subform.inning.data)
 
-            # updates the count based on previous pitch
+            # update count based on current count and pitch result
             balls, strikes, count = updateCount(balls,
                                                 strikes,
                                                 pitch.pitch_result,
@@ -826,9 +852,15 @@ def edit_outing_pitches(outing_id):
             db.session.add(pitch)
             db.session.commit()
 
+            # after the pitch was made, if the at_bat ended, reset variable
+            # so a new at_bat starts during the next loop
+            if pitch.ab_result is not '':
+                new_at_bat = True
+
+
         # redirect to user page
         flash('The outing has been adjusted!')
-        return redirect(url_for('user', username=user.username))
+        return redirect(url_for('outing', id=outing.id))
 
     # sets up subforms so they are visible in edit_outing.html
     num_pitches = 0
@@ -841,14 +873,9 @@ def edit_outing_pitches(outing_id):
     # set up batter choices here
     for subform in form.pitch:
         subform.batter_id.choices = getAvailableBatters(outing_id)
-    
-    batters = []
-    for b in opponent.batters:
-        batters.append(b)
 
     return render_template('outing/edit_outing_pitches.html',
                            title='Edit Outing',
-                           batters=batters,
                            outing=outing,
                            opponent=opponent,
                            form=form)

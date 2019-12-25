@@ -89,10 +89,6 @@ class RegistrationForm(FlaskForm):
 # each field is based on the baseball teams velocity tracking sheets
 class PitchForm(FlaskForm):
     batter_id = SelectField('Batter', validators=[Optional()])
-    batter_hand = SelectField(
-        'RHH/LHH',
-        choices=[('RHH', 'RHH'), ('LHH', 'LHH')],
-        validators=[DataRequired()])
     velocity = IntegerField('Velo', validators=[Optional()])
     lead_runner = SelectField(
         'Lead RNR',

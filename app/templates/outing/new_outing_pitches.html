@@ -17,7 +17,6 @@
                 <tr>
                     <th>Pitch</th>
                     <th>Batter</th>
-                    <th>RHH/LHH</th>
                     <th>Velo</th>
                     <th>Lead RNR</th>
                     <th>Time to Plate</th>
@@ -33,7 +32,6 @@
                 <tr class='subform' id="pitch-{{ loop.index0 }}-form" data-index='{{ loop.index0 }}'>
                     <td>{{ loop.index0+1 }}</td>
                     <td>{{ subform.batter_id() }}</td>
-                    <td>{{ subform.batter_hand() }}</td>
                     <td>{{ subform.velocity(size=4) }}</td>
                     <td>{{ subform.lead_runner() }}</td>
                     <td>{{ subform.time_to_plate(size=4) }}</td>
