@@ -4,7 +4,7 @@ from werkzeug.urls import url_parse
 from app import app, db
 from app.forms import LoginForm, RegistrationForm, OutingForm, PitchForm
 from app.forms import NewOutingFromCSV, SeasonForm, OpponentForm, BatterForm
-from app.forms import OutingPitchForm
+from app.forms import OutingPitchForm, NewOutingFromCSVPitches
 from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat
 from app.stats import calcPitchPercentages, pitchUsageByCount, calcAverageVelo
 from app.stats import calcPitchStrikePercentage, calcPitchWhiffRate
@@ -30,7 +30,7 @@ def index():
         -None
 
     RETURN:
-        -Displays index.html and passes pitchers, opponents, 
+        -Displays index.html and passes pitchers, opponents,
             seasons, and batters as a way to filter data
     '''
     pitchers = User.query.filter(User.year != 'Coach/Manager').all()
@@ -261,20 +261,21 @@ def outing(id):
     usage_percent_by_count_line_chart = pitchUsageByCountLineCharts(counts_percentages)
 
     # render template with all the statistical data calculated from the outing
-    return render_template('outing/outing.html',
-                           title=outing,
-                           outing=outing,
-                           usages=usages,
-                           usage_percentages=usage_percentages,
-                           usage_percentages_pie_chart=usage_percentages_pie_chart,
-                           counts=counts,
-                           counts_percentages=counts_percentages,
-                           pitch_avg_velo=pitch_avg_velo,
-                           pitch_strike_percentage=pitch_strike_percentage,
-                           pitch_whiff=pitch_whiff,
-                           velocity_over_time_line_chart=velocity_over_time_line_chart,
-                           strike_percentage_bar_chart=strike_percentage_bar_chart,
-                           usage_percent_by_count_line_chart=usage_percent_by_count_line_chart)
+    return render_template(
+        'outing/outing.html',
+        title=outing,
+        outing=outing,
+        usages=usages,
+        usage_percentages=usage_percentages,
+        usage_percentages_pie_chart=usage_percentages_pie_chart,
+        counts=counts,
+        counts_percentages=counts_percentages,
+        pitch_avg_velo=pitch_avg_velo,
+        pitch_strike_percentage=pitch_strike_percentage,
+        pitch_whiff=pitch_whiff,
+        velocity_over_time_line_chart=velocity_over_time_line_chart,
+        strike_percentage_bar_chart=strike_percentage_bar_chart,
+        usage_percent_by_count_line_chart=usage_percent_by_count_line_chart)
 
 # ***************-BATTER HOMEPAGE-*************** # DONE
 @app.route('/batter/<id>', methods=['GET', 'POST'])
@@ -284,7 +285,7 @@ def batter(id):
     BATTER HOMEPAGE:
 
     PARAM:
-        -id: The batter id (primary key) for the batter 
+        -id: The batter id (primary key) for the batter
             that the user is trying to view
 
     RETURN:
@@ -312,7 +313,7 @@ def opponent(id):
     OPPONENT HOMEPAGE:
 
     PARAM:
-        -id: The opponent id (primary key) for the opponent 
+        -id: The opponent id (primary key) for the opponent
             that the user is trying to view
 
     RETURN:
@@ -413,10 +414,10 @@ def new_opponent():
                             bats=subform.bats.data,
                             grad_year=subform.grad_year.data,
                             opponent_id=opponent.id)
-            
+
             # add before commit
             db.session.add(batter)
-        
+
         # commit the batters to database
         db.session.commit()
 
@@ -424,7 +425,7 @@ def new_opponent():
         flash('Congratulations, you just made a new opponent!')
         return redirect(url_for('index'))
 
-    return render_template('opponent/new_opponent.html', 
+    return render_template('opponent/new_opponent.html',
                            title='New Opponent',
                            form=form)
 
@@ -492,7 +493,7 @@ def edit_opponent(id):
     if not current_user.admin:
         flash('You are not an admin and cannot edit an opponent')
         return redirect(url_for('index'))
-    
+
     # get opponent object
     opponent = Opponent.query.filter_by(id=id).first()
 
@@ -524,7 +525,7 @@ def edit_opponent(id):
 def edit_batter(id):
     '''
     EDIT BATTER:
-    Can edit an already existing batter 
+    Can edit an already existing batter
 
     PARAM:
         -id: The batter id (primary key) that wants to be
@@ -538,7 +539,7 @@ def edit_batter(id):
     if not current_user.admin:
         flash("You are not an admin and cannot edit someone else's outing")
         return redirect(url_for('index'))
-    
+
     # get the correct form
     form = BatterForm()
 
@@ -564,7 +565,7 @@ def edit_batter(id):
 
         flash('Batter has been adjusted')
         return redirect(url_for('index'))
-    
+
     return render_template('opponent/edit_batter.html',
                            title='Edit Batter',
                            batter=batter,
@@ -590,7 +591,7 @@ def delete_batter(id):
     if not current_user.admin:
         flash("You are not an admin and cannot edit someone else's outing")
         return redirect(url_for('index'))
-    
+
     # get the batter object associated with the id
     batter = Batter.query.filter_by(id=id).first()
 
@@ -598,11 +599,11 @@ def delete_batter(id):
     if not batter:
         flash("Can't delete a batter that doesn't exist")
         return redirect(url_for('index'))
-    
+
     # delete the batter from database
     db.session.delete(batter)
     db.session.commit()
-    
+
     return redirect(url_for('opponent', id=batter.opponent_id))
 
 # ***************-NEW OUTING-*************** # DONE
@@ -610,7 +611,7 @@ def delete_batter(id):
 @login_required
 def new_outing():
     '''
-    NEW OUTING: 
+    NEW OUTING:
     Can create a new outing and pitches associated with
     that outing
 
@@ -658,90 +659,93 @@ def new_outing():
 @app.route('/new_outing_pitches/<outing_id>', methods=['GET', 'POST'])
 @login_required
 def new_outing_pitches(outing_id):
-        
-        # get the form associated with entering in X number of pitches
-        form = OutingPitchForm()
 
-        # set up batter choices
-        for subform in form.pitch:
-            subform.batter_id.choices = getAvailableBatters(outing_id)
+    # get the form associated with entering in X number of pitches
+    form = OutingPitchForm()
 
-        # if "add pitches" button was clicked
-        if form.validate_on_submit():
+    # set up batter choices
+    for subform in form.pitch:
+        subform.batter_id.choices = getAvailableBatters(outing_id)
 
-            # sets up count for first pitch of outing
-            balls = 0
-            strikes = 0
-            count = f'{balls}-{strikes}'
+    # if "add pitches" button was clicked
+    if form.validate_on_submit():
 
-            # Boolean variable to help with adding AtBat objects to the database
-            new_at_bat = True
+        # sets up count for first pitch of outing
+        balls = 0
+        strikes = 0
+        count = f'{balls}-{strikes}'
 
-            # variable to hold the current AtBat object
-            current_at_bat = None
+        # Boolean variable to help with adding AtBat objects to the db
+        new_at_bat = True
 
-            # add each individual pitch to the database
-            for index, subform in enumerate(form.pitch):
-                
-                # get the batter_id for the AtBat and Pitch objects
-                batter_id = subform.batter_id.data
+        # variable to hold the current AtBat object
+        current_at_bat = None
 
-                # if a new at bat has started, make a new AtBat object
-                if new_at_bat: 
-                    at_bat = AtBat(batter_id=batter_id,
-                                   outing_id=outing_id)
-                    
-                    # Add the AtBat object to database
-                    db.session.add(at_bat)
-                    db.session.commit()
+        # add each individual pitch to the database
+        for index, subform in enumerate(form.pitch):
 
-                    # Set the current_at_bat for subsequent pitches accordingly
-                    current_at_bat = at_bat
+            # get the batter_id for the AtBat and Pitch objects
+            batter_id = subform.batter_id.data
 
-                    # So new at_bat variables aren't made every pitch
-                    new_at_bat = False
+            # if a new at bat has started, make a new AtBat object
+            if new_at_bat:
+                at_bat = AtBat(
+                    batter_id=batter_id,
+                    outing_id=outing_id)
 
-                # sets the pitch_num column automatically
-                pitch_num = index+1
-
-                # create Pitch object
-                pitch = Pitch(atbat_id=current_at_bat.id,
-                              pitch_num=pitch_num,
-                              batter_id=batter_id,
-                              batter_hand=subform.batter_hand.data,
-                              velocity=subform.velocity.data,
-                              lead_runner=subform.lead_runner.data,
-                              time_to_plate=subform.time_to_plate.data,
-                              pitch_type=subform.pitch_type.data,
-                              pitch_result=subform.pitch_result.data,
-                              hit_spot=subform.hit_spot.data,
-                              count=count,
-                              ab_result=subform.ab_result.data,
-                              traj=subform.traj.data,
-                              fielder=subform.fielder.data,
-                              inning=subform.inning.data)
-
-                # update count based on current count and pitch result
-                balls, strikes, count = updateCount(balls,
-                                                    strikes,
-                                                    pitch.pitch_result,
-                                                    pitch.ab_result)
-
-                # adds pitch to database
-                db.session.add(pitch)
+                # Add the AtBat object to database
+                db.session.add(at_bat)
                 db.session.commit()
 
-                # after the pitch was made, if the at_bat ended, reset variable
-                # so a new at_bat starts during the next loop
-                if pitch.ab_result is not '':
-                    new_at_bat = True
+                # Set the current_at_bat for subsequent pitches accordingly
+                current_at_bat = at_bat
 
-            flash('Pitches added to outing!')
-            return redirect(url_for('outing', id=outing_id))
+                # So new at_bat variables aren't made every pitch
+                new_at_bat = False
 
-        return render_template('outing/new_outing_pitches.html',
-                               title='New Outing Pitches',
-                               form=form)
+            # sets the pitch_num column automatically
+            pitch_num = index+1
+
+            # create Pitch object
+            pitch = Pitch(
+                atbat_id=current_at_bat.id,
+                pitch_num=pitch_num,
+                batter_id=batter_id,
+                batter_hand=subform.batter_hand.data,
+                velocity=subform.velocity.data,
+                lead_runner=subform.lead_runner.data,
+                time_to_plate=subform.time_to_plate.data,
+                pitch_type=subform.pitch_type.data,
+                pitch_result=subform.pitch_result.data,
+                hit_spot=subform.hit_spot.data,
+                count=count,
+                ab_result=subform.ab_result.data,
+                traj=subform.traj.data,
+                fielder=subform.fielder.data,
+                inning=subform.inning.data)
+
+            # update count based on current count and pitch result
+            balls, strikes, count = updateCount(balls,
+                                                strikes,
+                                                pitch.pitch_result,
+                                                pitch.ab_result)
+
+            # adds pitch to database
+            db.session.add(pitch)
+            db.session.commit()
+
+            # after the pitch was made, if the at_bat ended, reset variable
+            # so a new at_bat starts during the next loop
+            if pitch.ab_result is not '':
+                new_at_bat = True
+
+        flash('Pitches added to outing!')
+        return redirect(url_for('outing', id=outing_id))
+
+    return render_template(
+        'outing/new_outing_pitches.html',
+        title='New Outing Pitches',
+        form=form)
 
 # ***************-EDIT OUTING PITCHES-*************** #
 @app.route('/edit_outing_pitches/<outing_id>', methods=['GET', 'POST'])
@@ -841,7 +845,7 @@ def edit_outing_pitches(outing_id):
     # set up batter choices here
     for subform in form.pitch:
         subform.batter_id.choices = getAvailableBatters(outing_id)
-    
+
     batters = []
     for b in opponent.batters:
         batters.append(b)
@@ -852,7 +856,7 @@ def edit_outing_pitches(outing_id):
                            outing=outing,
                            opponent=opponent,
                            form=form)
-    
+
 # ***************-EDIT OUTING-*************** # DONE
 @app.route('/edit_outing/<outing_id>', methods=['GET', 'POST'])
 @login_required
@@ -864,7 +868,7 @@ def edit_outing(outing_id):
     # get the available pitchers to choose from
     form.pitcher.choices = getAvailablePitchers()
 
-    # get objects from database 
+    # get objects from database
     outing = Outing.query.filter_by(id=outing_id).first_or_404()
     opponent = Opponent.query.filter_by(id=outing.opponent_id).first_or_404()
     this_season = Season.query.filter_by(id=outing.season_id).first_or_404()
@@ -879,7 +883,7 @@ def edit_outing(outing_id):
 
     # when edit wants to be made
     if form.validate_on_submit():
-        
+
         # get the user object from form
         pitcher = User.query.filter_by(username=form.pitcher.data).first_or_404()
 
@@ -887,7 +891,7 @@ def edit_outing(outing_id):
         outing.user_id = pitcher.id
         outing.date = form.date.data
         outing.season_id = form.season.data.id
-        
+
         # commit changes to database
         db.session.commit()
 
@@ -960,6 +964,7 @@ def new_outing_csv():
     '''
 
     form = NewOutingFromCSV()
+    form.pitcher.choices = getAvailablePitchers()
 
     if form.validate_on_submit():
 
@@ -979,7 +984,24 @@ def new_outing_csv():
         # Analyze *.csv file for errors and discrepencies
         valid = validate_CSV(file_loc)
         if valid:
-            return redirect(url_for('new_outing_csv_pitches', file_name=file_name))
+
+            # gets the user associated the username of the pitcher the outing
+            # is being created for
+            user = User.query.filter_by(username=form.pitcher.data).first_or_404()
+
+            # creates a new outing object based on form data and user
+            outing = Outing(
+                date=form.date.data,
+                opponent_id=form.opponent.data.id,
+                season_id=form.season.data.id,
+                user_id=user.id)
+
+            # add the new outing to the database before pitches so pitches have a
+            # outing_id associated with them
+            db.session.add(outing)
+            db.session.commit()
+
+            return redirect(url_for('new_outing_csv_pitches', file_name=file_name, outing_id=outing.id))
         else:  # delete invalid csv and refresh page
             os.remove(file_loc)
             return render_template("upload_csv.html",
@@ -989,9 +1011,9 @@ def new_outing_csv():
                            form=form)
 
 # ***************-NEW OUTING CSV PITCHES-*************** # MITCH
-@app.route('/new_outing_csv_pitches/<file_name>', methods=['GET', 'POST'])
+@app.route('/new_outing_csv_pitches/<file_name><outing_id>', methods=['GET', 'POST'])
 @login_required
-def new_outing_csv_pitches(file_name):
+def new_outing_csv_pitches(file_name, outing_id):
     '''
     NEW OUTING CSV
 
@@ -1021,66 +1043,83 @@ def new_outing_csv_pitches(file_name):
                 "pitch_type": row['pitch_type'],
                 "pitch_result": row['pitch_result'],
                 "hit_spot": row['hit_spot'],
-                "result": row['result'],
+                "traj": row['traj'],
+                "ab_result": row['ab_result'],
                 "fielder": row['fielder'],
-                "hit": row['hit'],
-                "out": row['out'],
                 "inning": row['inning']
             }
             pitches.append(pitch)
 
-    form = OutingForm()
-    form.pitcher.choices = getAvailablePitchers()
+    # Retrieve required DB objects
+    outing = Outing.query.filter_by(id=outing_id).first_or_404()
+    user = User.query.filter_by(id=outing.user_id).first_or_404()
+    opponent = Opponent.query.filter_by(id=outing.opponent_id).first_or_404()
+
+    # Setup form and form variables
+    form = NewOutingFromCSVPitches()
+    # set up batter choices
+    for subform in form.pitch:
+        subform.batter_id.choices = getAvailableBatters(outing_id)
+    # batter choices to fill into html
+    batters = []
+    for b in opponent.batters:
+        batters.append(b)
 
     if form.validate_on_submit():
-        # sets the username variable accordingly
-        if (current_user.admin):
-            username = form.pitcher.data
-        else:
-            username = current_user.username
 
-        # gets the user associated the username of the pitcher the outing
-        # is being created for
-        user = User.query.filter_by(username=username).first_or_404()
-
-        # creates a new outing object based on form data and user
-        outing = Outing(date=form.date.data,
-                        opponent=form.opponent.data,
-                        season=form.season.data,
-                        user_id=user.id)
-
-        # add the new outing to the database before pitches so pitches have a
-        # outing_id associated with them
-        db.session.add(outing)
-        db.session.commit()
-
+        # sets up count for first pitch of outing
         balls = 0
         strikes = 0
+        count = f'{balls}-{strikes}'
+
+        # Boolean variable to help with adding AtBat objects to the db
+        new_at_bat = True
+
+        # variable to hold the current AtBat object
+        current_at_bat = None
+
         # add each individual pitch to the database
         for index, subform in enumerate(form.pitch):
+
+            # get the batter_id for the AtBat and Pitch objects
+            batter_id = subform.batter_id.data
+
+            # if a new at bat has started, make a new AtBat object
+            if new_at_bat:
+                at_bat = AtBat(
+                    batter_id=batter_id,
+                    outing_id=outing_id)
+
+                # Add the AtBat object to database
+                db.session.add(at_bat)
+                db.session.commit()
+
+                # Set the current_at_bat for subsequent pitches accordingly
+                current_at_bat = at_bat
+
+                # So new at_bat variables aren't made every pitch
+                new_at_bat = False
 
             # creates Pitch object based on subform data
             pitchNum = index+1
 
-            pitch = Pitch(outing_id=outing.id,
-                          pitch_num=pitchNum,
-                          batter_id=subform.batter_id.data,
-                          batter_hand=subform.batter_hand.data,
-                          velocity=subform.velocity.data,
-                          lead_runner=subform.lead_runner.data,
-                          time_to_plate=subform.time_to_plate.data,
-                          pitch_type=subform.pitch_type.data,
-                          pitch_result=subform.pitch_result.data,
-                          hit_spot=subform.hit_spot.data,
-                          count_balls=balls,
-                          count_strikes=strikes,
-                          result=subform.result.data,
-                          fielder=subform.fielder.data,
-                          hit=subform.hit.data,
-                          out=subform.out.data,
-                          inning=subform.inning.data)
+            pitch = Pitch(
+                pitch_num=index,
+                batter_id=subform.batter_id.data,
+                batter_hand=subform.batter_hand.data,
+                velocity=subform.velocity.data,
+                lead_runner=subform.lead_runner.data,
+                time_to_plate=subform.time_to_plate.data,
+                pitch_type=subform.pitch_type.data,
+                pitch_result=subform.pitch_result.data,
+                hit_spot=subform.hit_spot.data,
+                count=count,
+                ab_result=subform.ab_result.data,
+                traj=subform.traj.data,
+                fielder=subform.fielder.data,
+                inning=subform.inning.data)
 
-            if pitch.result is not '':
+            if pitch.ab_result is not '':
                 balls = 0
                 strikes = 0
             else:
@@ -1106,7 +1145,8 @@ def new_outing_csv_pitches(file_name):
 
     return render_template("csv/new_outing_csv_pitches.html",
                            form=form,
-                           pitches=pitches)
+                           pitches=pitches,
+                           batters=batters)
 
 
 # ***************-HELPFUL FUNCTIONS-*************** #
@@ -1133,6 +1173,7 @@ def getAvailablePitchers():
 
     return available_pitchers
 
+
 def getAvailableBatters(outing_id):
     outing = Outing.query.filter_by(id=outing_id).first_or_404()
     opponent = Opponent.query.filter_by(id=outing.opponent_id).first_or_404()
@@ -1142,6 +1183,7 @@ def getAvailableBatters(outing_id):
         batters_tuples.append((batter.id, batter))
 
     return batters_tuples
+
 
 def validate_CSV(file_loc):
     '''
@@ -1160,7 +1202,7 @@ def validate_CSV(file_loc):
     pitch_attributes = [
             "batter_id", "batter_hand", "velocity", "lead_runner",
             "time_to_plate", "pitch_type", "pitch_result", "hit_spot",
-            "result", "fielder", "hit", "out", "inning"]
+            "ab_result", "traj", "fielder", "inning"]
     with open(file_loc) as f:
 
         csv_file = csv.DictReader(f)
@@ -1188,6 +1230,7 @@ def validate_CSV(file_loc):
             return False
         else:
             return True
+
 
 def updateCount(balls, strikes, pitch_result, ab_result):
     if ab_result is not '':

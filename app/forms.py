@@ -181,6 +181,16 @@ class NewOutingFromCSV(FlaskForm):
     Fields:
         file {file} -- csv file to be parsed with outing information
     """
+    pitcher = SelectField('Pitcher', validators=[Optional()])
+    date = DateField('Date', validators=[DataRequired()], format='%Y-%m-%d')
+    opponent = QuerySelectField(
+        query_factory=lambda: Opponent.query,
+        get_pk=lambda o: o,
+        get_label=lambda o: o)
+    season = QuerySelectField(
+        query_factory=lambda: Season.query,
+        get_pk=lambda s: s,
+        get_label=lambda s: s)
     file = FileField(
         'Outing File',
         validators=[FileRequired()]
@@ -188,3 +198,12 @@ class NewOutingFromCSV(FlaskForm):
         )
 
     submit = SubmitField('Validate Outing')
+
+
+class NewOutingFromCSVPitches(FlaskForm):
+    pitch = FieldList(
+        FormField(PitchForm),
+        min_entries=1,
+        max_entries=150,
+        validators=[Optional()])
+    submit = SubmitField('Create Outing')
