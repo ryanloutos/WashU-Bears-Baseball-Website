@@ -19,11 +19,8 @@
             {% endfor %}
         </p>
         <p>
-            <label>Year</label><br>
-            {% for subfield in form.year %}
-                {{ subfield }}
-                {{ subfield.label }} <br>
-            {% endfor %}
+            {{ form.year.label }}<br>
+            {{ form.year(size=8) }}<br>
             {% for error in form.year.errors %}
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}

@@ -12,7 +12,7 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(128))
     firstname = db.Column(db.String(64))
     lastname = db.Column(db.String(64))
-    year = db.Column(db.String(32), index=True)
+    grad_year = db.Column(db.String(8), index=True)
     throws = db.Column(db.String(8), index=True)
     outings = db.relationship('Outing', backref='pitcher', lazy='dynamic')
     # each user will have all their outings accessible through this
@@ -43,7 +43,9 @@ class Outing(db.Model):
         year = self.date.year
         month = self.date.month
         day = self.date.day
-        return f'{month}/{day} {self.opponent}'
+        pitcher = User.query.filter_by(id=self.user_id).first()
+
+        return f'{pitcher} {month}/{day} {self.opponent}'
 
 
 class Pitch(db.Model):

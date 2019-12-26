@@ -1,8 +1,19 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-    <h1>{{ pitcher }}</h1>
+    <h1>
+        {{ pitcher }}
+    </h1>
+    <div>
+        <a href="">Edit Info</a> <br>
+        <a href="">Delete User</a> <br>
+        Username: {{ pitcher.username }} <br>
+        Email: {{ pitcher.email }} <br>
+        Grad Year: {{ pitcher.grad_year }} <br>
+        Throws: {{ pitcher.throws }} <br>
+    </div>
     <br>
+    <h4>Outings</h4>
     <div>
         {% for o in pitcher.outings %}
         <p>
