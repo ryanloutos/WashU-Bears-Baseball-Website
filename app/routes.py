@@ -218,10 +218,11 @@ def season(id):
         return redirect(url_for('index'))
 
     # outings associated with the specific season
-    outings = season.outings
+    outings = Outing.query.filter_by(season_id=id).order_by(Outing.date).all()
 
     return render_template('season/season.html',
                            title=season,
+                           outings=outings,
                            season=season)
 
 # ***************-OUTING HOMEPAGE-*************** #

@@ -4,7 +4,7 @@
     <h1>{{ season }}</h1>
     <br>
     <div>
-        {% for o in season.outings %}
+        {% for o in outings %}
         <p>
             <a href="{{ url_for('outing', id=o.id) }}">{{ o }}</a>
         </p>

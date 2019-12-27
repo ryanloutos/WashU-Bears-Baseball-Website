@@ -96,14 +96,14 @@
         </p>
         <p>
             {{ form.opponent.label }}<br>
-            {{ form.opponent(size=32) }}<br>
+            {{ form.opponent() }}<br>
             {% for error in form.opponent.errors %}
                 <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
         </p>
         <p>
             {{ form.season.label }}<br>
-            {{ form.season(size=32) }}<br>
+            {{ form.season() }}<br>
             {% for error in form.season.errors %}
                 <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
