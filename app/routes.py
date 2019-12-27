@@ -1062,7 +1062,7 @@ def new_outing_csv():
 
 # ***************-NEW OUTING CSV PITCHES-*************** # MITCH
 @app.route(
-    '/new_outing_csv_pitches/<file_name><outing_id>',
+    '/new_outing_csv_pitches/<file_name>/<outing_id>',
     methods=['GET', 'POST'])
 @login_required
 def new_outing_csv_pitches(file_name, outing_id):
