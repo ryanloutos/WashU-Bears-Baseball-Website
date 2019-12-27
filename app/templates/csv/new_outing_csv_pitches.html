@@ -127,7 +127,7 @@
                         </select>
                     </td>
                     <td>
-                        {% if pitch['hit_spot'] in [1, 'Y', 'y', 'yes', 'Yes'] %}
+                        {% if pitch['hit_spot'] in [1, '1', 'Y', 'y', 'yes', 'Yes'] %}
                             <input id="pitch-{{outer_loop.index0}}-hit_spot" name="pitch-{{outer_loop.index0}}-hit_spot" type="checkbox" value="y" checked>
                         {% else %}
                             <input id="pitch-{{outer_loop.index0}}-hit_spot" name="pitch-{{outer_loop.index0}}-hit_spot" type="checkbox" value="y">
