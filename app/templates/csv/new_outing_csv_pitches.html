@@ -102,9 +102,9 @@
                     <td>
                         <select id="pitch-{{outer_loop.index0}}-lead_runner" name="pitch-{{outer_loop.index0}}-lead_runner" required>
                             <option value="" selected></option>
-                            <option value="1" {% if pitch['lead_runner']==1 %} selected='selected' {% endif %}>1</option>
-                            <option value="2" {% if pitch['lead_runner']==2 %} selected='selected' {% endif %}>2</option>
-                            <option value="3" {% if pitch['lead_runner']==3 %} selected='selected' {% endif %}>3</option>
+                            <option value="1" {% if pitch['lead_runner'] in [1, '1'] %} selected='selected' {% endif %}>1</option>
+                            <option value="2" {% if pitch['lead_runner'] in [2, '2'] %} selected='selected' {% endif %}>2</option>
+                            <option value="3" {% if pitch['lead_runner'] in [3, '3'] %} selected='selected' {% endif %}>3</option>
                         </select>
                     </td>
                     <td>
