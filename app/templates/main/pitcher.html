@@ -16,17 +16,19 @@
     <br>
     <h4>Outings</h4>
     <div>
-        <table class='table sortable_table'>
+        <table class='table sortable_table table-striped'>
             <tr>
                 <th onclick="sortTable(0)">Date</th>
                 <th onclick="sortTable(1)">Opponent</th>
                 <th onclick="sortTable(2)">Pitcher</th>
+                <th>View</th>
             </tr>
             {% for o in pitcher.outings %}
             <tr>
                 <td><a href="{{ url_for('outing', id=o.id) }}">{{ o.date }}</a></td>
                 <td>{{ o.opponent }}</td>
                 <td>{{ o.pitcher }}</td>
+                <td><a href="{{ url_for('outing', id=o.id) }}">View Me</a></td>
             </tr>
             {% endfor %}
         </table>
