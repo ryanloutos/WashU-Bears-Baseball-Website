@@ -32,9 +32,13 @@ class SeasonForm(FlaskForm):
 class BatterForm(FlaskForm):
     fullname = StringField('Name', validators=[Optional()])
     nickname = StringField('Initials/Number', validators=[Optional()])
-    bats = SelectField('Bats', choices=[('R','R'),('L','L')], validators=[Optional()])
+    bats = SelectField(
+        'Bats',
+        choices=[('R', 'R'), ('L', 'L')],
+        validators=[Optional()])
     grad_year = StringField('Grad Year', validators=[Optional()])
     submit = SubmitField('Create Batter', validators=[Optional()])
+
 
 # Creating a new opponent
 class OpponentForm(FlaskForm):
@@ -53,7 +57,8 @@ class RegistrationForm(FlaskForm):
     firstname = StringField('Firstname', validators=[DataRequired()])
     lastname = StringField('Lastname', validators=[DataRequired()])
     year = StringField('Year', validators=[DataRequired()])
-    throws = RadioField('Throws',
+    throws = RadioField(
+        'Throws',
         choices=[('R', 'R'),
                  ('L', 'L')],
         validators=[Optional()])
@@ -86,7 +91,7 @@ class PitchForm(FlaskForm):
     velocity = IntegerField('Velo', validators=[Optional()])
     lead_runner = SelectField(
         'Lead RNR',
-        choices=[('',''), ('1', '1'), ('2', '2'), ('3', '3')],
+        choices=[('', ''), ('1', '1'), ('2', '2'), ('3', '3')],
         validators=[Optional()])
     time_to_plate = DecimalField(
         'Time to Plate',

@@ -1,3 +1,0 @@
-pitch_num,batter_id,batter_hand,velocity,lead_runner,time_to_plate,pitch_type,pitch_result,hit_spot,count_balls,count_strikes,result,fielder,hit,out,inning
-1,1,R,85,,1.02,1,B,0,0,0,,,,,1
-2,1,R,84,,1.15,1,CS,0,1,0,,,,,1

@@ -1106,6 +1106,7 @@ def new_outing_csv_pitches(file_name, outing_id):
     outing = Outing.query.filter_by(id=outing_id).first_or_404()
     user = User.query.filter_by(id=outing.user_id).first_or_404()
     opponent = Opponent.query.filter_by(id=outing.opponent_id).first_or_404()
+    season = Season.query.filter_by(id=outing.season_id).first_or_404()
 
     # Setup form and form variables
     form = NewOutingFromCSVPitches()
@@ -1120,8 +1121,13 @@ def new_outing_csv_pitches(file_name, outing_id):
     if form.validate_on_submit():
 
         # sets up count for first pitch of outing
-        balls = 0
-        strikes = 0
+        # sets up count for first pitch of outing
+        if (season.semester == 'Fall'):
+            balls = 1
+            strikes = 1
+        else:
+            balls = 0
+            strikes = 0
         count = f'{balls}-{strikes}'
 
         # Boolean variable to help with adding AtBat objects to the db
@@ -1153,12 +1159,13 @@ def new_outing_csv_pitches(file_name, outing_id):
                 new_at_bat = False
 
             # creates Pitch object based on subform data
-            pitchNum = index+1
+            pitch_num = index+1
 
+            # create Pitch object
             pitch = Pitch(
-                pitch_num=index,
+                atbat_id=current_at_bat.id,
+                pitch_num=pitch_num,
                 batter_id=subform.batter_id.data,
-                batter_hand=subform.batter_hand.data,
                 velocity=subform.velocity.data,
                 lead_runner=subform.lead_runner.data,
                 time_to_plate=subform.time_to_plate.data,
@@ -1171,15 +1178,13 @@ def new_outing_csv_pitches(file_name, outing_id):
                 fielder=subform.fielder.data,
                 inning=subform.inning.data)
 
-            if pitch.ab_result is not '':
-                balls = 0
-                strikes = 0
-            else:
-                if pitch.pitch_result is 'B':
-                    balls += 1
-                else:
-                    if strikes is not 2:
-                        strikes += 1
+            # update count based on current count and pitch result
+            balls, strikes, count = updateCount(
+                balls,
+                strikes,
+                pitch.pitch_result,
+                pitch.ab_result,
+                season)
 
             # adds pitch to database
             db.session.add(pitch)

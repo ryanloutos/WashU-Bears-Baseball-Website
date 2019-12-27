@@ -96,7 +96,10 @@ class Batter(db.Model):
     short_name = db.Column(db.String(8), index=True)
     bats = db.Column(db.String(8), index=True)
     grad_year = db.Column(db.String(8), index=True)
-    opponent_id = db.Column(db.Integer, db.ForeignKey('opponent.id'), index=True)
+    opponent_id = db.Column(
+        db.Integer,
+        db.ForeignKey('opponent.id'),
+        index=True)
     at_bats = db.relationship('AtBat', backref='batter', lazy='dynamic')
 
     def __repr__(self):
