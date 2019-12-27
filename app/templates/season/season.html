@@ -1,13 +1,23 @@
 {% extends "base.html" %}
 
 {% block app_content %}
+<script src="{{ url_for('static', filename='js/sortable_table.js') }}"></script>
     <h1>{{ season }}</h1>
     <br>
     <div>
-        {% for o in outings %}
-        <p>
-            <a href="{{ url_for('outing', id=o.id) }}">{{ o }}</a>
-        </p>
-        {% endfor %}
+        <table class="table sortable_table">
+            <tr>
+                <th onclick="sortTable(0)">Date</th>
+                <th onclick="sortTable(1)">Opponent</th>
+                <th onclick="sortTable(2)">Pitcher</th>
+            </tr>
+            {% for o in outings %}
+            <tr>
+                <td><a href="{{ url_for('outing', id=o.id) }}">{{ o.date }}</a></td>
+                <td>{{ o.opponent }}</td>
+                <td>{{ o.pitcher }}</td>
+            </tr>
+            {% endfor %}
+        </table>
     </div>
 {% endblock %}
