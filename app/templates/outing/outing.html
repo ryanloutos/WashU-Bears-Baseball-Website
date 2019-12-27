@@ -47,7 +47,6 @@
                 <tr>
                     <th>Pitch</th>
                     <th>Batter</th>
-                    <th>RHH/LHH</th>
                     <th>Velo</th>
                     <th>Lead RNR</th>
                     <th>Time to Plate</th>
@@ -64,8 +63,13 @@
                     {% for pitch in at_bat.pitches %}
                         <tr>
                             <td>{{ pitch.pitch_num }}</td>
-                            <td>{{ pitch.batter_id }}</td>
-                            <td>{{ pitch.batter_hand }}</td>
+                            <td>
+                                {% for batter in opponent.batters %}
+                                    {% if pitch.batter_id==batter.id %}
+                                        {{ batter }}
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
                             {% if pitch.velocity==None %}
                                 <td></td>
                             {% else %}

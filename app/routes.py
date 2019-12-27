@@ -17,7 +17,7 @@ import os
 # for file naming duplication problem
 import random
 
-# ***************-INDEX-*************** # DONE
+# ***************-INDEX-*************** #
 @app.route('/')
 @app.route('/index', methods=['GET', 'POST'])
 @login_required
@@ -33,7 +33,7 @@ def index():
         -Displays index.html and passes pitchers, opponents,
             seasons, and batters as a way to filter data
     '''
-    pitchers = User.query.filter(User.year != 'Coach/Manager').all()
+    pitchers = User.query.filter(User.grad_year != 'Coach/Manager').order_by(User.lastname).all()
     seasons = Season.query.all()
     batters = Batter.query.all()
     opponents = Opponent.query.all()
@@ -45,7 +45,7 @@ def index():
                            seasons=seasons,
                            batters=batters)
 
-# ***************-LOGIN-*************** # DONE
+# ***************-LOGIN-*************** #
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     '''
@@ -92,7 +92,7 @@ def login():
                            title="Login",
                            form=form)
 
-# ***************-LOGOUT-*************** # DONE
+# ***************-LOGOUT-*************** #
 @app.route('/logout')
 def logout():
     '''
@@ -108,7 +108,7 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
-# ***************-REGISTER-*************** # DONE
+# ***************-REGISTER-*************** #
 @app.route('/register', methods=['GET', 'POST'])
 @login_required
 def register():
@@ -136,7 +136,7 @@ def register():
         # takes in the data from the form and creates a User object (row)
         user = User(firstname=form.firstname.data,
                     lastname=form.lastname.data,
-                    year=form.year.data,
+                    grad_year=form.year.data,
                     throws=form.throws.data,
                     username=form.username.data,
                     email=form.email.data,
@@ -157,8 +157,8 @@ def register():
                            title='Register',
                            form=form)
 
-# ***************-PITCHER HOMEPAGE-*************** # DONE
-@app.route('/pitcher/<id>')
+# ***************-PITCHER HOMEPAGE-*************** #
+@app.route('/pitcher/<id>', methods=['GET', 'POST'])
 @login_required
 def pitcher(id):
     '''
@@ -182,7 +182,7 @@ def pitcher(id):
         return redirect(url_for('index'))
 
     # if pitcher is a coach/manager, redirect to index page
-    if pitcher.year == 'Coach/Manager':
+    if pitcher.grad_year == 'Coach/Manager':
         flash('Cannot show outings for Coach/Manager')
         return redirect(url_for('index'))
 
@@ -193,7 +193,7 @@ def pitcher(id):
                            title=pitcher,
                            pitcher=pitcher)
 
-# ***************-SEASON HOMEPAGE-*************** # DONE
+# ***************-SEASON HOMEPAGE-*************** #
 @app.route('/season/<id>')
 @login_required
 def season(id):
@@ -224,7 +224,7 @@ def season(id):
                            title=season,
                            season=season)
 
-# ***************-OUTING HOMEPAGE-*************** # DONE
+# ***************-OUTING HOMEPAGE-*************** #
 @app.route('/outing/<id>', methods=['GET', 'POST'])
 @login_required
 def outing(id):
@@ -241,6 +241,7 @@ def outing(id):
     '''
     # get the outing object associated by the id in the url
     outing = Outing.query.filter_by(id=id).first()
+    opponent = Opponent.query.filter_by(id=outing.opponent_id).first()
 
     # if bug or outing trying to be viewed DNE
     if not outing:
@@ -265,6 +266,7 @@ def outing(id):
         'outing/outing.html',
         title=outing,
         outing=outing,
+        opponent=opponent,
         usages=usages,
         usage_percentages=usage_percentages,
         usage_percentages_pie_chart=usage_percentages_pie_chart,
@@ -277,7 +279,7 @@ def outing(id):
         strike_percentage_bar_chart=strike_percentage_bar_chart,
         usage_percent_by_count_line_chart=usage_percent_by_count_line_chart)
 
-# ***************-BATTER HOMEPAGE-*************** # DONE
+# ***************-BATTER HOMEPAGE-*************** #
 @app.route('/batter/<id>', methods=['GET', 'POST'])
 @login_required
 def batter(id):
@@ -305,7 +307,7 @@ def batter(id):
                            title=batter,
                            batter=batter)
 
-# ***************-OPPONENT HOMEPAGE-*************** # DONE
+# ***************-OPPONENT HOMEPAGE-*************** #
 @app.route('/opponent/<id>', methods=['GET', 'POST'])
 @login_required
 def opponent(id):
@@ -332,7 +334,7 @@ def opponent(id):
                            title=opponent,
                            opponent=opponent)
 
-# ***************-NEW SEASON-*************** # DONE
+# ***************-NEW SEASON-*************** #
 @app.route('/new_season', methods=['GET', 'POST'])
 @login_required
 def new_season():
@@ -373,7 +375,7 @@ def new_season():
                            title='New Season',
                            form=form)
 
-# ***************-NEW OPPONENT-*************** # DONE
+# ***************-NEW OPPONENT-*************** #
 @app.route('/new_opponent', methods=['GET', 'POST'])
 @login_required
 def new_opponent():
@@ -429,7 +431,7 @@ def new_opponent():
                            title='New Opponent',
                            form=form)
 
-# ***************-NEW BATTER-*************** # DONE
+# ***************-NEW BATTER-*************** #
 @app.route('/new_batter/<opponent_id>', methods=['GET', 'POST'])
 @login_required
 def new_batter(opponent_id):
@@ -471,7 +473,7 @@ def new_batter(opponent_id):
                            title='New Batter',
                            form=form)
 
-# ***************-EDIT OPPONENT-*************** # DONE
+# ***************-EDIT OPPONENT-*************** #
 @app.route('/edit_opponent/<id>', methods=['GET', 'POST'])
 @login_required
 def edit_opponent(id):
@@ -519,7 +521,7 @@ def edit_opponent(id):
                            opponent=opponent,
                            form=form)
 
-# ***************-EDIT BATTER-*************** # DONE
+# ***************-EDIT BATTER-*************** #
 @app.route('/edit_batter/<id>', methods=['GET', 'POST'])
 @login_required
 def edit_batter(id):
@@ -571,7 +573,7 @@ def edit_batter(id):
                            batter=batter,
                            form=form)
 
-# ***************-DELETE BATTER-*************** # DONE
+# ***************-DELETE BATTER-*************** #
 @app.route('/delete_batter/<id>', methods=['GET', 'POST'])
 @login_required
 def delete_batter(id):
@@ -606,7 +608,7 @@ def delete_batter(id):
 
     return redirect(url_for('opponent', id=batter.opponent_id))
 
-# ***************-NEW OUTING-*************** # DONE
+# ***************-NEW OUTING-*************** #
 @app.route('/new_outing', methods=['GET', 'POST'])
 @login_required
 def new_outing():
@@ -655,7 +657,7 @@ def new_outing():
                            title='New Outing',
                            form=form)
 
-# ***************-NEW OUTING PITCHES-*************** # DONE
+# ***************-NEW OUTING PITCHES-*************** #
 @app.route('/new_outing_pitches/<outing_id>', methods=['GET', 'POST'])
 @login_required
 def new_outing_pitches(outing_id):
@@ -667,15 +669,24 @@ def new_outing_pitches(outing_id):
     for subform in form.pitch:
         subform.batter_id.choices = getAvailableBatters(outing_id)
 
+    # get the outing/season associated with the id
+    outing = Outing.query.filter_by(id=outing_id).first_or_404()
+    season = Season.query.filter_by(id=outing.season_id).first_or_404()
+
     # if "add pitches" button was clicked
     if form.validate_on_submit():
 
         # sets up count for first pitch of outing
-        balls = 0
-        strikes = 0
-        count = f'{balls}-{strikes}'
+        if (season.semester == 'Fall'):
+            balls = 1
+            strikes = 1
+            count = f'{balls}-{strikes}'
+        else:
+            balls = 0
+            strikes = 0
+            count = f'{balls}-{strikes}'
 
-        # Boolean variable to help with adding AtBat objects to the db
+        # Boolean variable to help with adding AtBat objects to the database
         new_at_bat = True
 
         # variable to hold the current AtBat object
@@ -711,7 +722,6 @@ def new_outing_pitches(outing_id):
                 atbat_id=current_at_bat.id,
                 pitch_num=pitch_num,
                 batter_id=batter_id,
-                batter_hand=subform.batter_hand.data,
                 velocity=subform.velocity.data,
                 lead_runner=subform.lead_runner.data,
                 time_to_plate=subform.time_to_plate.data,
@@ -728,7 +738,8 @@ def new_outing_pitches(outing_id):
             balls, strikes, count = updateCount(balls,
                                                 strikes,
                                                 pitch.pitch_result,
-                                                pitch.ab_result)
+                                                pitch.ab_result,
+                                                season)
 
             # adds pitch to database
             db.session.add(pitch)
@@ -769,6 +780,7 @@ def edit_outing_pitches(outing_id):
     outing = Outing.query.filter_by(id=outing_id).first_or_404()
     user = User.query.filter_by(id=outing.user_id).first_or_404()
     opponent = Opponent.query.filter_by(id=outing.opponent_id).first_or_404()
+    season = Season.query.filter_by(id=outing.season_id).first_or_404()
 
     # only admins can go back and edit outing data
     if not current_user.admin:
@@ -785,29 +797,59 @@ def edit_outing_pitches(outing_id):
     # when edit wants to be made
     if form.validate_on_submit():
 
-        # delete all of the pitches associated with the outing
-        for p in outing.pitches:
-            db.session.delete(p)
+        # delete all of the pitches/at_bats associated with the outing
+        for at_bat in outing.at_bats:
+            for p in at_bat.pitches:
+                db.session.delete(p)
+            db.session.delete(at_bat)
 
         # commit the changes
         db.session.commit()
 
-        # set up count variable to update with each pitch
-        balls = 0
-        strikes = 0
-        count = '0-0'
+        # sets up count for first pitch of outing
+        if season.semester == 'Fall':
+            balls = 1
+            strikes = 1
+            count = f'{balls}-{strikes}'
+        else:
+            balls = 0
+            strikes = 0
+            count = f'{balls}-{strikes}'
+
+        # Boolean variable to help with adding AtBat objects to the database
+        new_at_bat = True
+
+        # variable to hold the current AtBat object
+        current_at_bat = None
 
         # add each individual pitch to the database
         for index, subform in enumerate(form.pitch):
 
-            # sets pitch_num automatically
+            # get the batter_id for the AtBat and Pitch objects
+            batter_id = subform.batter_id.data
+
+            # if a new at bat has started, make a new AtBat object
+            if new_at_bat:
+                at_bat = AtBat(batter_id=batter_id,
+                               outing_id=outing_id)
+
+                # Add the AtBat object to database
+                db.session.add(at_bat)
+                db.session.commit()
+
+                # Set the current_at_bat for subsequent pitches accordingly
+                current_at_bat = at_bat
+
+                # So new at_bat variables aren't made every pitch
+                new_at_bat = False
+
+            # sets the pitch_num column automatically
             pitch_num = index+1
 
-            # creates Pitch object based on subform data
-            pitch = Pitch(outing_id=outing_id,
+            # create Pitch object
+            pitch = Pitch(atbat_id=current_at_bat.id,
                           pitch_num=pitch_num,
-                          batter_id=subform.batter_id.data,
-                          batter_hand=subform.batter_hand.data,
+                          batter_id=batter_id,
                           velocity=subform.velocity.data,
                           lead_runner=subform.lead_runner.data,
                           time_to_plate=subform.time_to_plate.data,
@@ -820,19 +862,25 @@ def edit_outing_pitches(outing_id):
                           fielder=subform.fielder.data,
                           inning=subform.inning.data)
 
-            # updates the count based on previous pitch
+            # update count based on current count and pitch result
             balls, strikes, count = updateCount(balls,
                                                 strikes,
                                                 pitch.pitch_result,
-                                                pitch.ab_result)
+                                                pitch.ab_result,
+                                                season)
 
             # adds pitch to database
             db.session.add(pitch)
             db.session.commit()
 
+            # after the pitch was made, if the at_bat ended, reset variable
+            # so a new at_bat starts during the next loop
+            if pitch.ab_result is not '':
+                new_at_bat = True
+
         # redirect to user page
         flash('The outing has been adjusted!')
-        return redirect(url_for('user', username=user.username))
+        return redirect(url_for('outing', id=outing.id))
 
     # sets up subforms so they are visible in edit_outing.html
     num_pitches = 0
@@ -852,12 +900,11 @@ def edit_outing_pitches(outing_id):
 
     return render_template('outing/edit_outing_pitches.html',
                            title='Edit Outing',
-                           batters=batters,
                            outing=outing,
                            opponent=opponent,
                            form=form)
 
-# ***************-EDIT OUTING-*************** # DONE
+# ***************-EDIT OUTING-*************** #
 @app.route('/edit_outing/<outing_id>', methods=['GET', 'POST'])
 @login_required
 def edit_outing(outing_id):
@@ -874,7 +921,7 @@ def edit_outing(outing_id):
     this_season = Season.query.filter_by(id=outing.season_id).first_or_404()
     all_seasons = Season.query.all()
     this_pitcher = User.query.filter_by(id=outing.user_id).first_or_404()
-    all_pitchers = User.query.filter(User.year != 'Coach/Manager').all()
+    all_pitchers = User.query.filter(User.grad_year != 'Coach/Manager').all()
 
     # only admins can go back and edit outing data
     if not current_user.admin:
@@ -909,7 +956,7 @@ def edit_outing(outing_id):
                            all_pitchers=all_pitchers,
                            form=form)
 
-# ***************-DELETE OUTING-*************** # DONE
+# ***************-DELETE OUTING-*************** #
 @app.route('/delete_outing/<id>', methods=['GET', 'POST'])
 @login_required
 def delete_outing(id):
@@ -982,8 +1029,7 @@ def new_outing_csv():
         #     file_name = file_name + random.randint()
 
         # Analyze *.csv file for errors and discrepencies
-        valid = validate_CSV(file_loc)
-        if valid:
+        if validate_CSV(file_loc):
 
             # gets the user associated the username of the pitcher the outing
             # is being created for
@@ -996,12 +1042,15 @@ def new_outing_csv():
                 season_id=form.season.data.id,
                 user_id=user.id)
 
-            # add the new outing to the database before pitches so pitches have a
-            # outing_id associated with them
+            # add the new outing to the database before pitches so pitches
+            # have a outing_id associated with them
             db.session.add(outing)
             db.session.commit()
 
-            return redirect(url_for('new_outing_csv_pitches', file_name=file_name, outing_id=outing.id))
+            return redirect(url_for(
+                'new_outing_csv_pitches',
+                file_name=file_name,
+                outing_id=outing.id))
         else:  # delete invalid csv and refresh page
             os.remove(file_loc)
             return render_template("upload_csv.html",
@@ -1010,8 +1059,11 @@ def new_outing_csv():
     return render_template("csv/upload_csv.html",
                            form=form)
 
+
 # ***************-NEW OUTING CSV PITCHES-*************** # MITCH
-@app.route('/new_outing_csv_pitches/<file_name><outing_id>', methods=['GET', 'POST'])
+@app.route(
+    '/new_outing_csv_pitches/<file_name><outing_id>',
+    methods=['GET', 'POST'])
 @login_required
 def new_outing_csv_pitches(file_name, outing_id):
     '''
@@ -1162,7 +1214,7 @@ def getAvailablePitchers():
     '''
 
     # gets all the User objects that are players on the team
-    pitchers_objects = User.query.filter(User.year != 'Coach/Manager').all()
+    pitchers_objects = User.query.filter(User.grad_year != 'Coach/Manager').all()
 
     # set the available choices that someone can create an outing for
     available_pitchers = []
@@ -1232,10 +1284,14 @@ def validate_CSV(file_loc):
             return True
 
 
-def updateCount(balls, strikes, pitch_result, ab_result):
+def updateCount(balls, strikes, pitch_result, ab_result, season):
     if ab_result is not '':
-        balls = 0
-        strikes = 0
+        if (season.semester == 'Fall'):
+            balls = 1
+            strikes = 1
+        else:
+            balls = 0
+            strikes = 0
     else:
         if pitch_result is 'B':
             balls += 1

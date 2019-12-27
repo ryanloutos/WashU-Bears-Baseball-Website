@@ -52,15 +52,9 @@ class OpponentForm(FlaskForm):
 class RegistrationForm(FlaskForm):
     firstname = StringField('Firstname', validators=[DataRequired()])
     lastname = StringField('Lastname', validators=[DataRequired()])
-    year = RadioField('Year/Position',
-        choices=[('FR', 'FR'),
-                 ('SO', 'SO'),
-                 ('JR', 'JR'),
-                 ('SR', 'SR'),
-                 ('Coach/Manager', 'Coach/Manager')],
-        validators=[DataRequired()])
+    year = StringField('Year', validators=[DataRequired()])
     throws = RadioField('Throws',
-        choices=[('R', 'R'), 
+        choices=[('R', 'R'),
                  ('L', 'L')],
         validators=[Optional()])
     username = StringField('Username', validators=[DataRequired()])
@@ -89,10 +83,6 @@ class RegistrationForm(FlaskForm):
 # each field is based on the baseball teams velocity tracking sheets
 class PitchForm(FlaskForm):
     batter_id = SelectField('Batter', validators=[Optional()])
-    batter_hand = SelectField(
-        'RHH/LHH',
-        choices=[('RHH', 'RHH'), ('LHH', 'LHH')],
-        validators=[DataRequired()])
     velocity = IntegerField('Velo', validators=[Optional()])
     lead_runner = SelectField(
         'Lead RNR',
