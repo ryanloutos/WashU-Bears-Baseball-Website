@@ -1087,8 +1087,6 @@ def new_outing_csv_pitches(file_name, outing_id):
         csv_file = csv.DictReader(f)
         for index, row in enumerate(csv_file):
             pitch = {
-                "batter_id": row['batter_id'],
-                "batter_hand": row['batter_hand'],
                 "velocity": row['velocity'],
                 "lead_runner": row['lead_runner'],
                 "time_to_plate": row['time_to_plate'],
@@ -1257,7 +1255,7 @@ def validate_CSV(file_loc):
     # fields required to construct a pitch from Pitch class in modals. We need
     # to check if all of these exist.
     pitch_attributes = [
-            "batter_id", "batter_hand", "velocity", "lead_runner",
+            "velocity", "lead_runner",
             "time_to_plate", "pitch_type", "pitch_result", "hit_spot",
             "ab_result", "traj", "fielder", "inning"]
     with open(file_loc) as f:
