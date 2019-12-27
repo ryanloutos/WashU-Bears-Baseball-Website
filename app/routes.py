@@ -1098,6 +1098,8 @@ def new_outing_csv_pitches(file_name, outing_id):
                 "fielder": row['fielder'],
                 "inning": row['inning']
             }
+            if 'batter_id' in row.keys():
+                pitch["batter_id"] = row["batter_id"]
             pitches.append(pitch)
 
     # Retrieve required DB objects

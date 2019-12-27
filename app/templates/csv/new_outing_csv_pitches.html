@@ -87,7 +87,12 @@
                     <td>
                         <select id="pitch-{{outer_loop.index0}}-batter_id" name="pitch-{{outer_loop.index0}}-batter_id">
                         {% for batter in batters %}
-                            <option value="{{batter.id}}" >{{batter}}</option>
+                            {% if "batter_id" in pitch.keys() %}
+                                {{ pitch["batter_id"]}}
+                                <option value="{{batter.id}}" {% if pitch["batter_id"] in [batter.id, batter.id|string] %} selected=selected {% endif %}>{{batter}}</option>
+                            {% else %}
+                                <option value="{{batter.id}}" >{{batter}}</option>
+                            {% endif %}
                         {% endfor %}
                         </select>
                     </td>
