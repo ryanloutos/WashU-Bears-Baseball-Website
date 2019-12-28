@@ -2,6 +2,28 @@
 
 {% block app_content %}
 <script src="{{ url_for('static', filename='js/sortable_table.js') }}"></script>
+<script>
+    // Allows different season selections in velo comparisons
+    function velo_outings_selector_function(){
+        let selector = document.getElementById("velo-season-selector");
+        let selected_season = selector.value;
+
+        let velo_table = document.getElementById("outing-velo-table");
+        let outing_data_rows = velo_table.getElementsByClassName("data-row");
+
+        for(var i = 0; i < outing_data_rows.length; i++){
+            let data_objects = outing_data_rows[i].getElementsByTagName("td");
+            if (selected_season == "All Seasons"){  // for when all seasons is selected
+                outing_data_rows[i].style.display = "table-row";
+            } else if (data_objects[2].innerHTML == selected_season) {  // for when desired season is selected
+                outing_data_rows[i].style.display = "table-row";
+            } else {  // for when current season is not this one
+                outing_data_rows[i].style.display = "none";
+            }
+        }
+    }
+
+</script>
     <h1>
         {{ pitcher }}
     </h1>
@@ -19,13 +41,15 @@
         <table class='table sortable_table table-striped'>
             <tr>
                 <th onclick="sortTable(0, 0)">Date</th>
-                <th onclick="sortTable(1, 0)">Opponent</th>
-                <th onclick="sortTable(2, 0)">Pitcher</th>
+                <th onclick="sortTable(1, 0)">Season</th>
+                <th onclick="sortTable(2, 0)">Opponent</th>
+                <th onclick="sortTable(3, 0)">Pitcher</th>
                 <th>View</th>
             </tr>
             {% for o in pitcher.outings %}
             <tr>
                 <td>{{ o.date }}</td>
+                <td>{{ o.season }}</td>
                 <td>{{ o.opponent }}</td>
                 <td>{{ o.pitcher }}</td>
                 <td><a href="{{ url_for('outing', id=o.id) }}">View Me</a></td>
@@ -35,7 +59,16 @@
     </div>
     <div>
         <h4>Pitch Average Velo by Outing</h4>
-        <table class="table sortable_table table-striped">
+        <p>
+            Select Season:
+            <select onchange="velo_outings_selector_function()" name="velo-season-selector" id="velo-season-selector">
+                <option value="All Seasons" selected>All Seasons</option>
+                {% for season in seasons %}
+                    <option value="{{ season }}">{{season}}</option>
+                {% endfor %}
+            </select>
+        </p>
+        <table class="table sortable_table table-striped" id="outing-velo-table">
             <tr>
                 <th onclick="sortTable(0, 1)">Date</th>
                 <th onclick="sortTable(1, 1)">Opponent</th>
@@ -48,7 +81,7 @@
                 <th onclick="sortTable(8, 1)">CT</th>
             </tr>
             {% for outing in avg_pitch_velo_outing %}
-                <tr>
+                <tr class="data-row">
                     <td>{{ outing["details"]["date"] }}</td>
                     <td>{{ outing["details"]["opponent"] }}</td>
                     <td>{{ outing["details"]["season"] }}</td>

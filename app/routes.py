@@ -189,12 +189,19 @@ def pitcher(id):
     # get the outings associated with that player
     outings = pitcher.outings
 
+    # get seasons associated with player
+    seasons = []
+    for outing in outings:
+        if outing.season not in seasons:
+            seasons.append(outing.season)
+
     # gets stats associated with pitcher
     avg_pitch_velo_season, avg_pitch_velo_outing = avgPitchVeloPitcher(pitcher)
 
     return render_template('main/pitcher.html',
                            title=pitcher,
                            pitcher=pitcher,
+                           seasons=seasons,
                            avg_pitch_velo_season=avg_pitch_velo_season,
                            avg_pitch_velo_outing=avg_pitch_velo_outing)
 
