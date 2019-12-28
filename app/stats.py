@@ -527,6 +527,16 @@ def avgPitchVeloPitcher(pitcher):
 
 
 def pitchStrikePercentageSeason(pitcher):
+    """Calculates each outing's strike percentage and season totals.
+
+    Arguments:
+        pitcher {user object} -- pitcher whose stats are to be analyzed
+
+    Returns:
+        [tuple] -- first value contains the season averages for strike
+        percentage. the second value contains each outing's strike percentages
+        and meta-data as a dictionary
+    """
     # storage array for individual outing data
     outings = []
     # storage for season totals data
@@ -542,7 +552,7 @@ def pitchStrikePercentageSeason(pitcher):
         "FB": 0, "CB": 0, "SL": 0,
         "CH": 0, "CT": 0, "SM": 0,
         "total": 0}
-    
+
     # iterate through all pitcher appearances and at_bats
     for outing in pitcher.outings:
         # storage for individual outing calculations
@@ -579,13 +589,13 @@ def pitchStrikePercentageSeason(pitcher):
                     # for season totals
                     pitches_strikes_totals[PitchType(pitch.pitch_type).name] += 1
                     pitches_strikes_totals['total'] += 1
-        
+
         # Calculate outing totals
         for key, val in pitches.items():
             if pitches[key] != 0:
                 pitch_strike_percentage[key] = (
                     truncate(pitches_strikes[key]/pitches[key]*100))
-        
+
         # place into data array
         outings.append({
             "details": {
@@ -594,7 +604,7 @@ def pitchStrikePercentageSeason(pitcher):
                 "season": outing.season},
             "percentages": pitch_strike_percentage
         })
-    
+
     # calculate season totals
     for key, val in pitches_totals.items():
         if pitches[key] != 0:
@@ -602,3 +612,66 @@ def pitchStrikePercentageSeason(pitcher):
                 truncate(pitches_strikes_totals[key]/pitches_totals[key]*100))
 
     return (pitch_strike_percentage_totals, outings)
+
+
+def pitchUsageSeason(pitcher):
+    """Calculates pitch usage totals and percentages for a pitcher by outing
+    
+    Arguments:
+        pitcher {User object} -- pitcher to be analyzed
+    
+    Returns:
+        [tuple] -- first value is a dictionary that contains season totals and
+        percentages. the second is a dictionary that contains outing specific
+        meta-data, percentages, and totals
+    """    
+    # return array array for outing specific
+    outings = []
+    # storage for season totals
+    num_pitches_total = 0
+    pitches_total = {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0}
+    pitches_percentages_total = {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0}
+
+    for outing in pitcher.outings:
+        # storage for individual outings
+        num_pitches = 0
+        pitches = {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0}
+        pitches_percentages = {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0}
+
+        for at_bat in outing.at_bats:
+            for pitch in at_bat.pitches:
+                # for outing specific calculations
+                pitches[PitchType(pitch.pitch_type).name] += 1
+                num_pitches += 1
+
+                # for season totals
+                pitches_total[PitchType(pitch.pitch_type).name] += 1
+                num_pitches_total += 1
+
+        # calculate values for individual outings
+        if num_pitches != 0:
+            for key, val in pitches.items():
+                pitches_percentages[key] = truncate(pitches[key] / num_pitches * 100)
+
+        # storage array for individual outing totals
+        outings.append({
+            "details": {
+                "date": outing.date,
+                "opponent": outing.opponent,
+                "season": outing.season},
+            "percentages": pitches_percentages,
+            "usages": pitches
+        })
+
+    # calculate season totals
+    if num_pitches_total != 0:
+        for key, val in pitches.items():
+            pitches_percentages_total[key] = truncate(pitches_total[key] / num_pitches_total * 100)
+
+    # storage array for season totals values
+    season = {
+        "percentages": pitches_percentages_total,
+        "usages": pitches_total
+    }
+
+    return (season, outings)
