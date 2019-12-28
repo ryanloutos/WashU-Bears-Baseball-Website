@@ -519,15 +519,12 @@ def avgPitchVeloPitcher(pitcher):
                     pitches_total_velo[key]/pitches[key])
 
         # fill in outings arr
-        outing_details = {
-            "date": outing.date,
-            "opponent": outing.opponent
-        }
         outings.append(
             {
                 "details": {
                     "date": outing.date,
-                    "opponent": outing.opponent},
+                    "opponent": outing.opponent,
+                    "season": outing.season},
                 "velos": pitch_avg_velo
             }
         )

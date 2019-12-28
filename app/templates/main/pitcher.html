@@ -39,17 +39,19 @@
             <tr>
                 <th onclick="sortTable(0, 1)">Date</th>
                 <th onclick="sortTable(1, 1)">Opponent</th>
-                <th onclick="sortTable(2, 1)">FB</th>
-                <th onclick="sortTable(3, 1)">2SM</th>
-                <th onclick="sortTable(4, 1)">SL</th>
-                <th onclick="sortTable(5, 1)">CB</th>
-                <th onclick="sortTable(6, 1)">CH</th>
-                <th onclick="sortTable(7, 1)">CT</th>
+                <th onclick="sortTable(2, 1)">Season</th>
+                <th onclick="sortTable(3, 1)">FB</th>
+                <th onclick="sortTable(4, 1)">2SM</th>
+                <th onclick="sortTable(5, 1)">SL</th>
+                <th onclick="sortTable(6, 1)">CB</th>
+                <th onclick="sortTable(7, 1)">CH</th>
+                <th onclick="sortTable(8, 1)">CT</th>
             </tr>
             {% for outing in avg_pitch_velo_outing %}
                 <tr>
                     <td>{{ outing["details"]["date"] }}</td>
                     <td>{{ outing["details"]["opponent"] }}</td>
+                    <td>{{ outing["details"]["season"] }}</td>
                     <td>{{ outing["velos"]["FB"] }}</td>
                     <td>{{ outing["velos"]["SM"] }}</td>
                     <td>{{ outing["velos"]["SL"] }}</td>
@@ -60,6 +62,7 @@
             {% endfor%}
             <tr>
                 <td>SEASON TOTALS</td>
+                <td></td>
                 <td></td>
                 <td>{{ avg_pitch_velo_season["FB"] }}</td>
                 <td>{{ avg_pitch_velo_season["SM"] }}</td>
