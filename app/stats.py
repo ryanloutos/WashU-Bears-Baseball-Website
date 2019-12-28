@@ -451,6 +451,7 @@ def pitchUsageByCountLineCharts(data):
 
     return line_chart
 
+
 # UTILITY STAT FUNCTIONS-------------------------------------------------------
 def truncate(n, decimals=2):
     """Truncates the passed value to decimal places.
@@ -466,3 +467,75 @@ def truncate(n, decimals=2):
     """
     multiplier = 10 ** decimals
     return int(n * multiplier) / multiplier
+
+
+# SEASON PITCH STATISTICS -----------------------------------------------------
+def avgPitchVeloPitcher(pitcher):
+    """Calculates pitch velo by outings and season.
+
+    Arguments:
+        pitcher {pitcher object} -- pitcher to be analyzed
+
+    Returns:
+        tuple -- a dictionary containing avg of all pitches in a season and a
+            dictionary containing avg of pitches by outing in season
+    """
+    outings = []
+    pitches_totals = {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0}
+    pitches_total_velo_totals = {
+        "FB": 0, "CB": 0, "SL": 0,
+        "CH": 0, "CT": 0, "SM": 0}
+    pitch_avg_velo_totals = {
+        "FB": 0, "CB": 0, "SL": 0,
+        "CH": 0, "CT": 0, "SM": 0}
+
+    # get totals for player
+    for outing in pitcher.outings:
+
+        pitches = {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0}
+        pitches_total_velo = {
+            "FB": 0, "CB": 0, "SL": 0,
+            "CH": 0, "CT": 0, "SM": 0}
+        pitch_avg_velo = {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0}
+
+        # calculate sums
+        for at_bat in outing.at_bats:
+            for pitch in at_bat.pitches:
+                # for season stats
+                if pitch.velocity not in [None, ""]:
+                    pitches[PitchType(pitch.pitch_type).name] += 1
+                    pitches_total_velo[
+                        PitchType(pitch.pitch_type).name] += pitch.velocity
+
+                    # for outing specific stats
+                    pitches_totals[PitchType(pitch.pitch_type).name] += 1
+                    pitches_total_velo_totals[
+                        PitchType(pitch.pitch_type).name] += pitch.velocity
+
+        # calculate averages for outings
+        for key, val in pitches_totals.items():
+            if pitches[key] != 0:
+                pitch_avg_velo[key] = truncate(
+                    pitches_total_velo[key]/pitches[key])
+
+        # fill in outings arr
+        outing_details = {
+            "date": outing.date,
+            "opponent": outing.opponent
+        }
+        outings.append(
+            {
+                "details": {
+                    "date": outing.date,
+                    "opponent": outing.opponent},
+                "velos": pitch_avg_velo
+            }
+        )
+
+    # calculate averages for season totals
+    for key, val in pitches_totals.items():
+        if pitches_totals[key] != 0:
+            pitch_avg_velo_totals[key] = truncate(
+                pitches_total_velo_totals[key]/pitches_totals[key])
+
+    return (pitch_avg_velo_totals, outings)

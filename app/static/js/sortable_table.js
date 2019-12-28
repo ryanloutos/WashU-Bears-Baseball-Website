@@ -1,7 +1,7 @@
 // Credit to https://www.w3schools.com/howto/howto_js_sort_table.asp
-function sortTable(n) {
+function sortTable(n, tab) {
     var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
-    table = document.getElementsByClassName("sortable_table")[0];
+    table = document.getElementsByClassName("sortable_table")[tab];
     switching = true;
     // Set the sorting direction to ascending:
     dir = "asc";

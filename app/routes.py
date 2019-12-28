@@ -9,7 +9,7 @@ from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat
 from app.stats import calcPitchPercentages, pitchUsageByCount, calcAverageVelo
 from app.stats import calcPitchStrikePercentage, calcPitchWhiffRate
 from app.stats import createPitchPercentagePieChart, velocityOverTimeLineChart
-from app.stats import pitchStrikePercentageBarChart
+from app.stats import pitchStrikePercentageBarChart, avgPitchVeloPitcher
 from app.stats import pitchUsageByCountLineCharts
 # Handle CSV uploads
 import csv
@@ -189,9 +189,14 @@ def pitcher(id):
     # get the outings associated with that player
     outings = pitcher.outings
 
+    # gets stats associated with pitcher
+    avg_pitch_velo_season, avg_pitch_velo_outing = avgPitchVeloPitcher(pitcher)
+
     return render_template('main/pitcher.html',
                            title=pitcher,
-                           pitcher=pitcher)
+                           pitcher=pitcher,
+                           avg_pitch_velo_season=avg_pitch_velo_season,
+                           avg_pitch_velo_outing=avg_pitch_velo_outing)
 
 # ***************-SEASON HOMEPAGE-*************** #
 @app.route('/season/<id>')
