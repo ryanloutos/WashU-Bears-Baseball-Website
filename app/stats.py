@@ -83,28 +83,16 @@ def calcPitchStrikePercentage(outing):
         -dictionary containing strike percentage by pitch
     '''
     pitches = {
-        "FB": 0,
-        "CB": 0,
-        "SL": 0,
-        "CH": 0,
-        "CT": 0,
-        "SM": 0,
+        "FB": 0, "CB": 0, "SL": 0,
+        "CH": 0, "CT": 0, "SM": 0,
         "total": 0}
     pitches_strikes = {
-        "FB": 0,
-        "CB": 0,
-        "SL": 0,
-        "CH": 0,
-        "CT": 0,
-        "SM": 0,
+        "FB": 0, "CB": 0, "SL": 0,
+        "CH": 0, "CT": 0, "SM": 0,
         "total": 0}
     pitch_strike_percentage = {
-        "FB": 0,
-        "CB": 0,
-        "SL": 0,
-        "CH": 0,
-        "CT": 0,
-        "SM": 0,
+        "FB": 0, "CB": 0, "SL": 0,
+        "CH": 0, "CT": 0, "SM": 0,
         "total": 0}
 
     for at_bat in outing.at_bats:
@@ -536,3 +524,81 @@ def avgPitchVeloPitcher(pitcher):
                 pitches_total_velo_totals[key]/pitches_totals[key])
 
     return (pitch_avg_velo_totals, outings)
+
+
+def pitchStrikePercentageSeason(pitcher):
+    # storage array for individual outing data
+    outings = []
+    # storage for season totals data
+    pitches_totals = {
+        "FB": 0, "CB": 0, "SL": 0,
+        "CH": 0, "CT": 0, "SM": 0,
+        "total": 0}
+    pitches_strikes_totals = {
+        "FB": 0, "CB": 0, "SL": 0,
+        "CH": 0, "CT": 0, "SM": 0,
+        "total": 0}
+    pitch_strike_percentage_totals = {
+        "FB": 0, "CB": 0, "SL": 0,
+        "CH": 0, "CT": 0, "SM": 0,
+        "total": 0}
+    
+    # iterate through all pitcher appearances and at_bats
+    for outing in pitcher.outings:
+        # storage for individual outing calculations
+        pitches = {
+            "FB": 0, "CB": 0, "SL": 0,
+            "CH": 0, "CT": 0, "SM": 0,
+            "total": 0}
+        pitches_strikes = {
+            "FB": 0, "CB": 0, "SL": 0,
+            "CH": 0, "CT": 0, "SM": 0,
+            "total": 0}
+        pitch_strike_percentage = {
+            "FB": 0, "CB": 0, "SL": 0,
+            "CH": 0, "CT": 0, "SM": 0,
+            "total": 0}
+
+        for at_bat in outing.at_bats:
+            for pitch in at_bat.pitches:
+                # for outing specific
+                pitches[PitchType(pitch.pitch_type).name] += 1
+                pitches['total'] += 1
+
+                # for season totals
+                pitches_totals[PitchType(pitch.pitch_type).name] += 1
+                pitches_totals['total'] += 1
+
+                if (pitch.pitch_result == 'SS' or pitch.pitch_result == 'CS' or
+                        pitch.pitch_result == 'F' or pitch.pitch_result == 'IP'):
+
+                    # for outing specific
+                    pitches_strikes[PitchType(pitch.pitch_type).name] += 1
+                    pitches_strikes['total'] += 1
+
+                    # for season totals
+                    pitches_strikes_totals[PitchType(pitch.pitch_type).name] += 1
+                    pitches_strikes_totals['total'] += 1
+        
+        # Calculate outing totals
+        for key, val in pitches.items():
+            if pitches[key] != 0:
+                pitch_strike_percentage[key] = (
+                    truncate(pitches_strikes[key]/pitches[key]*100))
+        
+        # place into data array
+        outings.append({
+            "details": {
+                "date": outing.date,
+                "opponent": outing.opponent,
+                "season": outing.season},
+            "percentages": pitch_strike_percentage
+        })
+    
+    # calculate season totals
+    for key, val in pitches_totals.items():
+        if pitches[key] != 0:
+            pitch_strike_percentage_totals[key] = (
+                truncate(pitches_strikes_totals[key]/pitches_totals[key]*100))
+
+    return (pitch_strike_percentage_totals, outings)

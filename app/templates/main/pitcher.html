@@ -3,13 +3,15 @@
 {% block app_content %}
 <script src="{{ url_for('static', filename='js/sortable_table.js') }}"></script>
 <script>
-    // Allows different season selections in velo comparisons
-    function velo_outings_selector_function(){
-        let selector = document.getElementById("velo-season-selector");
+    // allows season selection in table
+    function season_selector(selector_id, table_id){
+        //  selector_id: id of selector for seasons
+        //  table_id:    id of table that can be sorted
+        let selector = document.getElementById(selector_id);
         let selected_season = selector.value;
 
-        let velo_table = document.getElementById("outing-velo-table");
-        let outing_data_rows = velo_table.getElementsByClassName("data-row");
+        let table = document.getElementById(table_id);
+        let outing_data_rows = table.getElementsByClassName("data-row");
 
         for(var i = 0; i < outing_data_rows.length; i++){
             let data_objects = outing_data_rows[i].getElementsByTagName("td");
@@ -61,7 +63,7 @@
         <h4>Pitch Average Velo by Outing</h4>
         <p>
             Select Season:
-            <select onchange="velo_outings_selector_function()" name="velo-season-selector" id="velo-season-selector">
+            <select onchange="season_selector('velo-season-selector', 'outing-velo-table')" name="velo-season-selector" id="velo-season-selector">
                 <option value="All Seasons" selected>All Seasons</option>
                 {% for season in seasons %}
                     <option value="{{ season }}">{{season}}</option>
@@ -103,6 +105,55 @@
                 <td>{{ avg_pitch_velo_season["CB"] }}</td>
                 <td>{{ avg_pitch_velo_season["CH"] }}</td>
                 <td>{{ avg_pitch_velo_season["CT"] }}</td>
+            </tr>
+        </table>
+    </div>
+    <div>
+        <h4>Pitch Strike Percentage by Outing</h4>
+        <p>
+            Select Season:
+            <select onchange="season_selector('strike-percentage-season-selector', 'strike-percentage-season-table')" name="strike-percentage-season-selector" id="strike-percentage-season-selector">
+                <option value="All Seasons" selected>All Seasons</option>
+                {% for season in seasons %}
+                    <option value="{{ season }}">{{season}}</option>
+                {% endfor %}
+            </select>
+        </p>
+        <table class="table table-striped sortable_table" id="strike-percentage-season-table">
+            <tr>
+                <th onclick="sortTable(0, 2)">Date</th>
+                <th onclick="sortTable(1, 2)">Opponent</th>
+                <th onclick="sortTable(2, 2)">Season</th>
+                <th onclick="sortTable(3, 2)">FB</th>
+                <th onclick="sortTable(4, 2)">2SM</th>
+                <th onclick="sortTable(5, 2)">SL</th>
+                <th onclick="sortTable(6, 2)">CB</th>
+                <th onclick="sortTable(7, 2)">CH</th>
+                <th onclick="sortTable(8, 2)">CT</th>
+            </tr>
+            {% for outing in strike_percentage_outing %}
+                <tr class="data-row">
+                    <td>{{ outing["details"]["date"] }}</td>
+                    <td>{{ outing["details"]["opponent"] }}</td>
+                    <td>{{ outing["details"]["season"] }}</td>
+                    <td>{{ outing["percentages"]["FB"] }}</td>
+                    <td>{{ outing["percentages"]["SM"] }}</td>
+                    <td>{{ outing["percentages"]["SL"] }}</td>
+                    <td>{{ outing["percentages"]["CB"] }}</td>
+                    <td>{{ outing["percentages"]["CH"] }}</td>
+                    <td>{{ outing["percentages"]["CT"] }}</td>
+                </tr>
+            {% endfor %}
+            <tr>
+                <td>SEASON TOTALS</td>
+                <td></td>
+                <td></td>
+                <td>{{ strike_percentage_season["FB"] }}</td>
+                <td>{{ strike_percentage_season["SM"] }}</td>
+                <td>{{ strike_percentage_season["SL"] }}</td>
+                <td>{{ strike_percentage_season["CB"] }}</td>
+                <td>{{ strike_percentage_season["CH"] }}</td>
+                <td>{{ strike_percentage_season["CT"] }}</td>
             </tr>
         </table>
     </div>
