@@ -1,13 +1,25 @@
 {% extends "base.html" %}
 
+{% block styles %}
+    {{ super() }}
+    <style>
+        .main {
+            font-family: 'Exo', sans-serif;
+            font-weight: 500;
+        }
+    </style>
+{% endblock %}
+
 {% block app_content %}
-<div class="main">
-    <h1>{{ user }}</h1>
-    <div>
-        Username: {{ user.username }} <br>
-        Email: {{ user.email }} <br>
-        <a href="">Edit Info</a>
+
+    <div class="main">
+        <h1>{{ user }}</h1>
+        <div>
+            Username: {{ user.username }} <br>
+            Email: {{ user.email }} <br> <br>
+            <a href="{{ url_for('edit_user', id=user.id) }}">Edit Username/Email</a> <br>
+            <a href="{{ url_for('change_password', id=user.id) }}">Change Password</a>
+        </div>
     </div>
-</div>
 
 {% endblock %}

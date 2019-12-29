@@ -4,7 +4,8 @@ from werkzeug.urls import url_parse
 from app import app, db
 from app.forms import LoginForm, RegistrationForm, OutingForm, PitchForm
 from app.forms import NewOutingFromCSV, SeasonForm, OpponentForm, BatterForm
-from app.forms import OutingPitchForm, NewOutingFromCSVPitches
+from app.forms import OutingPitchForm, NewOutingFromCSVPitches, EditUserForm
+from app.forms import ChangePasswordForm
 from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat
 from app.stats import calcPitchPercentages, pitchUsageByCount, calcAverageVelo
 from app.stats import calcPitchStrikePercentage, calcPitchWhiffRate
@@ -12,13 +13,14 @@ from app.stats import createPitchPercentagePieChart, velocityOverTimeLineChart
 from app.stats import pitchStrikePercentageBarChart, avgPitchVeloPitcher
 from app.stats import pitchUsageByCountLineCharts, pitchStrikePercentageSeason
 from app.stats import pitchUsageSeason, seasonStatLine
+
 # Handle CSV uploads
 import csv
 import os
 # for file naming duplication problem
 import random
 
-# ***************-INDEX-*************** #
+# ***************-INDEX-*************** # DONE
 @app.route('/')
 @app.route('/index', methods=['GET', 'POST'])
 @login_required
@@ -31,14 +33,13 @@ def index():
         -None
 
     RETURN:
-        -Displays index.html and passes pitchers, opponents,
-            seasons, and batters as a way to filter data
+        -Displays index.html
     '''
 
     return render_template('main/index.html',
-                           title='WashU')
+                           title='WashU Pitching')
 
-# ***************-LOGIN-*************** #
+# ***************-LOGIN-*************** # DONE
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     '''
@@ -72,6 +73,11 @@ def login():
             flash('Invalid username or password')
             return redirect(url_for('login'))
 
+        # if the user is retired
+        # if user.retired:
+        #     flash("Retired pitcher, can't log in")
+        #     return redirect(url_for('login'))
+
         # login the user if nothing failed above
         login_user(user, remember=form.remember_me.data)
 
@@ -85,7 +91,7 @@ def login():
                            title="Login",
                            form=form)
 
-# ***************-LOGOUT-*************** #
+# ***************-LOGOUT-*************** # DONE
 @app.route('/logout')
 def logout():
     '''
@@ -101,7 +107,7 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
-# ***************-REGISTER-*************** #
+# ***************-REGISTER-*************** # DONE
 @app.route('/register', methods=['GET', 'POST'])
 @login_required
 def register():
@@ -126,6 +132,7 @@ def register():
     # when the 'register' button is pressed
     form = RegistrationForm()
     if form.validate_on_submit():
+
         # takes in the data from the form and creates a User object (row)
         user = User(firstname=form.firstname.data,
                     lastname=form.lastname.data,
@@ -133,7 +140,8 @@ def register():
                     throws=form.throws.data,
                     username=form.username.data,
                     email=form.email.data,
-                    admin=form.admin.data)
+                    admin=form.admin.data,
+                    retired=form.retired.data)
 
         # sets the password based on what was entered
         user.set_password(form.password.data)
@@ -148,6 +156,114 @@ def register():
 
     return render_template('main/register.html',
                            title='Register',
+                           form=form)
+
+# ***************-PROFILE PAGE-*************** # DONE
+@app.route('/user/<id>', methods=['GET', 'POST'])
+@login_required
+def user(id):
+    '''
+    PROFILE PAGE:
+    View your profile info and all changes to username,
+        email, or password
+
+    PARAM:
+        -id: the id of the currently logged
+            in user
+
+    RETURN:
+        -user.html which displays the basic info
+    '''
+    if current_user.id is not int(id):
+        flash('You can only view your own profile page')
+        return redirect(url_for('index'))
+
+    user = User.query.filter_by(id=id).first_or_404()
+
+    return render_template('main/user.html',
+                           user=user)
+
+# ***************-EDIT PROFILE-*************** # DONE
+@app.route('/user/<id>/edit', methods=['GET', 'POST'])
+@login_required
+def edit_user(id):
+    '''
+    EDIT USER:
+    Change username/email associated with account
+
+    PARAM:
+        -id: the id of the user
+
+    RETURN:
+        -edit_user.html which serves a form to make changes
+    '''
+    user = User.query.filter_by(id=id).first()
+
+    # if someone tries to access link directly
+    if current_user.id != user.id:
+        flash("You can only make changes to your own account")
+        redirect(url_for("index"))
+    
+    # when the 'save changes' button is pressed
+    form = EditUserForm()
+    if form.validate_on_submit():
+        
+        # update username and email
+        user.username = form.username.data
+        user.email = form.email.data
+
+        # commit the changes
+        db.session.commit()
+
+        # redirects to user page
+        flash('Changes made!')
+        return redirect(url_for('user', id=current_user.id))
+
+    return render_template('main/edit_user.html',
+                           title='Edit User',
+                           user=user,
+                           form=form)
+
+# ***************-CHANGE PASSWORD-*************** # DONE
+@app.route('/user/<id>/change_password', methods=['GET', 'POST'])
+@login_required
+def change_password(id):
+    '''
+    CHANGE PASSWORD:
+
+    PARAM:
+        -id: the id of the user
+
+    RETURN:
+        -change_password.html which serves a form to make changes
+    '''
+    user = User.query.filter_by(id=id).first()
+
+    # if someone tries to access link directly
+    if current_user.id != user.id:
+        flash("You can only make changes to your own account")
+        redirect(url_for("index"))
+    
+    # when the 'save changes' button is pressed
+    form = ChangePasswordForm()
+    if form.validate_on_submit():
+        
+        if not user.check_password(form.current_password.data):
+            flash("Current password entered is incorrect")
+            return redirect(url_for("change_password", id=user.id))
+
+        # set the new password
+        user.set_password(form.password.data)
+
+        # commit the changes
+        db.session.commit()
+
+        # redirects to user page
+        flash('Password changed!')
+        return redirect(url_for('user', id=user.id))
+
+    return render_template('main/change_password.html',
+                           title='Change Password',
                            form=form)
 
 # ***************-STAFF-*************** #
@@ -355,19 +471,6 @@ def pitcher_outings(id):
                            pitch_usage_outing=pitch_usage_outing,
                            season_stat_line=season_stat_line,
                            outing_stat_line=outing_stat_line)
-
-@app.route('/user/<username>', methods=['GET', 'POST'])
-@login_required
-def user(username):
-    if current_user.username != username:
-        flash('You can only view your own profile page')
-        return redirect(url_for('index'))
-    
-    user = User.query.filter_by(username=username).first_or_404()
-
-    return render_template('main/user.html',
-                           user=user)
-
 
 
 # ***************-SEASON HOMEPAGE-*************** #

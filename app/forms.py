@@ -86,6 +86,32 @@ class RegistrationForm(FlaskForm):
             raise ValidationError('Please use a different email address.')
 
 
+class EditUserForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired()])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    submit = SubmitField('Save Changes')
+
+    def validate_username(self, username):
+        '''Be created make sure username doesn't already exist in database'''
+        user = User.query.filter_by(username=username.data).first()
+        if user is not None:
+            raise ValidationError('Please use a different username.')
+
+    def validate_email(self, email):
+        '''Make sure email doesn't already exist in database'''
+        user = User.query.filter_by(email=email.data).first()
+        if user is not None:
+            raise ValidationError('Please use a different email address.')
+
+
+class ChangePasswordForm(FlaskForm):
+    current_password = PasswordField('Current Password', validators=[DataRequired()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    password2 = PasswordField(  # make sure passwords match
+        'Repeat Password', validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Update Password')
+    
+
 # each field is based on the baseball teams velocity tracking sheets
 class PitchForm(FlaskForm):
     batter_id = SelectField('Batter', validators=[Optional()])

@@ -12,29 +12,24 @@
 
 {% block app_content %}
     <div class="main">
-        <h1>Sign In</h1>
+        <h1></h1>
         <form method="post" novalidate>
             {{ form.hidden_tag() }}
             <p>
                 {{ form.username.label }}<br>
-                {{ form.username(size=32) }}<br>
+                {{ form.username(size=32, value=user.username) }}<br>
                 {% for error in form.username.errors %}
                 <span style="color: red;">[{{ error }}]</span>
                 {% endfor %}
             </p>
             <p>
-                {{ form.password.label }}<br>
-                {{ form.password(size=32) }}<br>
-                {% for error in form.password.errors %}
+                {{ form.email.label }}<br>
+                {{ form.email(size=32, value=user.email) }}<br>
+                {% for error in form.email.errors %}
                 <span style="color: red;">[{{ error }}]</span>
                 {% endfor %}
             </p>
-            <p>{{ form.remember_me() }} {{ form.remember_me.label }}</p>
             <p>{{ form.submit() }}</p>
         </form>
-        <p>
-            Forgot Your Password?
-            <a href="">Click to Reset It</a>
-        </p>
     </div>
 {% endblock %}
