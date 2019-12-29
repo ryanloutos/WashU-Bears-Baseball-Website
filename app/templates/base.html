@@ -4,104 +4,13 @@
     {% if title %}
         {{ title }} 
     {% else %}
-        WashU Pitching Portal
+        WashU Bear Pitching
     {% endif %}
 {% endblock %}
 
 {% block styles %}
     {{ super() }}
-    <style>
-        @import url('https://fonts.googleapis.com/css?family=Exo:100,200,300,400,500,600,700,800');
-    </style>
-    <style>
-        .navbar-default {
-            background-color: #bd2e1f;
-            border-color: #ab1000;
-            font-family: 'Exo', sans-serif;
-            font-weight: 500;
-            position: sticky;
-        }
-        .navbar-default .navbar-brand {
-          color: #f9feff;
-          padding: 8px;
-        }
-        .navbar-default .navbar-brand:hover,
-        .navbar-default .navbar-brand:focus {
-          color: #acacac;
-        }
-        .navbar-default .navbar-text {
-          color: #f9feff;
-        }
-        .navbar-default .navbar-nav > li > a {
-          color: #f9feff;
-        }
-        .navbar-default .navbar-nav > li > a:hover,
-        .navbar-default .navbar-nav > li > a:focus {
-          color: #acacac;
-        }
-        .navbar-default .navbar-nav > .active > a,
-        .navbar-default .navbar-nav > .active > a:hover,
-        .navbar-default .navbar-nav > .active > a:focus {
-          color: #acacac;
-          background-color: #ab1000;
-        }
-        .navbar-default .navbar-nav > .open > a,
-        .navbar-default .navbar-nav > .open > a:hover,
-        .navbar-default .navbar-nav > .open > a:focus {
-          color: #acacac;
-          background-color: #ab1000;
-        }
-        .navbar-default .navbar-toggle {
-          border-color: #ab1000;
-        }
-        .navbar-default .navbar-toggle:hover,
-        .navbar-default .navbar-toggle:focus {
-          background-color: #ab1000;
-        }
-        .navbar-default .navbar-toggle .icon-bar {
-          background-color: #f9feff;
-        }
-        .navbar-default .navbar-collapse,
-        .navbar-default .navbar-form {
-          border-color: #f9feff;
-        }
-        .navbar-default .navbar-link {
-          color: #f9feff;
-        }
-        .navbar-default .navbar-link:hover {
-          color: #acacac;
-        }
-        
-        @media (max-width: 767px) {
-          .navbar-default .navbar-nav .open .dropdown-menu > li > a {
-            color: #f9feff;
-          }
-          .navbar-default .navbar-nav .open .dropdown-menu > li > a:hover,
-          .navbar-default .navbar-nav .open .dropdown-menu > li > a:focus {
-            color: #acacac;
-          }
-          .navbar-default .navbar-nav .open .dropdown-menu > .active > a,
-          .navbar-default .navbar-nav .open .dropdown-menu > .active > a:hover,
-          .navbar-default .navbar-nav .open .dropdown-menu > .active > a:focus {
-            color: #acacac;
-            background-color: #ab1000;
-          }
-        }
-        .navbar-brand img {
-            max-height: 100%;
-            width: auto;
-        }
-         .container {
-             background-color: white;
-         }
-         th, td {
-             text-align: center;
-         }
-         .table-headers {
-            background-color: #bd2e1f;
-            color: #f9feff;
-          }
-    </style>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/base.css') }}">
 {% endblock %}
 
 {% block navbar %}

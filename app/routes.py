@@ -266,13 +266,13 @@ def change_password(id):
                            title='Change Password',
                            form=form)
 
-# ***************-STAFF-*************** #
+# ***************-STAFF HOMEPAGE-*************** # DONE
 @app.route('/staff', methods=['GET', 'POST'])
 @login_required
 def staff():
     '''
     STAFF:
-    Page to look at staff as a whole
+    Pages to look at staff as a whole
 
     PARAM:
         -None
@@ -280,11 +280,52 @@ def staff():
     RETURN:
         -staff.html
     '''
-    pitchers = User.query.filter(User.grad_year != 'Coach/Manager').order_by(User.lastname).all()
 
-    return render_template('main/staff.html',
+    return render_template('staff/staff_home.html',
+                           title='WashU Pitching Staff')
+
+# ***************-STAFF ROSTER-*************** # DONE
+@app.route('/staff/roster', methods=['GET', 'POST'])
+@login_required
+def staff_roster():
+    '''
+    STAFF ROSTER:
+    Current pitchers on the team
+
+    PARAM:
+        -None
+
+    RETURN:
+        -staff_roster.html which displays a table of 
+            the current staff
+    '''
+    pitchers = User.query.filter(User.grad_year != 'Coach/Manager').filter(User.retired == 0).order_by(User.lastname).all()
+
+    return render_template('staff/staff_roster.html',
                            title='Staff',
                            pitchers=pitchers)
+
+# ***************-STAFF RETIRED-*************** # DONE
+@app.route('/staff/retired', methods=['GET', 'POST'])
+@login_required
+def staff_retired():
+    '''
+    STAFF RETIRED:
+    Pitchers no longer on the team
+
+    PARAM:
+        -None
+
+    RETURN:
+        -staff_retired.html which displays a table of 
+            the retired staff
+    '''
+
+    retired_pitchers = User.query.filter(User.grad_year != 'Coach/Manager').filter(User.retired == 1).order_by(User.lastname).all()
+
+    return render_template('staff/staff_retired.html',
+                           title='Retired Pitchers',
+                           retired_pitchers=retired_pitchers)
 
 # ***************-PITCHER HOMEPAGE-*************** #
 @app.route('/pitcher/<id>', methods=['GET', 'POST'])
@@ -318,7 +359,14 @@ def pitcher(id):
     # get the outings associated with that player
     outings = pitcher.outings
 
-    recent_outings = [outings[i] for i in range(3)]
+    num_outings = 0
+    for o in outings:
+        num_outings += 1
+
+    if num_outings >= 3:
+        recent_outings = [outings[i] for i in range(3)]
+    else:
+        recent_outings = []
 
     for outing in outings:
         if outing.date >= recent_outings[2].date:

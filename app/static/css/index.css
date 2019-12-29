@@ -1,0 +1,17 @@
+.main {
+    text-align: center;
+}
+.main h1 {
+    font-family: 'Exo', sans-serif;
+    font-weight: 800;
+}
+.team-pic {
+    width: 500px;
+    height: auto;
+    margin: 20px;
+    border: 5px solid #bd2e1f;
+}
+.logos {
+    width: 100px;
+    height: auto;
+}

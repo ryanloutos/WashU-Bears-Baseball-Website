@@ -70,6 +70,7 @@ class RegistrationForm(FlaskForm):
     password2 = PasswordField(  # make sure passwords match
         'Repeat Password', validators=[DataRequired(), EqualTo('password')])
     admin = BooleanField('Admin?', validators=[Optional()])
+    retired = BooleanField('Retired?', validators=[Optional()])
     submit = SubmitField('Register')
 
     # these two functions will run automatically when a new user is trying to

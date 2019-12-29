@@ -2,12 +2,6 @@
 
 {% block styles %}
     {{ super() }}
-    <style>
-        .main {
-            font-family: 'Exo', sans-serif;
-            font-weight: 500;
-        }
-    </style>
 {% endblock %}
 
 {% block app_content %}
@@ -19,21 +13,21 @@
                 {{ form.firstname.label }}<br>
                 {{ form.firstname(size=32) }}<br>
                 {% for error in form.firstname.errors %}
-                <span style="color: red;">[{{ error }}]</span>
+                    <span style="color: red;">[{{ error }}]</span>
                 {% endfor %}
             </p>
             <p>
                 {{ form.lastname.label }}<br>
                 {{ form.lastname(size=32) }}<br>
                 {% for error in form.lastname.errors %}
-                <span style="color: red;">[{{ error }}]</span>
+                    <span style="color: red;">[{{ error }}]</span>
                 {% endfor %}
             </p>
             <p>
                 {{ form.year.label }}<br>
                 {{ form.year(size=8) }}<br>
                 {% for error in form.year.errors %}
-                <span style="color: red;">[{{ error }}]</span>
+                    <span style="color: red;">[{{ error }}]</span>
                 {% endfor %}
             </p>
             <p>
@@ -43,42 +37,48 @@
                     {{ subfield.label }} <br>
                 {% endfor %}
                 {% for error in form.throws.errors %}
-                <span style="color: red;">[{{ error }}]</span>
+                    <span style="color: red;">[{{ error }}]</span>
                 {% endfor %}
             </p>
             <p>
                 {{ form.username.label }}<br>
                 {{ form.username(size=32) }}<br>
                 {% for error in form.username.errors %}
-                <span style="color: red;">[{{ error }}]</span>
+                    <span style="color: red;">[{{ error }}]</span>
                 {% endfor %}
             </p>
             <p>
                 {{ form.email.label }}<br>
                 {{ form.email(size=32) }}<br>
                 {% for error in form.email.errors %}
-                <span style="color: red;">[{{ error }}]</span>
+                    <span style="color: red;">[{{ error }}]</span>
                 {% endfor %}
             </p>
             <p>
                 {{ form.password.label }}<br>
                 {{ form.password(size=32) }}<br>
                 {% for error in form.password.errors %}
-                <span style="color: red;">[{{ error }}]</span>
+                    <span style="color: red;">[{{ error }}]</span>
                 {% endfor %}
             </p>
             <p>
                 {{ form.password2.label }}<br>
                 {{ form.password2(size=32) }}<br>
                 {% for error in form.password2.errors %}
-                <span style="color: red;">[{{ error }}]</span>
+                    <span style="color: red;">[{{ error }}]</span>
                 {% endfor %}
             </p>
             <p>{{ form.admin.label }} <br>
-            {{ form.admin }} <br>
-            {% for error in form.admin.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
+                {{ form.admin }} <br>
+                {% for error in form.admin.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>{{ form.retired.label }} <br>
+                {{ form.retired }} <br>
+                {% for error in form.retired.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
             </p>
             <p>{{ form.submit() }}</p>
         </form>
