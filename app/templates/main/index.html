@@ -1,43 +1,39 @@
 {% extends "base.html" %}
 
+{% block styles %}
+{{ super() }}
+<style>
+    .main {
+        text-align: center;
+    }
+    .main h1 {
+        font-family: 'Exo', sans-serif;
+        font-weight: 800;
+    }
+    .team-pic {
+        width: 500px;
+        height: auto;
+        margin: 20px;
+        border: 5px solid #bd2e1f;
+    }
+    .logos {
+        width: 100px;
+        height: auto;
+    }
+</style>
+{% endblock %}
+
 {% block app_content %}
-    <h1>
-        WashU 2019-2020 Pitching Staff
-    </h1>
-    <h2>Players:</h2>
-    <br>
-    <div>
-        {% for p in pitchers %}
-        <p>
-            <a href="{{ url_for('pitcher', id=p.id) }}">{{ p }}</a>
-        </p>
-        {% endfor %}
+    <div class="main">
+        <h1>
+            <img class="logos" alt="WashU-Logo" src="{{ url_for('static', filename='images/Bear_Head_Color.png') }}">
+            WashU Bears Pitching Staff
+            <img class="logos" alt="WashU-Logo" src="{{ url_for('static', filename='images/WashU_Color.png') }}">
+            <br>
+            
+        </h1>
+        <img class="team-pic" alt="Team Pic" src="{{ url_for('static', filename='images/Anthem.jpg') }}">
+        <img class="team-pic" alt="Team Pic" src="{{ url_for('static', filename='images/Dom.jpg') }}">
     </div>
-    <h2>Seasons:</h2>
-    <br>
-    <div>
-        {% for s in seasons %}
-        <p>
-            <a href="{{ url_for('season', id=s.id) }}">{{ s }}</a>
-        </p>
-        {% endfor %}
-    </div>
-    <h2>Batters:</h2>
-    <br>
-    <div>
-        {% for b in batters %}
-        <p>
-            <a href="{{ url_for('batter', id=b.id) }}">{{ b.name }}</a>
-        </p>
-        {% endfor %}
-    </div>
-    <h2>Opponents:</h2>
-    <br>
-    <div>
-        {% for o in opponents %}
-        <p>
-            <a href="{{ url_for('opponent', id=o.id) }}">{{ o }}</a>
-        </p>
-        {% endfor %}
-    </div>
+    
 {% endblock %}

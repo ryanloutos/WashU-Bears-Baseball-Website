@@ -34,17 +34,9 @@ def index():
         -Displays index.html and passes pitchers, opponents,
             seasons, and batters as a way to filter data
     '''
-    pitchers = User.query.filter(User.grad_year != 'Coach/Manager').order_by(User.lastname).all()
-    seasons = Season.query.all()
-    batters = Batter.query.all()
-    opponents = Opponent.query.all()
 
     return render_template('main/index.html',
-                           title='WashU',
-                           pitchers=pitchers,
-                           opponents=opponents,
-                           seasons=seasons,
-                           batters=batters)
+                           title='WashU')
 
 # ***************-LOGIN-*************** #
 @app.route('/login', methods=['GET', 'POST'])
@@ -157,6 +149,26 @@ def register():
     return render_template('main/register.html',
                            title='Register',
                            form=form)
+
+# ***************-STAFF-*************** #
+@app.route('/staff', methods=['GET', 'POST'])
+@login_required
+def staff():
+    '''
+    STAFF:
+    Page to look at staff as a whole
+
+    PARAM:
+        -None
+
+    RETURN:
+        -staff.html
+    '''
+    pitchers = User.query.filter(User.grad_year != 'Coach/Manager').order_by(User.lastname).all()
+
+    return render_template('main/staff.html',
+                           title='Staff',
+                           pitchers=pitchers)
 
 # ***************-PITCHER HOMEPAGE-*************** #
 @app.route('/pitcher/<id>', methods=['GET', 'POST'])

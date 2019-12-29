@@ -12,6 +12,7 @@
         background: #bd2e1f;
         overflow-x: hidden;
         padding: 8px 0;
+        font-family: 'Exo', sans-serif;
       }
       
       .sidenav a {
@@ -29,6 +30,11 @@
       .main {
         margin-left: 140px; /* Same width as the sidebar + left position in px */
         padding: 0px 10px;
+        font-family: 'Exo', sans-serif;
+      }
+
+      .main h1{
+        font-weight: 700;
       }
       
       @media screen and (max-height: 450px) {
@@ -39,36 +45,29 @@
 {% endblock %}
 
 {% block app_content %}
+
     <div class="sidenav">
-        <a href="#">Opponent Home</a>
-        <a href="#">Batters</a>
-        <a href="#">Game Results</a>
+        <a href="#">Home</a>
+        <a href="#">Pitchers</a>
+        <a href="#"></a>
         <a href="#">Advanced Statistics</a>
     </div>
     <div class="main">
-        <h1>
-            {{ opponent }} 
-        </h1>
-        <br>
-        <h2>
-            Batters
-            <a href="{{ url_for('new_batter', opponent_id=opponent.id) }}">New Batter</a>
-        </h2>
-        <div>
-            {% for b in opponent.batters %}
-            <p>
-                <a href="{{ url_for('batter', id=b.id) }}">{{ b.name }}</a>
-            </p>
+        <h1>Staff Roster</h1> <br>
+        <table class="table table-striped">
+            <tr>
+                <th>Name</th>
+                <th>Throws</th>
+                <th>Grad Year</th>
+            </tr>
+            {% for p in pitchers %}
+                <tr>
+                    <td>{{ p }}</td>
+                    <td>{{ p.throws }}</td>
+                    <td>{{ p.grad_year }}</td>
+                </tr>
             {% endfor %}
-        </div>
-        <h2>Outings</h2>
-        <div>
-            {% for o in opponent.outings %}
-            <p>
-                <a href="#">{{ o }}</a>
-            </p>
-            {% endfor %}
-        </div>
+        </table>
     </div>
-    
+
 {% endblock %}
