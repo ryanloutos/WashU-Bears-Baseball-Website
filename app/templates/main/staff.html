@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block app_content %}
-
+    <script src="{{ url_for('static', filename='js/sortable_table.js') }}"></script>
     <div class="sidenav">
         <a href="#">Home</a>
         <a href="#">Pitchers</a>
@@ -14,11 +14,11 @@
     </div>
     <div class="main">
         <h1>Staff Roster</h1> <br>
-        <table class="table table-striped">
+        <table class="table table-striped sortable_table">
             <tr>
-                <th>Name</th>
-                <th>Throws</th>
-                <th>Grad Year</th>
+                <th onclick="sortTable(0, 0)">Name</th>
+                <th onclick="sortTable(1, 0)">Throws</th>
+                <th onclick="sortTable(2, 0)">Grad Year</th>
                 <th>Player Homepage</th>
             </tr>
             {% for p in pitchers %}
