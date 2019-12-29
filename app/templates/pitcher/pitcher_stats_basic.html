@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block styles %}
+    {{ super() }}
+    <script src="{{ url_for('static', filename='js/sortable_table.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/season_selector.js') }}"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidenav.css') }}">
+{% endblock %}
+
+{% block app_content %}
+    {% include "pitcher/pitcher_sidenav.html" %}
+    <div class="main">
+        <h1>
+            {{ pitcher }}
+        </h1>
+        <br>
+        <div>
+            <h4>Stat Line by Outing Over Career</h4>
+            <table class="table tables sortable_table">
+                <tr class="table-headers">
+                    <th onclick="sortTable(0, 4)">Date</th>
+                    <th onclick="sortTable(1, 4)">Opponent</th>
+                    <th onclick="sortTable(2, 4)">Season</th>
+                    <th onclick="sortTable(3, 4)">IP</th>
+                    <th onclick="sortTable(4, 4)">H</th>
+                    <th onclick="sortTable(5, 4)">1B</th>
+                    <th onclick="sortTable(6, 4)">2B</th>
+                    <th onclick="sortTable(7, 4)">3B</th>
+                    <th onclick="sortTable(8, 4)">HR</th>
+                    <th onclick="sortTable(9, 4)">E</th>
+                    <th onclick="sortTable(10, 4)">BB</th>
+                    <th onclick="sortTable(11, 4)">HBP</th>
+                    <th onclick="sortTable(12, 4)">K</th>
+                    <th onclick="sortTable(13, 4)">KL</th>
+                    <th onclick="sortTable(14, 4)">K/9</th>
+                    <th onclick="sortTable(15, 4)">BB/9</th>
+                    <th onclick="sortTable(16, 4)">P</th>
+                    <th onclick="sortTable(17, 4)">BF</th>
+                </tr>
+                {% for outing in outing_stat_line %}
+                    <tr>
+                        <td>{{ outing["details"]["date"] }}</td>
+                        <td>{{ outing["details"]["opponent"] }}</td>
+                        <td>{{ outing["details"]["season"] }}</td>
+                        <td>{{ outing["stat_line"]["ip"] }}</td>
+                        <td>{{ outing["stat_line"]["h"] }}</td>
+                        <td>{{ outing["stat_line"]["1b"] }}</td>
+                        <td>{{ outing["stat_line"]["2b"] }}</td>
+                        <td>{{ outing["stat_line"]["3b"] }}</td>
+                        <td>{{ outing["stat_line"]["hr"] }}</td>
+                        <td>{{ outing["stat_line"]["e"] }}</td>
+                        <td>{{ outing["stat_line"]["bb"] }}</td>
+                        <td>{{ outing["stat_line"]["hbp"] }}</td>
+                        <td>{{ outing["stat_line"]["k"] }}</td>
+                        <td>{{ outing["stat_line"]["kl"] }}</td>
+                        <td>{{ outing["stat_line"]["kp9"] }}</td>
+                        <td>{{ outing["stat_line"]["bb9"] }}</td>
+                        <td>{{ outing["stat_line"]["p"] }}</td>
+                        <td>{{ outing["stat_line"]["bf"] }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+{% endblock %}

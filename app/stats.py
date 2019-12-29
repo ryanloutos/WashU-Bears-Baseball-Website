@@ -736,8 +736,12 @@ def seasonStatLine(pitcher):
                         else:
                             stat_line[pitch.ab_result.lower()] += 1
         # calculate outing based stats
-        stat_line["kp9"] = truncate((stat_line["k"]+stat_line["kl"])/stat_line["ip"] * 9)
-        stat_line["bb9"] = truncate(stat_line["bb"]/stat_line["ip"]*9)
+        if stat_line["ip"] == 0:
+            stat_line["kp9"] = "inf"
+            stat_line["bb9"] = "inf"
+        else:
+            stat_line["kp9"] = truncate((stat_line["k"]+stat_line["kl"])/stat_line["ip"] * 9)
+            stat_line["bb9"] = truncate(stat_line["bb"]/stat_line["ip"]*9)
 
         # add to outings return arr
         outings.append({

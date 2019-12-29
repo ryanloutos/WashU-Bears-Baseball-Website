@@ -36,6 +36,17 @@
             {% endfor %}
         </p>
         <p>
+            {{ form.retired.label }}<br>
+            {% if batter.retired %}
+                {{ form.retired(checked='checked') }}
+            {% else %}
+                {{ form.retired() }}
+            {% endif %}
+            {% for error in form.retired.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
             {{ form.submit() }}
         </p>
     </form>

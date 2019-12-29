@@ -100,6 +100,7 @@ class Batter(db.Model):
         db.Integer,
         db.ForeignKey('opponent.id'),
         index=True)
+    retired = db.Column(db.Boolean, index=True)
     at_bats = db.relationship('AtBat', backref='batter', lazy='dynamic')
 
     def __repr__(self):

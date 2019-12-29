@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block styles %}
+    {{ super() }}
+    <script src="{{ url_for('static', filename='js/sortable_table.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/season_selector.js') }}"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidenav.css') }}">
+    <style>
+        #recent-outings {
+            width: 300px;
+        }
+    </style>
+{% endblock %}
+
+{% block app_content %}
+    {% include "pitcher/pitcher_sidenav.html" %}
+    <div class="main">
+        <h1>
+            {{ pitcher }}
+        </h1>
+        <br>
+        <div>
+            <h4>Recent Outings</h4>
+            <table class="table" id="recent-outings">
+                <tr class="table-headers">
+                    <th width=20px></th>
+                    <th>Date</th>
+                    <th>Opponent</th>
+                </tr>
+                {% for o in recent_outings %}
+                    <tr>
+                        <td><a href="{{ url_for('outing', id=o.id) }}">View</a></td>
+                        <td>{{ o.date }}</td>
+                        <td>{{ o.opponent }}</td>
+                    </tr>
+                    
+                {% endfor %}
+            </table>
+        </div>
+        <br>
+    </div>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+<div class="main">
+    <h1>{{ user }}</h1>
+    <div>
+        Username: {{ user.username }} <br>
+        Email: {{ user.email }} <br>
+        <a href="">Edit Info</a>
+    </div>
+</div>
+
+{% endblock %}

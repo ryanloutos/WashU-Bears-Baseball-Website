@@ -2,46 +2,7 @@
 
 {% block styles %}
 {{ super() }}
-<style>
-    .sidenav {
-        width: 130px;
-        position: fixed;
-        z-index: 1;
-        top: 100px;
-        left: 10px;
-        background: #bd2e1f;
-        overflow-x: hidden;
-        padding: 8px 0;
-        font-family: 'Exo', sans-serif;
-      }
-      
-      .sidenav a {
-        padding: 6px 8px 6px 16px;
-        text-decoration: none;
-        font-size: 12px;
-        color: #ffffff;
-        display: block;
-      }
-      
-      .sidenav a:hover {
-        color: #064579;
-      }
-      
-      .main {
-        margin-left: 140px; /* Same width as the sidebar + left position in px */
-        padding: 0px 10px;
-        font-family: 'Exo', sans-serif;
-      }
-
-      .main h1{
-        font-weight: 700;
-      }
-      
-      @media screen and (max-height: 450px) {
-        .sidenav {padding-top: 15px;}
-        .sidenav a {font-size: 18px;}
-      }
-</style>
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidenav.css') }}">
 {% endblock %}
 
 {% block app_content %}
@@ -49,7 +10,6 @@
     <div class="sidenav">
         <a href="#">Home</a>
         <a href="#">Pitchers</a>
-        <a href="#"></a>
         <a href="#">Advanced Statistics</a>
     </div>
     <div class="main">
@@ -59,12 +19,14 @@
                 <th>Name</th>
                 <th>Throws</th>
                 <th>Grad Year</th>
+                <th>Player Homepage</th>
             </tr>
             {% for p in pitchers %}
                 <tr>
                     <td>{{ p }}</td>
                     <td>{{ p.throws }}</td>
                     <td>{{ p.grad_year }}</td>
+                    <td><a href="{{ url_for('pitcher', id=p.id) }}">View</a></td>
                 </tr>
             {% endfor %}
         </table>

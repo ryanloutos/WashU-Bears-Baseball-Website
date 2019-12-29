@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+
+{% block styles %}
+    {{ super() }}
+    <script src="{{ url_for('static', filename='js/sortable_table.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/season_selector.js') }}"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidenav.css') }}">
+{% endblock %}
+
+{% block app_content %}
+    {% include "pitcher/pitcher_sidenav.html" %}
+    <div class="main">
+        <h1>
+            {{ pitcher }}
+        </h1>
+        <br>
+        <div>
+            <h4>Pitch Average Velo by Outing</h4>
+            <p>
+                Select Season:
+                <select onchange="season_selector('velo-season-selector', 'outing-velo-table')" name="velo-season-selector" id="velo-season-selector">
+                    <option value="All Seasons" selected>All Seasons</option>
+                    {% for season in seasons %}
+                        <option value="{{ season }}">{{season}}</option>
+                    {% endfor %}
+                </select>
+            </p>
+            <table class="table sortable_table" id="outing-velo-table">
+                <tr class="table-headers">
+                    <th onclick="sortTable(0, 1)">Date</th>
+                    <th onclick="sortTable(1, 1)">Opponent</th>
+                    <th onclick="sortTable(2, 1)">Season</th>
+                    <th onclick="sortTable(3, 1)">FB</th>
+                    <th onclick="sortTable(4, 1)">2SM</th>
+                    <th onclick="sortTable(5, 1)">SL</th>
+                    <th onclick="sortTable(6, 1)">CB</th>
+                    <th onclick="sortTable(7, 1)">CH</th>
+                    <th onclick="sortTable(8, 1)">CT</th>
+                </tr>
+                {% for outing in avg_pitch_velo_outing %}
+                    <tr class="data-row">
+                        <td>{{ outing["details"]["date"] }}</td>
+                        <td>{{ outing["details"]["opponent"] }}</td>
+                        <td>{{ outing["details"]["season"] }}</td>
+                        <td>{{ outing["velos"]["FB"] }}</td>
+                        <td>{{ outing["velos"]["SM"] }}</td>
+                        <td>{{ outing["velos"]["SL"] }}</td>
+                        <td>{{ outing["velos"]["CB"] }}</td>
+                        <td>{{ outing["velos"]["CH"] }}</td>
+                        <td>{{ outing["velos"]["CT"] }}</td>
+                    </tr>
+                {% endfor%}
+                <tr>
+                    <td>SEASON TOTALS</td>
+                    <td></td>
+                    <td></td>
+                    <td>{{ avg_pitch_velo_season["FB"] }}</td>
+                    <td>{{ avg_pitch_velo_season["SM"] }}</td>
+                    <td>{{ avg_pitch_velo_season["SL"] }}</td>
+                    <td>{{ avg_pitch_velo_season["CB"] }}</td>
+                    <td>{{ avg_pitch_velo_season["CH"] }}</td>
+                    <td>{{ avg_pitch_velo_season["CT"] }}</td>
+                </tr>
+            </table>
+        </div>
+        <div>
+            <h4>Pitch Strike Percentage by Outing</h4>
+            <p>
+                Select Season:
+                <select onchange="season_selector('strike-percentage-season-selector', 'strike-percentage-season-table')" name="strike-percentage-season-selector" id="strike-percentage-season-selector">
+                    <option value="All Seasons" selected>All Seasons</option>
+                    {% for season in seasons %}
+                        <option value="{{ season }}">{{season}}</option>
+                    {% endfor %}
+                </select>
+            </p>
+            <table class="table sortable_table" id="strike-percentage-season-table">
+                <tr class="table-headers">
+                    <th onclick="sortTable(0, 2)">Date</th>
+                    <th onclick="sortTable(1, 2)">Opponent</th>
+                    <th onclick="sortTable(2, 2)">Season</th>
+                    <th onclick="sortTable(3, 2)">FB</th>
+                    <th onclick="sortTable(4, 2)">2SM</th>
+                    <th onclick="sortTable(5, 2)">SL</th>
+                    <th onclick="sortTable(6, 2)">CB</th>
+                    <th onclick="sortTable(7, 2)">CH</th>
+                    <th onclick="sortTable(8, 2)">CT</th>
+                </tr>
+                {% for outing in strike_percentage_outing %}
+                    <tr class="data-row">
+                        <td>{{ outing["details"]["date"] }}</td>
+                        <td>{{ outing["details"]["opponent"] }}</td>
+                        <td>{{ outing["details"]["season"] }}</td>
+                        <td>{{ outing["percentages"]["FB"] }}</td>
+                        <td>{{ outing["percentages"]["SM"] }}</td>
+                        <td>{{ outing["percentages"]["SL"] }}</td>
+                        <td>{{ outing["percentages"]["CB"] }}</td>
+                        <td>{{ outing["percentages"]["CH"] }}</td>
+                        <td>{{ outing["percentages"]["CT"] }}</td>
+                    </tr>
+                {% endfor %}
+                <tr>
+                    <td>SEASON TOTALS</td>
+                    <td></td>
+                    <td></td>
+                    <td>{{ strike_percentage_season["FB"] }}</td>
+                    <td>{{ strike_percentage_season["SM"] }}</td>
+                    <td>{{ strike_percentage_season["SL"] }}</td>
+                    <td>{{ strike_percentage_season["CB"] }}</td>
+                    <td>{{ strike_percentage_season["CH"] }}</td>
+                    <td>{{ strike_percentage_season["CT"] }}</td>
+                </tr>
+            </table>
+        </div>
+        <div>
+            <h4>Pitch Usage by Outing</h4>
+            <p>
+                Select Season:
+                <select onchange="season_selector('pitch-usage-season-selector', 'pitch-usage-season-table')" name="pitch-usage-season-selector" id="strike-percentage-season-selector">
+                    <option value="All Seasons" selected>All Seasons</option>
+                    {% for season in seasons %}
+                        <option value="{{ season }}">{{season}}</option>
+                    {% endfor %}
+                </select>
+            </p>
+            <p>Values are listed as {number thrown}/{percentage}</p>
+            <table class="table sortable_table" id="pitch-usage-season-table">
+                <tr class="table-headers">
+                    <th onclick="sortTable(0, 3)">Date</th>
+                    <th onclick="sortTable(1, 3)">Opponent</th>
+                    <th onclick="sortTable(2, 3)">Season</th>
+                    <th onclick="sortTable(3, 3)">FB</th>
+                    <th onclick="sortTable(4, 3)">2SM</th>
+                    <th onclick="sortTable(5, 3)">SL</th>
+                    <th onclick="sortTable(6, 3)">CB</th>
+                    <th onclick="sortTable(7, 3)">CH</th>
+                    <th onclick="sortTable(8, 3)">CT</th>
+                </tr>
+                {% for outing in pitch_usage_outing %}
+                    <tr class="data-row">
+                        <td>{{ outing["details"]["date"] }}</td>
+                        <td>{{ outing["details"]["opponent"] }}</td>
+                        <td>{{ outing["details"]["season"] }}</td>
+                        <td>{{ outing["usages"]["FB"] }} / {{ outing["percentages"]["FB"] }}</td>
+                        <td>{{ outing["usages"]["SM"] }} / {{ outing["percentages"]["SM"] }}</td>
+                        <td>{{ outing["usages"]["SL"] }} / {{ outing["percentages"]["SL"] }}</td>
+                        <td>{{ outing["usages"]["CB"] }} / {{ outing["percentages"]["CB"] }}</td>
+                        <td>{{ outing["usages"]["CH"] }} / {{ outing["percentages"]["CH"] }}</td>
+                        <td>{{ outing["usages"]["CT"] }} / {{ outing["percentages"]["CT"] }}</td>
+                    </tr>
+                {% endfor %}
+                <tr>
+                    <td>SEASON TOTALS</td>
+                    <td></td>
+                    <td></td>
+                    <td>{{ pitch_usage_season["usages"]["FB"] }} / {{ pitch_usage_season["percentages"]["FB"] }}</td>
+                    <td>{{ pitch_usage_season["usages"]["SM"] }} / {{ pitch_usage_season["percentages"]["SM"] }}</td>
+                    <td>{{ pitch_usage_season["usages"]["SL"] }} / {{ pitch_usage_season["percentages"]["SL"] }}</td>
+                    <td>{{ pitch_usage_season["usages"]["CB"] }} / {{ pitch_usage_season["percentages"]["CB"] }}</td>
+                    <td>{{ pitch_usage_season["usages"]["CH"] }} / {{ pitch_usage_season["percentages"]["CH"] }}</td>
+                    <td>{{ pitch_usage_season["usages"]["CT"] }} / {{ pitch_usage_season["percentages"]["CT"] }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+{% endblock %}

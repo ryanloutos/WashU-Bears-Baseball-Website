@@ -37,6 +37,7 @@ class BatterForm(FlaskForm):
         choices=[('R', 'R'), ('L', 'L')],
         validators=[Optional()])
     grad_year = StringField('Grad Year', validators=[Optional()])
+    retired = BooleanField('Retired?')
     submit = SubmitField('Create Batter', validators=[Optional()])
 
 
