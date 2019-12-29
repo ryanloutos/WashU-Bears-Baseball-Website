@@ -718,11 +718,7 @@ def seasonStatLine(pitcher):
 
                     # stats that result in out
                     if pitch.ab_result in ["IP->Out", "K", "KL", "FC", "D3->Out"]:
-                        stat_line["ip"] += 0.1
-
-                        # for if this out completes an inning
-                        if stat_line["ip"]*10 % 3 == 0:
-                            stat_line["ip"] += 0.7
+                        stat_line["ip"] += 1
 
                         # for outs that were strikeouts
                         if pitch.ab_result in ["K", "KL"]:
@@ -735,6 +731,11 @@ def seasonStatLine(pitcher):
                             stat_line["e"] += 1
                         else:
                             stat_line[pitch.ab_result.lower()] += 1
+
+        # fix innings pitched
+        stat_line_total["ip"] += stat_line["ip"]
+        stat_line["ip"] = truncate(stat_line["ip"] / 3)
+
         # calculate outing based stats
         if stat_line["ip"] == 0:
             stat_line["kp9"] = "inf"
@@ -754,10 +755,11 @@ def seasonStatLine(pitcher):
 
         # add to season total stat line
         for stat, val in stat_line.items():
-            if stat not in ["kp9", "bb9"]:
+            if stat not in ["kp9", "bb9", "ip"]:
                 stat_line_total[stat] += val
 
     # calc season based summary stats
+    stat_line_total["ip"] = truncate(stat_line_total["ip"]/3)
     stat_line_total["kp9"] = truncate((stat_line_total["k"]+stat_line_total["kl"])/stat_line_total["ip"] * 9)
     stat_line_total["bb9"] = truncate(stat_line_total["bb"]/stat_line_total["ip"]*9)
 
