@@ -3,7 +3,6 @@
 {% block styles %}
     {{ super() }}
     <script src="{{ url_for('static', filename='js/sortable_table.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/season_selector.js') }}"></script>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidenav.css') }}">
     <style>
         #recent-outings {
@@ -33,7 +32,6 @@
                         <td>{{ o.date }}</td>
                         <td>{{ o.opponent }}</td>
                     </tr>
-                    
                 {% endfor %}
             </table>
         </div>

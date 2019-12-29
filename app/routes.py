@@ -327,23 +327,23 @@ def staff_retired():
                            title='Retired Pitchers',
                            retired_pitchers=retired_pitchers)
 
-# ***************-PITCHER HOMEPAGE-*************** #
+# ***************-PITCHER HOMEPAGE-*************** # DONE
 @app.route('/pitcher/<id>', methods=['GET', 'POST'])
 @login_required
 def pitcher(id):
     '''
     PITCHER HOMEPAGE:
-    Displays outings for a specific pitcher
+    Displays different pages related to a specific pitcher
 
     PARAM:
         -id: the id (primary key) of the pitcher that wants
             to be viewed
 
     RETURN:
-        -pitcher.html which displays the outings to be viewed
-            that are associated with username
+        -pitcher_home.html which has "quick hitter" info
+            and can navigate to other pages using side nav
     '''
-    # get the user object associated with the username in the url
+    # get the user object associated with the id in the url
     pitcher = User.query.filter_by(id=id).first()
 
     # either bug or user trying to access pitcher page that DNE
@@ -359,10 +359,12 @@ def pitcher(id):
     # get the outings associated with that player
     outings = pitcher.outings
 
+    # get the number of outings they have thrown
     num_outings = 0
     for o in outings:
         num_outings += 1
 
+    # set the 3 most recent outings thrown by pitcher
     if num_outings >= 3:
         recent_outings = [outings[i] for i in range(3)]
     else:
@@ -386,10 +388,115 @@ def pitcher(id):
                            pitcher=pitcher,
                            recent_outings=recent_outings)
 
+# ***************-PITCHER OUTINGS-*************** # DONE
+@app.route('/pitcher/<id>/outings', methods=['GET', 'POST'])
+@login_required
+def pitcher_outings(id):
+    '''
+    PITCHER OUTINGS:
+    Displays the outings thrown by a pitcher
 
+    PARAM:
+        -id: the id (primary key) of the pitcher that wants
+            to be viewed
+
+    RETURN:
+        -pitcher_outings.html which holds a table showing all
+            of their outings
+    '''
+    # get the user object associated with the username in the url
+    pitcher = User.query.filter_by(id=id).first()
+
+    # either bug or user trying to access pitcher page that DNE
+    if not pitcher:
+        flash('URL does not exist')
+        return redirect(url_for('index'))
+
+    # if pitcher is a coach/manager, redirect to index page
+    if pitcher.grad_year == 'Coach/Manager':
+        flash('Cannot show outings for Coach/Manager')
+        return redirect(url_for('index'))
+
+    # get the outings associated with that player
+    outings = pitcher.outings
+
+    # get seasons associated with player
+    seasons = []
+    for outing in outings:
+        if outing.season not in seasons:
+            seasons.append(outing.season)
+
+    return render_template('pitcher/pitcher_outings.html',
+                           title=pitcher,
+                           pitcher=pitcher,
+                           seasons=seasons)
+
+# ***************-PITCHER BASIC STATS-*************** # DONE
+@app.route('/pitcher/<id>/stats/basic', methods=['GET', 'POST'])
+@login_required
+def pitcher_stats_basic(id):
+    '''
+    PITCHER BASIC STATS:
+    Displays basic game/outing statistics
+
+    PARAM:
+        -id: the id (primary key) of the pitcher that wants
+            to be viewed
+
+    RETURN:
+        -pitcher_stats_basic.html which holds a table holding
+            basic statistics
+    '''
+
+    # get the user object associated with the username in the url
+    pitcher = User.query.filter_by(id=id).first()
+
+    # either bug or user trying to access pitcher page that DNE
+    if not pitcher:
+        flash('URL does not exist')
+        return redirect(url_for('index'))
+
+    # if pitcher is a coach/manager, redirect to index page
+    if pitcher.grad_year == 'Coach/Manager':
+        flash('Cannot show outings for Coach/Manager')
+        return redirect(url_for('index'))
+
+    # get the outings associated with that player
+    outings = pitcher.outings
+
+    # get seasons associated with player
+    seasons = []
+    for outing in outings:
+        if outing.season not in seasons:
+            seasons.append(outing.season)
+
+    # gets stats associated with pitcher
+    season_stat_line, outing_stat_line = seasonStatLine(pitcher)
+
+    return render_template('pitcher/pitcher_stats_basic.html',
+                           title=pitcher,
+                           pitcher=pitcher,
+                           seasons=seasons,
+                           season_stat_line=season_stat_line,
+                           outing_stat_line=outing_stat_line)
+
+# ***************-PITCHER ADVANCED STATS-*************** # DONE
 @app.route('/pitcher/<id>/stats/advanced', methods=['GET', 'POST'])
 @login_required
 def pitcher_stats_advanced(id):
+    '''
+    PITCHER ADVANCED STATS:
+    Displays advanced game/outing statistics
+
+    PARAM:
+        -id: the id (primary key) of the pitcher that wants
+            to be viewed
+
+    RETURN:
+        -pitcher_stats_advanced.html which holds a table holding
+            basic statistics
+    '''
+
     # get the user object associated with the username in the url
     pitcher = User.query.filter_by(id=id).first()
 
@@ -416,7 +523,6 @@ def pitcher_stats_advanced(id):
     avg_pitch_velo_season, avg_pitch_velo_outing = avgPitchVeloPitcher(pitcher)
     strike_percentage_season, strike_percentage_outing = pitchStrikePercentageSeason(pitcher)
     pitch_usage_season, pitch_usage_outing = pitchUsageSeason(pitcher)
-    season_stat_line, outing_stat_line = seasonStatLine(pitcher)
 
     return render_template('pitcher/pitcher_stats_advanced.html',
                            title=pitcher,
@@ -427,99 +533,7 @@ def pitcher_stats_advanced(id):
                            strike_percentage_season=strike_percentage_season,
                            strike_percentage_outing=strike_percentage_outing,
                            pitch_usage_season=pitch_usage_season,
-                           pitch_usage_outing=pitch_usage_outing,
-                           season_stat_line=season_stat_line,
-                           outing_stat_line=outing_stat_line)
-
-
-@app.route('/pitcher/<id>/stats/basic', methods=['GET', 'POST'])
-@login_required
-def pitcher_stats_basic(id):
-    # get the user object associated with the username in the url
-    pitcher = User.query.filter_by(id=id).first()
-
-    # either bug or user trying to access pitcher page that DNE
-    if not pitcher:
-        flash('URL does not exist')
-        return redirect(url_for('index'))
-
-    # if pitcher is a coach/manager, redirect to index page
-    if pitcher.grad_year == 'Coach/Manager':
-        flash('Cannot show outings for Coach/Manager')
-        return redirect(url_for('index'))
-
-    # get the outings associated with that player
-    outings = pitcher.outings
-
-    # get seasons associated with player
-    seasons = []
-    for outing in outings:
-        if outing.season not in seasons:
-            seasons.append(outing.season)
-
-    # gets stats associated with pitcher
-    avg_pitch_velo_season, avg_pitch_velo_outing = avgPitchVeloPitcher(pitcher)
-    strike_percentage_season, strike_percentage_outing = pitchStrikePercentageSeason(pitcher)
-    pitch_usage_season, pitch_usage_outing = pitchUsageSeason(pitcher)
-    season_stat_line, outing_stat_line = seasonStatLine(pitcher)
-
-    return render_template('pitcher/pitcher_stats_basic.html',
-                           title=pitcher,
-                           pitcher=pitcher,
-                           seasons=seasons,
-                           avg_pitch_velo_season=avg_pitch_velo_season,
-                           avg_pitch_velo_outing=avg_pitch_velo_outing,
-                           strike_percentage_season=strike_percentage_season,
-                           strike_percentage_outing=strike_percentage_outing,
-                           pitch_usage_season=pitch_usage_season,
-                           pitch_usage_outing=pitch_usage_outing,
-                           season_stat_line=season_stat_line,
-                           outing_stat_line=outing_stat_line)
-
-@app.route('/pitcher/<id>/outings', methods=['GET', 'POST'])
-@login_required
-def pitcher_outings(id):
-    # get the user object associated with the username in the url
-    pitcher = User.query.filter_by(id=id).first()
-
-    # either bug or user trying to access pitcher page that DNE
-    if not pitcher:
-        flash('URL does not exist')
-        return redirect(url_for('index'))
-
-    # if pitcher is a coach/manager, redirect to index page
-    if pitcher.grad_year == 'Coach/Manager':
-        flash('Cannot show outings for Coach/Manager')
-        return redirect(url_for('index'))
-
-    # get the outings associated with that player
-    outings = pitcher.outings
-
-    # get seasons associated with player
-    seasons = []
-    for outing in outings:
-        if outing.season not in seasons:
-            seasons.append(outing.season)
-
-    # gets stats associated with pitcher
-    avg_pitch_velo_season, avg_pitch_velo_outing = avgPitchVeloPitcher(pitcher)
-    strike_percentage_season, strike_percentage_outing = pitchStrikePercentageSeason(pitcher)
-    pitch_usage_season, pitch_usage_outing = pitchUsageSeason(pitcher)
-    season_stat_line, outing_stat_line = seasonStatLine(pitcher)
-
-    return render_template('pitcher/pitcher_outings.html',
-                           title=pitcher,
-                           pitcher=pitcher,
-                           seasons=seasons,
-                           avg_pitch_velo_season=avg_pitch_velo_season,
-                           avg_pitch_velo_outing=avg_pitch_velo_outing,
-                           strike_percentage_season=strike_percentage_season,
-                           strike_percentage_outing=strike_percentage_outing,
-                           pitch_usage_season=pitch_usage_season,
-                           pitch_usage_outing=pitch_usage_outing,
-                           season_stat_line=season_stat_line,
-                           outing_stat_line=outing_stat_line)
-
+                           pitch_usage_outing=pitch_usage_outing)
 
 # ***************-SEASON HOMEPAGE-*************** #
 @app.route('/season/<id>')
