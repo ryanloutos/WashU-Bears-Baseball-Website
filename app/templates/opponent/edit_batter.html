@@ -1,53 +1,56 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-    <h1>Edit Batter</h1>
-    <form method="post" novalidate>
-        {{ form.hidden_tag() }} {# Preventing CSRF attacks #}
-        <p>
-            {{ form.fullname.label }}<br>
-            {{ form.fullname(size=32, value=batter.name) }}
-            {% for error in form.fullname.errors %}
-                <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.nickname.label }}<br>
-            {{ form.nickname(size=32, value=batter.short_name) }}
-            {% for error in form.nickname.errors %}
-                <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.bats.label }}<br>
-            <select id="bats" name="bats">
-                <option value="R" {% if batter.bats == 'R' %} selected='selected' {% endif %}>R</option>
-                <option value="L" {% if batter.bats == 'L' %} selected='selected' {% endif %}>L</option>
-            </select>
-            {% for error in form.bats.errors %}
-                <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.grad_year.label }}<br>
-            {{ form.grad_year(size=32, value=batter.grad_year) }}
-            {% for error in form.grad_year.errors %}
-                <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.retired.label }}<br>
-            {% if batter.retired %}
-                {{ form.retired(checked='checked') }}
-            {% else %}
-                {{ form.retired() }}
-            {% endif %}
-            {% for error in form.retired.errors %}
-                <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.submit() }}
-        </p>
-    </form>
+    <div class="main">
+        <h1>Edit Batter</h1>
+        <form method="post" novalidate>
+            {{ form.hidden_tag() }} {# Preventing CSRF attacks #}
+            <p>
+                {{ form.fullname.label }}<br>
+                {{ form.fullname(size=32, value=batter.name) }}
+                {% for error in form.fullname.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.nickname.label }}<br>
+                {{ form.nickname(size=32, value=batter.short_name) }}
+                {% for error in form.nickname.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.bats.label }}<br>
+                <select id="bats" name="bats">
+                    <option value="R" {% if batter.bats == 'R' %} selected='selected' {% endif %}>R</option>
+                    <option value="L" {% if batter.bats == 'L' %} selected='selected' {% endif %}>L</option>
+                    <option value="S" {% if batter.bats == 'S' %} selected='selected' {% endif %}>S</option>
+                </select>
+                {% for error in form.bats.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.grad_year.label }}<br>
+                {{ form.grad_year(size=32, value=batter.grad_year) }}
+                {% for error in form.grad_year.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.retired.label }}<br>
+                {% if batter.retired %}
+                    {{ form.retired(checked='checked') }}
+                {% else %}
+                    {{ form.retired() }}
+                {% endif %}
+                {% for error in form.retired.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.submit() }}
+            </p>
+        </form>
+    </div>
 {% endblock %}

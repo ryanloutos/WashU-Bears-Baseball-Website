@@ -1,193 +1,143 @@
 {% extends "base.html" %}
 
+{% block styles %}
+    {{ super() }}
+    {#idea for add/delete row comes from: https://www.rmedgar.com/blog/dynamic_fields_flask_wtf#}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="{{ url_for('static', filename='js/pitch_table.js') }}"></script>
+{% endblock %}
+
 {% block app_content %}
-{#https://www.rmedgar.com/blog/dynamic_fields_flask_wtf#}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script> 
-    $(document).ready(function() {
-        //this function copies the form and appends a new one with the appropriate attributes
-        $('#add').click(function addForm() {
-            //Get Last index
-            var $lastForm = $('.subform').last();
-
-            //sets newIndex 
-            if ($lastForm.length > 0) {
-                newIndex = parseInt($lastForm.data('index'))+1;
-            }
-            else {
-                newIndex=0;
-            }
-
-            // Maximum of 150 subforms
-            if (newIndex > 150) {
-                console.log('[WARNING] Reached maximum number of elements');
-                return;
-            }
-
-            //clone the first subform which will always be there
-            var $newForm = $('#pitch-0-form').clone();
-
-            //set the appropriate attributes so subform works
-            $newForm.attr('id', 'pitch-'+newIndex+'-form');
-            $newForm.attr('data-index', newIndex);
-
-            // looks for the different DOM form elements and updates attributes
-            $newForm.find('input').each(function(idx) {
-                var $item = $(this);
-                $item.attr('id', $item.attr('id').replace('0', newIndex));
-                $item.attr('name', $item.attr('name').replace('0', newIndex));
-            });
-            $newForm.find('select').each(function(idx) {
-                var $item = $(this);
-                $item.attr('id', $item.attr('id').replace('0', newIndex));
-                $item.attr('name', $item.attr('name').replace('0', newIndex));
-            });
-
-            //append to the end of the table
-            $("#table > tbody").append($newForm);
-            $newForm.find("td:first-child").text(newIndex);
-            $newForm.addClass('subform');
-        });
-
-        //this function deletes the last subform (last row)
-        $('#delete').click(function deleteForm() {
-            var $lastForm = $('.subform').last();
-            $lastForm.remove();
-        });
-    });
-</script>
-<h1>Create Outing From CSV</h1>
-<form method="POST" novalidate>
-    {{ form.hidden_tag() }} {# Preventing CSRF attacks #}
-    <br>
-    <div class="panel, panel-default">
-        <div class="panel-heading">Pitches</div>
-        <div class="panel-body"> Check to see if pitch information is correct</div>
-        <table class='table' id='table'>
-            <tr>
-                <th>Pitch</th>
-                <th>Batter</th>
-                <th>Velo</th>
-                <th>Lead RNR</th>
-                <th>Time to Plate</th>
-                <th>Pitch Type</th>
-                <th>Pitch Result</th>
-                <th>Hit Spot?</th>
-                <th>AB Result</th>
-                <th>GB/LD/FB</th>
-                <th>Fielder</th>
-                <th>Inning</th>
-            </tr>
-            {% for pitch in pitches %}
-                {% set outer_loop = loop %} {# Had to make all fields manually because of index difference. #}
-                <tr class='subform' id="pitch-{{outer_loop.index0}}-form" data-index="{{outer_loop.index0}}">
-                    <td>
-                        {{outer_loop.index0+1}}
-                    </td>
-                    <td>
-                        <select id="pitch-{{outer_loop.index0}}-batter_id" name="pitch-{{outer_loop.index0}}-batter_id">
-                        {% for batter in batters %}
-                            {% if "batter_id" in pitch.keys() %}
-                                {{ pitch["batter_id"]}}
-                                <option value="{{batter.id}}" {% if pitch["batter_id"] in [batter.id, batter.id|string] %} selected=selected {% endif %}>{{batter}}</option>
-                            {% else %}
-                                <option value="{{batter.id}}" >{{batter}}</option>
-                            {% endif %}
-                        {% endfor %}
-                        </select>
-                    </td>
-                    <td>
-                        <input id="pitch-{{outer_loop.index0}}-velocity" name="pitch-{{outer_loop.index0}}-velocity" size="4" type="text" value="{{pitch['velocity']}}">
-                    </td>
-                    <td>
-                        <select id="pitch-{{outer_loop.index0}}-lead_runner" name="pitch-{{outer_loop.index0}}-lead_runner" required>
-                            <option value="" selected></option>
-                            <option value="1" {% if pitch['lead_runner'] in [1, '1'] %} selected='selected' {% endif %}>1</option>
-                            <option value="2" {% if pitch['lead_runner'] in [2, '2'] %} selected='selected' {% endif %}>2</option>
-                            <option value="3" {% if pitch['lead_runner'] in [3, '3'] %} selected='selected' {% endif %}>3</option>
-                        </select>
-                    </td>
-                    <td>
-                        <input id="pitch-{{outer_loop.index0}}-time_to_plate" name="pitch-{{outer_loop.index0}}-time_to_plate" size="4" type="text" value="{{pitch['time_to_plate']}}">
-                    </td>
-                    <td>
-                        <select id="pitch-{{outer_loop.index0}}-pitch_type" name="pitch-{{outer_loop.index0}}-pitch_type" required>
-                            <option value="" {% if pitch['pitch_type']=='' %} selected='selected' {% endif %}>Select</option>
-                            <option value="1" {% if pitch['pitch_type'] in [1, '1'] %} selected='selected' {% endif %}>1</option>
-                            <option value="2" {% if pitch['pitch_type'] in [2, '2'] %} selected='selected' {% endif %}>2</option>
-                            <option value="3" {% if pitch['pitch_type'] in [3, '3'] %} selected='selected' {% endif %}>3</option>
-                            <option value="4" {% if pitch['pitch_type'] in [4, '4'] %} selected='selected' {% endif %}>4</option>
-                            <option value="5" {% if pitch['pitch_type'] in [5, '5'] %} selected='selected' {% endif %}>5</option>
-                            <option value="7" {% if pitch['pitch_type'] in [7, '7'] %} selected='selected' {% endif %}>7</option>
-                        </select>
-                    </td>
-                    <td>
-                        <select id="pitch-{{outer_loop.index0}}-pitch_result" name="pitch-{{outer_loop.index0}}-pitch_result" required>
-                            <option value="" {% if pitch['pitch_result'].strip()=='' %} selected='selected' {% endif %}>Select</option>
-                            <option value="B" {% if pitch['pitch_result'].strip() in ['B', 'b'] %} selected='selected' {% endif %}>B</option>
-                            <option value="CS" {% if pitch['pitch_result'].strip() in ['CS', 'cs'] %} selected='selected' {% endif %}>CS</option>
-                            <option value="SS" {% if pitch['pitch_result'].strip() in ['SS', 'ss'] %} selected='selected' {% endif %}>SS</option>
-                            <option value="F" {% if pitch['pitch_result'].strip() in ['F', 'f'] %} selected='selected' {% endif %}>F</option>
-                            <option value="IP" {% if pitch['pitch_result'].strip() in ['IP', 'ip'] %} selected='selected' {% endif %}>IP</option>
-                        </select>
-                    </td>
-                    <td>
-                        {% if pitch['hit_spot'] in [1, '1', 'Y', 'y', 'yes', 'Yes'] %}
-                            <input id="pitch-{{outer_loop.index0}}-hit_spot" name="pitch-{{outer_loop.index0}}-hit_spot" type="checkbox" value="y" checked>
-                        {% else %}
-                            <input id="pitch-{{outer_loop.index0}}-hit_spot" name="pitch-{{outer_loop.index0}}-hit_spot" type="checkbox" value="y">
-                        {% endif %}
-                    </td>
-                    <td>
-                        <select id="pitch-{{loop.index0}}-ab_result" name="pitch-{{loop.index0}}-ab_result" required>
-                            <option value="" {% if pitch["ab_result"] in [None, ''] %} selected='selected' {% endif %}></option>
-                            <option value="IP->Out" {% if pitch["ab_result"] in ['IP->Out'] %} selected='selected' {% endif %}>IP->Out</option>
-                            <option value="K" {% if pitch["ab_result"] in ['K', 'k'] %} selected='selected' {% endif %}>K</option>
-                            <option value="KL" {% if pitch["ab_result"] in ['KL', 'kl'] %} selected='selected' {% endif %}>KL</option>
-                            <option value="BB" {% if pitch["ab_result"] in ['BB', 'bb'] %} selected='selected' {% endif %}>BB</option>
-                            <option value="HBP" {% if pitch["ab_result"] in ['HBP', 'hbp'] %} selected='selected' {% endif %}>HBP</option>
-                            <option value="1B" {% if pitch["ab_result"] in ['1B', '1b'] %} selected='selected' {% endif %}>1B</option>
-                            <option value="2B" {% if pitch["ab_result"] in ['2B', '2b'] %} selected='selected' {% endif %}>2B</option>
-                            <option value="3B" {% if pitch["ab_result"] in ['3B', '3b'] %} selected='selected' {% endif %}>3B</option>
-                            <option value="HR" {% if pitch["ab_result"] in ['HR', 'hr'] %} selected='selected' {% endif %}>HR</option>
-                            <option value="Error" {% if pitch["ab_result"] in ['Error', 'e', 'E'] %} selected='selected' {% endif %}>Error</option>
-                            <option value="CI" {% if pitch["ab_result"] in ['CI', 'ci'] %} selected='selected' {% endif %}>CI</option>
-                            <option value="FC" {% if pitch["ab_result"] in ['FC', 'fc'] %} selected='selected' {% endif %}>FC</option>
-                            <option value="D3->Out" {% if pitch["ab_result"] in ['D3->Out'] %} selected='selected' {% endif %}>D3->Out</option>
-                            <option value="D3->Safe" {% if pitch["ab_result"] in ['D3->Safe'] %} selected='selected' {% endif %}>D3->Safe</option>
-                        </select>
-                    </td>
-                    <td>
-                        <select id="pitch-{{loop.index0}}-traj" name="pitch-{{loop.index0}}-traj" required>
-                            <option value="" {%   if pitch["traj"] in [None, ''] %} selected='selected' {% endif %}></option>
-                            <option value="GB" {% if pitch["traj"] in ['GB', 'gb'] %} selected='selected' {% endif %}>GB</option>
-                            <option value="LD" {% if pitch["traj"] in ['LD', 'ld'] %} selected='selected' {% endif %}>FB</option>
-                            <option value="FB" {% if pitch["traj"] in ['FB', 'fb'] %} selected='selected' {% endif %}>LD</option>
-                        </select>
-                    </td>
-                    <td>
-                        <select id="pitch-{{outer_loop.index0}}-fielder" name="pitch-{{outer_loop.index0}}-fielder" required>
-                            <option value="" {% if pitch["fielder"]==None %} selected='selected' {% endif %}></option>
-                            <option value="1" {% if pitch["fielder"] in [1, '1', 'P', 'p'] %} selected='selected' {% endif %}>1</option>
-                            <option value="2" {% if pitch["fielder"] in [2, '2', 'C', 'c'] %} selected='selected' {% endif %}>2</option>
-                            <option value="3" {% if pitch["fielder"] in [3, '3', '1B', '1b'] %} selected='selected' {% endif %}>3</option>
-                            <option value="4" {% if pitch["fielder"] in [4, '4', '2B', '2b'] %} selected='selected' {% endif %}>4</option>
-                            <option value="5" {% if pitch["fielder"] in [5, '5', '3B', '3b'] %} selected='selected' {% endif %}>5</option>
-                            <option value="6" {% if pitch["fielder"] in [6, '6', 'SS', 'ss'] %} selected='selected' {% endif %}>6</option>
-                            <option value="7" {% if pitch["fielder"] in [7, '7', 'LF', 'lf'] %} selected='selected' {% endif %}>7</option>
-                            <option value="8" {% if pitch["fielder"] in [8, '8', 'CF', 'cf'] %} selected='selected' {% endif %}>8</option>
-                            <option value="9" {% if pitch["fielder"] in [9, '9', 'RF', 'rf'] %} selected='selected' {% endif %}>9</option>
-                        </select>
-                    </td>
-                    <td>
-                        <input id="pitch-{{outer_loop.index0}}-inning" name="pitch-{{outer_loop.index0}}-inning" size="4" type="text" value="{{pitch['inning']}}">
-                    </td>
-                </tr>
-            {% endfor %}
-        </table>
+    <div class="main">
+        <h1>Create Outing From CSV</h1>
+        <form method="POST" novalidate>
+            {{ form.hidden_tag() }} {# Preventing CSRF attacks #}
+            <br>
+                <table class='table' id='table'>
+                    <tr class="table-headers">
+                        <th>Pitch</th>
+                        <th>Batter</th>
+                        <th>Velo</th>
+                        <th>Lead RNR</th>
+                        <th>Time to Plate</th>
+                        <th>Pitch Type</th>
+                        <th>Pitch Result</th>
+                        <th>Hit Spot?</th>
+                        <th>AB Result</th>
+                        <th>GB/LD/FB</th>
+                        <th>Fielder</th>
+                        <th>Inning</th>
+                        <th>Delete Row</th>
+                    </tr>
+                    {% for pitch in pitches %}
+                        {% set outer_loop = loop %} {# Had to make all fields manually because of index difference. #}
+                        <tr class='subform' id="pitch-{{outer_loop.index0}}-form" data-index="{{outer_loop.index0}}">
+                            <td>
+                                {{outer_loop.index0+1}}
+                            </td>
+                            <td>
+                                <select id="pitch-{{outer_loop.index0}}-batter_id" name="pitch-{{outer_loop.index0}}-batter_id">
+                                {% for batter in batters %}
+                                    {% if "batter_id" in pitch.keys() %}
+                                        {{ pitch["batter_id"]}}
+                                        <option value="{{batter.id}}" {% if pitch["batter_id"] in [batter.id, batter.id|string] %} selected=selected {% endif %}>{{batter}}</option>
+                                    {% else %}
+                                        <option value="{{batter.id}}" >{{batter}}</option>
+                                    {% endif %}
+                                {% endfor %}
+                                </select>
+                            </td>
+                            <td>
+                                <input id="pitch-{{outer_loop.index0}}-velocity" name="pitch-{{outer_loop.index0}}-velocity" size="4" type="text" value="{{pitch['velocity']}}">
+                            </td>
+                            <td>
+                                <select id="pitch-{{outer_loop.index0}}-lead_runner" name="pitch-{{outer_loop.index0}}-lead_runner" required>
+                                    <option value="" selected></option>
+                                    <option value="1" {% if pitch['lead_runner'] in [1, '1'] %} selected='selected' {% endif %}>1</option>
+                                    <option value="2" {% if pitch['lead_runner'] in [2, '2'] %} selected='selected' {% endif %}>2</option>
+                                    <option value="3" {% if pitch['lead_runner'] in [3, '3'] %} selected='selected' {% endif %}>3</option>
+                                </select>
+                            </td>
+                            <td>
+                                <input id="pitch-{{outer_loop.index0}}-time_to_plate" name="pitch-{{outer_loop.index0}}-time_to_plate" size="4" type="text" value="{{pitch['time_to_plate']}}">
+                            </td>
+                            <td>
+                                <select id="pitch-{{outer_loop.index0}}-pitch_type" name="pitch-{{outer_loop.index0}}-pitch_type" required>
+                                    <option value="" {% if pitch['pitch_type']=='' %} selected='selected' {% endif %}>Select</option>
+                                    <option value="1" {% if pitch['pitch_type'] in [1, '1'] %} selected='selected' {% endif %}>1</option>
+                                    <option value="2" {% if pitch['pitch_type'] in [2, '2'] %} selected='selected' {% endif %}>2</option>
+                                    <option value="3" {% if pitch['pitch_type'] in [3, '3'] %} selected='selected' {% endif %}>3</option>
+                                    <option value="4" {% if pitch['pitch_type'] in [4, '4'] %} selected='selected' {% endif %}>4</option>
+                                    <option value="5" {% if pitch['pitch_type'] in [5, '5'] %} selected='selected' {% endif %}>5</option>
+                                    <option value="7" {% if pitch['pitch_type'] in [7, '7'] %} selected='selected' {% endif %}>7</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select id="pitch-{{outer_loop.index0}}-pitch_result" name="pitch-{{outer_loop.index0}}-pitch_result" required>
+                                    <option value="" {% if pitch['pitch_result'].strip()=='' %} selected='selected' {% endif %}>Select</option>
+                                    <option value="B" {% if pitch['pitch_result'].strip() in ['B', 'b'] %} selected='selected' {% endif %}>B</option>
+                                    <option value="CS" {% if pitch['pitch_result'].strip() in ['CS', 'cs'] %} selected='selected' {% endif %}>CS</option>
+                                    <option value="SS" {% if pitch['pitch_result'].strip() in ['SS', 'ss'] %} selected='selected' {% endif %}>SS</option>
+                                    <option value="F" {% if pitch['pitch_result'].strip() in ['F', 'f'] %} selected='selected' {% endif %}>F</option>
+                                    <option value="IP" {% if pitch['pitch_result'].strip() in ['IP', 'ip'] %} selected='selected' {% endif %}>IP</option>
+                                </select>
+                            </td>
+                            <td>
+                                {% if pitch['hit_spot'] in [1, '1', 'Y', 'y', 'yes', 'Yes'] %}
+                                    <input id="pitch-{{outer_loop.index0}}-hit_spot" name="pitch-{{outer_loop.index0}}-hit_spot" type="checkbox" value="y" checked>
+                                {% else %}
+                                    <input id="pitch-{{outer_loop.index0}}-hit_spot" name="pitch-{{outer_loop.index0}}-hit_spot" type="checkbox" value="y">
+                                {% endif %}
+                            </td>
+                            <td>
+                                <select id="pitch-{{loop.index0}}-ab_result" name="pitch-{{loop.index0}}-ab_result" required>
+                                    <option value="" {% if pitch["ab_result"] in [None, ''] %} selected='selected' {% endif %}></option>
+                                    <option value="IP->Out" {% if pitch["ab_result"] in ['IP->Out'] %} selected='selected' {% endif %}>IP->Out</option>
+                                    <option value="K" {% if pitch["ab_result"] in ['K', 'k'] %} selected='selected' {% endif %}>K</option>
+                                    <option value="KL" {% if pitch["ab_result"] in ['KL', 'kl'] %} selected='selected' {% endif %}>KL</option>
+                                    <option value="BB" {% if pitch["ab_result"] in ['BB', 'bb'] %} selected='selected' {% endif %}>BB</option>
+                                    <option value="HBP" {% if pitch["ab_result"] in ['HBP', 'hbp'] %} selected='selected' {% endif %}>HBP</option>
+                                    <option value="1B" {% if pitch["ab_result"] in ['1B', '1b'] %} selected='selected' {% endif %}>1B</option>
+                                    <option value="2B" {% if pitch["ab_result"] in ['2B', '2b'] %} selected='selected' {% endif %}>2B</option>
+                                    <option value="3B" {% if pitch["ab_result"] in ['3B', '3b'] %} selected='selected' {% endif %}>3B</option>
+                                    <option value="HR" {% if pitch["ab_result"] in ['HR', 'hr'] %} selected='selected' {% endif %}>HR</option>
+                                    <option value="Error" {% if pitch["ab_result"] in ['Error', 'e', 'E'] %} selected='selected' {% endif %}>Error</option>
+                                    <option value="CI" {% if pitch["ab_result"] in ['CI', 'ci'] %} selected='selected' {% endif %}>CI</option>
+                                    <option value="FC" {% if pitch["ab_result"] in ['FC', 'fc'] %} selected='selected' {% endif %}>FC</option>
+                                    <option value="D3->Out" {% if pitch["ab_result"] in ['D3->Out'] %} selected='selected' {% endif %}>D3->Out</option>
+                                    <option value="D3->Safe" {% if pitch["ab_result"] in ['D3->Safe'] %} selected='selected' {% endif %}>D3->Safe</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select id="pitch-{{loop.index0}}-traj" name="pitch-{{loop.index0}}-traj" required>
+                                    <option value="" {%   if pitch["traj"] in [None, ''] %} selected='selected' {% endif %}></option>
+                                    <option value="GB" {% if pitch["traj"] in ['GB', 'gb'] %} selected='selected' {% endif %}>GB</option>
+                                    <option value="LD" {% if pitch["traj"] in ['LD', 'ld'] %} selected='selected' {% endif %}>FB</option>
+                                    <option value="FB" {% if pitch["traj"] in ['FB', 'fb'] %} selected='selected' {% endif %}>LD</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select id="pitch-{{outer_loop.index0}}-fielder" name="pitch-{{outer_loop.index0}}-fielder" required>
+                                    <option value="" {% if pitch["fielder"]==None %} selected='selected' {% endif %}></option>
+                                    <option value="1" {% if pitch["fielder"] in [1, '1', 'P', 'p'] %} selected='selected' {% endif %}>1</option>
+                                    <option value="2" {% if pitch["fielder"] in [2, '2', 'C', 'c'] %} selected='selected' {% endif %}>2</option>
+                                    <option value="3" {% if pitch["fielder"] in [3, '3', '1B', '1b'] %} selected='selected' {% endif %}>3</option>
+                                    <option value="4" {% if pitch["fielder"] in [4, '4', '2B', '2b'] %} selected='selected' {% endif %}>4</option>
+                                    <option value="5" {% if pitch["fielder"] in [5, '5', '3B', '3b'] %} selected='selected' {% endif %}>5</option>
+                                    <option value="6" {% if pitch["fielder"] in [6, '6', 'SS', 'ss'] %} selected='selected' {% endif %}>6</option>
+                                    <option value="7" {% if pitch["fielder"] in [7, '7', 'LF', 'lf'] %} selected='selected' {% endif %}>7</option>
+                                    <option value="8" {% if pitch["fielder"] in [8, '8', 'CF', 'cf'] %} selected='selected' {% endif %}>8</option>
+                                    <option value="9" {% if pitch["fielder"] in [9, '9', 'RF', 'rf'] %} selected='selected' {% endif %}>9</option>
+                                </select>
+                            </td>
+                            <td>
+                                <input id="pitch-{{outer_loop.index0}}-inning" name="pitch-{{outer_loop.index0}}-inning" size="4" type="text" value="{{pitch['inning']}}">
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            <p>{{ form.submit() }}</p>
+        </form>
+        <button id="add">Add Row</button>
     </div>
-    <p>{{ form.submit() }}</p>
-</form>
-<button id="add">Add Row</button>
-<button id="delete">Delete Last Row</button>
 {% endblock %}

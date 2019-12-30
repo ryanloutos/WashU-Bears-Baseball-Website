@@ -30,16 +30,29 @@ class SeasonForm(FlaskForm):
 
 # Creating a new batter
 class BatterForm(FlaskForm):
+    opponent = SelectField('Opponent', validators=[Optional()])
     fullname = StringField('Name', validators=[Optional()])
     nickname = StringField('Initials/Number', validators=[Optional()])
     bats = SelectField(
         'Bats',
-        choices=[('R', 'R'), ('L', 'L')],
+        choices=[('R', 'R'), ('L', 'L'), ('S', 'S')],
         validators=[Optional()])
     grad_year = StringField('Grad Year', validators=[Optional()])
     retired = BooleanField('Retired?')
     submit = SubmitField('Create Batter', validators=[Optional()])
 
+
+class EditBatterForm(FlaskForm):
+    opponent = SelectField('Opponent', validators=[Optional()])
+    fullname = StringField('Name', validators=[Optional()])
+    nickname = StringField('Initials/Number', validators=[Optional()])
+    bats = SelectField(
+        'Bats',
+        choices=[('R', 'R'), ('L', 'L'), ('S', 'S')],
+        validators=[Optional()])
+    grad_year = StringField('Grad Year', validators=[Optional()])
+    retired = BooleanField('Retired?')
+    submit = SubmitField('Save Changes', validators=[Optional()])
 
 # Creating a new opponent
 class OpponentForm(FlaskForm):
@@ -51,6 +64,11 @@ class OpponentForm(FlaskForm):
         validators=[Optional()]
     )
     submit = SubmitField('Create New Opponent')
+
+
+class EditOpponentNameForm(FlaskForm):
+    name = StringField('Team Name', validators=[DataRequired()])
+    submit = SubmitField('Save Changes')
 
 
 # Creating a new account. Only admin users can access this page

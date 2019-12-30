@@ -5,7 +5,7 @@ from app import app, db
 from app.forms import LoginForm, RegistrationForm, OutingForm, PitchForm
 from app.forms import NewOutingFromCSV, SeasonForm, OpponentForm, BatterForm
 from app.forms import OutingPitchForm, NewOutingFromCSVPitches, EditUserForm
-from app.forms import ChangePasswordForm
+from app.forms import ChangePasswordForm, EditBatterForm, EditOpponentNameForm
 from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat
 from app.stats import calcPitchPercentages, pitchUsageByCount, calcAverageVelo
 from app.stats import calcPitchStrikePercentage, calcPitchWhiffRate
@@ -388,7 +388,7 @@ def pitcher(id):
                            pitcher=pitcher,
                            recent_outings=recent_outings)
 
-# ***************-PITCHER OUTINGS-*************** # DONE
+# ***************-PITCHER OUTINGS-*************** # 
 @app.route('/pitcher/<id>/outings', methods=['GET', 'POST'])
 @login_required
 def pitcher_outings(id):
@@ -431,7 +431,7 @@ def pitcher_outings(id):
                            pitcher=pitcher,
                            seasons=seasons)
 
-# ***************-PITCHER BASIC STATS-*************** # DONE
+# ***************-PITCHER BASIC STATS-*************** # 
 @app.route('/pitcher/<id>/stats/basic', methods=['GET', 'POST'])
 @login_required
 def pitcher_stats_basic(id):
@@ -480,7 +480,7 @@ def pitcher_stats_basic(id):
                            season_stat_line=season_stat_line,
                            outing_stat_line=outing_stat_line)
 
-# ***************-PITCHER ADVANCED STATS-*************** # DONE
+# ***************-PITCHER ADVANCED STATS-*************** # 
 @app.route('/pitcher/<id>/stats/advanced', methods=['GET', 'POST'])
 @login_required
 def pitcher_stats_advanced(id):
@@ -535,7 +535,7 @@ def pitcher_stats_advanced(id):
                            pitch_usage_season=pitch_usage_season,
                            pitch_usage_outing=pitch_usage_outing)
 
-# ***************-SEASON HOMEPAGE-*************** #
+# ***************-SEASON HOMEPAGE-*************** # 
 @app.route('/season/<id>')
 @login_required
 def season(id):
@@ -567,7 +567,7 @@ def season(id):
                            outings=outings,
                            season=season)
 
-# ***************-OUTING HOMEPAGE-*************** #
+# ***************-OUTING HOMEPAGE-*************** # 
 @app.route('/outing/<id>', methods=['GET', 'POST'])
 @login_required
 def outing(id):
@@ -622,7 +622,7 @@ def outing(id):
         strike_percentage_bar_chart=strike_percentage_bar_chart,
         usage_percent_by_count_line_chart=usage_percent_by_count_line_chart)
 
-# ***************-BATTER HOMEPAGE-*************** #
+# ***************-BATTER HOMEPAGE-*************** # 
 @app.route('/batter/<id>', methods=['GET', 'POST'])
 @login_required
 def batter(id):
@@ -647,10 +647,10 @@ def batter(id):
         return redirect(url_for('index'))
 
     return render_template('opponent/batter.html',
-                           title=batter,
+                           title=batter.name,
                            batter=batter)
 
-# ***************-OPPONENT HOMEPAGE-*************** #
+# ***************-OPPONENT HOMEPAGE-*************** # 
 @app.route('/opponent/<id>', methods=['GET', 'POST'])
 @login_required
 def opponent(id):
@@ -673,11 +673,38 @@ def opponent(id):
         flash("URL does not exist")
         return redirect(url_for('index'))
 
-    return render_template('opponent/opponent.html',
+    return render_template('opponent/opponent_home.html',
                            title=opponent,
                            opponent=opponent)
 
-# ***************-NEW SEASON-*************** #
+# ***************-OPPONENT ROSTER-*************** # 
+@app.route('/opponent/<id>/roster', methods=['GET', 'POST'])
+@login_required
+def opponent_roster(id):
+    '''
+    OPPONENT ROSTER:
+
+    PARAM:
+        -id: The opponent id (primary key) for the opponent
+            that the user is trying to view
+
+    RETURN:
+        -opponent.html which displays the homepage/info page
+            for that opponent
+    '''
+    # get the Opponent object assicated with the id
+    opponent = Opponent.query.filter_by(id=id).first()
+
+    # bug or user trying to view opponent that DNE
+    if not opponent:
+        flash("URL does not exist")
+        return redirect(url_for('index'))
+
+    return render_template('opponent/opponent_roster.html',
+                           title=opponent,
+                           opponent=opponent)
+
+# ***************-NEW SEASON-*************** # 
 @app.route('/new_season', methods=['GET', 'POST'])
 @login_required
 def new_season():
@@ -718,7 +745,7 @@ def new_season():
                            title='New Season',
                            form=form)
 
-# ***************-NEW OPPONENT-*************** #
+# ***************-NEW OPPONENT-*************** # 
 @app.route('/new_opponent', methods=['GET', 'POST'])
 @login_required
 def new_opponent():
@@ -774,10 +801,10 @@ def new_opponent():
                            title='New Opponent',
                            form=form)
 
-# ***************-NEW BATTER-*************** #
-@app.route('/new_batter/<opponent_id>', methods=['GET', 'POST'])
+# ***************-NEW BATTER-*************** # 
+@app.route('/new_batter', methods=['GET', 'POST'])
 @login_required
-def new_batter(opponent_id):
+def new_batter():
     '''
     NEW BATTER:
     Can create a new batter for a specific opponent
@@ -792,9 +819,18 @@ def new_batter(opponent_id):
     if not current_user.admin:
         flash('You are not an admin and cannot create a season')
         return redirect(url_for('index'))
+    
+    # get the correct form
+    form = BatterForm()
+
+    # set the opponent choices correctly
+    opponent_choices = []
+    opponents = Opponent.query.all()
+    for o in opponents:
+        opponent_choices.append((str(o.id),o.name))
+    form.opponent.choices = opponent_choices
 
     # when the Create Season button is pressed...
-    form = BatterForm()
     if form.validate_on_submit():
 
         # insert data from form into season table
@@ -802,7 +838,7 @@ def new_batter(opponent_id):
                         short_name=form.nickname.data,
                         bats=form.bats.data,
                         grad_year=form.grad_year.data,
-                        opponent_id=opponent_id)
+                        opponent_id=form.opponent.data)
 
         # send Season object to data table
         db.session.add(batter)
@@ -810,13 +846,13 @@ def new_batter(opponent_id):
 
         # redirect back to login page
         flash('Congratulations, you just made a new batter!')
-        return redirect(url_for('opponent', id=opponent_id))
+        return redirect(url_for('opponent', id=batter.opponent_id))
 
     return render_template('opponent/new_batter.html',
                            title='New Batter',
                            form=form)
 
-# ***************-EDIT OPPONENT-*************** #
+# ***************-EDIT OPPONENT-*************** # 
 @app.route('/edit_opponent/<id>', methods=['GET', 'POST'])
 @login_required
 def edit_opponent(id):
@@ -848,7 +884,7 @@ def edit_opponent(id):
         return redirect(url_for('index'))
 
     # once 'create opponent' button is pressed
-    form = OpponentForm()
+    form = EditOpponentNameForm()
     if form.validate_on_submit():
 
         # get the updated Opponent name and commit to database
@@ -864,7 +900,7 @@ def edit_opponent(id):
                            opponent=opponent,
                            form=form)
 
-# ***************-EDIT BATTER-*************** #
+# ***************-EDIT BATTER-*************** # 
 @app.route('/edit_batter/<id>', methods=['GET', 'POST'])
 @login_required
 def edit_batter(id):
@@ -882,11 +918,11 @@ def edit_batter(id):
     '''
     # make sure user is admin
     if not current_user.admin:
-        flash("You are not an admin and cannot edit someone else's outing")
+        flash("You are not an admin")
         return redirect(url_for('index'))
 
     # get the correct form
-    form = BatterForm()
+    form = EditBatterForm()
 
     # get the batter object
     batter = Batter.query.filter_by(id=id).first()
@@ -895,6 +931,13 @@ def edit_batter(id):
     if not batter:
         flash('URL does not exist')
         return redirect(url_for('index'))
+    
+    # set the opponent choices correctly
+    opponent_choices = []
+    opponents = Opponent.query.all()
+    for o in opponents:
+        opponent_choices.append((str(o.id),o.name))
+    form.opponent.choices = opponent_choices
 
     # submit is clicked
     if form.validate_on_submit():
@@ -917,7 +960,7 @@ def edit_batter(id):
                            batter=batter,
                            form=form)
 
-# ***************-DELETE BATTER-*************** #
+# ***************-DELETE BATTER-*************** # 
 @app.route('/delete_batter/<id>', methods=['GET', 'POST'])
 @login_required
 def delete_batter(id):
@@ -952,7 +995,7 @@ def delete_batter(id):
 
     return redirect(url_for('opponent', id=batter.opponent_id))
 
-# ***************-NEW OUTING-*************** #
+# ***************-NEW OUTING-*************** # 
 @app.route('/new_outing', methods=['GET', 'POST'])
 @login_required
 def new_outing():
@@ -1001,7 +1044,7 @@ def new_outing():
                            title='New Outing',
                            form=form)
 
-# ***************-NEW OUTING PITCHES-*************** #
+# ***************-NEW OUTING PITCHES-*************** # 
 @app.route('/new_outing_pitches/<outing_id>', methods=['GET', 'POST'])
 @login_required
 def new_outing_pitches(outing_id):
@@ -1102,7 +1145,7 @@ def new_outing_pitches(outing_id):
         title='New Outing Pitches',
         form=form)
 
-# ***************-EDIT OUTING PITCHES-*************** #
+# ***************-EDIT OUTING PITCHES-*************** # 
 @app.route('/edit_outing_pitches/<outing_id>', methods=['GET', 'POST'])
 @login_required
 def edit_outing_pitches(outing_id):
@@ -1248,7 +1291,7 @@ def edit_outing_pitches(outing_id):
                            opponent=opponent,
                            form=form)
 
-# ***************-EDIT OUTING-*************** #
+# ***************-EDIT OUTING-*************** # 
 @app.route('/edit_outing/<outing_id>', methods=['GET', 'POST'])
 @login_required
 def edit_outing(outing_id):
@@ -1300,7 +1343,7 @@ def edit_outing(outing_id):
                            all_pitchers=all_pitchers,
                            form=form)
 
-# ***************-DELETE OUTING-*************** #
+# ***************-DELETE OUTING-*************** # 
 @app.route('/delete_outing/<id>', methods=['GET', 'POST'])
 @login_required
 def delete_outing(id):
@@ -1340,7 +1383,7 @@ def delete_outing(id):
     flash('Outing has been deleted')
     return redirect(url_for('pitcher', id=user.id))
 
-# ***************-NEW OUTING CSV-*************** # MITCH
+# ***************-NEW OUTING CSV-*************** # 
 @app.route('/new_outing_csv', methods=['GET', 'POST'])
 @login_required
 def new_outing_csv():
@@ -1403,8 +1446,7 @@ def new_outing_csv():
     return render_template("csv/upload_csv.html",
                            form=form)
 
-
-# ***************-NEW OUTING CSV PITCHES-*************** # MITCH
+# ***************-NEW OUTING CSV PITCHES-*************** # 
 @app.route(
     '/new_outing_csv_pitches/<file_name>/<outing_id>',
     methods=['GET', 'POST'])
@@ -1548,7 +1590,6 @@ def new_outing_csv_pitches(file_name, outing_id):
                            form=form,
                            pitches=pitches,
                            batters=batters)
-
 
 # ***************-HELPFUL FUNCTIONS-*************** #
 def getAvailablePitchers():

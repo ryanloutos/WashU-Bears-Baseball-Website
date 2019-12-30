@@ -1,53 +1,54 @@
 {% extends "base.html" %}
 
-{% block app_content %}
-{#idea for add/delete row comes from: https://www.rmedgar.com/blog/dynamic_fields_flask_wtf#}
+{% block styles %}
+    {{ super() }}
+    {#idea for add/delete row comes from: https://www.rmedgar.com/blog/dynamic_fields_flask_wtf#}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="{{ url_for('static', filename='js/pitch_table.js') }}"></script>
-    <h1>New Outing</h1>
-    <h2>DUE TO BUG, ALWAYS USE AT LEAST 2 PITCHES</h2>
-    <form method="post" novalidate>
-        {{ form.hidden_tag() }}
-        <div class="panel panel-default">
-            <div class="panel-heading">Pitches</div>
-            <div class="panel-body">
-                <p>This is where you can enter in the pitches for the outing</p>
-            </div>
-            <table class='table' id="table">
-                <tr>
-                    <th>Pitch</th>
-                    <th>Batter</th>
-                    <th>Velo</th>
-                    <th>Lead RNR</th>
-                    <th>Time to Plate</th>
-                    <th>Pitch Type</th>
-                    <th>Pitch Result</th>
-                    <th>Hit Spot?</th>
-                    <th>AB Result</th>
-                    <th>GB/LD/FB</th>
-                    <th>Fielder</th>
-                    <th>Inning</th>
-                </tr>
-                {% for subform in form.pitch %}
-                <tr class='subform' id="pitch-{{ loop.index0 }}-form" data-index='{{ loop.index0 }}'>
-                    <td>{{ loop.index0+1 }}</td>
-                    <td>{{ subform.batter_id() }}</td>
-                    <td>{{ subform.velocity(size=4) }}</td>
-                    <td>{{ subform.lead_runner() }}</td>
-                    <td>{{ subform.time_to_plate(size=4) }}</td>
-                    <td>{{ subform.pitch_type() }}</td>
-                    <td>{{ subform.pitch_result() }}</td>
-                    <td>{{ subform.hit_spot() }}</td>
-                    <td>{{ subform.ab_result() }}</td>
-                    <td>{{ subform.traj() }}</td>
-                    <td>{{ subform.fielder() }}</td>
-                    <td>{{ subform.inning(size=4) }}</td>
-                    <td><a class="delete" data-index="{{ loop.index0 }}">Delete</a></td>
-                </tr>
-                {% endfor %}
-            </table>
-        </div>
-        <p>{{ form.submit() }}</p>
-    </form>
-    <button id="add">Add Row</button>
+{% endblock %}
+
+{% block app_content %}
+    <div class="main">
+        <h1>New Outing Pitches</h1>
+        <h2>DUE TO BUG, ALWAYS USE AT LEAST 2 PITCHES</h2>
+        <form method="post" novalidate>
+            {{ form.hidden_tag() }}
+                <table class='table' id="table">
+                    <tr class="table-headers">
+                        <th>Pitch</th>
+                        <th>Batter</th>
+                        <th>Velo</th>
+                        <th>Lead RNR</th>
+                        <th>Time to Plate</th>
+                        <th>Pitch Type</th>
+                        <th>Pitch Result</th>
+                        <th>Hit Spot?</th>
+                        <th>AB Result</th>
+                        <th>GB/LD/FB</th>
+                        <th>Fielder</th>
+                        <th>Inning</th>
+                        <th>Delete Row</th>
+                    </tr>
+                    {% for subform in form.pitch %}
+                    <tr class='subform' id="pitch-{{ loop.index0 }}-form" data-index='{{ loop.index0 }}'>
+                        <td>{{ loop.index0+1 }}</td>
+                        <td>{{ subform.batter_id() }}</td>
+                        <td>{{ subform.velocity(size=4) }}</td>
+                        <td>{{ subform.lead_runner() }}</td>
+                        <td>{{ subform.time_to_plate(size=4) }}</td>
+                        <td>{{ subform.pitch_type() }}</td>
+                        <td>{{ subform.pitch_result() }}</td>
+                        <td>{{ subform.hit_spot() }}</td>
+                        <td>{{ subform.ab_result() }}</td>
+                        <td>{{ subform.traj() }}</td>
+                        <td>{{ subform.fielder() }}</td>
+                        <td>{{ subform.inning(size=4) }}</td>
+                        <td><a class="delete" data-index="{{ loop.index0 }}">Delete</a></td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            <p>{{ form.submit() }}</p>
+        </form>
+        <button id="add">Add Row</button>
+    </div>
 {% endblock %}

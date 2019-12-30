@@ -1,25 +1,27 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-    <h1>New Season</h1>
-    <form method="post">
-        {{ form.hidden_tag() }}
-        <p>
-            {{ form.semester.label }}<br>
-            {{ form.semester() }}<br>
-            {% for error in form.semester.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.year.label }}<br>
-            {{ form.year(size=16) }}<br>
-            {% for error in form.year.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.submit() }}
-        </p>
-    </form>
+    <div class="main">
+        <h1>New Season</h1>
+        <form method="post">
+            {{ form.hidden_tag() }}
+            <p>
+                {{ form.semester.label }}<br>
+                {{ form.semester() }}<br>
+                {% for error in form.semester.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.year.label }}<br>
+                {{ form.year(size=16) }}<br>
+                {% for error in form.year.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.submit() }}
+            </p>
+        </form>
+    </div>
 {% endblock %}

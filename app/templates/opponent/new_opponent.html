@@ -1,31 +1,31 @@
 {% extends "base.html" %}
 
-{% block app_content %}
+{% block styles %}
+    {{ super() }}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="{{ url_for('static', filename='js/opponent_table.js') }}"></script>
+{% endblock %}
 
-    <h1>New Opponent</h1>
-    <form method="post">
-        {{ form.hidden_tag() }}
-        <p>
-            {{ form.name.label }}<br>
-            {{ form.name(size=32) }}<br>
-            {% for error in form.name.errors %}
-                <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <br>
-        <div class="panel panel-default">
-            <div class="panel-heading">Batters</div>
-            <div class="panel-body">
-                <p>This is where you insert players for a specific opponent/team</p>
-            </div>
+{% block app_content %}
+    <div class="main">
+        <h1>New Opponent</h1>
+        <form method="post">
+            {{ form.hidden_tag() }}
+            <p>
+                {{ form.name.label }}<br>
+                {{ form.name(size=32) }}<br>
+                {% for error in form.name.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <br>
             <table class='table' id='table'>
-                <tr>
+                <tr class="table-headers">
                     <th>Name</th>
                     <th>Initials/Number</th>
                     <th>Bats (R/L)</th>
                     <th>Graduation Year</th>
+                    <th>Delete Row</th>
                 </tr>
                 {% for subform in form.batter %}
                 <tr class='subform' id='batter-{{ loop.index0 }}-form' data-index='{{ loop.index0 }}'>
@@ -57,11 +57,10 @@
                 </tr>
                 {% endfor %}
             </table>
-        </div>
-        <p>
-            {{ form.submit() }}
-        </p>
-    </form>
-    <button id="add">Add Row</button>
-
+            <p>
+                {{ form.submit() }}
+            </p>
+        </form>
+        <button id="add">Add Row</button>
+    </div>
 {% endblock %}

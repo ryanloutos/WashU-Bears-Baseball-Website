@@ -83,11 +83,15 @@ th, td {
     text-align: center;
 }
 .table-headers {
-background-color: #bd2e1f;
-color: #f9feff;
+    background-color: #bd2e1f;
+    color: #f9feff;
 }
 
 .main {
     font-family: 'Exo', sans-serif;
     font-weight: 500;
+}
+
+.alert {
+    left: 1000px;
 }

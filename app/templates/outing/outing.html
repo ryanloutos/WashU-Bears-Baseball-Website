@@ -1,7 +1,11 @@
 {% extends "base.html" %}
 
-{% block app_content %}
+{% block styles %}
+    {{ super() }}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    {# Required for data visualization #}
+    <script src="http://kozea.github.com/pygal.js/javascripts/svg.jquery.js"></script>
+    <script src="http://kozea.github.com/pygal.js/javascripts/pygal-tooltips.js"></script>
     <script>
         $(document).ready(function() {
             //hides all the statistics initiatally
@@ -30,21 +34,20 @@
             });
         });
     </script>
-    {# Required for data visualization #}
-    <script src="http://kozea.github.com/pygal.js/javascripts/svg.jquery.js"></script>
-    <script src="http://kozea.github.com/pygal.js/javascripts/pygal-tooltips.js"></script>
+{% endblock %}
+
+{% block app_content %}
+<div class="main">
     <h1>
         {{ outing }}
-        <a href="{{ url_for('edit_outing', outing_id=outing.id) }}">Edit Outing</a>
-        <a href="{{ url_for('edit_outing_pitches', outing_id=outing.id) }}">Edit Pitches</a>
+        {% if current_user.admin %}
+            <a href="{{ url_for('edit_outing', outing_id=outing.id) }}">Edit Outing</a>
+            <a href="{{ url_for('edit_outing_pitches', outing_id=outing.id) }}">Edit Pitches</a>
+        {% endif %}
     </h1>
         <div class="panel panel-default">
-            <div class="panel-heading">Pitches</div>
-            <div class="panel-body">
-                <p>{{ outing }}</p>
-            </div>
             <table class="table">
-                <tr>
+                <tr class="table-headers">
                     <th>Pitch</th>
                     <th>Batter</th>
                     <th>Velo</th>
@@ -286,4 +289,5 @@
                 </div>
             </div>
         </div>
+    </div>
 {% endblock %}

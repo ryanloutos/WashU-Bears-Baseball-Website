@@ -65,6 +65,7 @@
                 <li><a href="{{ url_for('register') }}">New User</a></li>
                 <li><a href="{{ url_for('new_opponent') }}">New Opponent</a></li>
                 <li><a href="{{ url_for('new_season') }}">New Season</a></li>
+                <li><a href="{{ url_for('new_batter') }}">New Batter</a></li>
             </ul>
           </li>
           {% endif %}
@@ -82,7 +83,7 @@
         {% with messages = get_flashed_messages() %}
         {% if messages %}
             {% for message in messages %}
-            <div class="alert alert-info" role="alert">{{ message }}</div>
+            <div class="alert alert-danger" role="alert">{{ message }}</div>
             {% endfor %}
         {% endif %}
         {% endwith %}
