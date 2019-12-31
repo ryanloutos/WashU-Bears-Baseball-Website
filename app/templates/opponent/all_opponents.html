@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block styles %}
+    {{ super() }}
+{% endblock %}
+
+{% block app_content %}
+    <div class="main">
+        <h1>
+            All Opponents
+        </h1>
+        <table class="table sortable_table">
+            <tr class="table-headers">
+                <th>Team Name</th>
+                <th>View</th>
+            </tr>
+            {% for o in opponents %}
+                <tr>
+                    <td>{{ o }}</td>
+                    <td><a href="{{ url_for('opponent', id=o.id) }}">View</a></td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}

@@ -6,6 +6,7 @@ from app.forms import LoginForm, RegistrationForm, OutingForm, PitchForm
 from app.forms import NewOutingFromCSV, SeasonForm, OpponentForm, BatterForm
 from app.forms import OutingPitchForm, NewOutingFromCSVPitches, EditUserForm
 from app.forms import ChangePasswordForm, EditBatterForm, EditOpponentNameForm
+from app.forms import NewBatterForm
 from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat
 from app.stats import calcPitchPercentages, pitchUsageByCount, calcAverageVelo
 from app.stats import calcPitchStrikePercentage, calcPitchWhiffRate
@@ -677,6 +678,27 @@ def opponent(id):
                            title=opponent,
                            opponent=opponent)
 
+# ***************-ALL OPPONENTS-*************** # 
+@app.route('/all_opponents', methods=['GET', 'POST'])
+@login_required
+def all_opponents():
+    '''
+    ALL OPPONENTS HOMEPAGE:
+
+    PARAM:
+        -noe
+
+    RETURN:
+        -all_opponents.html which displays the a list of all
+            the teams opponents
+    '''
+    # get the Opponent object assicated with the id
+    opponents = Opponent.query.all()
+
+    return render_template('opponent/all_opponents.html',
+                           title="All Opponents",
+                           opponents=opponents)
+
 # ***************-OPPONENT ROSTER-*************** # 
 @app.route('/opponent/<id>/roster', methods=['GET', 'POST'])
 @login_required
@@ -821,7 +843,7 @@ def new_batter():
         return redirect(url_for('index'))
     
     # get the correct form
-    form = BatterForm()
+    form = NewBatterForm()
 
     # set the opponent choices correctly
     opponent_choices = []

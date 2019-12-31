@@ -30,6 +30,19 @@ class SeasonForm(FlaskForm):
 
 # Creating a new batter
 class BatterForm(FlaskForm):
+    fullname = StringField('Name', validators=[Optional()])
+    nickname = StringField('Initials/Number', validators=[Optional()])
+    bats = SelectField(
+        'Bats',
+        choices=[('R', 'R'), ('L', 'L'), ('S', 'S')],
+        validators=[Optional()])
+    grad_year = StringField('Grad Year', validators=[Optional()])
+    retired = BooleanField('Retired?')
+    submit = SubmitField('Create Batter', validators=[Optional()])
+
+
+# Creating a new batter
+class NewBatterForm(FlaskForm):
     opponent = SelectField('Opponent', validators=[Optional()])
     fullname = StringField('Name', validators=[Optional()])
     nickname = StringField('Initials/Number', validators=[Optional()])
