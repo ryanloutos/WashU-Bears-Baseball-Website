@@ -607,7 +607,7 @@ def pitchStrikePercentageSeason(pitcher):
 
     # calculate season totals
     for key, val in pitches_totals.items():
-        if pitches[key] != 0:
+        if pitches_totals[key] != 0:
             pitch_strike_percentage_totals[key] = (
                 truncate(pitches_strikes_totals[key]/pitches_totals[key]*100))
 
@@ -760,7 +760,8 @@ def seasonStatLine(pitcher):
 
     # calc season based summary stats
     stat_line_total["ip"] = truncate(stat_line_total["ip"]/3)
-    stat_line_total["kp9"] = truncate((stat_line_total["k"]+stat_line_total["kl"])/stat_line_total["ip"] * 9)
-    stat_line_total["bb9"] = truncate(stat_line_total["bb"]/stat_line_total["ip"]*9)
+    if(stat_line_total["ip"] > 0):
+        stat_line_total["kp9"] = truncate((stat_line_total["k"]+stat_line_total["kl"])/stat_line_total["ip"] * 9)
+        stat_line_total["bb9"] = truncate(stat_line_total["bb"]/stat_line_total["ip"]*9)
 
     return(stat_line_total, outings)
