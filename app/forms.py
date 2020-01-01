@@ -177,7 +177,8 @@ class PitchForm(FlaskForm):
             ('1B', '1B'), ('2B', '2B'), ('3B', '3B'),
             ('HR', 'HR'), ('Error', 'Error'), ('CI', 'CI'), ('FC', 'FC'),
             ('D3->Out', 'D3->Out'),
-            ('D3->Safe', 'D3->Safe')],
+            ('D3->Safe', 'D3->Safe'),
+            ('Other', 'Other')],
         validators=[Optional()])
     traj = SelectField(
         'GB/LD/FB',
