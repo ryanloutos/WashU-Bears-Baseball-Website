@@ -1001,7 +1001,7 @@ def edit_batter(id):
         db.session.commit()
 
         flash('Batter has been adjusted')
-        return redirect(url_for('index'))
+        return redirect(url_for('opponent_roster', id=batter.opponent_id))
 
     return render_template('opponent/edit_batter.html',
                            title='Edit Batter',
