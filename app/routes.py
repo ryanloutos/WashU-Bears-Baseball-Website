@@ -13,7 +13,7 @@ from app.stats import calcPitchStrikePercentage, calcPitchWhiffRate
 from app.stats import createPitchPercentagePieChart, velocityOverTimeLineChart
 from app.stats import pitchStrikePercentageBarChart, avgPitchVeloPitcher
 from app.stats import pitchUsageByCountLineCharts, pitchStrikePercentageSeason
-from app.stats import pitchUsageSeason, seasonStatLine
+from app.stats import pitchUsageSeason, seasonStatLine, staffBasicStats
 
 # Handle CSV uploads
 import csv
@@ -297,7 +297,7 @@ def staff_roster():
         -None
 
     RETURN:
-        -staff_roster.html which displays a table of 
+        -staff_roster.html which displays a table of
             the current staff
     '''
     pitchers = User.query.filter(User.grad_year != 'Coach/Manager').filter(User.retired == 0).order_by(User.lastname).all()
@@ -305,6 +305,32 @@ def staff_roster():
     return render_template('staff/staff_roster.html',
                            title='Staff',
                            pitchers=pitchers)
+
+
+# ***************-STAFF BASIC STATS-*********** #
+# could still use sortable functions for class/throws/...
+@app.route('/staff/basic_stats', methods=['GET', 'POST'])
+@login_required
+def staff_basic_stats():
+    """Basic stats of all players on current roster.
+
+    Arguments:
+        -None
+
+    Returns:
+        staff_basic_stats.html -- list of basic stats for all players
+        currently on roster
+    """
+    pitchers = User.query.filter(User.grad_year != 'Coach/Manager').filter(User.retired == 0).order_by(User.lastname).all()
+
+    staff_stat_summary, players_stat_summary = staffBasicStats(pitchers)
+
+    return render_template(
+        'staff/staff_basic_stats.html',
+        staff_stat_summary=staff_stat_summary,
+        players_stat_summary=players_stat_summary
+    )
+
 
 # ***************-STAFF RETIRED-*************** # DONE
 @app.route('/staff/retired', methods=['GET', 'POST'])

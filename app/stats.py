@@ -765,3 +765,90 @@ def seasonStatLine(pitcher):
         stat_line_total["bb9"] = truncate(stat_line_total["bb"]/stat_line_total["ip"]*9)
 
     return(stat_line_total, outings)
+
+
+# STAFF STATISTICS ------------------------------------------------------------
+def staffBasicStats(pitchers):
+    """Generates basic stat line for group of pitchers passed in
+
+    Arguments:
+        pitchers {array} -- array of pitcher objects to be analyzed as a staff
+
+    Returns:
+        [tuple] -- first is a dictionary containing the staff total stat line.
+        The second value is an array containing dicts containing the meta data
+        associated with each pitcher, as well as their stat line.
+    """
+    players = []
+    stat_line_total = {
+        "ip": 0.0, "h": 0, "bb": 0, "hbp": 0, "e": 0, "k": 0, "kl": 0, "1b": 0,
+        "2b": 0, "3b": 0, "hr": 0, "kp9": 0.0, "bb9": 0.0, "p": 0, "bf": 0
+    }
+
+    for pitcher in pitchers:
+        stat_line = {
+            "ip": 0.0, "h": 0, "bb": 0, "hbp": 0, "e": 0, "k": 0, "kl": 0, "1b": 0,
+            "2b": 0, "3b": 0, "hr": 0, "kp9": 0.0, "bb9": 0.0, "p": 0, "bf": 0
+        }
+        for outing in pitcher.outings:
+            for at_bat in outing.at_bats:
+                for pitch in at_bat.pitches:
+                    stat_line['p'] += 1  # increase pitches
+
+                    # check ball in play or out statistics
+                    if pitch.ab_result is not '':
+                        stat_line["bf"] += 1  # increase batters faced
+
+                        # stats that result in hit
+                        if pitch.ab_result in ["1B", "2B", "3B", "HR"]:
+                            stat_line["h"] += 1  # increase hits
+                            stat_line[pitch.ab_result.lower()] += 1  # increase type of hit
+
+                        # stats that result in out
+                        if pitch.ab_result in ["IP->Out", "K", "KL", "FC", "D3->Out"]:
+                            stat_line["ip"] += 1
+
+                            # for outs that were strikeouts
+                            if pitch.ab_result in ["K", "KL"]:
+                                stat_line[pitch.ab_result.lower()] += 1
+
+                        # stats where batter reaches base another way
+                        if pitch.ab_result in ["BB", "HBP", "Error", "CI", "D3->Safe"]:
+
+                            if pitch.ab_result in ["Error", "CI", "D3->Safe"]:
+                                stat_line["e"] += 1
+                            else:
+                                stat_line[pitch.ab_result.lower()] += 1
+
+        # sum up a pitchers work to team total
+        for stat, val in stat_line.items():
+            if stat not in ["kp9", "bb9"]:
+                stat_line_total[stat] += val
+
+        # fix ip for player
+        stat_line["ip"] = truncate(stat_line["ip"] / 3)
+
+        # calculate ip based stats for pitcher
+        if stat_line["ip"] == 0:
+            stat_line["kp9"] = "inf"
+            stat_line["bb9"] = "inf"
+        else:
+            stat_line["kp9"] = truncate((stat_line["k"]+stat_line["kl"])/stat_line["ip"] * 9)
+            stat_line["bb9"] = truncate(stat_line["bb"]/stat_line["ip"]*9)
+
+        # append to storage array
+        players.append({
+            "details": {
+                "name": f"{pitcher.firstname} {pitcher.lastname}",
+                "class": pitcher.grad_year,
+                "throws": pitcher.throws},
+            "stat_line": stat_line
+        })
+
+    # calculate team stat totals
+    stat_line_total["ip"] = truncate(stat_line_total["ip"]/3)
+    if(stat_line_total["ip"] > 0):
+        stat_line_total["kp9"] = truncate((stat_line_total["k"]+stat_line_total["kl"])/stat_line_total["ip"] * 9)
+        stat_line_total["bb9"] = truncate(stat_line_total["bb"]/stat_line_total["ip"]*9)
+
+    return (stat_line_total, players)
