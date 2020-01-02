@@ -16,7 +16,16 @@
         <br>
         <div>
             <h4>Stat Line by Outing Over Career</h4>
-            <table class="table tables sortable_table">
+            <p>
+                Select Season:
+                <select onchange="season_selector('basic-stat-season-selector', 'basic-stat-season-table')" name="basic-stat-season-selector" id="basic-stat-season-selector">
+                    <option value="All Seasons" selected>All Seasons</option>
+                    {% for season in seasons %}
+                        <option value="{{ season }}">{{season}}</option>
+                    {% endfor %}
+                </select>
+            </p>
+            <table class="table tables sortable_table" id="basic-stat-season-table">
                 <tr class="table-headers">
                     <th onclick="sortTable(0, 0)">Date</th>
                     <th onclick="sortTable(1, 0)">Opponent</th>

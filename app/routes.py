@@ -1613,6 +1613,7 @@ def new_outing_csv_pitches(file_name, outing_id):
                            pitches=pitches,
                            batters=batters)
 
+
 # ***************-HELPFUL FUNCTIONS-*************** #
 def getAvailablePitchers():
     '''
