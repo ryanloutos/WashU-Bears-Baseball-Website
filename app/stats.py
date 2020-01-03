@@ -457,7 +457,7 @@ def truncate(n, decimals=2):
     return int(n * multiplier) / multiplier
 
 
-# SEASON PITCH STATISTICS -----------------------------------------------------
+# PITCHER ADVANCED STATISTICS -----------------------------------------------------
 def avgPitchVeloPitcher(pitcher):
     """Calculates pitch velo by outings and season.
 
@@ -489,19 +489,19 @@ def avgPitchVeloPitcher(pitcher):
         # calculate sums
         for at_bat in outing.at_bats:
             for pitch in at_bat.pitches:
-                # for season stats
+                # for outing specific stats
                 if pitch.velocity not in [None, ""]:
                     pitches[PitchType(pitch.pitch_type).name] += 1
                     pitches_total_velo[
                         PitchType(pitch.pitch_type).name] += pitch.velocity
 
-                    # for outing specific stats
+                    # for season total stats
                     pitches_totals[PitchType(pitch.pitch_type).name] += 1
                     pitches_total_velo_totals[
                         PitchType(pitch.pitch_type).name] += pitch.velocity
 
         # calculate averages for outings
-        for key, val in pitches_totals.items():
+        for key, val in pitches.items():
             if pitches[key] != 0:
                 pitch_avg_velo[key] = truncate(
                     pitches_total_velo[key]/pitches[key])
@@ -677,6 +677,7 @@ def pitchUsageSeason(pitcher):
     return (season, outings)
 
 
+# PITCHER BASIC STATISTICS
 def seasonStatLine(pitcher):
     """Calculates regular stat line for the pitcher desired outing by outing
     and as a career total.
@@ -767,7 +768,7 @@ def seasonStatLine(pitcher):
     return(stat_line_total, outings)
 
 
-# STAFF STATISTICS ------------------------------------------------------------
+# STAFF BASIC STATISTICS ------------------------------------------------------------
 def staffBasicStats(pitchers):
     """Generates basic stat line for group of pitchers passed in
 
@@ -852,3 +853,61 @@ def staffBasicStats(pitchers):
         stat_line_total["bb9"] = truncate(stat_line_total["bb"]/stat_line_total["ip"]*9)
 
     return (stat_line_total, players)
+
+
+# STAFF ADVANCED STATISTICS
+def staffPitcherAvgVelo(pitchers):
+    players = []
+
+    pitches_totals = {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0}
+    pitches_total_velo_totals = {
+        "FB": 0, "CB": 0, "SL": 0,
+        "CH": 0, "CT": 0, "SM": 0}
+    pitch_avg_velo_totals = {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0}
+
+    for pitcher in pitchers:
+
+        # Individual pitcher velo storage
+        pitches = {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0}
+        pitches_total_velo = {
+            "FB": 0, "CB": 0, "SL": 0,
+            "CH": 0, "CT": 0, "SM": 0}
+        pitch_avg_velo = {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0}
+
+        for outing in pitcher.outings:
+            for at_bat in outing.at_bats:
+                for pitch in at_bat.pitches:
+                    if pitch.velocity not in [None, ""]:
+                        # for pitcher individual stats
+                        pitches[PitchType(pitch.pitch_type).name] += 1
+                        pitches_total_velo[PitchType(pitch.pitch_type).name] += pitch.velocity
+
+                        # for team total stats
+                        pitches_totals[PitchType(pitch.pitch_type).name] += 1
+                        pitches_total_velo_totals[
+                            PitchType(pitch.pitch_type).name] += pitch.velocity
+
+        # calculate averages for pitcher
+        for key, val in pitches.items():
+            if pitches[key] != 0:
+                pitch_avg_velo[key] = truncate(
+                    pitches_total_velo[key]/pitches[key])
+
+        # fill in players arr
+        players.append(
+            {
+                "details": {
+                    "name": f"{pitcher.firstname} {pitcher.lastname}",
+                    "class": pitcher.grad_year,
+                    "throws": pitcher.throws},
+                "velos": pitch_avg_velo
+            }
+        )
+
+    # calculate averages for season totals
+    for key, val in pitches_totals.items():
+        if pitches_totals[key] != 0:
+            pitch_avg_velo_totals[key] = truncate(
+                pitches_total_velo_totals[key]/pitches_totals[key])
+
+    return (pitch_avg_velo_totals, players)
