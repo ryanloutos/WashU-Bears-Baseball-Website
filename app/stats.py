@@ -457,7 +457,7 @@ def truncate(n, decimals=2):
     return int(n * multiplier) / multiplier
 
 
-# PITCHER ADVANCED STATISTICS -----------------------------------------------------
+# PITCHER ADVANCED STATISTICS -------------------------------------------------
 def avgPitchVeloPitcher(pitcher):
     """Calculates pitch velo by outings and season.
 
@@ -677,7 +677,7 @@ def pitchUsageSeason(pitcher):
     return (season, outings)
 
 
-# PITCHER BASIC STATISTICS
+# PITCHER BASIC STATISTICS ----------------------------------------------------
 def seasonStatLine(pitcher):
     """Calculates regular stat line for the pitcher desired outing by outing
     and as a career total.
@@ -768,7 +768,7 @@ def seasonStatLine(pitcher):
     return(stat_line_total, outings)
 
 
-# STAFF BASIC STATISTICS ------------------------------------------------------------
+# STAFF BASIC STATISTICS ------------------------------------------------------
 def staffBasicStats(pitchers):
     """Generates basic stat line for group of pitchers passed in
 
@@ -855,8 +855,18 @@ def staffBasicStats(pitchers):
     return (stat_line_total, players)
 
 
-# STAFF ADVANCED STATISTICS
+# STAFF ADVANCED STATISTICS ---------------------------------------------------
 def staffPitcherAvgVelo(pitchers):
+    """Generates staff average velo's by pitcher, and team averages.
+
+    Arguments:
+        pitchers {array} -- array of user objects to be analyzed
+
+    Returns:
+        tuple -- first value is a dictionary containing team average velo's by
+        pitch, the second is an array of dictionaries containing each
+        pitcher's average velo's by pitch, as well as related meta-date
+    """
     players = []
 
     pitches_totals = {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0}
@@ -911,3 +921,83 @@ def staffPitcherAvgVelo(pitchers):
                 pitches_total_velo_totals[key]/pitches_totals[key])
 
     return (pitch_avg_velo_totals, players)
+
+
+def staffPitchStrikePercentage(pitchers):
+
+    # storage array for staff info
+    players = []
+
+    # storage for team totals
+    pitches_totals = {
+        "FB": 0, "CB": 0, "SL": 0,
+        "CH": 0, "CT": 0, "SM": 0,
+        "total": 0}
+    pitches_strikes_totals = {
+        "FB": 0, "CB": 0, "SL": 0,
+        "CH": 0, "CT": 0, "SM": 0,
+        "total": 0}
+    pitch_strike_percentage_totals = {
+        "FB": 0, "CB": 0, "SL": 0,
+        "CH": 0, "CT": 0, "SM": 0,
+        "total": 0}
+
+    for pitcher in pitchers:
+
+        # storage for pitchers individual stats
+        pitches = {
+            "FB": 0, "CB": 0, "SL": 0,
+            "CH": 0, "CT": 0, "SM": 0,
+            "total": 0}
+        pitches_strikes = {
+            "FB": 0, "CB": 0, "SL": 0,
+            "CH": 0, "CT": 0, "SM": 0,
+            "total": 0}
+        pitch_strike_percentage = {
+            "FB": 0, "CB": 0, "SL": 0,
+            "CH": 0, "CT": 0, "SM": 0,
+            "total": 0}
+
+        for outing in pitcher.outings:
+            for at_bat in outing.at_bats:
+                for pitch in at_bat.pitches:
+                    # for pitcher specific
+                    pitches[PitchType(pitch.pitch_type).name] += 1
+                    pitches['total'] += 1
+
+                    # for team totals
+                    pitches_totals[PitchType(pitch.pitch_type).name] += 1
+                    pitches_totals['total'] += 1
+
+                    if (pitch.pitch_result == 'SS' or pitch.pitch_result == 'CS' or
+                            pitch.pitch_result == 'F' or pitch.pitch_result == 'IP'):
+
+                        # for pitcher specific
+                        pitches_strikes[PitchType(pitch.pitch_type).name] += 1
+                        pitches_strikes['total'] += 1
+
+                        # for team totals
+                        pitches_strikes_totals[PitchType(pitch.pitch_type).name] += 1
+                        pitches_strikes_totals['total'] += 1
+
+        # Calculate pitcher totals
+        for key, val in pitches.items():
+            if pitches[key] != 0:
+                pitch_strike_percentage[key] = (
+                    truncate(pitches_strikes[key]/pitches[key]*100))
+
+        players.append({
+            "details": {
+                "name": f"{pitcher.firstname} {pitcher.lastname}",
+                "class": pitcher.grad_year,
+                "throws": pitcher.throws},
+            "percentages": pitch_strike_percentage
+        })
+
+    # calculate team totals
+    for key, val in pitches_totals.items():
+        if pitches_totals[key] != 0:
+            pitch_strike_percentage_totals[key] = (
+                truncate(pitches_strikes_totals[key]/pitches_totals[key]*100))
+
+    return (pitches_strikes_totals, players)

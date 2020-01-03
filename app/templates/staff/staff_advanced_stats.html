@@ -12,7 +12,7 @@
         <p><h1>Staff Advanced Stats</h1></p>
         <div>
             <h4>Pitcher Pitch Average Velo</h4>
-            <table class="table sortable_table" id="pitcher-avg-velo">
+            <table class="table sortable_table">
                 <tr class="table-headers">
                     <th onclick="sortTable(0, 0, 2)">Name</th>
                     <th onclick="sortTable(1, 0, 2)">Throws</th>
@@ -47,6 +47,46 @@
                     <td>{{ team_avg_velo["CB"] }}</td>
                     <td>{{ team_avg_velo["CH"] }}</td>
                     <td>{{ team_avg_velo["CT"] }}</td>
+                </tr>
+            </table>
+        </div>
+        <div>
+            <h4>Pitcher Pitch Strike Percentage</h4>
+            <table class="table sortable_table">
+                <tr class="table-headers">
+                    <th onclick="sortTable(0, 1, 2)">Name</th>
+                    <th onclick="sortTable(1, 1, 2)">Throws</th>
+                    <th onclick="sortTable(2, 1, 2)">Grad Year</th>
+                    <th onclick="sortTable(3, 1, 2)">FB</th>
+                    <th onclick="sortTable(4, 1, 2)">2SM</th>
+                    <th onclick="sortTable(5, 1, 2)">SL</th>
+                    <th onclick="sortTable(6, 1, 2)">CB</th>
+                    <th onclick="sortTable(7, 1, 2)">CH</th>
+                    <th onclick="sortTable(8, 1, 2)">CT</th>
+                </tr>
+                {% for pitcher in player_strike_percentages %}
+                <tr>
+                    <td>{{ pitcher["details"]["name"] }}</td>
+                    <td>{{ pitcher["details"]["throws"] }}</td>
+                    <td>{{ pitcher["details"]["class"] }}</td>
+                    <td>{{ pitcher["percentages"]["FB"] }}</td>
+                    <td>{{ pitcher["percentages"]["SM"] }}</td>
+                    <td>{{ pitcher["percentages"]["SL"] }}</td>
+                    <td>{{ pitcher["percentages"]["CB"] }}</td>
+                    <td>{{ pitcher["percentages"]["CH"] }}</td>
+                    <td>{{ pitcher["percentages"]["CT"] }}</td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td>Staff Averages</td>
+                    <td></td>
+                    <td></td>
+                    <td>{{ team_strike_percentages["FB"] }}</td>
+                    <td>{{ team_strike_percentages["SM"] }}</td>
+                    <td>{{ team_strike_percentages["SL"] }}</td>
+                    <td>{{ team_strike_percentages["CB"] }}</td>
+                    <td>{{ team_strike_percentages["CH"] }}</td>
+                    <td>{{ team_strike_percentages["CT"] }}</td>
                 </tr>
             </table>
         </div>

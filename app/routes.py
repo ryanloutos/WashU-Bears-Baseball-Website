@@ -14,7 +14,7 @@ from app.stats import createPitchPercentagePieChart, velocityOverTimeLineChart
 from app.stats import pitchStrikePercentageBarChart, avgPitchVeloPitcher
 from app.stats import pitchUsageByCountLineCharts, pitchStrikePercentageSeason
 from app.stats import pitchUsageSeason, seasonStatLine, staffBasicStats
-from app.stats import staffPitcherAvgVelo
+from app.stats import staffPitcherAvgVelo, staffPitchStrikePercentage
 
 # Handle CSV uploads
 import csv
@@ -340,11 +340,14 @@ def staff_advanced_stats():
     pitchers = User.query.filter(User.grad_year != 'Coach/Manager').filter(User.retired == 0).order_by(User.lastname).all()
 
     team_avg_velo, player_avg_velo = staffPitcherAvgVelo(pitchers)
+    team_strike_percentages, player_strike_percentages = staffPitchStrikePercentage(pitchers)
 
     return render_template(
         'staff/staff_advanced_stats.html',
         team_avg_velo=team_avg_velo,
-        player_avg_velo=player_avg_velo
+        player_avg_velo=player_avg_velo,
+        team_strike_percentages=team_strike_percentages,
+        player_strike_percentages=player_strike_percentages
     )
 
 
