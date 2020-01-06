@@ -4,8 +4,9 @@
 * 
 * @param  {number} n Column of table to sort by
 * @param  {number} tab number of table to be sorted starting at 0
+* @param  {number} ignore default to one for index. For stat tables pass 2 so that totals are ignored in sorting
 */
-function sortTable(n, tab) {
+function sortTable(n, tab, ignore=1) {
     var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
     table = document.getElementsByClassName("sortable_table")[tab];
     switching = true;
@@ -19,7 +20,7 @@ function sortTable(n, tab) {
         rows = table.rows;
         /* Loop through all table rows (except the
             first, which contains table headers): */
-            for (i = 1; i < (rows.length - 1); i++) {
+            for (i = 1; i < (rows.length - ignore); i++) {
                 // Start by saying there should be no switching:
                 shouldSwitch = false;
                 /* Get the two elements you want to compare,
