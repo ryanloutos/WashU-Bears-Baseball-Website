@@ -21,7 +21,6 @@
                     <th onclick="sortTable(0, 0)">Date</th>
                     <th onclick="sortTable(1, 0)">Season</th>
                     <th onclick="sortTable(2, 0)">Opponent</th>
-                    <th onclick="sortTable(3, 0)">Pitcher</th>
                     <th>View</th>
                 </tr>
                 {% for o in pitcher.outings %}
@@ -29,7 +28,6 @@
                     <td>{{ o.date }}</td>
                     <td>{{ o.season }}</td>
                     <td>{{ o.opponent }}</td>
-                    <td>{{ o.pitcher }}</td>
                     <td><a href="{{ url_for('outing', id=o.id) }}">View Me</a></td>
                 </tr>
                 {% endfor %}

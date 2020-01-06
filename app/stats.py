@@ -3,6 +3,7 @@ from enum import Enum
 import pygal
 from pygal.style import DarkSolarizedStyle, DefaultStyle
 import lxml
+import math
 
 
 class PitchType(Enum):
@@ -456,6 +457,16 @@ def truncate(n, decimals=2):
     multiplier = 10 ** decimals
     return int(n * multiplier) / multiplier
 
+def percentage(n, decimals=0):
+    '''
+    Gets the percentage rounded to a specific decimal place
+    PARAM:
+        - n - is a the decimal number 0<=n<=1
+        - decimals - is the place you want to round to
+    '''
+    multiplier = 10 ** decimals
+    percentage = 100 * n
+    return int(math.floor(percentage*multiplier + 0.5) / multiplier)
 
 # PITCHER ADVANCED STATISTICS -------------------------------------------------
 def avgPitchVeloPitcher(pitcher):
@@ -1015,3 +1026,79 @@ def staffPitchStrikePercentage(pitchers):
     #     pitch_strike_percentage_totals[pitch] = truncate(val / len(players))
 
     return (pitches_strikes_totals, players)
+
+
+def outingPitchStatistics(outing):
+    '''
+    Calculates different statistics for specific pitches for a specific outing
+
+    PARAM:
+        - outing (object) - takes in an outing object to look through its pitches
+    
+    RETURN:
+        - array where each index is a pitch which holds different statistics
+
+    '''
+    pitch_stats = []
+    pitches = [1,2,3,4,5,7]
+
+    for pitch in pitches:
+        total_pitches = 0
+        num_thrown = 0
+        total_velo = 0
+        num_with_velo = 0
+        velo_max = 0
+        velo_min = 150
+        num_strikes = 0
+        for ab in outing.at_bats:
+            for p in ab.pitches:
+                total_pitches += 1
+                if p.pitch_type is pitch:
+                    num_thrown += 1
+                    if p.velocity not in [None, ""]:
+                        total_velo += p.velocity
+                        num_with_velo += 1
+                        if p.velocity > velo_max:
+                            velo_max = p.velocity
+                        if p.velocity < velo_min:
+                            velo_min = p.velocity
+                    if p.pitch_result is not "B":
+                        num_strikes += 1
+        
+        if num_thrown is 0:
+            num_thrown = "X"
+            strike_percentage = "X"
+        else: 
+            strike_percentage = percentage(num_strikes/num_thrown, 0)
+
+        if num_with_velo is not 0:
+            velo_avg = truncate(total_velo/num_with_velo, 1)
+        else:
+            velo_avg = "X"
+
+        if velo_max is 0:
+            velo_max = "X"
+
+        if velo_min is 150:
+            velo_min = "X"
+
+        if num_thrown not in [0,"X"]:
+            percentage_thrown = percentage(num_thrown/total_pitches, 0)
+        else:
+            percentage_thrown = "X"
+
+        print(f"{pitch} - {num_thrown} - {velo_avg} - {velo_max} - {velo_min} - {percentage_thrown} - {strike_percentage}")
+        pitch_stats.append(
+            {
+                "pitch_type": PitchType(pitch).name,
+                "num_thrown": num_thrown,
+                "velo_avg": velo_avg,
+                "velo_max": velo_max,
+                "velo_min": velo_min,
+                "percentage_thrown": percentage_thrown,
+                "strike_percentage": strike_percentage,
+            }
+        )
+
+    return pitch_stats
+    

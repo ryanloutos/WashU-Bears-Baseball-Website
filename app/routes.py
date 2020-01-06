@@ -15,6 +15,7 @@ from app.stats import pitchStrikePercentageBarChart, avgPitchVeloPitcher
 from app.stats import pitchUsageByCountLineCharts, pitchStrikePercentageSeason
 from app.stats import pitchUsageSeason, seasonStatLine, staffBasicStats
 from app.stats import staffPitcherAvgVelo, staffPitchStrikePercentage
+from app.stats import outingPitchStatistics
 
 # Handle CSV uploads
 import csv
@@ -625,8 +626,39 @@ def outing(id):
             that is requested to be displayed
 
     RETURN:
-        -outing.html which displays all of the info/pitches
-            associated with that outing
+        -outing_home.html which displays the homepage for
+            the outing
+    '''
+    # get the outing object associated by the id in the url
+    outing = Outing.query.filter_by(id=id).first()
+    opponent = Opponent.query.filter_by(id=outing.opponent_id).first()
+
+    # if bug or outing trying to be viewed DNE
+    if not outing:
+        flash("URL does not exits")
+        return redirect(url_for('index'))
+
+    # render template with all the statistical data calculated from the outing
+    return render_template(
+        'outing/outing_home.html',
+        title=outing,
+        outing=outing,
+        opponent=opponent)
+
+# ***************-OUTING PBP-*************** # 
+@app.route('/outing/<id>/pbp', methods=['GET', 'POST'])
+@login_required
+def outing_pbp(id):
+    '''
+    OUTING PITCH BY PITCH:
+
+    PARAM:
+        -outing_id: The outing id (primary key) of the outing
+            that is requested to be displayed
+
+    RETURN:
+        -outing.html which displays all of the pitches and 
+            at bats from the outing
     '''
     # get the outing object associated by the id in the url
     outing = Outing.query.filter_by(id=id).first()
@@ -652,7 +684,7 @@ def outing(id):
 
     # render template with all the statistical data calculated from the outing
     return render_template(
-        'outing/outing.html',
+        'outing/outing_pbp.html',
         title=outing,
         outing=outing,
         opponent=opponent,
@@ -667,6 +699,41 @@ def outing(id):
         velocity_over_time_line_chart=velocity_over_time_line_chart,
         strike_percentage_bar_chart=strike_percentage_bar_chart,
         usage_percent_by_count_line_chart=usage_percent_by_count_line_chart)
+
+# ***************-OUTING ADVANCED STATS-*************** # 
+@app.route('/outing/<id>/stats/advanced', methods=['GET', 'POST'])
+@login_required
+def outing_stats_advanced(id):
+    '''
+    OUTING ADVANCED STATS:
+
+    PARAM:
+        -outing_id: The outing id (primary key) of the outing
+            that is requested to be displayed
+
+    RETURN:
+        -outing.html which displays some advanced statistics
+            for a specific outing
+    '''
+    # get the outing object associated by the id in the url
+    outing = Outing.query.filter_by(id=id).first()
+    opponent = Opponent.query.filter_by(id=outing.opponent_id).first()
+
+    # if bug or outing trying to be viewed DNE
+    if not outing:
+        flash("URL does not exits")
+        return redirect(url_for('index'))
+
+    # Get statistical data
+    pitch_stats = outingPitchStatistics(outing)
+
+    # render template with all the statistical data calculated from the outing
+    return render_template(
+        'outing/outing_stats_advanced.html',
+        title=outing,
+        outing=outing,
+        opponent=opponent,
+        pitch_stats=pitch_stats)
 
 # ***************-BATTER HOMEPAGE-*************** # 
 @app.route('/batter/<id>', methods=['GET', 'POST'])

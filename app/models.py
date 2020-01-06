@@ -46,7 +46,7 @@ class Outing(db.Model):
         day = self.date.day
         pitcher = User.query.filter_by(id=self.user_id).first()
 
-        return f'{pitcher} {month}/{day} {self.opponent}'
+        return f'{month}/{day} - {pitcher} vs. {self.opponent}'
 
 
 class Pitch(db.Model):

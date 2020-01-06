@@ -1,0 +1,11 @@
+<div class="sidenav">
+    <a href="{{ url_for('outing', id=outing.id) }}">Outing Home</a>
+    <a href="{{ url_for('outing_pbp', id=outing.id) }}">Pitch by Pitch</a>
+    <a href="">Basic Stats</a>
+    <a href="{{ url_for('outing_stats_advanced', id=outing.id) }}">Advanced Stats</a>
+    <a href="">Video</a>
+    {% if current_user.admin %}
+        <a href="{{ url_for('edit_outing', outing_id=outing.id) }}">Edit Outing</a>
+        <a href="{{ url_for('edit_outing_pitches', outing_id=outing.id) }}">Edit Pitches</a>
+    {% endif %}
+</div>

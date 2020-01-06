@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block styles %}
+    {{ super() }}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    {# Required for data visualization #}
+    <script src="http://kozea.github.com/pygal.js/javascripts/svg.jquery.js"></script>
+    <script src="http://kozea.github.com/pygal.js/javascripts/pygal-tooltips.js"></script>
+    <script src="{{ url_for('static', filename='js/stat_selector.js') }}"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidenav.css') }}">
+    <script>
+        function show_stat() {
+            which_stat = document.getElementById("stat-selector").value;
+        }
+    </script>
+{% endblock %}
+
+{% block app_content %}
+{% include "outing/outing_sidenav.html" %}
+<div class="main">
+    <h1>
+        Advanced Stats
+    </h1>
+    <p>
+        Select Statistic:
+        <select onchange="show_stat()" id="stat-selector">
+            <option value="Pitch Stats" selected>Pitch Stats</option>
+            <option value="R/L Splits">R/L Splits</option>
+            <option value="Time to Plate">Time to Plate</option>
+            <option value="Velo Over Time">Velo Over Time</option>
+        </select>
+    </p>
+    <div name="pitch-stats">
+        <table class="table">
+            <tr>
+                <th>Pitch Type</th>
+                <th>Number Thrown</th>
+                <th>Velo Avg</th>
+                <th>Velo Max</th>
+                <th>Velo Min</th>
+                <th>Usage %</th>
+                <th>Strike %</th>
+            </tr>
+            {% for pitch in pitch_stats %}
+                <tr>
+                    <td>{{pitch.pitch_type}}</td>
+                    <td>{{pitch.num_thrown}}</td>
+                    <td>{{pitch.velo_avg}}</td>
+                    <td>{{pitch.velo_max}}</td>
+                    <td>{{pitch.velo_min}}</td>
+                    <td>{{pitch.percentage_thrown}}</td>
+                    <td>{{pitch.strike_percentage}}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    </div>
+{% endblock %}

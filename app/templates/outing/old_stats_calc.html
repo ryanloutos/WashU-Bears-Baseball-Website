@@ -1,0 +1,188 @@
+<div class="panel panel-default">
+    <div class="panel-heading">Stats
+        <select id='statistic-choice'>
+            <option>CHOOSE STATISTIC</option>
+            <option value='pitch-usage'>Pitch Usage</option>
+            <option value='pitch-usage-by-count'>Pitch Usage by Count</option>
+            <option value='pitch-usage-by-count-percentage'>Pitch Usage by Count Percentage</option>
+            <option value='pitch-avg-velo'>Pitch Average Velocity</option>
+            <option value='pitch-strike-percentage'>Pitch Strike Percentage</option>
+            <option value='pitch-whiff-rate'>Pitch Whiff Rate</option>
+            <option value='velocity-over-time-chart'>Velocity Over Time Chart</option>
+            <option value='strike-percentage-bar-chart'>Strike percentage bar chart</option>
+
+        </select>
+        <button id='choose-stat'>GO</button>
+    </div>
+    <div class="panel-body">
+        <div id='pitch-usage'>
+            <h3>Pitch Usage</h3>
+            <table class="table">
+                <tr>
+                    <th></th>
+                    <th>FB</th>
+                    <th>2S</th>
+                    <th>CB</th>
+                    <th>SL</th>
+                    <th>CH</th>
+                    <th>CT</th>
+                </tr>
+                <tr>
+                    <th>Num</th>
+                    <td>{{usages["FB"]}}</td>
+                    <td>{{usages["SM"]}}</td>
+                    <td>{{usages["CB"]}}</td>
+                    <td>{{usages["SL"]}}</td>
+                    <td>{{usages["CH"]}}</td>
+                    <td>{{usages["CT"]}}</td>
+                </tr>
+                <tr>
+                    <th>Percent</th>
+                    <td>{{usage_percentages["FB"]}}</td>
+                    <td>{{usage_percentages["SM"]}}</td>
+                    <td>{{usage_percentages["CB"]}}</td>
+                    <td>{{usage_percentages["SL"]}}</td>
+                    <td>{{usage_percentages["CH"]}}</td>
+                    <td>{{usage_percentages["CT"]}}</td>
+                </tr>
+            </table>
+            <embed type="image/svg+xml" src= "{{ usage_percentages_pie_chart.render_data_uri()|safe }}" />
+        </div>
+        <div id='pitch-usage-by-count'>
+            <h3>Pitch Usage by Count</h3>
+            <table class="table">
+                <tr>
+                    <th>Count</th>
+                    <th>FB</th>
+                    <th>2S</th>
+                    <th>CB</th>
+                    <th>SL</th>
+                    <th>CH</th>
+                    <th>CT</th>
+                    <th>Total</th>
+                </tr>
+                {% for count, value in counts.items() %}
+                    <tr>
+                        <th>{{count}}</th>
+                        <td>{{value["pitches"]["FB"]}}</td>
+                        <td>{{value["pitches"]["SM"]}}</td>
+                        <td>{{value["pitches"]["CB"]}}</td>
+                        <td>{{value["pitches"]["SL"]}}</td>
+                        <td>{{value["pitches"]["CH"]}}</td>
+                        <td>{{value["pitches"]["CT"]}}</td>
+                        <td>{{value["total"]}}</td>
+                    </tr>
+                {% endfor%}
+            </table>
+        </div>
+        <div id='pitch-usage-by-count-percentage'>
+            <h3>Pitch Usage by Count Percentage</h3>
+            <table class="table">
+                <tr>
+                    <th>Count</th>
+                    <th>FB</th>
+                    <th>2S</th>
+                    <th>CB</th>
+                    <th>SL</th>
+                    <th>CH</th>
+                    <th>CT</th>
+                    <th>Total</th>
+                </tr>
+                {% for count, value in counts_percentages.items() %}
+                    <tr>
+                        <th>{{count}}</th>
+                        <td>{{value["pitches"]["FB"]}}</td>
+                        <td>{{value["pitches"]["SM"]}}</td>
+                        <td>{{value["pitches"]["CB"]}}</td>
+                        <td>{{value["pitches"]["SL"]}}</td>
+                        <td>{{value["pitches"]["CH"]}}</td>
+                        <td>{{value["pitches"]["CT"]}}</td>
+                        <td>{{value["total"]}}</td>
+                    </tr>
+                {% endfor%}
+            </table>
+            <embed type="image/svg+xml" src= "{{ usage_percent_by_count_line_chart.render_data_uri()|safe }}" />
+        </div>
+        <div id='pitch-avg-velo'>
+            <h3>Average Velocity By Pitch</h3>
+            <table class="table">
+                <tr>
+                    <th></th>
+                    <th>FB</th>
+                    <th>2S</th>
+                    <th>CB</th>
+                    <th>SL</th>
+                    <th>CH</th>
+                    <th>CT</th>
+                </tr>
+                <tr>
+                    <th>Velo</th>
+                    <td>{{pitch_avg_velo["FB"]}}</td>
+                    <td>{{pitch_avg_velo["SM"]}}</td>
+                    <td>{{pitch_avg_velo["CB"]}}</td>
+                    <td>{{pitch_avg_velo["SL"]}}</td>
+                    <td>{{pitch_avg_velo["CH"]}}</td>
+                    <td>{{pitch_avg_velo["CT"]}}</td>
+                </tr>
+            </table>
+        </div>
+        <div id='pitch-strike-percentage'>
+            <h3>Strike Percentage by Pitch</h3>
+            <table class="table">
+                <tr>
+                    <th></th>
+                    <th>FB</th>
+                    <th>2S</th>
+                    <th>CB</th>
+                    <th>SL</th>
+                    <th>CH</th>
+                    <th>CT</th>
+                    <th>Total</th>
+                </tr>
+                <tr>
+                    <th>Velo</th>
+                    <td>{{pitch_strike_percentage["FB"]}}</td>
+                    <td>{{pitch_strike_percentage["SM"]}}</td>
+                    <td>{{pitch_strike_percentage["CB"]}}</td>
+                    <td>{{pitch_strike_percentage["SL"]}}</td>
+                    <td>{{pitch_strike_percentage["CH"]}}</td>
+                    <td>{{pitch_strike_percentage["CT"]}}</td>
+                    <td>{{pitch_strike_percentage["total"]}}</td>
+                </tr>
+            </table>
+        </div>
+        <div id='pitch-whiff-rate'>
+            <h3>Whiff Rate by Pitch</h3>
+            <table class="table">
+                <tr>
+                    <th></th>
+                    <th>FB</th>
+                    <th>2S</th>
+                    <th>CB</th>
+                    <th>SL</th>
+                    <th>CH</th>
+                    <th>CT</th>
+                    <th>Total</th>
+                </tr>
+                <tr>
+                    <th>Velo</th>
+                    <td>{{pitch_whiff["FB"]}}</td>
+                    <td>{{pitch_whiff["SM"]}}</td>
+                    <td>{{pitch_whiff["CB"]}}</td>
+                    <td>{{pitch_whiff["SL"]}}</td>
+                    <td>{{pitch_whiff["CH"]}}</td>
+                    <td>{{pitch_whiff["CT"]}}</td>
+                    <td>{{pitch_whiff["total"]}}</td>
+                </tr>
+            </table>
+        </div>
+        <div id="velocity-over-time-chart">
+            <h3>Velocity Over Time Chart</h3>
+            <embed type="image/svg+xml" src= "{{ velocity_over_time_line_chart.render_data_uri()|safe }}" />
+        </div>
+        <div id="strike-percentage-bar-chart">
+            <h3>Strike Percentage Bar Chart</h3>
+            <embed type="image/svg+xml" src= "{{ strike_percentage_bar_chart.render_data_uri()|safe }}" />
+        </div>
+    </div>
+</div>
