@@ -15,7 +15,7 @@ from app.stats import pitchStrikePercentageBarChart, avgPitchVeloPitcher
 from app.stats import pitchUsageByCountLineCharts, pitchStrikePercentageSeason
 from app.stats import pitchUsageSeason, seasonStatLine, staffBasicStats
 from app.stats import staffPitcherAvgVelo, staffPitchStrikePercentage
-from app.stats import outingPitchStatistics
+from app.stats import outingPitchStatistics, outingTimeToPlate
 
 # Handle CSV uploads
 import csv
@@ -726,6 +726,7 @@ def outing_stats_advanced(id):
 
     # Get statistical data
     pitch_stats = outingPitchStatistics(outing)
+    time_to_plate = outingTimeToPlate(outing)
 
     # render template with all the statistical data calculated from the outing
     return render_template(
@@ -733,7 +734,8 @@ def outing_stats_advanced(id):
         title=outing,
         outing=outing,
         opponent=opponent,
-        pitch_stats=pitch_stats)
+        pitch_stats=pitch_stats,
+        time_to_plate=time_to_plate)
 
 # ***************-BATTER HOMEPAGE-*************** # 
 @app.route('/batter/<id>', methods=['GET', 'POST'])

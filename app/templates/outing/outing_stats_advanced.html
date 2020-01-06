@@ -9,8 +9,17 @@
     <script src="{{ url_for('static', filename='js/stat_selector.js') }}"></script>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidenav.css') }}">
     <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            show_stat();
+        });
         function show_stat() {
             which_stat = document.getElementById("stat-selector").value;
+            table = document.getElementById(which_stat);
+            
+            document.getElementById("pitch-stats").style.display = "none"
+            document.getElementById("time-to-plate").style.display = "none"
+
+            table.style.display = "block";
         }
     </script>
 {% endblock %}
@@ -24,17 +33,17 @@
     <p>
         Select Statistic:
         <select onchange="show_stat()" id="stat-selector">
-            <option value="Pitch Stats" selected>Pitch Stats</option>
+            <option value="pitch-stats" selected>Pitch Stats</option>
             <option value="R/L Splits">R/L Splits</option>
-            <option value="Time to Plate">Time to Plate</option>
+            <option value="time-to-plate">Time to Plate</option>
             <option value="Velo Over Time">Velo Over Time</option>
         </select>
     </p>
-    <div name="pitch-stats">
-        <table class="table">
+    <div id="pitch-stats">
+        <table id="pitch-stats" class="table">
             <tr>
                 <th>Pitch Type</th>
-                <th>Number Thrown</th>
+                <th>n</th>
                 <th>Velo Avg</th>
                 <th>Velo Max</th>
                 <th>Velo Min</th>
@@ -48,12 +57,35 @@
                     <td>{{pitch.velo_avg}}</td>
                     <td>{{pitch.velo_max}}</td>
                     <td>{{pitch.velo_min}}</td>
-                    <td>{{pitch.percentage_thrown}}</td>
-                    <td>{{pitch.strike_percentage}}</td>
+                    <td>
+                        {{pitch.percentage_thrown}}
+                        {%if pitch.percentage_thrown != "X"%}%{%endif%}
+                    </td>
+                    <td>
+                        {{pitch.strike_percentage}}
+                        {%if pitch.strike_percentage != "X"%}%{%endif%}
+                    </td>
                 </tr>
             {% endfor %}
         </table>
     </div>
+    <div id="time-to-plate">
+        <table class="table">
+            <tr>
+                <th>Lead RNR</th>
+                <th>Num Pitches</th>
+                <th>Average</th>
+            </tr>
+            {% for runner in time_to_plate %}
+                <tr>
+                    <td>{{runner.lead_runner}}</td>
+                    <td>{{runner.num_times}}</td>
+                    <td>{{runner.avg}}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+    
 
     </div>
 {% endblock %}

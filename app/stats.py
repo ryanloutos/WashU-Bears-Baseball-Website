@@ -1101,4 +1101,42 @@ def outingPitchStatistics(outing):
         )
 
     return pitch_stats
+
+
+def outingTimeToPlate(outing):
+    '''
+    Calculates time to plate info for a specific outing
+
+    PARAM:
+        - outing (object) which has the time to plate info
     
+    RETURN:
+        - array holding each lead runner and the info associated
+            with each situation
+    '''
+    lead_runners = [1,2,3]
+    time_to_plate = []
+    for runner in lead_runners:
+        total_time = 0
+        num_times = 0
+        for ab in outing.at_bats:
+            for p in ab.pitches:
+                if p.lead_runner is runner:
+                    if p.time_to_plate not in [None, ""]:
+                        total_time += p.time_to_plate
+                        num_times += 1
+        if num_times is 0:
+            num_times = "X"
+            avg = "X"
+        else:
+            avg = truncate(total_time/num_times)
+        time_to_plate.append(
+            {
+                "lead_runner": runner,
+                "num_times": num_times,
+                "avg": avg,
+            }
+        )
+    return time_to_plate
+
+
