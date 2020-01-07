@@ -1712,6 +1712,9 @@ def new_outing_csv_pitches(file_name, outing_id):
             db.session.add(pitch)
             db.session.commit()
 
+            if pitch.ab_result is not '':
+                new_at_bat = True
+
         # delete temp file and be done with it
         os.remove(file_loc)
 
