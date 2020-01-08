@@ -38,9 +38,10 @@ def index():
     RETURN:
         -Displays index.html
     '''
-
     return render_template('main/index.html',
-                           title='WashU Pitching')
+                           title='WashU Pitching',
+                           current_season=getCurrentSeason(),
+                           old_seasons=getOldSeasons())
 
 # ***************-LOGIN-*************** # DONE
 @app.route('/login', methods=['GET', 'POST'])
@@ -58,6 +59,7 @@ def login():
             other page trying to be accessed once login is
             successful
     '''
+
     # if the user is already signed in then send to home page
     if current_user.is_authenticated:
         return redirect(url_for('index'))
@@ -92,7 +94,9 @@ def login():
 
     return render_template('main/login.html',
                            title="Login",
-                           form=form)
+                           form=form,
+                           current_season=getCurrentSeason(),
+                           old_seasons=getOldSeasons())
 
 # ***************-LOGOUT-*************** # DONE
 @app.route('/logout')
@@ -127,6 +131,7 @@ def register():
             redirects back to index.html once the user
             was created successfully
     '''
+
     # if user is not an admin, they can't add player/coach to portal
     if not current_user.admin:
         flash('You are not an admin and cannot create a user')
@@ -159,7 +164,9 @@ def register():
 
     return render_template('main/register.html',
                            title='Register',
-                           form=form)
+                           form=form,
+                           current_season=getCurrentSeason(),
+                           old_seasons=getOldSeasons())
 
 # ***************-PROFILE PAGE-*************** # DONE
 @app.route('/user/<id>', methods=['GET', 'POST'])
@@ -177,6 +184,7 @@ def user(id):
     RETURN:
         -user.html which displays the basic info
     '''
+
     if current_user.id is not int(id):
         flash('You can only view your own profile page')
         return redirect(url_for('index'))
@@ -184,7 +192,9 @@ def user(id):
     user = User.query.filter_by(id=id).first_or_404()
 
     return render_template('main/user.html',
-                           user=user)
+                           user=user,
+                           current_season=getCurrentSeason(),
+                           old_seasons=getOldSeasons())
 
 # ***************-EDIT PROFILE-*************** # DONE
 @app.route('/user/<id>/edit', methods=['GET', 'POST'])
@@ -200,6 +210,7 @@ def edit_user(id):
     RETURN:
         -edit_user.html which serves a form to make changes
     '''
+
     user = User.query.filter_by(id=id).first()
 
     # if someone tries to access link directly
@@ -225,7 +236,9 @@ def edit_user(id):
     return render_template('main/edit_user.html',
                            title='Edit User',
                            user=user,
-                           form=form)
+                           form=form,
+                           current_season=getCurrentSeason(),
+                           old_seasons=getOldSeasons())
 
 # ***************-CHANGE PASSWORD-*************** # DONE
 @app.route('/user/<id>/change_password', methods=['GET', 'POST'])
@@ -240,6 +253,7 @@ def change_password(id):
     RETURN:
         -change_password.html which serves a form to make changes
     '''
+
     user = User.query.filter_by(id=id).first()
 
     # if someone tries to access link directly
@@ -267,7 +281,9 @@ def change_password(id):
 
     return render_template('main/change_password.html',
                            title='Change Password',
-                           form=form)
+                           form=form,
+                           current_season=getCurrentSeason(),
+                           old_seasons=getOldSeasons())
 
 # ***************-STAFF HOMEPAGE-*************** # DONE
 @app.route('/staff', methods=['GET', 'POST'])
@@ -285,7 +301,9 @@ def staff():
     '''
 
     return render_template('staff/staff_home.html',
-                           title='WashU Pitching Staff')
+                           title='WashU Pitching Staff',
+                           current_season=getCurrentSeason(),
+                           old_seasons=getOldSeasons())
 
 # ***************-STAFF ROSTER-*************** # DONE
 @app.route('/staff/roster', methods=['GET', 'POST'])
@@ -306,7 +324,9 @@ def staff_roster():
 
     return render_template('staff/staff_roster.html',
                            title='Staff',
-                           pitchers=pitchers)
+                           pitchers=pitchers,
+                           current_season=getCurrentSeason(),
+                           old_seasons=getOldSeasons())
 
 
 # ***************-STAFF BASIC STATS-*********** #
@@ -330,8 +350,9 @@ def staff_basic_stats():
     return render_template(
         'staff/staff_basic_stats.html',
         staff_stat_summary=staff_stat_summary,
-        players_stat_summary=players_stat_summary
-    )
+        players_stat_summary=players_stat_summary,
+        current_season=getCurrentSeason(),
+        old_seasons=getOldSeasons())
 
 
 # # ***************-STAFF ADVANCED STATS-*********** #
@@ -348,7 +369,9 @@ def staff_advanced_stats():
         team_avg_velo=team_avg_velo,
         player_avg_velo=player_avg_velo,
         team_strike_percentages=team_strike_percentages,
-        player_strike_percentages=player_strike_percentages
+        player_strike_percentages=player_strike_percentages,
+        current_season=getCurrentSeason(),
+        old_seasons=getOldSeasons()
     )
 
 
@@ -372,7 +395,9 @@ def staff_retired():
 
     return render_template('staff/staff_retired.html',
                            title='Retired Pitchers',
-                           retired_pitchers=retired_pitchers)
+                           retired_pitchers=retired_pitchers,
+                           current_season=getCurrentSeason(),
+                           old_seasons=getOldSeasons())
 
 # ***************-PITCHER HOMEPAGE-*************** # DONE
 @app.route('/pitcher/<id>', methods=['GET', 'POST'])
@@ -433,7 +458,9 @@ def pitcher(id):
     return render_template('pitcher/pitcher_home.html',
                            title=pitcher,
                            pitcher=pitcher,
-                           recent_outings=recent_outings)
+                           recent_outings=recent_outings,
+                           current_season=getCurrentSeason(),
+                           old_seasons=getOldSeasons())
 
 # ***************-PITCHER OUTINGS-*************** # 
 @app.route('/pitcher/<id>/outings', methods=['GET', 'POST'])
@@ -476,7 +503,9 @@ def pitcher_outings(id):
     return render_template('pitcher/pitcher_outings.html',
                            title=pitcher,
                            pitcher=pitcher,
-                           seasons=seasons)
+                           seasons=seasons,
+                           current_season=getCurrentSeason(),
+                           old_seasons=getOldSeasons())
 
 # ***************-PITCHER BASIC STATS-*************** # 
 @app.route('/pitcher/<id>/stats/basic', methods=['GET', 'POST'])
@@ -525,7 +554,9 @@ def pitcher_stats_basic(id):
                            pitcher=pitcher,
                            seasons=seasons,
                            season_stat_line=season_stat_line,
-                           outing_stat_line=outing_stat_line)
+                           outing_stat_line=outing_stat_line,
+                           current_season=getCurrentSeason(),
+                           old_seasons=getOldSeasons())
 
 # ***************-PITCHER ADVANCED STATS-*************** # 
 @app.route('/pitcher/<id>/stats/advanced', methods=['GET', 'POST'])
@@ -580,7 +611,9 @@ def pitcher_stats_advanced(id):
                            strike_percentage_season=strike_percentage_season,
                            strike_percentage_outing=strike_percentage_outing,
                            pitch_usage_season=pitch_usage_season,
-                           pitch_usage_outing=pitch_usage_outing)
+                           pitch_usage_outing=pitch_usage_outing,
+                           current_season=getCurrentSeason(),
+                           old_seasons=getOldSeasons())
 
 # ***************-SEASON HOMEPAGE-*************** # 
 @app.route('/season/<id>')
@@ -612,7 +645,9 @@ def season(id):
     return render_template('season/season.html',
                            title=season,
                            outings=outings,
-                           season=season)
+                           season=season,
+                           current_season=getCurrentSeason(),
+                           old_seasons=getOldSeasons())
 
 # ***************-OUTING HOMEPAGE-*************** # 
 @app.route('/outing/<id>', methods=['GET', 'POST'])
@@ -643,7 +678,9 @@ def outing(id):
         'outing/outing_home.html',
         title=outing,
         outing=outing,
-        opponent=opponent)
+        opponent=opponent,
+        current_season=getCurrentSeason(),
+        old_seasons=getOldSeasons())
 
 # ***************-OUTING PBP-*************** # 
 @app.route('/outing/<id>/pbp', methods=['GET', 'POST'])
@@ -698,7 +735,10 @@ def outing_pbp(id):
         pitch_whiff=pitch_whiff,
         velocity_over_time_line_chart=velocity_over_time_line_chart,
         strike_percentage_bar_chart=strike_percentage_bar_chart,
-        usage_percent_by_count_line_chart=usage_percent_by_count_line_chart)
+        usage_percent_by_count_line_chart=usage_percent_by_count_line_chart,
+        current_season=getCurrentSeason(),
+        old_seasons=getOldSeasons()
+    )
 
 # ***************-OUTING ADVANCED STATS-*************** # 
 @app.route('/outing/<id>/stats/advanced', methods=['GET', 'POST'])
@@ -735,7 +775,10 @@ def outing_stats_advanced(id):
         outing=outing,
         opponent=opponent,
         pitch_stats=pitch_stats,
-        time_to_plate=time_to_plate)
+        time_to_plate=time_to_plate,
+        current_season=getCurrentSeason(),
+        old_seasons=getOldSeasons()
+    )
 
 # ***************-BATTER HOMEPAGE-*************** # 
 @app.route('/batter/<id>', methods=['GET', 'POST'])
@@ -763,7 +806,9 @@ def batter(id):
 
     return render_template('opponent/batter.html',
                            title=batter.name,
-                           batter=batter)
+                           batter=batter,
+                           current_season=getCurrentSeason(),
+                           old_seasons=getOldSeasons())
 
 # ***************-OPPONENT HOMEPAGE-*************** # 
 @app.route('/opponent/<id>', methods=['GET', 'POST'])
@@ -790,7 +835,9 @@ def opponent(id):
 
     return render_template('opponent/opponent_home.html',
                            title=opponent,
-                           opponent=opponent)
+                           opponent=opponent,
+                           current_season=getCurrentSeason(),
+                           old_seasons=getOldSeasons())
 
 # ***************-ALL OPPONENTS-*************** # 
 @app.route('/all_opponents', methods=['GET', 'POST'])
@@ -811,7 +858,9 @@ def all_opponents():
 
     return render_template('opponent/all_opponents.html',
                            title="All Opponents",
-                           opponents=opponents)
+                           opponents=opponents,
+                           current_season=getCurrentSeason(),
+                           old_seasons=getOldSeasons())
 
 # ***************-OPPONENT ROSTER-*************** # 
 @app.route('/opponent/<id>/roster', methods=['GET', 'POST'])
@@ -838,7 +887,9 @@ def opponent_roster(id):
 
     return render_template('opponent/opponent_roster.html',
                            title=opponent,
-                           opponent=opponent)
+                           opponent=opponent,
+                           current_season=getCurrentSeason(),
+                           old_seasons=getOldSeasons())
 
 # ***************-NEW SEASON-*************** # 
 @app.route('/new_season', methods=['GET', 'POST'])
@@ -867,7 +918,8 @@ def new_season():
 
         # insert data from form into season table
         season = Season(semester=form.semester.data,
-                        year=form.year.data)
+                        year=form.year.data,
+                        current_season=form.current_season.data)
 
         # send Season object to data table
         db.session.add(season)
@@ -879,7 +931,67 @@ def new_season():
 
     return render_template('season/new_season.html',
                            title='New Season',
-                           form=form)
+                           form=form,
+                           current_season=getCurrentSeason(),
+                           old_seasons=getOldSeasons())
+
+# ***************-EDIT SEASON-*************** # 
+@app.route('/edit_season/<id>', methods=['GET', 'POST'])
+@login_required
+def edit_season(id):
+    '''
+    EDIT SEASON:
+    Can edit a current season (like making it the new current
+        season)
+
+    PARAM:
+        -id: The season id that wants to be edited
+
+    RETURN:
+        -edit_season.html and redirects to the season page
+            once the season was edited
+    '''
+    # if user is not an admin, they can't create a new season
+    if not current_user.admin:
+        flash('You are not an admin and cannot edit a season')
+        return redirect(url_for('index'))
+    
+    # get the season that wants to be edited
+    season = Season.query.filter_by(id=id).first()
+
+    # if the season doesn't exist, redirect
+    if not season:
+        flash("This season doesn't exist")
+        return redirect(url_for('index'))
+
+    # when the Edit Season button is pressed...
+    form = SeasonForm()
+    if form.validate_on_submit():
+
+        # if this season become the current season
+        if form.current_season.data:
+            seasons = Season.query.all()
+            for s in seasons:
+                s.current_season = False
+
+        # make the changes to the season
+        season.semester = form.semester.data
+        season.year = form.year.data
+        season.current_season = form.current_season.data
+
+        # commit the changes made above
+        db.session.commit()
+
+        # redirect to season homepage
+        flash('Changes made!')
+        return redirect(url_for('season', id=id))
+
+    return render_template('season/edit_season.html',
+                           title='New Season',
+                           season=season,
+                           form=form,
+                           current_season=getCurrentSeason(),
+                           old_seasons=getOldSeasons())
 
 # ***************-NEW OPPONENT-*************** # 
 @app.route('/new_opponent', methods=['GET', 'POST'])
@@ -935,7 +1047,9 @@ def new_opponent():
 
     return render_template('opponent/new_opponent.html',
                            title='New Opponent',
-                           form=form)
+                           form=form,
+                           current_season=getCurrentSeason(),
+                           old_seasons=getOldSeasons())
 
 # ***************-NEW BATTER-*************** # 
 @app.route('/new_batter', methods=['GET', 'POST'])
@@ -986,7 +1100,9 @@ def new_batter():
 
     return render_template('opponent/new_batter.html',
                            title='New Batter',
-                           form=form)
+                           form=form,
+                           current_season=getCurrentSeason(),
+                           old_seasons=getOldSeasons())
 
 # ***************-EDIT OPPONENT-*************** # 
 @app.route('/edit_opponent/<id>', methods=['GET', 'POST'])
@@ -1034,7 +1150,9 @@ def edit_opponent(id):
     return render_template('opponent/edit_opponent.html',
                            title='Edit Opponent',
                            opponent=opponent,
-                           form=form)
+                           form=form,
+                           current_season=getCurrentSeason(),
+                           old_seasons=getOldSeasons())
 
 # ***************-EDIT BATTER-*************** # 
 @app.route('/edit_batter/<id>', methods=['GET', 'POST'])
@@ -1094,7 +1212,9 @@ def edit_batter(id):
     return render_template('opponent/edit_batter.html',
                            title='Edit Batter',
                            batter=batter,
-                           form=form)
+                           form=form,
+                           current_season=getCurrentSeason(),
+                           old_seasons=getOldSeasons())
 
 # ***************-DELETE BATTER-*************** # 
 @app.route('/delete_batter/<id>', methods=['GET', 'POST'])
@@ -1178,7 +1298,9 @@ def new_outing():
 
     return render_template('outing/new_outing.html',
                            title='New Outing',
-                           form=form)
+                           form=form,
+                           current_season=getCurrentSeason(),
+                           old_seasons=getOldSeasons())
 
 # ***************-NEW OUTING PITCHES-*************** # 
 @app.route('/new_outing_pitches/<outing_id>', methods=['GET', 'POST'])
@@ -1279,7 +1401,10 @@ def new_outing_pitches(outing_id):
     return render_template(
         'outing/new_outing_pitches.html',
         title='New Outing Pitches',
-        form=form)
+        form=form,
+        current_season=getCurrentSeason(),
+        old_seasons=getOldSeasons()
+    )
 
 # ***************-EDIT OUTING PITCHES-*************** # 
 @app.route('/edit_outing_pitches/<outing_id>', methods=['GET', 'POST'])
@@ -1425,7 +1550,9 @@ def edit_outing_pitches(outing_id):
                            title='Edit Outing',
                            outing=outing,
                            opponent=opponent,
-                           form=form)
+                           form=form,
+                           current_season=getCurrentSeason(),
+                           old_seasons=getOldSeasons())
 
 # ***************-EDIT OUTING-*************** # 
 @app.route('/edit_outing/<outing_id>', methods=['GET', 'POST'])
@@ -1477,7 +1604,9 @@ def edit_outing(outing_id):
                            all_seasons=all_seasons,
                            this_pitcher=this_pitcher,
                            all_pitchers=all_pitchers,
-                           form=form)
+                           form=form,
+                           current_season=getCurrentSeason(),
+                           old_seasons=getOldSeasons())
 
 # ***************-DELETE OUTING-*************** # 
 @app.route('/delete_outing/<id>', methods=['GET', 'POST'])
@@ -1580,7 +1709,9 @@ def new_outing_csv():
                                    form=form)
 
     return render_template("csv/upload_csv.html",
-                           form=form)
+                           form=form,
+                           current_season=getCurrentSeason(),
+                           old_seasons=getOldSeasons())
 
 # ***************-NEW OUTING CSV PITCHES-*************** # 
 @app.route(
@@ -1728,7 +1859,9 @@ def new_outing_csv_pitches(file_name, outing_id):
     return render_template("csv/new_outing_csv_pitches.html",
                            form=form,
                            pitches=pitches,
-                           batters=batters)
+                           batters=batters,
+                           current_season=getCurrentSeason(),
+                           old_seasons=getOldSeasons())
 
 
 # ***************-HELPFUL FUNCTIONS-*************** #
@@ -1830,3 +1963,12 @@ def updateCount(balls, strikes, pitch_result, ab_result, season):
                 strikes += 1
     count = f'{balls}-{strikes}'
     return (balls, strikes, count)
+
+
+def getCurrentSeason():
+    current_season = Season.query.filter_by(current_season=True).first()
+    return current_season
+
+def getOldSeasons():
+    old_seasons = Season.query.filter_by(current_season=False).all()
+    return old_seasons

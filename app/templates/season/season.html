@@ -9,6 +9,7 @@
 <script src="{{ url_for('static', filename='js/sortable_table.js') }}"></script>
     <div class="main">
         <h1>{{ season }}</h1>
+        <h2><a href=" {{ url_for('edit_season', id=season.id) }} ">Edit</a></h2>
         <br>
         <div>
             <table class="table sortable_table">

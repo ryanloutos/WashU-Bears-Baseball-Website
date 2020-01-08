@@ -75,6 +75,7 @@ class Season(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     semester = db.Column(db.String(8), index=True)
     year = db.Column(db.String(8), index=True)
+    current_season = db.Column(db.Boolean, index=True)
     outings = db.relationship('Outing', backref='season', lazy='dynamic')
 
     def __repr__(self):

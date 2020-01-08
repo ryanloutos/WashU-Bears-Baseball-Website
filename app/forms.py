@@ -25,6 +25,7 @@ class SeasonForm(FlaskForm):
         choices=[('Fall', 'Fall'), ('Spring', 'Spring')],
         validators=[DataRequired()])
     year = StringField('Year', validators=[DataRequired()])
+    current_season = BooleanField('Current Season?')
     submit = SubmitField('Create New Season')
 
 

@@ -37,10 +37,11 @@
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Seasons <span class="caret"></span></a>
             <ul class="dropdown-menu">
-                <li><a href="{{ url_for('season', id=3) }}">Fall 2019</a></li>
-                <li><a href="{{ url_for('season', id=4) }}">Spring 2020</a></li>
+                <li><a href="{{ url_for('season', id=current_season.id) }}">{{ current_season }}</a></li>
                 <li role="separator" class="divider"></li>
-                <li><a href="{{ url_for('season', id=2) }}">Spring 2019</a></li>
+                {% for s in old_seasons %}
+                  <li><a href="{{ url_for('season', id=s.id) }}">{{ s }}</a></li>
+                {% endfor %}
             </ul>
           </li>
           <li><a href="{{ url_for('all_opponents') }}">Opponents</a></li>
