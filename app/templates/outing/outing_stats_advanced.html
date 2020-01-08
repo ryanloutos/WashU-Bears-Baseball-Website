@@ -7,10 +7,94 @@
     <script src="http://kozea.github.com/pygal.js/javascripts/svg.jquery.js"></script>
     <script src="http://kozea.github.com/pygal.js/javascripts/pygal-tooltips.js"></script>
     <script src="{{ url_for('static', filename='js/stat_selector.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidenav.css') }}">
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             show_stat();
+            var ctx = document.getElementById('velo-over-time').getContext('2d');
+            var chart = new Chart(ctx, {
+                // The type of chart we want to create
+                type: 'line',
+
+                // The data for our dataset
+                data: {
+                    labels: {{ labels }},
+                    datasets: [{
+                        label: 'FB',
+                        borderColor: 'rgb(230, 25, 75)',
+                        backgroundColor: 'rgba(0, 0, 0, 0)',
+                        pointRadius: 2,
+                        lineTension: 0,
+                        data: [
+                            {% for v in velos['FB'] %}
+                                {{v}},
+                            {% endfor %}
+                        ]
+                    },{
+                        label: 'CB',
+                        borderColor: 'rgb(0, 130, 200)',
+                        backgroundColor: 'rgba(0, 0, 0, 0)',
+                        pointRadius: 2,
+                        lineTension: 0,
+                        data: [
+                            {% for v in velos['CB'] %}
+                                {{v}},
+                            {% endfor %}
+                        ] 
+                    },{
+                        label: 'SL',
+                        borderColor: 'rgb(0, 200, 0)',
+                        backgroundColor: 'rgba(0, 0, 0, 0)',
+                        pointRadius: 2,
+                        lineTension: 0,
+                        data: [
+                            {% for v in velos['SL'] %}
+                                {{v}},
+                            {% endfor %}
+                        ] 
+                    },{
+                        label: 'CH',
+                        borderColor: 'rgb(200, 200, 0)',
+                        backgroundColor: 'rgba(0, 0, 0, 0)',
+                        pointRadius: 2,
+                        lineTension: 0,
+                        data: [
+                            {% for v in velos['CH'] %}
+                                {{v}},
+                            {% endfor %}
+                        ] 
+                    },{
+                        label: 'CT',
+                        borderColor: 'rgb(0, 200, 200)',
+                        backgroundColor: 'rgba(0, 0, 0, 0)',
+                        pointRadius: 2,
+                        lineTension: 0,
+                        data: [
+                            {% for v in velos['CT'] %}
+                                {{v}},
+                            {% endfor %}
+                        ] 
+                    },{
+                        label: 'SM',
+                        borderColor: 'rgb(0, 128, 128)',
+                        backgroundColor: 'rgba(0, 0, 0, 0)',
+                        pointRadius: 2,
+                        lineTension: 0,
+                        data: [
+                            {% for v in velos['SM'] %}
+                                {{v}},
+                            {% endfor %}
+                        ] 
+                    }
+                    ]
+                },
+
+                // Configuration options go here
+                options: {
+                    spanGaps: true,
+                }
+            });
         });
         function show_stat() {
             which_stat = document.getElementById("stat-selector").value;
@@ -18,6 +102,7 @@
             
             document.getElementById("pitch-stats").style.display = "none"
             document.getElementById("time-to-plate").style.display = "none"
+            document.getElementById("velo-over-time").style.display = "none"
 
             table.style.display = "block";
         }
@@ -36,7 +121,7 @@
             <option value="pitch-stats" selected>Pitch Stats</option>
             <option value="R/L Splits">R/L Splits</option>
             <option value="time-to-plate">Time to Plate</option>
-            <option value="Velo Over Time">Velo Over Time</option>
+            <option value="velo-over-time">Velo Over Time</option>
         </select>
     </p>
     <div id="pitch-stats">
@@ -85,7 +170,7 @@
             {% endfor %}
         </table>
     </div>
-    
-
+    <canvas id="velo-over-time" width="1000" height="400">
+    </canvas>
     </div>
 {% endblock %}

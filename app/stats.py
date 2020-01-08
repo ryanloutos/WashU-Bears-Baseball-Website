@@ -1087,7 +1087,6 @@ def outingPitchStatistics(outing):
         else:
             percentage_thrown = "X"
 
-        print(f"{pitch} - {num_thrown} - {velo_avg} - {velo_max} - {velo_min} - {percentage_thrown} - {strike_percentage}")
         pitch_stats.append(
             {
                 "pitch_type": PitchType(pitch).name,
@@ -1140,3 +1139,17 @@ def outingTimeToPlate(outing):
     return time_to_plate
 
 
+def veloOverTime(outing):
+    velos = {"FB": [], "CB": [], "SL": [], "CH": [], "CT": [], "SM": []}
+    for at_bat in outing.at_bats:
+        for pitch in at_bat.pitches:
+            pitch_type = PitchType(pitch.pitch_type).name
+            for key in velos.keys():
+                if key is pitch_type:
+                    if not pitch.velocity:
+                        velos[key].append("null")
+                    else:
+                        velos[key].append(pitch.velocity)
+                else:
+                    velos[key].append("null")
+    return velos

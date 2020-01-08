@@ -15,7 +15,7 @@ from app.stats import pitchStrikePercentageBarChart, avgPitchVeloPitcher
 from app.stats import pitchUsageByCountLineCharts, pitchStrikePercentageSeason
 from app.stats import pitchUsageSeason, seasonStatLine, staffBasicStats
 from app.stats import staffPitcherAvgVelo, staffPitchStrikePercentage
-from app.stats import outingPitchStatistics, outingTimeToPlate
+from app.stats import outingPitchStatistics, outingTimeToPlate, veloOverTime
 
 # Handle CSV uploads
 import csv
@@ -768,6 +768,17 @@ def outing_stats_advanced(id):
     pitch_stats = outingPitchStatistics(outing)
     time_to_plate = outingTimeToPlate(outing)
 
+    # setting up horizontal axis for line chart
+    horizontal_axis = []
+    i = 1
+    for ab in outing.at_bats:
+        for p in ab.pitches:
+            horizontal_axis.append(i)
+            i += 1
+    
+
+    velos = veloOverTime(outing)
+
     # render template with all the statistical data calculated from the outing
     return render_template(
         'outing/outing_stats_advanced.html',
@@ -776,6 +787,8 @@ def outing_stats_advanced(id):
         opponent=opponent,
         pitch_stats=pitch_stats,
         time_to_plate=time_to_plate,
+        labels=horizontal_axis,
+        velos=velos,
         current_season=getCurrentSeason(),
         old_seasons=getOldSeasons()
     )
