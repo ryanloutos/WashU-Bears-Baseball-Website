@@ -7,32 +7,59 @@ The blog walks through setting up a flask app for someone with no experience and
 to get the ball rolling
 
 To do
-- Go through code and make sure everything is neat and organized where it is at (need more docstrings still)
-- Get debugger working for vscode
-- Add basic baseball stat division(hits, walks, ...)
-- summary stats by game(player home page)
-- game selected summary stats(able to choose outings to compare/ over time)
-- whole team comparison and global tables
-- tracking individual pitches over a season
-- Improve little data entry things
-- Figure out way to make data entry fast and easy
-- Create a filter so you can choose to see cumulative data for team and/or individual pitchers over a certain time, season, etc.
-- Make a neat, clean, easy to read summary page for any outing(s)
-
-Currently being worked on:
-- Creating a csv entry point for pitch information
-  - TODO:
-    - more file validation points
-    - make sure when saving that temp file names are not duplicated
-    - safety checks for file existence
-    - Add auto-index for outs
-    - account for user input mistakes (spaces, capitals, strings vs numbers)
-    - improve instruction set of upload file
-  - DONE:
-    - It is possible to upload outings via CSV and have them saved to database
-
-
-
-
+- Staff Pages
+  - Put something on the homepage
+  - Basic Stats
+    - Season choice?
+    - Organize stats better (i.e. game vs. practice outings)
+    - Create filter to look at over a certain date
+    - Ideas: 
+      - Simplify by just picking a few stats important to team (K/BB, S%, etc)
+      - Make a new page for just summary statistics important to coach?
+  - Advanced Stats
+    - Season choice?
+    - Organize stats better (i.e. game vs. practice outings)
+    - Create filter to look at over a certain date
+    - Ideas:
+      - Just add a bunch of detailed random statistics that may be useful to look at
+        such as R/L splits, velo with runners on/off, etc.
+- Pitcher Pages
+  - Update home page with graph? More info? Headshot? Action shot?
+  - Fix the way dates are displayed to be MM/DD/YYYY
+  - Outings
+    - Create season selector
+  - Basic Stats
+    - Create separate tables for matchups or regular games
+    - Fix career totals so they match the season being viewed
+    - Change how pitch usage is displayed (add color maybe?)
+- Outing Pages
+  - Put something interesting on front page of outing
+  - Fix the way the date is displayed....add year?
+  - Add Basic Stats page
+  - Advanced Stats
+    - Add different statistics
+    - Make tables better looking
+- Season Pages
+  - Fix the way dates are displayed
+  - Fix Edit button or put in different place
+  - Add sidenav for specific seasons?
+- Opponent Pages
+  - Make "All Opponents" page better looking
+  - Add team logo or something to opponent table to be displayed
+  - Add "Conference" boolean column to Opponent table
+  - Homepage
+    - Add team logo?
+    - Move "Edit" button to sidenav for admins
+    - Put something interesting such as notes, updated record, idk
+    - Roster
+      - Fix "shortnames" to only have their initials
+      - Add position column to batter?
+      - Add throws column to batter?
+    - Add navbar pages: maybe add a "notes" tab?
+- Batter Pages
+  - Added sidenav for a specific batter
+  - "Spray" page?
+  - "Sequencing" page?
+  - "Notes" page?
 
 Cool README.md style stuff [here](https://help.github.com/en/github/writing-on-github/basic-writing-and-formatting-syntax)

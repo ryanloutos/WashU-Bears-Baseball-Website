@@ -439,21 +439,21 @@ def pitcher(id):
     # set the 3 most recent outings thrown by pitcher
     if num_outings >= 3:
         recent_outings = [outings[i] for i in range(3)]
-    else:
-        recent_outings = []
-
-    for outing in outings:
-        if outing.date >= recent_outings[2].date:
-            if outing.date >= recent_outings[1].date:
-                if outing.date >= recent_outings[0].date:
-                    recent_outings[2] = recent_outings[1]
-                    recent_outings[1] = recent_outings[0]
-                    recent_outings[0] = outing
+        for outing in outings:
+            if outing.date >= recent_outings[2].date:
+                if outing.date >= recent_outings[1].date:
+                    if outing.date >= recent_outings[0].date:
+                        recent_outings[2] = recent_outings[1]
+                        recent_outings[1] = recent_outings[0]
+                        recent_outings[0] = outing
+                    else:
+                        recent_outings[2] = recent_outings[1]
+                        recent_outings[1] = outing
                 else:
-                    recent_outings[2] = recent_outings[1]
-                    recent_outings[1] = outing
-            else:
-                recent_outings[2] = outing
+                    recent_outings[2] = outing
+    else:
+        recent_outings = [outings[i] for i in range(num_outings)]
+
 
     return render_template('pitcher/pitcher_home.html',
                            title=pitcher,
