@@ -16,6 +16,7 @@ from app.stats import pitchUsageByCountLineCharts, pitchStrikePercentageSeason
 from app.stats import pitchUsageSeason, seasonStatLine, staffBasicStats
 from app.stats import staffPitcherAvgVelo, staffPitchStrikePercentage
 from app.stats import outingPitchStatistics, outingTimeToPlate, veloOverTime
+from app.stats import teamImportantStatsSeason
 
 # Handle CSV uploads
 import csv
@@ -299,9 +300,15 @@ def staff():
     RETURN:
         -staff.html
     '''
+    pitchers = User.query.filter(User.grad_year != 'Coach/Manager').filter(User.retired == 0).order_by(User.lastname).all()
+
+    strike_percentage, fps_percentage, k_to_bb = teamImportantStatsSeason(pitchers)
 
     return render_template('staff/staff_home.html',
                            title='WashU Pitching Staff',
+                           strike_percentage=strike_percentage,
+                           fps_percentage=fps_percentage,
+                           k_to_bb=k_to_bb,
                            current_season=getCurrentSeason(),
                            old_seasons=getOldSeasons())
 
@@ -1983,5 +1990,5 @@ def getCurrentSeason():
     return current_season
 
 def getOldSeasons():
-    old_seasons = Season.query.filter_by(current_season=False).all()
+    old_seasons = Season.query.filter_by(current_season=False).order_by(Season.year).all()
     return old_seasons

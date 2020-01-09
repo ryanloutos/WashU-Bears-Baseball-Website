@@ -3,11 +3,59 @@
 {% block styles %}
     {{ super() }}
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidenav.css') }}">
+    <style>
+        #team-season-stats {
+            width: 300px;
+        }
+    </style>
 {% endblock %}
 
 {% block app_content %}
     {% include "staff/staff_sidenav.html" %}
     <div class="main">
-        <h1>Pitching Staff 19-20</h1> 
+        <h1>Pitching Staff 19-20</h1>
+        <h2>Current Season: {{ current_season }}</h2> 
+        <p>
+            <table class="table" id="team-season-stats">
+                <tr>
+                    <th>Statistic</th>
+                    <th>Goal</th>
+                    <th>Current Value</th>
+                </tr>
+                <tr>
+                    <td>Strike%</td>
+                    <td>65%</td>
+                    {% if strike_percentage >= 65 %}
+                        <td style="background-color: rgb(0,100,0); color: white">
+                    {% else %}
+                        <td style="background-color: rgb(200,0,0); color: white">
+                    {% endif %}
+                    {{ strike_percentage }}%
+                    </td>
+                </tr>
+                <tr>
+                    <td>FPS%</td>
+                    <td>60%</td>
+                    {% if fps_percentage >= 60 %}
+                        <td style="background-color: rgb(0,100,0); color: white">
+                    {% else %}
+                        <td style="background-color: rgb(200,0,0); color: white">
+                    {% endif %}
+                    {{ fps_percentage }}%
+                    </td>
+                </tr>
+                <tr>
+                    <td>K/BB</td>
+                    <td>2</td>
+                    {% if k_to_bb >= 2 %}
+                        <td style="background-color: rgb(0,100,0); color: white">
+                    {% else %}
+                        <td style="background-color: rgb(200,0,0); color: white">
+                    {% endif %}
+                    {{ k_to_bb }}%
+                    </td>
+                </tr>
+            </table>
+        </p>
     </div>
 {% endblock %}

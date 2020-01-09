@@ -4,6 +4,7 @@ import pygal
 from pygal.style import DarkSolarizedStyle, DefaultStyle
 import lxml
 import math
+from app.models import Season
 
 
 class PitchType(Enum):
@@ -1153,3 +1154,59 @@ def veloOverTime(outing):
                 else:
                     velos[key].append("null")
     return velos
+
+
+def teamImportantStatsSeason(pitchers): 
+    # weighted strike percentage
+    strikes = 0
+    total_pitches = 0
+    strike_percentage = 0
+    # weighted FPS
+    first_pitch_strikes = 0
+    first_pitches = 0
+    fps_percentage = 0 
+    # K/BB Ratio
+    strikeouts = 0
+    walks = 0
+    k_to_bb = 0
+
+    for p in pitchers:
+        for o in p.outings:
+            current_inning = 1
+            season = Season.query.filter_by(id=o.season_id).first()
+            if season.current_season:
+                for ab in o.at_bats:
+                    for index, p in enumerate(ab.pitches):
+                        total_pitches += 1
+                        if p.pitch_result is not "B":
+                            strikes += 1 
+                        if index is 0:
+                            first_pitches += 1
+                            if p.pitch_result is not "B":
+                                first_pitch_strikes += 1
+                        if p.ab_result in ["K", "KL"]:
+                            strikeouts += 1
+                        if p.ab_result == "BB":
+                            walks += 1
+
+    if total_pitches is 0:
+        strike_percentage = "X"
+    else:
+        strike_percentage = percentage(strikes/total_pitches, 0)
+    
+    if first_pitch_strikes is 0:
+        fps_percentage = "X"
+    else:
+        fps_percentage = percentage(first_pitch_strikes/first_pitches)
+    
+    if walks is 0:
+        if strikeouts is 0:
+            k_to_bb = 0
+        else: 
+            k_to_bb = "inf"
+    else:
+        k_to_bb = truncate(strikeouts/walks, 1)
+
+    return strike_percentage, fps_percentage, k_to_bb
+
+

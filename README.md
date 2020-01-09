@@ -1,14 +1,9 @@
 Baseball-Pitching-Portal
-Collaborators: Ryan Loutos, Mitchell Black, Brian Hall
-
-The project structure and login pages were learned and/or taken from 
-https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world
-The blog walks through setting up a flask app for someone with no experience and was used 
-to get the ball rolling
+Collaborators: Ryan Loutos, Mitchell Black, Brian Hall, Kenny Dorian
 
 To do
 - Staff Pages
-  - Put something on the homepage
+  + Put something on the homepage
   - Basic Stats
     - Season choice?
     - Organize stats better (i.e. game vs. practice outings)
