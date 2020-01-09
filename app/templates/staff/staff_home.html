@@ -13,7 +13,7 @@
 {% block app_content %}
     {% include "staff/staff_sidenav.html" %}
     <div class="main">
-        <h1>Pitching Staff 19-20</h1>
+        <h1>Pitching Staff 19-20</h1> <br>
         <h2>Current Season: {{ current_season }}</h2> 
         <p>
             <table class="table" id="team-season-stats">
@@ -52,7 +52,7 @@
                     {% else %}
                         <td style="background-color: rgb(200,0,0); color: white">
                     {% endif %}
-                    {{ k_to_bb }}%
+                    {{ k_to_bb }}
                     </td>
                 </tr>
             </table>
