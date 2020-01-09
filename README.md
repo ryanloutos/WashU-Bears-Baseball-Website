@@ -3,7 +3,6 @@ Collaborators: Ryan Loutos, Mitchell Black, Brian Hall, Kenny Dorian
 
 To do
 - Staff Pages
-  + Put something on the homepage
   - Basic Stats
     - Season choice?
     - Organize stats better (i.e. game vs. practice outings)
