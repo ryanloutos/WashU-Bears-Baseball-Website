@@ -3,5 +3,5 @@
     <a href="{{ url_for('pitcher_outings', id=pitcher.id) }}">Outings</a>
     <a href="{{ url_for('pitcher_stats_basic', id=pitcher.id) }}">Basic Stats</a>
     <a href="{{ url_for('pitcher_stats_advanced', id=pitcher.id) }}">Advanced Stats</a>
-    <a href="">Videos</a>
+    <a href="{{ url_for('pitcher_videos', id=pitcher.id) }}">Videos</a>
 </div>

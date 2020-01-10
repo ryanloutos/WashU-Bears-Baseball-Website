@@ -622,7 +622,21 @@ def pitcher_stats_advanced(id):
                            current_season=getCurrentSeason(),
                            old_seasons=getOldSeasons())
 
-# ***************-SEASON HOMEPAGE-*************** # 
+
+@app.route('/pitcher/<id>/videos', methods=["GET", "POST"])
+@login_required
+def pitcher_videos(id):
+
+    pitcher = User.query.filter_by(id=id).first()
+
+    return render_template(
+        '/pitcher/pitcher_videos.html',
+        title=pitcher,
+        pitcher=pitcher,
+        current_season=getCurrentSeason(),
+        old_seasons=getOldSeasons())
+
+# ***************-SEASON HOMEPAGE-*************** #
 @app.route('/season/<id>')
 @login_required
 def season(id):
@@ -782,7 +796,6 @@ def outing_stats_advanced(id):
         for p in ab.pitches:
             horizontal_axis.append(i)
             i += 1
-    
 
     velos = veloOverTime(outing)
 
@@ -799,6 +812,22 @@ def outing_stats_advanced(id):
         current_season=getCurrentSeason(),
         old_seasons=getOldSeasons()
     )
+
+
+@app.route('/outing/<id>/videos', methods=["GET", "POST"])
+@login_required
+def outing_videos(id):
+
+    outing = Outing.query.filter_by(id=id).first()
+
+    return render_template(
+        '/outing/outing_videos.html',
+        title=outing,
+        outing=outing,
+        current_season=getCurrentSeason(),
+        old_seasons=getOldSeasons()
+    )
+
 
 # ***************-BATTER HOMEPAGE-*************** # 
 @app.route('/batter/<id>', methods=['GET', 'POST'])
