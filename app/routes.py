@@ -860,7 +860,7 @@ def batter(id):
                            old_seasons=getOldSeasons())
 
 
-@app.route("/batter/<batter_id>/at_bats")
+@app.route("/batter/<batter_id>/at_bats", methods=['GET', 'POST'])
 @login_required
 def batter_at_bats(batter_id):
     batter = Batter.query.filter_by(id=batter_id).first()
@@ -874,11 +874,11 @@ def batter_at_bats(batter_id):
         '/opponent/batter/batter_at_bats.html',
         batter=batter,
         current_season=getCurrentSeason(),
-        old_season=getOldSeasons()
+        old_seasons=getOldSeasons()
     )
 
 
-@app.route("/batter/<batter_id>/at_bat/<ab_num>")
+@app.route("/batter/<batter_id>/at_bat/<ab_num>", methods=['GET', 'POST'])
 @login_required
 def batter_at_bat(batter_id, ab_num):
     batter = Batter.query.filter_by(id=batter_id).first()
@@ -892,10 +892,26 @@ def batter_at_bat(batter_id, ab_num):
         batter=batter,
         title=batter.name,
         current_season=getCurrentSeason(),
-        old_season=getOldSeasons()
+        old_seasons=getOldSeasons()
     )
 
-# ***************-OPPONENT HOMEPAGE-*************** # 
+
+@app.route("/batter/<batter_id>/pitches_against", methods=['GET', 'POST'])
+@login_required
+def batter_pitches_against(batter_id):
+
+    batter = Batter.query.filter_by(id=batter_id).first()
+
+    return render_template(
+        'opponent/batter/batter_pitches_against.html',
+        title=batter,
+        batter=batter,
+        current_season=getCurrentSeason(),
+        old_seasons=getOldSeasons()
+    )
+
+
+# ***************-OPPONENT HOMEPAGE-*************** #
 @app.route('/opponent/<id>', methods=['GET', 'POST'])
 @login_required
 def opponent(id):

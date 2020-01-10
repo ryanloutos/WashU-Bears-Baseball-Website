@@ -22,33 +22,33 @@
                 <th>Inning</th>
             </tr>
             {% for pitch in at_bat.pitches %}
-            <tr style="background-color: {{ color }};">
-                <td>{{ pitch.pitch_num }}</td>
-                {% if pitch.velocity==None %}
-                    <td></td>
-                {% else %}
-                    <td>{{ pitch.velocity }}</td>
-                {% endif %}
-                <td>{{ pitch.lead_runner }}</td>
-                {% if pitch.time_to_plate==None %}
-                    <td></td>
-                {% else %}
-                    <td>{{ pitch.time_to_plate }}</td>
-                {% endif %}
-                <td>{{ pitch.pitch_type }}</td>
-                <td>{{ pitch.pitch_result }}</td>
-                {% if pitch.hit_spot %}
-                    <td>X</td>
-                {% else %}
-                    <td></td>
-                {% endif %}
-                <td>{{ pitch.count }}</td>
-                <td>{{ pitch.ab_result }}</td>
-                <td>{{ pitch.traj }}</td>
-                <td>{{ pitch.fielder }}</td>
-                <td>{{ pitch.inning }}</td>
-            </tr>
-        {% endfor %}
+                <tr>
+                    <td>{{ pitch.pitch_num }}</td>
+                    {% if pitch.velocity==None %}
+                        <td></td>
+                    {% else %}
+                        <td>{{ pitch.velocity }}</td>
+                    {% endif %}
+                    <td>{{ pitch.lead_runner }}</td>
+                    {% if pitch.time_to_plate==None %}
+                        <td></td>
+                    {% else %}
+                        <td>{{ pitch.time_to_plate }}</td>
+                    {% endif %}
+                    <td>{{ pitch.pitch_type }}</td>
+                    <td>{{ pitch.pitch_result }}</td>
+                    {% if pitch.hit_spot %}
+                        <td>X</td>
+                    {% else %}
+                        <td></td>
+                    {% endif %}
+                    <td>{{ pitch.count }}</td>
+                    <td>{{ pitch.ab_result }}</td>
+                    <td>{{ pitch.traj }}</td>
+                    <td>{{ pitch.fielder }}</td>
+                    <td>{{ pitch.inning }}</td>
+                </tr>
+            {% endfor %}
         </table>
     </div>
 {% endblock %}
