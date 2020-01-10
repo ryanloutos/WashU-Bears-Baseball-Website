@@ -218,11 +218,11 @@ def edit_user(id):
     if current_user.id != user.id:
         flash("You can only make changes to your own account")
         redirect(url_for("index"))
-    
+
     # when the 'save changes' button is pressed
     form = EditUserForm()
     if form.validate_on_submit():
-        
+
         # update username and email
         user.username = form.username.data
         user.email = form.email.data
@@ -261,11 +261,11 @@ def change_password(id):
     if current_user.id != user.id:
         flash("You can only make changes to your own account")
         redirect(url_for("index"))
-    
+
     # when the 'save changes' button is pressed
     form = ChangePasswordForm()
     if form.validate_on_submit():
-        
+
         if not user.check_password(form.current_password.data):
             flash("Current password entered is incorrect")
             return redirect(url_for("change_password", id=user.id))
@@ -888,7 +888,38 @@ def opponent(id):
                            current_season=getCurrentSeason(),
                            old_seasons=getOldSeasons())
 
-# ***************-ALL OPPONENTS-*************** # 
+
+@app.route("/opponent/<id>/GamesResults", methods=["GET", "POST"])
+@login_required
+def opponent_games_results(id):
+
+    opponent = Opponent.query.filter_by(id=id).first()
+
+    return render_template(
+        '/opponent/opponent_GamesResults.html',
+        title=opponent,
+        opponent=opponent,
+        current_season=getCurrentSeason(),
+        old_seasons=getOldSeasons()
+    )
+
+
+@app.route("/opponent/<id>/ScoutingStats", methods=["GET", "POST"])
+@login_required
+def opponent_scouting_stats(id):
+    opponent = Opponent.query.filter_by(id=id).first()
+
+    return render_template(
+        '/opponent/opponent_ScoutingStats.html',
+        title=opponent,
+        opponent=opponent,
+        current_season=getCurrentSeason(),
+        old_seasons=getOldSeasons()
+    )
+
+
+
+# ***************-ALL OPPONENTS-*************** #
 @app.route('/all_opponents', methods=['GET', 'POST'])
 @login_required
 def all_opponents():
@@ -1004,7 +1035,7 @@ def edit_season(id):
     if not current_user.admin:
         flash('You are not an admin and cannot edit a season')
         return redirect(url_for('index'))
-    
+
     # get the season that wants to be edited
     season = Season.query.filter_by(id=id).first()
 
