@@ -3,7 +3,7 @@
 {% block styles %}
     {{ super() }}
     <script src="{{ url_for('static', filename='js/sortable_table.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/season_selector.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/checkbox_table.js') }}"></script>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidenav.css') }}">
 {% endblock %}
 
@@ -17,13 +17,16 @@
         <div>
             <h4>Stat Line by Outing Over Career</h4>
             <p>
-                Select Season:
-                <select onchange="season_selector('basic-stat-season-selector', 'basic-stat-season-table')" name="basic-stat-season-selector" id="basic-stat-season-selector">
-                    <option value="All Seasons" selected>All Seasons</option>
+                <h6>Select Season(s):</h6>
+                <!-- setup checkbox based logic -->
+                <div id="season-checkbox">
                     {% for season in seasons %}
-                        <option value="{{ season }}">{{season}}</option>
+                        <p>
+                            <input type="checkbox" onclick="checkbox_table('basic-stat-season-table', 'season-checkbox', 2)" value="{{ season }}">{{ season }}</input>
+                        </p>
                     {% endfor %}
-                </select>
+                </div>
+                <!-- end checkbox based logic -->
             </p>
             <table class="table tables sortable_table" id="basic-stat-season-table">
                 <tr class="table-headers">

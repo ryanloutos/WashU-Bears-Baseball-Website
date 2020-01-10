@@ -4,7 +4,7 @@ Collaborators: Ryan Loutos, Mitchell Black, Brian Hall, Kenny Dorian
 To do
 - Staff Pages
   - Basic Stats
-    - Season choice?
+    - [x] Season(s) choice
     - Organize stats better (i.e. game vs. practice outings)
     - Create filter to look at over a certain date
     - Ideas: 
@@ -47,6 +47,7 @@ To do
     - Put something interesting such as notes, updated record, idk
     - Roster
       - Fix "shortnames" to only have their initials
+      - ^I dont know about this one bc sometimes in velo sheet we only have number
       - Add position column to batter?
       - Add throws column to batter?
     - Add navbar pages: maybe add a "notes" tab?
