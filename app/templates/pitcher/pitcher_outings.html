@@ -15,8 +15,17 @@
         </h1>
         <br>
         <h4>Outings</h4>
+        <p>
+            <h5>Select a Season:</h5>
+            <select name="Outings Season Selector" id="outings-season-selector" onchange="season_selector('outings-season-selector', 'outings-table', 1)">
+                <option value="All Seasons">All Seasons</option>
+                {% for season in seasons %}
+                    <option value="{{ season }}">{{ season }}</option>
+                {% endfor %}
+            </select>
+        </p>
         <div>
-            <table class='table sortable_table'>
+            <table class='table sortable_table' id='outings-table'>
                 <tr class="table-headers">
                     <th onclick="sortTable(0, 0)">Date</th>
                     <th onclick="sortTable(1, 0)">Season</th>
@@ -24,7 +33,7 @@
                     <th>View</th>
                 </tr>
                 {% for o in pitcher.outings %}
-                <tr>
+                <tr class="data-row">
                     <td>{{ o.date }}</td>
                     <td>{{ o.season }}</td>
                     <td>{{ o.opponent }}</td>
