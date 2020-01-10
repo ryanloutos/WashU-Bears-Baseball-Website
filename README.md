@@ -43,7 +43,7 @@ To do
   - Add "Conference" boolean column to Opponent table
   - Homepage
     - Add team logo?
-    - Move "Edit" button to sidenav for admins
+    - [x] Move "Edit" button to sidenav for admins
     - Put something interesting such as notes, updated record, idk
     - Roster
       - Fix "shortnames" to only have their initials
