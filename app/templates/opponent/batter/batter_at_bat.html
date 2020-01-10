@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    <div class="main">
+        <h1>
+            {{ batter.name }} vs. {{ pitcher }}
+        </h1> 
+        <h2>Pitches</h2>
+        <table class="table">
+            <tr class="table-headers">
+                <th>Pitch</th>
+                <th>Velo</th>
+                <th>Lead RNR</th>
+                <th>Time to Plate</th>
+                <th>Pitch Type</th>
+                <th>Pitch Result</th>
+                <th>Hit Spot?</th>
+                <th>Count</th>
+                <th>AB Result</th>
+                <th>GB/FB/LD</th>
+                <th>Fielder</th>
+                <th>Inning</th>
+            </tr>
+            {% for pitch in at_bat.pitches %}
+            <tr style="background-color: {{ color }};">
+                <td>{{ pitch.pitch_num }}</td>
+                {% if pitch.velocity==None %}
+                    <td></td>
+                {% else %}
+                    <td>{{ pitch.velocity }}</td>
+                {% endif %}
+                <td>{{ pitch.lead_runner }}</td>
+                {% if pitch.time_to_plate==None %}
+                    <td></td>
+                {% else %}
+                    <td>{{ pitch.time_to_plate }}</td>
+                {% endif %}
+                <td>{{ pitch.pitch_type }}</td>
+                <td>{{ pitch.pitch_result }}</td>
+                {% if pitch.hit_spot %}
+                    <td>X</td>
+                {% else %}
+                    <td></td>
+                {% endif %}
+                <td>{{ pitch.count }}</td>
+                <td>{{ pitch.ab_result }}</td>
+                <td>{{ pitch.traj }}</td>
+                <td>{{ pitch.fielder }}</td>
+                <td>{{ pitch.inning }}</td>
+            </tr>
+        {% endfor %}
+        </table>
+    </div>
+{% endblock %}

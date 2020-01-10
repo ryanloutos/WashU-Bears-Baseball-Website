@@ -121,6 +121,12 @@ class AtBat(db.Model):
         date = outing.date
         return f"{date} vs. {pitcher}"
 
+    def get_pitcher(self):
+        outing = Outing.query.filter_by(id=self.outing_id).first()
+        pitcher = User.query.filter_by(id=outing.user_id).first()
+
+        return pitcher
+
 
 @login.user_loader
 def load_user(id):

@@ -853,11 +853,47 @@ def batter(id):
         flash("URL does not exist")
         return redirect(url_for('index'))
 
-    return render_template('opponent/batter.html',
+    return render_template('opponent/batter/batter.html',
                            title=batter.name,
                            batter=batter,
                            current_season=getCurrentSeason(),
                            old_seasons=getOldSeasons())
+
+
+@app.route("/batter/<batter_id>/at_bats")
+@login_required
+def batter_at_bats(batter_id):
+    batter = Batter.query.filter_by(id=batter_id).first()
+
+    # either bug or user trying to view a batter that DNE
+    if not batter:
+        flash("URL does not exist")
+        return redirect(url_for('index'))
+
+    return render_template(
+        '/opponent/batter/batter_at_bats.html',
+        batter=batter,
+        current_season=getCurrentSeason(),
+        old_season=getOldSeasons()
+    )
+
+
+@app.route("/batter/<batter_id>/at_bat/<ab_num>")
+@login_required
+def batter_at_bat(batter_id, ab_num):
+    batter = Batter.query.filter_by(id=batter_id).first()
+    at_bat = AtBat.query.filter_by(id=ab_num).first()
+    pitcher = at_bat.get_pitcher()
+
+    return render_template(
+        '/opponent/batter/batter_at_bat.html',
+        at_bat=at_bat,
+        pitcher=pitcher,
+        batter=batter,
+        title=batter.name,
+        current_season=getCurrentSeason(),
+        old_season=getOldSeasons()
+    )
 
 # ***************-OPPONENT HOMEPAGE-*************** # 
 @app.route('/opponent/<id>', methods=['GET', 'POST'])
@@ -1178,7 +1214,7 @@ def new_batter():
         flash('Congratulations, you just made a new batter!')
         return redirect(url_for('opponent', id=batter.opponent_id))
 
-    return render_template('opponent/new_batter.html',
+    return render_template('opponent/batter/new_batter.html',
                            title='New Batter',
                            form=form,
                            current_season=getCurrentSeason(),
@@ -1289,7 +1325,7 @@ def edit_batter(id):
         flash('Batter has been adjusted')
         return redirect(url_for('opponent_roster', id=batter.opponent_id))
 
-    return render_template('opponent/edit_batter.html',
+    return render_template('opponent/batter/edit_batter.html',
                            title='Edit Batter',
                            batter=batter,
                            form=form,
