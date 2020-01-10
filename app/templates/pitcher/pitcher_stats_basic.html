@@ -48,7 +48,7 @@
                 </tr>
                 {% for outing in outing_stat_line %}
                     <tr class="data-row">
-                        <td>{{ outing["details"]["date"] }}</td>
+                        <td>{{ outing["details"]["date"].month }}/{{ outing["details"]["date"].day }}/{{ outing["details"]["date"].year }}</td>
                         <td>{{ outing["details"]["opponent"] }}</td>
                         <td>{{ outing["details"]["season"] }}</td>
                         <td>{{ outing["stat_line"]["ip"] }}</td>

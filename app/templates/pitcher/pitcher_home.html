@@ -29,7 +29,7 @@
                 {% for o in recent_outings %}
                     <tr>
                         <td><a href="{{ url_for('outing', id=o.id) }}">View</a></td>
-                        <td>{{ o.date }}</td>
+                        <td>{{ o.date.month }}/{{ o.date.day }}/{{ o.date.year }}</td>
                         <td>{{ o.opponent }}</td>
                     </tr>
                 {% endfor %}

@@ -34,7 +34,7 @@
                 </tr>
                 {% for o in pitcher.outings %}
                 <tr class="data-row">
-                    <td>{{ o.date }}</td>
+                    <td>{{ o.date.month }}/{{ o.date.day }}/{{ o.date.year }}</td>
                     <td>{{ o.season }}</td>
                     <td>{{ o.opponent }}</td>
                     <td><a href="{{ url_for('outing', id=o.id) }}">View Me</a></td>

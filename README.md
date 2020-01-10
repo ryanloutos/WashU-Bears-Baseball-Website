@@ -19,9 +19,9 @@ To do
         such as R/L splits, velo with runners on/off, etc.
 - Pitcher Pages
   - Update home page with graph? More info? Headshot? Action shot?
-  - Fix the way dates are displayed to be MM/DD/YYYY
+  - [x] Fix the way dates are displayed to be MM/DD/YYYY
   - Outings
-    - Create season selector
+    - [x] Create season selector
   - Basic Stats
     - Create separate tables for matchups or regular games
     - Fix career totals so they match the season being viewed
