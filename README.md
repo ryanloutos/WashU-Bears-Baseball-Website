@@ -57,4 +57,10 @@ To do
   - "Sequencing" page?
   - "Notes" page?
 
+- Global Improvement Goals:
+  - API
+    - Generate code for api that can return certain stat calculations based on user controlled input
+    - Attach API calculations to tables in site
+    - Attack user buttons to AJAX requests
+
 Cool README.md style stuff [here](https://help.github.com/en/github/writing-on-github/basic-writing-and-formatting-syntax)
