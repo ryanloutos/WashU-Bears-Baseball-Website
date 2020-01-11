@@ -20,6 +20,8 @@ from app import routes, models, errors
 
 # import blueprints
 from .views.main import main
+from .views.staff import staff_bp
 
 # Register Blueprints
 app.register_blueprint(main)
+app.register_blueprint(staff_bp)
