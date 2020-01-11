@@ -52,7 +52,7 @@ To do
       - Add throws column to batter?
     - Add navbar pages: maybe add a "notes" tab?
 - Batter Pages
-  - Added sidenav for a specific batter
+  - [x] Added sidenav for a specific batter
   - "Spray" page?
   - "Sequencing" page?
   - "Notes" page?

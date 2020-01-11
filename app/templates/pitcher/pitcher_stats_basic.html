@@ -5,6 +5,55 @@
     <script src="{{ url_for('static', filename='js/sortable_table.js') }}"></script>
     <script src="{{ url_for('static', filename='js/checkbox_table.js') }}"></script>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidenav.css') }}">
+    <script>
+        function calc_totals(){
+            let data_table = document.getElementById("basic-stat-season-table");
+            let data_rows = data_table.getElementsByClassName("data-row");
+
+            let sums = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+
+            for(var i = 0; i < data_rows.length; i++){
+                if(data_rows[i].style.display != "none"){
+                    data_items = data_rows[i].getElementsByTagName("td");
+                    for(var j = 3; j < data_items.length; j++){
+                        if(isNaN(Number(data_items[j].innerHTML)) == false){
+                            sums[j-3] += Number(data_items[j].innerHTML);
+                        }
+                    }
+                }
+            }
+
+            // calculate kp9 and bb9
+            sums[11] = (sums[9]+sums[10])/ sums[0] * 9;
+            sums[12] = (sums[7]/sums[0]) * 9
+
+            let totals_row = document.createElement("tr");
+            totals_row.classList.add("sum-row");
+            let blank1 = document.createElement("td");
+            blank1.innerText = "Totals"
+            let blank2 = document.createElement("td");
+            let blank3 = document.createElement("td");
+            totals_row.appendChild(blank1);
+            totals_row.appendChild(blank2);
+            totals_row.appendChild(blank3);
+            for(var i = 0; i < sums.length; i++){
+                let table_data = document.createElement("td");
+                var truncate_nums = [0,11,12]
+                var division_nums = [11,12]
+                if(truncate_nums.includes(i)){
+                    table_data.innerText = sums[i].toFixed(2);
+                    table_data.innerHTML = sums[i].toFixed(2);
+                } else {
+                    table_data.innerText = sums[i].toFixed(0);
+                    table_data.innerHTML = sums[i].toFixed(0);
+                }
+                
+                totals_row.appendChild(table_data);
+            }
+            document.getElementsByClassName("sum-row")[0].parentNode.removeChild(document.getElementsByClassName("sum-row")[0]);
+            data_table.appendChild(totals_row);
+        }
+    </script>
 {% endblock %}
 
 {% block app_content %}
@@ -22,7 +71,7 @@
                 <div id="season-checkbox">
                     {% for season in seasons %}
                         <p>
-                            <input type="checkbox" onclick="checkbox_table('basic-stat-season-table', 'season-checkbox', 2)" value="{{ season }}">{{ season }}</input>
+                            <input type="checkbox" onclick="checkbox_table('basic-stat-season-table', 'season-checkbox', 2); calc_totals()" value="{{ season }}">{{ season }}</input>
                         </p>
                     {% endfor %}
                 </div>
@@ -71,8 +120,8 @@
                         <td>{{ outing["stat_line"]["bf"] }}</td>
                     </tr>
                 {% endfor %}
-                <tr>
-                    <td>Career Totals</td>
+                <tr class="sum-row">
+                    <td>Totals</td>
                     <td></td>
                     <td></td>
                     <td>{{ season_stat_line["ip"] }}</td>
