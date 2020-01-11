@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block styles %}
+    {{ super() }}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    {# Required for data visualization #}
+    <script src="http://kozea.github.com/pygal.js/javascripts/svg.jquery.js"></script>
+    <script src="http://kozea.github.com/pygal.js/javascripts/pygal-tooltips.js"></script>
+    <script src="{{ url_for('static', filename='js/stat_selector.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidenav.css') }}">
+{% endblock %}
+
+{% block app_content %}
+{% include "outing/outing_sidenav.html" %}
+<div class="main">
+    <h1>
+        Basic Stat Support Coming Soon!
+    </h1>
+    <h3>Give us ideas in person please</h3>
+</div>
+{% endblock %}

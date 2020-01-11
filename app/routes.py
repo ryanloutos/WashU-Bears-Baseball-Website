@@ -394,7 +394,7 @@ def staff_retired():
         -None
 
     RETURN:
-        -staff_retired.html which displays a table of 
+        -staff_retired.html which displays a table of
             the retired staff
     '''
 
@@ -461,7 +461,6 @@ def pitcher(id):
     else:
         recent_outings = [outings[i] for i in range(num_outings)]
 
-
     return render_template('pitcher/pitcher_home.html',
                            title=pitcher,
                            pitcher=pitcher,
@@ -469,7 +468,7 @@ def pitcher(id):
                            current_season=getCurrentSeason(),
                            old_seasons=getOldSeasons())
 
-# ***************-PITCHER OUTINGS-*************** # 
+# ***************-PITCHER OUTINGS-*************** #
 @app.route('/pitcher/<id>/outings', methods=['GET', 'POST'])
 @login_required
 def pitcher_outings(id):
@@ -514,7 +513,7 @@ def pitcher_outings(id):
                            current_season=getCurrentSeason(),
                            old_seasons=getOldSeasons())
 
-# ***************-PITCHER BASIC STATS-*************** # 
+# ***************-PITCHER BASIC STATS-*************** #
 @app.route('/pitcher/<id>/stats/basic', methods=['GET', 'POST'])
 @login_required
 def pitcher_stats_basic(id):
@@ -565,7 +564,7 @@ def pitcher_stats_basic(id):
                            current_season=getCurrentSeason(),
                            old_seasons=getOldSeasons())
 
-# ***************-PITCHER ADVANCED STATS-*************** # 
+# ***************-PITCHER ADVANCED STATS-*************** #
 @app.route('/pitcher/<id>/stats/advanced', methods=['GET', 'POST'])
 @login_required
 def pitcher_stats_advanced(id):
@@ -670,7 +669,7 @@ def season(id):
                            current_season=getCurrentSeason(),
                            old_seasons=getOldSeasons())
 
-# ***************-OUTING HOMEPAGE-*************** # 
+# ***************-OUTING HOMEPAGE-*************** #
 @app.route('/outing/<id>', methods=['GET', 'POST'])
 @login_required
 def outing(id):
@@ -703,7 +702,7 @@ def outing(id):
         current_season=getCurrentSeason(),
         old_seasons=getOldSeasons())
 
-# ***************-OUTING PBP-*************** # 
+# ***************-OUTING PBP-*************** #
 @app.route('/outing/<id>/pbp', methods=['GET', 'POST'])
 @login_required
 def outing_pbp(id):
@@ -715,7 +714,7 @@ def outing_pbp(id):
             that is requested to be displayed
 
     RETURN:
-        -outing.html which displays all of the pitches and 
+        -outing.html which displays all of the pitches and
             at bats from the outing
     '''
     # get the outing object associated by the id in the url
@@ -761,7 +760,7 @@ def outing_pbp(id):
         old_seasons=getOldSeasons()
     )
 
-# ***************-OUTING ADVANCED STATS-*************** # 
+# ***************-OUTING ADVANCED STATS-*************** #
 @app.route('/outing/<id>/stats/advanced', methods=['GET', 'POST'])
 @login_required
 def outing_stats_advanced(id):
@@ -814,6 +813,21 @@ def outing_stats_advanced(id):
     )
 
 
+@app.route('/outing/<id>/stats/basic', methods=["GET", "POST"])
+@login_required
+def outing_stats_basic(id):
+
+    outing = Outing.query.filter_by(id=id).first()
+
+    return render_template(
+        '/outing/outing_stats_basic.html',
+        title=outing,
+        outing=outing,
+        current_season=getCurrentSeason(),
+        old_seasons=getOldSeasons()
+    )
+
+
 @app.route('/outing/<id>/videos', methods=["GET", "POST"])
 @login_required
 def outing_videos(id):
@@ -829,7 +843,7 @@ def outing_videos(id):
     )
 
 
-# ***************-BATTER HOMEPAGE-*************** # 
+# ***************-BATTER HOMEPAGE-*************** #
 @app.route('/batter/<id>', methods=['GET', 'POST'])
 @login_required
 def batter(id):
@@ -970,7 +984,6 @@ def opponent_scouting_stats(id):
     )
 
 
-
 # ***************-ALL OPPONENTS-*************** #
 @app.route('/all_opponents', methods=['GET', 'POST'])
 @login_required
@@ -994,7 +1007,7 @@ def all_opponents():
                            current_season=getCurrentSeason(),
                            old_seasons=getOldSeasons())
 
-# ***************-OPPONENT ROSTER-*************** # 
+# ***************-OPPONENT ROSTER-*************** #
 @app.route('/opponent/<id>/roster', methods=['GET', 'POST'])
 @login_required
 def opponent_roster(id):
@@ -1023,7 +1036,7 @@ def opponent_roster(id):
                            current_season=getCurrentSeason(),
                            old_seasons=getOldSeasons())
 
-# ***************-NEW SEASON-*************** # 
+# ***************-NEW SEASON-*************** #
 @app.route('/new_season', methods=['GET', 'POST'])
 @login_required
 def new_season():
@@ -1067,7 +1080,7 @@ def new_season():
                            current_season=getCurrentSeason(),
                            old_seasons=getOldSeasons())
 
-# ***************-EDIT SEASON-*************** # 
+# ***************-EDIT SEASON-*************** #
 @app.route('/edit_season/<id>', methods=['GET', 'POST'])
 @login_required
 def edit_season(id):
@@ -1125,7 +1138,7 @@ def edit_season(id):
                            current_season=getCurrentSeason(),
                            old_seasons=getOldSeasons())
 
-# ***************-NEW OPPONENT-*************** # 
+# ***************-NEW OPPONENT-*************** #
 @app.route('/new_opponent', methods=['GET', 'POST'])
 @login_required
 def new_opponent():
@@ -1183,7 +1196,7 @@ def new_opponent():
                            current_season=getCurrentSeason(),
                            old_seasons=getOldSeasons())
 
-# ***************-NEW BATTER-*************** # 
+# ***************-NEW BATTER-*************** #
 @app.route('/new_batter', methods=['GET', 'POST'])
 @login_required
 def new_batter():
@@ -1201,7 +1214,7 @@ def new_batter():
     if not current_user.admin:
         flash('You are not an admin and cannot create a season')
         return redirect(url_for('index'))
-    
+
     # get the correct form
     form = NewBatterForm()
 
@@ -1209,7 +1222,7 @@ def new_batter():
     opponent_choices = []
     opponents = Opponent.query.all()
     for o in opponents:
-        opponent_choices.append((str(o.id),o.name))
+        opponent_choices.append((str(o.id), o.name))
     form.opponent.choices = opponent_choices
 
     # when the Create Season button is pressed...
@@ -1236,7 +1249,7 @@ def new_batter():
                            current_season=getCurrentSeason(),
                            old_seasons=getOldSeasons())
 
-# ***************-EDIT OPPONENT-*************** # 
+# ***************-EDIT OPPONENT-*************** #
 @app.route('/edit_opponent/<id>', methods=['GET', 'POST'])
 @login_required
 def edit_opponent(id):
@@ -1286,7 +1299,7 @@ def edit_opponent(id):
                            current_season=getCurrentSeason(),
                            old_seasons=getOldSeasons())
 
-# ***************-EDIT BATTER-*************** # 
+# ***************-EDIT BATTER-*************** #
 @app.route('/edit_batter/<id>', methods=['GET', 'POST'])
 @login_required
 def edit_batter(id):
@@ -1317,12 +1330,12 @@ def edit_batter(id):
     if not batter:
         flash('URL does not exist')
         return redirect(url_for('index'))
-    
+
     # set the opponent choices correctly
     opponent_choices = []
     opponents = Opponent.query.all()
     for o in opponents:
-        opponent_choices.append((str(o.id),o.name))
+        opponent_choices.append((str(o.id), o.name))
     form.opponent.choices = opponent_choices
 
     # submit is clicked
@@ -1348,7 +1361,7 @@ def edit_batter(id):
                            current_season=getCurrentSeason(),
                            old_seasons=getOldSeasons())
 
-# ***************-DELETE BATTER-*************** # 
+# ***************-DELETE BATTER-*************** #
 @app.route('/delete_batter/<id>', methods=['GET', 'POST'])
 @login_required
 def delete_batter(id):
@@ -1383,7 +1396,7 @@ def delete_batter(id):
 
     return redirect(url_for('opponent', id=batter.opponent_id))
 
-# ***************-NEW OUTING-*************** # 
+# ***************-NEW OUTING-*************** #
 @app.route('/new_outing', methods=['GET', 'POST'])
 @login_required
 def new_outing():
@@ -1434,7 +1447,7 @@ def new_outing():
                            current_season=getCurrentSeason(),
                            old_seasons=getOldSeasons())
 
-# ***************-NEW OUTING PITCHES-*************** # 
+# ***************-NEW OUTING PITCHES-*************** #
 @app.route('/new_outing_pitches/<outing_id>', methods=['GET', 'POST'])
 @login_required
 def new_outing_pitches(outing_id):
@@ -1492,7 +1505,7 @@ def new_outing_pitches(outing_id):
                 new_at_bat = False
 
             # sets the pitch_num column automatically
-            pitch_num = index+1
+            pitch_num = index + 1
 
             # create Pitch object
             pitch = Pitch(
@@ -1538,7 +1551,7 @@ def new_outing_pitches(outing_id):
         old_seasons=getOldSeasons()
     )
 
-# ***************-EDIT OUTING PITCHES-*************** # 
+# ***************-EDIT OUTING PITCHES-*************** #
 @app.route('/edit_outing_pitches/<outing_id>', methods=['GET', 'POST'])
 @login_required
 def edit_outing_pitches(outing_id):
@@ -1624,7 +1637,7 @@ def edit_outing_pitches(outing_id):
                 new_at_bat = False
 
             # sets the pitch_num column automatically
-            pitch_num = index+1
+            pitch_num = index + 1
 
             # create Pitch object
             pitch = Pitch(atbat_id=current_at_bat.id,
@@ -1686,7 +1699,7 @@ def edit_outing_pitches(outing_id):
                            current_season=getCurrentSeason(),
                            old_seasons=getOldSeasons())
 
-# ***************-EDIT OUTING-*************** # 
+# ***************-EDIT OUTING-*************** #
 @app.route('/edit_outing/<outing_id>', methods=['GET', 'POST'])
 @login_required
 def edit_outing(outing_id):
@@ -1740,7 +1753,7 @@ def edit_outing(outing_id):
                            current_season=getCurrentSeason(),
                            old_seasons=getOldSeasons())
 
-# ***************-DELETE OUTING-*************** # 
+# ***************-DELETE OUTING-*************** #
 @app.route('/delete_outing/<id>', methods=['GET', 'POST'])
 @login_required
 def delete_outing(id):
@@ -1780,7 +1793,7 @@ def delete_outing(id):
     flash('Outing has been deleted')
     return redirect(url_for('pitcher', id=user.id))
 
-# ***************-NEW OUTING CSV-*************** # 
+# ***************-NEW OUTING CSV-*************** #
 @app.route('/new_outing_csv', methods=['GET', 'POST'])
 @login_required
 def new_outing_csv():
@@ -1845,7 +1858,8 @@ def new_outing_csv():
                            current_season=getCurrentSeason(),
                            old_seasons=getOldSeasons())
 
-# ***************-NEW OUTING CSV PITCHES-*************** # 
+
+# ***************-NEW OUTING CSV PITCHES-*************** #
 @app.route(
     '/new_outing_csv_pitches/<file_name>/<outing_id>',
     methods=['GET', 'POST'])
@@ -1862,9 +1876,9 @@ def new_outing_csv_pitches(file_name, outing_id):
     '''
     # location of file name, passed from new_outing_csv via GET
     file_loc = os.path.join(
-                os.path.dirname(os.path.realpath(__file__)),
-                "csv_files",
-                file_name)
+        os.path.dirname(os.path.realpath(__file__)),
+        "csv_files",
+        file_name)
 
     # extract pitches from CSV so they can be put in html form
     pitches = []
@@ -1944,7 +1958,7 @@ def new_outing_csv_pitches(file_name, outing_id):
                 new_at_bat = False
 
             # creates Pitch object based on subform data
-            pitch_num = index+1
+            pitch_num = index + 1
 
             # create Pitch object
             pitch = Pitch(
@@ -2047,9 +2061,9 @@ def validate_CSV(file_loc):
     # fields required to construct a pitch from Pitch class in modals. We need
     # to check if all of these exist.
     pitch_attributes = [
-            "velocity", "lead_runner",
-            "time_to_plate", "pitch_type", "pitch_result", "hit_spot",
-            "ab_result", "traj", "fielder", "inning"]
+        "velocity", "lead_runner", "time_to_plate", "pitch_type",
+        "pitch_result", "hit_spot", "ab_result", "traj", "fielder",
+        "inning"]
     with open(file_loc) as f:
 
         csv_file = csv.DictReader(f)
@@ -2100,6 +2114,7 @@ def updateCount(balls, strikes, pitch_result, ab_result, season):
 def getCurrentSeason():
     current_season = Season.query.filter_by(current_season=True).first()
     return current_season
+
 
 def getOldSeasons():
     old_seasons = Season.query.filter_by(current_season=False).order_by(Season.year).all()

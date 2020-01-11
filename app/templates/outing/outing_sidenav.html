@@ -1,7 +1,7 @@
 <div class="sidenav">
     <a href="{{ url_for('outing', id=outing.id) }}">Outing Home</a>
     <a href="{{ url_for('outing_pbp', id=outing.id) }}">Pitch by Pitch</a>
-    <a href="">Basic Stats</a>
+    <a href="{{ url_for('outing_stats_basic', id=outing.id) }}">Basic Stats</a>
     <a href="{{ url_for('outing_stats_advanced', id=outing.id) }}">Advanced Stats</a>
     <a href="{{ url_for('outing_videos', id=outing.id) }}">Video</a>
     {% if current_user.admin %}
