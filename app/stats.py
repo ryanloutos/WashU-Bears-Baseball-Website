@@ -1041,7 +1041,7 @@ def outingPitchStatistics(outing):
 
     '''
     pitch_stats = []
-    pitches = [1,2,3,4,5,7]
+    pitches = [1,7,2,3,4,5]
 
     for pitch in pitches:
         total_pitches = 0

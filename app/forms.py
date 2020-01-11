@@ -9,7 +9,6 @@ from wtforms.validators import EqualTo, Optional
 from .models import User, Season, Opponent
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 
-
 # Basic form for users to login, must type in both username and a password
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
@@ -80,8 +79,12 @@ class OpponentForm(FlaskForm):
     submit = SubmitField('Create New Opponent')
 
 
-class EditOpponentNameForm(FlaskForm):
+class EditOpponentForm(FlaskForm):
     name = StringField('Team Name', validators=[DataRequired()])
+    file = FileField(
+        'Team Logo',
+        validators=[FileRequired()]   
+    )
     submit = SubmitField('Save Changes')
 
 

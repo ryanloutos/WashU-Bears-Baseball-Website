@@ -5,7 +5,7 @@ from app import app, db
 from app.forms import LoginForm, RegistrationForm, OutingForm, PitchForm
 from app.forms import NewOutingFromCSV, SeasonForm, OpponentForm, BatterForm
 from app.forms import OutingPitchForm, NewOutingFromCSVPitches, EditUserForm
-from app.forms import ChangePasswordForm, EditBatterForm, EditOpponentNameForm
+from app.forms import ChangePasswordForm, EditBatterForm, EditOpponentForm
 from app.forms import NewBatterForm
 from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat
 from app.stats import calcPitchPercentages, pitchUsageByCount, calcAverageVelo
@@ -144,6 +144,38 @@ def batter_pitches_against(batter_id):
     )
 
 
+@app.route("/batter/<batter_id>/spray_chart", methods=['GET', 'POST'])
+@login_required
+def batter_spray_chart(batter_id):
+
+    batter = Batter.query.filter_by(id=batter_id).first()
+    if not batter:
+        flash("URL does not exist")
+        return redurect(url_for('main.index'))
+
+    return render_template(
+        'opponent/batter/batter_spray_chart.html',
+        title=batter,
+        batter=batter
+    )
+
+
+@app.route("/batter/<batter_id>/sequencing", methods=['GET', 'POST'])
+@login_required
+def batter_sequencing(batter_id):
+
+    batter = Batter.query.filter_by(id=batter_id).first()
+    if not batter:
+        flash("URL does not exist")
+        return redurect(url_for('main.index'))
+
+    return render_template(
+        'opponent/batter/batter_sequencing.html',
+        title=batter,
+        batter=batter
+    )
+
+
 # ***************-OPPONENT HOMEPAGE-*************** #
 @app.route('/opponent/<id>', methods=['GET', 'POST'])
 @login_required
@@ -162,6 +194,10 @@ def opponent(id):
     # get the Opponent object assicated with the id
     opponent = Opponent.query.filter_by(id=id).first()
 
+    file_loc = os.path.join("images",
+                            "team_logos",
+                            f"{opponent.id}.png")
+
     # bug or user trying to view opponent that DNE
     if not opponent:
         flash("URL does not exist")
@@ -169,7 +205,8 @@ def opponent(id):
 
     return render_template('opponent/opponent_home.html',
                            title=opponent,
-                           opponent=opponent)
+                           opponent=opponent,
+                           file_loc=file_loc)
 
 
 @app.route("/opponent/<id>/GamesResults", methods=["GET", "POST"])
@@ -491,8 +528,17 @@ def edit_opponent(id):
         return redirect(url_for('main.index'))
 
     # once 'create opponent' button is pressed
-    form = EditOpponentNameForm()
+    form = EditOpponentForm()
     if form.validate_on_submit():
+
+        file_name = opponent.id
+        file_loc = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                                "static",
+                                "images",
+                                "team_logos",
+                                f"{file_name}.png")
+        
+        form.file.data.save(file_loc)
 
         # get the updated Opponent name and commit to database
         opponent.name = form.name.data

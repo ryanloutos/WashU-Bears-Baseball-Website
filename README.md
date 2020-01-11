@@ -28,34 +28,32 @@ To do
     - Change how pitch usage is displayed (add color maybe?)
 - Outing Pages
   - Put something interesting on front page of outing
-  - Fix the way the date is displayed....add year?
+  - [x] Fix the way the date is displayed....add year?
   - Add Basic Stats page
   - Advanced Stats
     - Add different statistics
-    - Make tables better looking
+    - [x] Make tables better looking
 - Season Pages
-  - Fix the way dates are displayed
-  - Fix Edit button or put in different place
+  - [x] Fix the way dates are displayed
+  - [x] Fix Edit button or put in different place
   - Add sidenav for specific seasons?
 - Opponent Pages
   - Make "All Opponents" page better looking
   - Add team logo or something to opponent table to be displayed
   - Add "Conference" boolean column to Opponent table
   - Homepage
-    - Add team logo?
+    - [x] Add team logo?
     - [x] Move "Edit" button to sidenav for admins
     - Put something interesting such as notes, updated record, idk
     - Roster
-      - Fix "shortnames" to only have their initials
-      - ^I dont know about this one bc sometimes in velo sheet we only have number
       - Add position column to batter?
       - Add throws column to batter?
     - Add navbar pages: maybe add a "notes" tab?
-- Batter Pages
+- [x] Batter Pages
   - [x] Added sidenav for a specific batter
-  - "Spray" page?
-  - "Sequencing" page?
-  - "Notes" page?
+  - [x] "Spray" page?
+  - [x] "Sequencing" page?
+  - [x] "Notes" page?
 
 - Global Improvement Goals:
   - API
