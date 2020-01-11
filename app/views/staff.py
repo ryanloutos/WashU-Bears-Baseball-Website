@@ -7,12 +7,12 @@ from app.stats import staffPitcherAvgVelo, staffPitchStrikePercentage
 from app.stats import teamImportantStatsSeason
 
 # setup blueprint
-staff_bp = Blueprint('staff_bp', __name__)
+staff = Blueprint('staff', __name__)
 
 # ***************-STAFF HOMEPAGE-*************** # DONE
-@staff_bp.route('/staff', methods=['GET', 'POST'])
+@staff.route('/staff', methods=['GET', 'POST'])
 @login_required
-def staff():
+def staff_home():
     '''
     STAFF:
     Pages to look at staff as a whole
@@ -34,7 +34,7 @@ def staff():
                            k_to_bb=k_to_bb)
 
 # ***************-STAFF ROSTER-*************** # DONE
-@staff_bp.route('/staff/roster', methods=['GET', 'POST'])
+@staff.route('/staff/roster', methods=['GET', 'POST'])
 @login_required
 def staff_roster():
     '''
@@ -57,7 +57,7 @@ def staff_roster():
 
 # ***************-STAFF BASIC STATS-*********** #
 # could still use sortable functions for class/throws/...
-@staff_bp.route('/staff/basic_stats', methods=['GET', 'POST'])
+@staff.route('/staff/basic_stats', methods=['GET', 'POST'])
 @login_required
 def staff_basic_stats():
     """Basic stats of all players on current roster.
@@ -80,7 +80,7 @@ def staff_basic_stats():
 
 
 # # ***************-STAFF ADVANCED STATS-*********** #
-@staff_bp.route('/staff/advanced_stats', methods=['GET', 'POST'])
+@staff.route('/staff/advanced_stats', methods=['GET', 'POST'])
 @login_required
 def staff_advanced_stats():
     pitchers = User.query.filter(User.grad_year != 'Coach/Manager').filter(User.retired == 0).order_by(User.lastname).all()
@@ -98,7 +98,7 @@ def staff_advanced_stats():
 
 
 # ***************-STAFF RETIRED-*************** # DONE
-@staff_bp.route('/staff/retired', methods=['GET', 'POST'])
+@staff.route('/staff/retired', methods=['GET', 'POST'])
 @login_required
 def staff_retired():
     '''

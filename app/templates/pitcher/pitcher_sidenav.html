@@ -1,7 +1,7 @@
 <div class="sidenav">
-    <a href="{{ url_for('pitcher', id=pitcher.id) }}">Pitcher Home</a>
-    <a href="{{ url_for('pitcher_outings', id=pitcher.id) }}">Outings</a>
-    <a href="{{ url_for('pitcher_stats_basic', id=pitcher.id) }}">Basic Stats</a>
-    <a href="{{ url_for('pitcher_stats_advanced', id=pitcher.id) }}">Advanced Stats</a>
-    <a href="{{ url_for('pitcher_videos', id=pitcher.id) }}">Videos</a>
+    <a href="{{ url_for('pitcher.pitcher_home', id=pitcher.id) }}">Pitcher Home</a>
+    <a href="{{ url_for('pitcher.pitcher_outings', id=pitcher.id) }}">Outings</a>
+    <a href="{{ url_for('pitcher.pitcher_stats_basic', id=pitcher.id) }}">Basic Stats</a>
+    <a href="{{ url_for('pitcher.pitcher_stats_advanced', id=pitcher.id) }}">Advanced Stats</a>
+    <a href="{{ url_for('pitcher.pitcher_videos', id=pitcher.id) }}">Videos</a>
 </div>

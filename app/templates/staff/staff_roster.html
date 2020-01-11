@@ -27,7 +27,7 @@
                     <td>{{ p }}</td>
                     <td>{{ p.throws }}</td>
                     <td>{{ p.grad_year }}</td>
-                    <td><a href="{{ url_for('pitcher', id=p.id) }}">View</a></td>
+                    <td><a href="{{ url_for('pitcher.pitcher_home', id=p.id) }}">View</a></td>
                 </tr>
             {% endfor %}
         </table>
