@@ -8,11 +8,18 @@ from flask_bootstrap import Bootstrap
 # setting up necessary variables, packages, etc on entry
 app = Flask(__name__)
 app.config.from_object(Config)
+
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 login = LoginManager(app)
-login.login_view = 'login'
+login.login_view = 'main.login'
 bootstrap = Bootstrap(app)
 
 # this position is required for flask to function
 from app import routes, models, errors
+
+# import blueprints
+from .views.main import main
+
+# Register Blueprints
+app.register_blueprint(main)

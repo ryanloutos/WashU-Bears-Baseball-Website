@@ -24,263 +24,6 @@ import os
 # for file naming duplication problem
 import random
 
-# ***************-INDEX-*************** # DONE
-@app.route('/')
-@app.route('/index', methods=['GET', 'POST'])
-@login_required
-def index():
-    '''
-    HOME PAGE:
-    Returns the home page of the portal
-
-    PARAM:
-        -None
-
-    RETURN:
-        -Displays index.html
-    '''
-    return render_template('main/index.html',
-                           title='WashU Pitching')
-
-# ***************-LOGIN-*************** # DONE
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    '''
-    LOGIN PAGE:
-    User enters username and password and gets
-    redirected to index.html if successful
-
-    PARAM:
-        -None
-
-    RETURN:
-        -Displays login.html and redirects to index.html or some
-            other page trying to be accessed once login is
-            successful
-    '''
-
-    # if the user is already signed in then send to home page
-    if current_user.is_authenticated:
-        return redirect(url_for('index'))
-
-    form = LoginForm()
-
-    # when the Login button is pressed
-    if form.validate_on_submit():
-
-        # get the user object from the username that was typed in
-        user = User.query.filter_by(username=form.username.data).first()
-
-        # if the username doesn't exist or passwords don't match,
-        # redirect back to login page
-        if user is None or not user.check_password(form.password.data):
-            flash('Invalid username or password')
-            return redirect(url_for('login'))
-
-        # if the user is retired
-        # if user.retired:
-        #     flash("Retired pitcher, can't log in")
-        #     return redirect(url_for('login'))
-
-        # login the user if nothing failed above
-        login_user(user, remember=form.remember_me.data)
-
-        # send user to the page they were trying to get to without logging in
-        next_page = request.args.get('next')
-        if not next_page or url_parse(next_page).netloc != '':
-            next_page = url_for('index')
-        return redirect(next_page)
-
-    return render_template('main/login.html',
-                           title="Login",
-                           form=form)
-
-# ***************-LOGOUT-*************** # DONE
-@app.route('/logout')
-def logout():
-    '''
-    LOGOUT:
-    Logouts the current_user and redirects to login page
-
-    PARAM:
-        -None
-
-    RETURN:
-        -Login page
-    '''
-    logout_user()
-    return redirect(url_for('login'))
-
-# ***************-REGISTER-*************** # DONE
-@app.route('/register', methods=['GET', 'POST'])
-@login_required
-def register():
-    '''
-    REGISTER:
-    Create a new user (player/coach/manager) if current user
-    is an admin
-
-    PARAM:
-        -None
-
-    RETURN:
-        -register.html to create a new user and then
-            redirects back to index.html once the user
-            was created successfully
-    '''
-
-    # if user is not an admin, they can't add player/coach to portal
-    if not current_user.admin:
-        flash('You are not an admin and cannot create a user')
-        return redirect(url_for('index'))
-
-    # when the 'register' button is pressed
-    form = RegistrationForm()
-    if form.validate_on_submit():
-
-        # takes in the data from the form and creates a User object (row)
-        user = User(firstname=form.firstname.data,
-                    lastname=form.lastname.data,
-                    grad_year=form.year.data,
-                    throws=form.throws.data,
-                    username=form.username.data,
-                    email=form.email.data,
-                    admin=form.admin.data,
-                    retired=form.retired.data)
-
-        # sets the password based on what was entered
-        user.set_password(form.password.data)
-
-        # adds new user to database
-        db.session.add(user)
-        db.session.commit()
-
-        # redirects to login page
-        flash('Congratulations, you just created a new user!')
-        return redirect(url_for('login'))
-
-    return render_template('main/register.html',
-                           title='Register',
-                           form=form)
-
-# ***************-PROFILE PAGE-*************** # DONE
-@app.route('/user/<id>', methods=['GET', 'POST'])
-@login_required
-def user(id):
-    '''
-    PROFILE PAGE:
-    View your profile info and all changes to username,
-        email, or password
-
-    PARAM:
-        -id: the id of the currently logged
-            in user
-
-    RETURN:
-        -user.html which displays the basic info
-    '''
-
-    if current_user.id is not int(id):
-        flash('You can only view your own profile page')
-        return redirect(url_for('index'))
-
-    user = User.query.filter_by(id=id).first_or_404()
-
-    return render_template('main/user.html',
-                           user=user)
-
-# ***************-EDIT PROFILE-*************** # DONE
-@app.route('/user/<id>/edit', methods=['GET', 'POST'])
-@login_required
-def edit_user(id):
-    '''
-    EDIT USER:
-    Change username/email associated with account
-
-    PARAM:
-        -id: the id of the user
-
-    RETURN:
-        -edit_user.html which serves a form to make changes
-    '''
-
-    user = User.query.filter_by(id=id).first()
-
-    if not user:
-        flash("URL does not exist")
-        return redirect(url_for('index'))
-
-    # if someone tries to access link directly
-    if current_user.id != user.id:
-        flash("You can only make changes to your own account")
-        return redirect(url_for("index"))
-
-    # when the 'save changes' button is pressed
-    form = EditUserForm()
-    if form.validate_on_submit():
-
-        # update username and email
-        user.username = form.username.data
-        user.email = form.email.data
-
-        # commit the changes
-        db.session.commit()
-
-        # redirects to user page
-        flash('Changes made!')
-        return redirect(url_for('user', id=current_user.id))
-
-    return render_template('main/edit_user.html',
-                           title='Edit User',
-                           user=user,
-                           form=form)
-
-# ***************-CHANGE PASSWORD-*************** # DONE
-@app.route('/user/<id>/change_password', methods=['GET', 'POST'])
-@login_required
-def change_password(id):
-    '''
-    CHANGE PASSWORD:
-
-    PARAM:
-        -id: the id of the user
-
-    RETURN:
-        -change_password.html which serves a form to make changes
-    '''
-
-    user = User.query.filter_by(id=id).first()
-
-    if not user:
-        flash("URL does not exist")
-        return redirect(url_for("index"))
-
-    # if someone tries to access link directly
-    if current_user.id != user.id:
-        flash("You can only make changes to your own account")
-        return redirect(url_for("index"))
-
-    # when the 'save changes' button is pressed
-    form = ChangePasswordForm()
-    if form.validate_on_submit():
-
-        if not user.check_password(form.current_password.data):
-            flash("Current password entered is incorrect")
-            return redirect(url_for("change_password", id=user.id))
-
-        # set the new password
-        user.set_password(form.password.data)
-
-        # commit the changes
-        db.session.commit()
-
-        # redirects to user page
-        flash('Password changed!')
-        return redirect(url_for('user', id=user.id))
-
-    return render_template('main/change_password.html',
-                           title='Change Password',
-                           form=form)
 
 # ***************-STAFF HOMEPAGE-*************** # DONE
 @app.route('/staff', methods=['GET', 'POST'])
@@ -414,12 +157,12 @@ def pitcher(id):
     # either bug or user trying to access pitcher page that DNE
     if not pitcher:
         flash('URL does not exist')
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
 
     # if pitcher is a coach/manager, redirect to index page
     if pitcher.grad_year == 'Coach/Manager':
         flash('Cannot show outings for Coach/Manager')
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
 
     # get the outings associated with that player
     outings = pitcher.outings
@@ -474,12 +217,12 @@ def pitcher_outings(id):
     # either bug or user trying to access pitcher page that DNE
     if not pitcher:
         flash('URL does not exist')
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
 
     # if pitcher is a coach/manager, redirect to index page
     if pitcher.grad_year == 'Coach/Manager':
         flash('Cannot show outings for Coach/Manager')
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
 
     # get the outings associated with that player
     outings = pitcher.outings
@@ -518,12 +261,12 @@ def pitcher_stats_basic(id):
     # either bug or user trying to access pitcher page that DNE
     if not pitcher:
         flash('URL does not exist')
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
 
     # if pitcher is a coach/manager, redirect to index page
     if pitcher.grad_year == 'Coach/Manager':
         flash('Cannot show outings for Coach/Manager')
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
 
     # get the outings associated with that player
     outings = pitcher.outings
@@ -567,12 +310,12 @@ def pitcher_stats_advanced(id):
     # either bug or user trying to access pitcher page that DNE
     if not pitcher:
         flash('URL does not exist')
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
 
     # if pitcher is a coach/manager, redirect to index page
     if pitcher.grad_year == 'Coach/Manager':
         flash('Cannot show outings for Coach/Manager')
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
 
     # get the outings associated with that player
     outings = pitcher.outings
@@ -633,7 +376,7 @@ def season(id):
     # either bug or user trying to access a season id that DNE
     if not season:
         flash('URL does not exist')
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
 
     # outings associated with the specific season
     outings = Outing.query.filter_by(season_id=id).order_by(Outing.date).all()
@@ -664,7 +407,7 @@ def outing(id):
     # if bug or outing trying to be viewed DNE
     if not outing:
         flash("URL does not exits")
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
 
     # get opponent associated with outing
     opponent = Opponent.query.filter_by(id=outing.opponent_id).first()
@@ -672,7 +415,7 @@ def outing(id):
     # if bug or outing trying to be viewed DNE
     if not outing:
         flash("URL does not exits")
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
 
     # render template with all the statistical data calculated from the outing
     return render_template(
@@ -701,7 +444,7 @@ def outing_pbp(id):
     # if bug or outing trying to be viewed DNE
     if not outing:
         flash("URL does not exits")
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
 
     opponent = Opponent.query.filter_by(id=outing.opponent_id).first()
 
@@ -757,7 +500,7 @@ def outing_stats_advanced(id):
     # if bug or outing trying to be viewed DNE
     if not outing:
         flash("URL does not exits")
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
 
     opponent = Opponent.query.filter_by(id=outing.opponent_id).first()
 
@@ -795,7 +538,7 @@ def outing_stats_basic(id):
     outing = Outing.query.filter_by(id=id).first()
     if not outing:
         flash("URL does not exist")
-        return redirect(url_for("index"))
+        return redirect(url_for('main.index'))
 
     return render_template(
         '/outing/outing_stats_basic.html',
@@ -811,7 +554,7 @@ def outing_videos(id):
     outing = Outing.query.filter_by(id=id).first()
     if not outing:
         flash("URL does not exist")
-        return redirect(url_for("index"))
+        return redirect(url_for('main.index'))
 
     return render_template(
         '/outing/outing_videos.html',
@@ -842,7 +585,7 @@ def batter(id):
     # either bug or user trying to view a batter that DNE
     if not batter:
         flash("URL does not exist")
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
 
     return render_template('opponent/batter/batter.html',
                            title=batter.name,
@@ -858,7 +601,7 @@ def batter_at_bats(batter_id):
     # either bug or user trying to view a batter that DNE
     if not batter:
         flash("URL does not exist")
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
 
     return render_template(
         '/opponent/batter/batter_at_bats.html',
@@ -873,12 +616,12 @@ def batter_at_bat(batter_id, ab_num):
     batter = Batter.query.filter_by(id=batter_id).first()
     if not batter:
         flash("URL does not exist")
-        return redurect(url_for('index'))
+        return redurect(url_for('main.index'))
 
     at_bat = AtBat.query.filter_by(id=ab_num).first()
     if not at_bat:
         flash("URL does not exist")
-        return redurect(url_for('index'))
+        return redurect(url_for('main.index'))
 
     pitcher = at_bat.get_pitcher()
 
@@ -898,7 +641,7 @@ def batter_pitches_against(batter_id):
     batter = Batter.query.filter_by(id=batter_id).first()
     if not batter:
         flash("URL does not exist")
-        return redurect(url_for('index'))
+        return redurect(url_for('main.index'))
 
     return render_template(
         'opponent/batter/batter_pitches_against.html',
@@ -928,7 +671,7 @@ def opponent(id):
     # bug or user trying to view opponent that DNE
     if not opponent:
         flash("URL does not exist")
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
 
     return render_template('opponent/opponent_home.html',
                            title=opponent,
@@ -942,7 +685,7 @@ def opponent_games_results(id):
     opponent = Opponent.query.filter_by(id=id).first()
     if not opponent:
         flash("URL does not exist")
-        return redurect(url_for('index'))
+        return redurect(url_for('main.index'))
 
     return render_template(
         '/opponent/opponent_GamesResults.html',
@@ -957,7 +700,7 @@ def opponent_scouting_stats(id):
     opponent = Opponent.query.filter_by(id=id).first()
     if not opponent:
         flash("URL does not exist")
-        return redurect(url_for('index'))
+        return redurect(url_for('main.index'))
 
     return render_template(
         '/opponent/opponent_ScoutingStats.html',
@@ -984,7 +727,7 @@ def all_opponents():
     opponents = Opponent.query.all()
     if not opponents:
         flash("URL does not exist")
-        return redurect(url_for('index'))
+        return redurect(url_for('main.index'))
 
     return render_template('opponent/all_opponents.html',
                            title="All Opponents",
@@ -1011,7 +754,7 @@ def opponent_roster(id):
     # bug or user trying to view opponent that DNE
     if not opponent:
         flash("URL does not exist")
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
 
     return render_template('opponent/opponent_roster.html',
                            title=opponent,
@@ -1036,7 +779,7 @@ def new_season():
     # if user is not an admin, they can't create a new season
     if not current_user.admin:
         flash('You are not an admin and cannot create a season')
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
 
     # when the Create Season button is pressed...
     form = SeasonForm()
@@ -1053,7 +796,7 @@ def new_season():
 
         # redirect back to login page
         flash('Congratulations, you just made a new season!')
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
 
     return render_template('season/new_season.html',
                            title='New Season',
@@ -1078,7 +821,7 @@ def edit_season(id):
     # if user is not an admin, they can't create a new season
     if not current_user.admin:
         flash('You are not an admin and cannot edit a season')
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
 
     # get the season that wants to be edited
     season = Season.query.filter_by(id=id).first()
@@ -1086,7 +829,7 @@ def edit_season(id):
     # if the season doesn't exist, redirect
     if not season:
         flash("This season doesn't exist")
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
 
     # when the Edit Season button is pressed...
     form = SeasonForm()
@@ -1134,7 +877,7 @@ def new_opponent():
     # if user is not an admin, they can't create a new opponent
     if not current_user.admin:
         flash('You are not an admin and cannot create a opponent')
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
 
     # when the Create Opponent button is pressed...
     form = OpponentForm()
@@ -1165,7 +908,7 @@ def new_opponent():
 
         # redirect back to login page
         flash('Congratulations, you just made a new opponent!')
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
 
     return render_template('opponent/new_opponent.html',
                            title='New Opponent',
@@ -1188,7 +931,7 @@ def new_batter():
     # if user is not an admin, they can't create a new season
     if not current_user.admin:
         flash('You are not an admin and cannot create a season')
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
 
     # get the correct form
     form = NewBatterForm()
@@ -1243,7 +986,7 @@ def edit_opponent(id):
     # if user is not an admin, they can't create a new opponent
     if not current_user.admin:
         flash('You are not an admin and cannot edit an opponent')
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
 
     # get opponent object
     opponent = Opponent.query.filter_by(id=id).first()
@@ -1251,7 +994,7 @@ def edit_opponent(id):
     # either bug or admin trying to edit opponent that doesn't exist
     if not opponent:
         flash('URL does not exist')
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
 
     # once 'create opponent' button is pressed
     form = EditOpponentNameForm()
@@ -1289,7 +1032,7 @@ def edit_batter(id):
     # make sure user is admin
     if not current_user.admin:
         flash("You are not an admin")
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
 
     # get the correct form
     form = EditBatterForm()
@@ -1300,7 +1043,7 @@ def edit_batter(id):
     # bug or trying to edit batter that doesn't exist
     if not batter:
         flash('URL does not exist')
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
 
     # set the opponent choices correctly
     opponent_choices = []
@@ -1349,7 +1092,7 @@ def delete_batter(id):
     # only admins can go back and edit outing data
     if not current_user.admin:
         flash("You are not an admin and cannot edit someone else's outing")
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
 
     # get the batter object associated with the id
     batter = Batter.query.filter_by(id=id).first()
@@ -1357,7 +1100,7 @@ def delete_batter(id):
     # bug of trying to delete batter that doesn't exist
     if not batter:
         flash("Can't delete a batter that doesn't exist")
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
 
     # delete the batter from database
     db.session.delete(batter)
@@ -1538,7 +1281,7 @@ def edit_outing_pitches(outing_id):
     outing = Outing.query.filter_by(id=outing_id).first_or_404()
     if not outing:
         flash("URL does not exist")
-        return redirect(url_for("index"))
+        return redirect(url_for('main.index'))
 
     user = User.query.filter_by(id=outing.user_id).first_or_404()
     opponent = Opponent.query.filter_by(id=outing.opponent_id).first_or_404()
@@ -1547,7 +1290,7 @@ def edit_outing_pitches(outing_id):
     # only admins can go back and edit outing data
     if not current_user.admin:
         flash("You are not an admin and cannot edit someone else's outing")
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
 
     # get the correct form
     form = OutingPitchForm()
@@ -1681,7 +1424,7 @@ def edit_outing(outing_id):
     outing = Outing.query.filter_by(id=outing_id).first_or_404()
     if not outing:
         flash("URL does not exist")
-        return redirect(url_for("index"))
+        return redirect(url_for('main.index'))
     opponent = Opponent.query.filter_by(id=outing.opponent_id).first_or_404()
     this_season = Season.query.filter_by(id=outing.season_id).first_or_404()
     all_seasons = Season.query.all()
@@ -1691,7 +1434,7 @@ def edit_outing(outing_id):
     # only admins can go back and edit outing data
     if not current_user.admin:
         flash("You are not an admin and cannot edit someone else's outing")
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
 
     # when edit wants to be made
     if form.validate_on_submit():
@@ -1742,13 +1485,13 @@ def delete_outing(id):
     outing = Outing.query.filter_by(id=id).first_or_404()
     if not outing:
         flash("URL does not exist")
-        return redirect(url_for("index"))
+        return redirect(url_for('main.index'))
     user = User.query.filter_by(id=outing.user_id).first_or_404()
 
     # only admins have permission to delete an outing
     if not current_user.admin:
         flash("You are not an admin and cannot edit someone else's outing")
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
 
     # deletes the pitches associated with outing
     for at_bat in outing.at_bats:
@@ -1874,7 +1617,7 @@ def new_outing_csv_pitches(file_name, outing_id):
     outing = Outing.query.filter_by(id=outing_id).first_or_404()
     if not outing:
         flash("URL does not exist")
-        return redirect(url_for("index"))
+        return redirect(url_for('main.index'))
     user = User.query.filter_by(id=outing.user_id).first_or_404()
     opponent = Opponent.query.filter_by(id=outing.opponent_id).first_or_404()
     season = Season.query.filter_by(id=outing.season_id).first_or_404()
@@ -1968,7 +1711,7 @@ def new_outing_csv_pitches(file_name, outing_id):
         os.remove(file_loc)
 
         flash("New Outing Created!")
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
     else:
         for fieldName, errorMessages in form.errors.items():
             for err in errorMessages:
@@ -2042,7 +1785,7 @@ def getAvailableBatters(outing_id):
     outing = Outing.query.filter_by(id=outing_id).first_or_404()
     if not outing:
         flash("URL does not exist")
-        return redirect(url_for("index"))
+        return redirect(url_for('main.index'))
     opponent = Opponent.query.filter_by(id=outing.opponent_id).first_or_404()
 
     batters_tuples = []

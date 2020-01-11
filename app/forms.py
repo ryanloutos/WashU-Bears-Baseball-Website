@@ -6,7 +6,7 @@ from wtforms import FieldList, FormField
 from wtforms.fields.html5 import DateField
 from wtforms.validators import ValidationError, DataRequired, Email
 from wtforms.validators import EqualTo, Optional
-from app.models import User, Season, Opponent
+from .models import User, Season, Opponent
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 
 
