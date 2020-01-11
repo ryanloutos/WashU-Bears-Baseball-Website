@@ -144,6 +144,6 @@
         <p>{{ form.submit() }}</p>
     </form>
     <button id="add">Add Row</button>
-    <a href="{{ url_for('delete_outing', id=outing.id) }}">Delete Outing</a>
+    <a href="{{ url_for('outing.delete_outing', id=outing.id) }}">Delete Outing</a>
 </div>
 {% endblock %}

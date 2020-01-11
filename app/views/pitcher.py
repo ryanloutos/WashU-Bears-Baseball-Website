@@ -222,6 +222,7 @@ def pitcher_stats_advanced(id):
                            pitch_usage_season=pitch_usage_season,
                            pitch_usage_outing=pitch_usage_outing)
 
+
 @pitcher.route('/pitcher/<id>/videos', methods=["GET", "POST"])
 @login_required
 def pitcher_videos(id):
