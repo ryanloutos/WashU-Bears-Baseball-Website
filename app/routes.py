@@ -214,10 +214,14 @@ def edit_user(id):
 
     user = User.query.filter_by(id=id).first()
 
+    if not user:
+        flash("URL does not exist")
+        return redirect(url_for('index'))
+
     # if someone tries to access link directly
     if current_user.id != user.id:
         flash("You can only make changes to your own account")
-        redirect(url_for("index"))
+        return redirect(url_for("index"))
 
     # when the 'save changes' button is pressed
     form = EditUserForm()
@@ -257,10 +261,14 @@ def change_password(id):
 
     user = User.query.filter_by(id=id).first()
 
+    if not user:
+        flash("URL does not exist")
+        return redirect(url_for("index"))
+
     # if someone tries to access link directly
     if current_user.id != user.id:
         flash("You can only make changes to your own account")
-        redirect(url_for("index"))
+        return redirect(url_for("index"))
 
     # when the 'save changes' button is pressed
     form = ChangePasswordForm()
@@ -686,6 +694,13 @@ def outing(id):
     '''
     # get the outing object associated by the id in the url
     outing = Outing.query.filter_by(id=id).first()
+
+    # if bug or outing trying to be viewed DNE
+    if not outing:
+        flash("URL does not exits")
+        return redirect(url_for('index'))
+
+    # get opponent associated with outing
     opponent = Opponent.query.filter_by(id=outing.opponent_id).first()
 
     # if bug or outing trying to be viewed DNE
@@ -719,12 +734,12 @@ def outing_pbp(id):
     '''
     # get the outing object associated by the id in the url
     outing = Outing.query.filter_by(id=id).first()
-    opponent = Opponent.query.filter_by(id=outing.opponent_id).first()
-
     # if bug or outing trying to be viewed DNE
     if not outing:
         flash("URL does not exits")
         return redirect(url_for('index'))
+
+    opponent = Opponent.query.filter_by(id=outing.opponent_id).first()
 
     # Get statistical data
     usages, usage_percentages = calcPitchPercentages(outing)
@@ -777,12 +792,12 @@ def outing_stats_advanced(id):
     '''
     # get the outing object associated by the id in the url
     outing = Outing.query.filter_by(id=id).first()
-    opponent = Opponent.query.filter_by(id=outing.opponent_id).first()
-
     # if bug or outing trying to be viewed DNE
     if not outing:
         flash("URL does not exits")
         return redirect(url_for('index'))
+
+    opponent = Opponent.query.filter_by(id=outing.opponent_id).first()
 
     # Get statistical data
     pitch_stats = outingPitchStatistics(outing)
@@ -818,6 +833,9 @@ def outing_stats_advanced(id):
 def outing_stats_basic(id):
 
     outing = Outing.query.filter_by(id=id).first()
+    if not outing:
+        flash("URL does not exist")
+        return redirect(url_for("index"))
 
     return render_template(
         '/outing/outing_stats_basic.html',
@@ -833,6 +851,9 @@ def outing_stats_basic(id):
 def outing_videos(id):
 
     outing = Outing.query.filter_by(id=id).first()
+    if not outing:
+        flash("URL does not exist")
+        return redirect(url_for("index"))
 
     return render_template(
         '/outing/outing_videos.html',
@@ -877,6 +898,7 @@ def batter(id):
 @app.route("/batter/<batter_id>/at_bats", methods=['GET', 'POST'])
 @login_required
 def batter_at_bats(batter_id):
+
     batter = Batter.query.filter_by(id=batter_id).first()
 
     # either bug or user trying to view a batter that DNE
@@ -895,8 +917,17 @@ def batter_at_bats(batter_id):
 @app.route("/batter/<batter_id>/at_bat/<ab_num>", methods=['GET', 'POST'])
 @login_required
 def batter_at_bat(batter_id, ab_num):
+
     batter = Batter.query.filter_by(id=batter_id).first()
+    if not batter:
+        flash("URL does not exist")
+        return redurect(url_for('index'))
+
     at_bat = AtBat.query.filter_by(id=ab_num).first()
+    if not at_bat:
+        flash("URL does not exist")
+        return redurect(url_for('index'))
+
     pitcher = at_bat.get_pitcher()
 
     return render_template(
@@ -915,6 +946,9 @@ def batter_at_bat(batter_id, ab_num):
 def batter_pitches_against(batter_id):
 
     batter = Batter.query.filter_by(id=batter_id).first()
+    if not batter:
+        flash("URL does not exist")
+        return redurect(url_for('index'))
 
     return render_template(
         'opponent/batter/batter_pitches_against.html',
@@ -960,6 +994,9 @@ def opponent(id):
 def opponent_games_results(id):
 
     opponent = Opponent.query.filter_by(id=id).first()
+    if not opponent:
+        flash("URL does not exist")
+        return redurect(url_for('index'))
 
     return render_template(
         '/opponent/opponent_GamesResults.html',
@@ -974,6 +1011,9 @@ def opponent_games_results(id):
 @login_required
 def opponent_scouting_stats(id):
     opponent = Opponent.query.filter_by(id=id).first()
+    if not opponent:
+        flash("URL does not exist")
+        return redurect(url_for('index'))
 
     return render_template(
         '/opponent/opponent_ScoutingStats.html',
@@ -1000,6 +1040,9 @@ def all_opponents():
     '''
     # get the Opponent object assicated with the id
     opponents = Opponent.query.all()
+    if not opponents:
+        flash("URL does not exist")
+        return redurect(url_for('index'))
 
     return render_template('opponent/all_opponents.html',
                            title="All Opponents",
@@ -1571,6 +1614,10 @@ def edit_outing_pitches(outing_id):
 
     # get the database objects needed for the function
     outing = Outing.query.filter_by(id=outing_id).first_or_404()
+    if not outing:
+        flash("URL does not exist")
+        return redirect(url_for("index"))
+
     user = User.query.filter_by(id=outing.user_id).first_or_404()
     opponent = Opponent.query.filter_by(id=outing.opponent_id).first_or_404()
     season = Season.query.filter_by(id=outing.season_id).first_or_404()
@@ -1712,6 +1759,9 @@ def edit_outing(outing_id):
 
     # get objects from database
     outing = Outing.query.filter_by(id=outing_id).first_or_404()
+    if not outing:
+        flash("URL does not exist")
+        return redirect(url_for("index"))
     opponent = Opponent.query.filter_by(id=outing.opponent_id).first_or_404()
     this_season = Season.query.filter_by(id=outing.season_id).first_or_404()
     all_seasons = Season.query.all()
@@ -1772,6 +1822,9 @@ def delete_outing(id):
 
     # get the outing and user objects associated with this outing
     outing = Outing.query.filter_by(id=id).first_or_404()
+    if not outing:
+        flash("URL does not exist")
+        return redirect(url_for("index"))
     user = User.query.filter_by(id=outing.user_id).first_or_404()
 
     # only admins have permission to delete an outing
@@ -1903,6 +1956,9 @@ def new_outing_csv_pitches(file_name, outing_id):
 
     # Retrieve required DB objects
     outing = Outing.query.filter_by(id=outing_id).first_or_404()
+    if not outing:
+        flash("URL does not exist")
+        return redirect(url_for("index"))
     user = User.query.filter_by(id=outing.user_id).first_or_404()
     opponent = Opponent.query.filter_by(id=outing.opponent_id).first_or_404()
     season = Season.query.filter_by(id=outing.season_id).first_or_404()
@@ -2037,6 +2093,9 @@ def getAvailablePitchers():
 
 def getAvailableBatters(outing_id):
     outing = Outing.query.filter_by(id=outing_id).first_or_404()
+    if not outing:
+        flash("URL does not exist")
+        return redirect(url_for("index"))
     opponent = Opponent.query.filter_by(id=outing.opponent_id).first_or_404()
 
     batters_tuples = []
