@@ -40,9 +40,7 @@ def index():
         -Displays index.html
     '''
     return render_template('main/index.html',
-                           title='WashU Pitching',
-                           current_season=getCurrentSeason(),
-                           old_seasons=getOldSeasons())
+                           title='WashU Pitching')
 
 # ***************-LOGIN-*************** # DONE
 @app.route('/login', methods=['GET', 'POST'])
@@ -95,9 +93,7 @@ def login():
 
     return render_template('main/login.html',
                            title="Login",
-                           form=form,
-                           current_season=getCurrentSeason(),
-                           old_seasons=getOldSeasons())
+                           form=form)
 
 # ***************-LOGOUT-*************** # DONE
 @app.route('/logout')
@@ -165,9 +161,7 @@ def register():
 
     return render_template('main/register.html',
                            title='Register',
-                           form=form,
-                           current_season=getCurrentSeason(),
-                           old_seasons=getOldSeasons())
+                           form=form)
 
 # ***************-PROFILE PAGE-*************** # DONE
 @app.route('/user/<id>', methods=['GET', 'POST'])
@@ -193,9 +187,7 @@ def user(id):
     user = User.query.filter_by(id=id).first_or_404()
 
     return render_template('main/user.html',
-                           user=user,
-                           current_season=getCurrentSeason(),
-                           old_seasons=getOldSeasons())
+                           user=user)
 
 # ***************-EDIT PROFILE-*************** # DONE
 @app.route('/user/<id>/edit', methods=['GET', 'POST'])
@@ -241,9 +233,7 @@ def edit_user(id):
     return render_template('main/edit_user.html',
                            title='Edit User',
                            user=user,
-                           form=form,
-                           current_season=getCurrentSeason(),
-                           old_seasons=getOldSeasons())
+                           form=form)
 
 # ***************-CHANGE PASSWORD-*************** # DONE
 @app.route('/user/<id>/change_password', methods=['GET', 'POST'])
@@ -290,9 +280,7 @@ def change_password(id):
 
     return render_template('main/change_password.html',
                            title='Change Password',
-                           form=form,
-                           current_season=getCurrentSeason(),
-                           old_seasons=getOldSeasons())
+                           form=form)
 
 # ***************-STAFF HOMEPAGE-*************** # DONE
 @app.route('/staff', methods=['GET', 'POST'])
@@ -316,9 +304,7 @@ def staff():
                            title='WashU Pitching Staff',
                            strike_percentage=strike_percentage,
                            fps_percentage=fps_percentage,
-                           k_to_bb=k_to_bb,
-                           current_season=getCurrentSeason(),
-                           old_seasons=getOldSeasons())
+                           k_to_bb=k_to_bb)
 
 # ***************-STAFF ROSTER-*************** # DONE
 @app.route('/staff/roster', methods=['GET', 'POST'])
@@ -339,9 +325,7 @@ def staff_roster():
 
     return render_template('staff/staff_roster.html',
                            title='Staff',
-                           pitchers=pitchers,
-                           current_season=getCurrentSeason(),
-                           old_seasons=getOldSeasons())
+                           pitchers=pitchers)
 
 
 # ***************-STAFF BASIC STATS-*********** #
@@ -365,9 +349,7 @@ def staff_basic_stats():
     return render_template(
         'staff/staff_basic_stats.html',
         staff_stat_summary=staff_stat_summary,
-        players_stat_summary=players_stat_summary,
-        current_season=getCurrentSeason(),
-        old_seasons=getOldSeasons())
+        players_stat_summary=players_stat_summary)
 
 
 # # ***************-STAFF ADVANCED STATS-*********** #
@@ -384,9 +366,7 @@ def staff_advanced_stats():
         team_avg_velo=team_avg_velo,
         player_avg_velo=player_avg_velo,
         team_strike_percentages=team_strike_percentages,
-        player_strike_percentages=player_strike_percentages,
-        current_season=getCurrentSeason(),
-        old_seasons=getOldSeasons()
+        player_strike_percentages=player_strike_percentages
     )
 
 
@@ -410,9 +390,7 @@ def staff_retired():
 
     return render_template('staff/staff_retired.html',
                            title='Retired Pitchers',
-                           retired_pitchers=retired_pitchers,
-                           current_season=getCurrentSeason(),
-                           old_seasons=getOldSeasons())
+                           retired_pitchers=retired_pitchers)
 
 # ***************-PITCHER HOMEPAGE-*************** # DONE
 @app.route('/pitcher/<id>', methods=['GET', 'POST'])
@@ -472,9 +450,7 @@ def pitcher(id):
     return render_template('pitcher/pitcher_home.html',
                            title=pitcher,
                            pitcher=pitcher,
-                           recent_outings=recent_outings,
-                           current_season=getCurrentSeason(),
-                           old_seasons=getOldSeasons())
+                           recent_outings=recent_outings)
 
 # ***************-PITCHER OUTINGS-*************** #
 @app.route('/pitcher/<id>/outings', methods=['GET', 'POST'])
@@ -517,9 +493,7 @@ def pitcher_outings(id):
     return render_template('pitcher/pitcher_outings.html',
                            title=pitcher,
                            pitcher=pitcher,
-                           seasons=seasons,
-                           current_season=getCurrentSeason(),
-                           old_seasons=getOldSeasons())
+                           seasons=seasons)
 
 # ***************-PITCHER BASIC STATS-*************** #
 @app.route('/pitcher/<id>/stats/basic', methods=['GET', 'POST'])
@@ -568,9 +542,7 @@ def pitcher_stats_basic(id):
                            pitcher=pitcher,
                            seasons=seasons,
                            season_stat_line=season_stat_line,
-                           outing_stat_line=outing_stat_line,
-                           current_season=getCurrentSeason(),
-                           old_seasons=getOldSeasons())
+                           outing_stat_line=outing_stat_line)
 
 # ***************-PITCHER ADVANCED STATS-*************** #
 @app.route('/pitcher/<id>/stats/advanced', methods=['GET', 'POST'])
@@ -625,9 +597,7 @@ def pitcher_stats_advanced(id):
                            strike_percentage_season=strike_percentage_season,
                            strike_percentage_outing=strike_percentage_outing,
                            pitch_usage_season=pitch_usage_season,
-                           pitch_usage_outing=pitch_usage_outing,
-                           current_season=getCurrentSeason(),
-                           old_seasons=getOldSeasons())
+                           pitch_usage_outing=pitch_usage_outing)
 
 
 @app.route('/pitcher/<id>/videos', methods=["GET", "POST"])
@@ -639,9 +609,7 @@ def pitcher_videos(id):
     return render_template(
         '/pitcher/pitcher_videos.html',
         title=pitcher,
-        pitcher=pitcher,
-        current_season=getCurrentSeason(),
-        old_seasons=getOldSeasons())
+        pitcher=pitcher)
 
 # ***************-SEASON HOMEPAGE-*************** #
 @app.route('/season/<id>')
@@ -673,9 +641,7 @@ def season(id):
     return render_template('season/season.html',
                            title=season,
                            outings=outings,
-                           season=season,
-                           current_season=getCurrentSeason(),
-                           old_seasons=getOldSeasons())
+                           season=season)
 
 # ***************-OUTING HOMEPAGE-*************** #
 @app.route('/outing/<id>', methods=['GET', 'POST'])
@@ -713,9 +679,7 @@ def outing(id):
         'outing/outing_home.html',
         title=outing,
         outing=outing,
-        opponent=opponent,
-        current_season=getCurrentSeason(),
-        old_seasons=getOldSeasons())
+        opponent=opponent)
 
 # ***************-OUTING PBP-*************** #
 @app.route('/outing/<id>/pbp', methods=['GET', 'POST'])
@@ -770,9 +734,7 @@ def outing_pbp(id):
         pitch_whiff=pitch_whiff,
         velocity_over_time_line_chart=velocity_over_time_line_chart,
         strike_percentage_bar_chart=strike_percentage_bar_chart,
-        usage_percent_by_count_line_chart=usage_percent_by_count_line_chart,
-        current_season=getCurrentSeason(),
-        old_seasons=getOldSeasons()
+        usage_percent_by_count_line_chart=usage_percent_by_count_line_chart
     )
 
 # ***************-OUTING ADVANCED STATS-*************** #
@@ -822,9 +784,7 @@ def outing_stats_advanced(id):
         pitch_stats=pitch_stats,
         time_to_plate=time_to_plate,
         labels=horizontal_axis,
-        velos=velos,
-        current_season=getCurrentSeason(),
-        old_seasons=getOldSeasons()
+        velos=velos
     )
 
 
@@ -840,9 +800,7 @@ def outing_stats_basic(id):
     return render_template(
         '/outing/outing_stats_basic.html',
         title=outing,
-        outing=outing,
-        current_season=getCurrentSeason(),
-        old_seasons=getOldSeasons()
+        outing=outing
     )
 
 
@@ -858,9 +816,7 @@ def outing_videos(id):
     return render_template(
         '/outing/outing_videos.html',
         title=outing,
-        outing=outing,
-        current_season=getCurrentSeason(),
-        old_seasons=getOldSeasons()
+        outing=outing
     )
 
 
@@ -890,9 +846,7 @@ def batter(id):
 
     return render_template('opponent/batter/batter.html',
                            title=batter.name,
-                           batter=batter,
-                           current_season=getCurrentSeason(),
-                           old_seasons=getOldSeasons())
+                           batter=batter)
 
 
 @app.route("/batter/<batter_id>/at_bats", methods=['GET', 'POST'])
@@ -908,9 +862,7 @@ def batter_at_bats(batter_id):
 
     return render_template(
         '/opponent/batter/batter_at_bats.html',
-        batter=batter,
-        current_season=getCurrentSeason(),
-        old_seasons=getOldSeasons()
+        batter=batter
     )
 
 
@@ -935,9 +887,7 @@ def batter_at_bat(batter_id, ab_num):
         at_bat=at_bat,
         pitcher=pitcher,
         batter=batter,
-        title=batter.name,
-        current_season=getCurrentSeason(),
-        old_seasons=getOldSeasons()
+        title=batter.name
     )
 
 
@@ -953,9 +903,7 @@ def batter_pitches_against(batter_id):
     return render_template(
         'opponent/batter/batter_pitches_against.html',
         title=batter,
-        batter=batter,
-        current_season=getCurrentSeason(),
-        old_seasons=getOldSeasons()
+        batter=batter
     )
 
 
@@ -984,9 +932,7 @@ def opponent(id):
 
     return render_template('opponent/opponent_home.html',
                            title=opponent,
-                           opponent=opponent,
-                           current_season=getCurrentSeason(),
-                           old_seasons=getOldSeasons())
+                           opponent=opponent)
 
 
 @app.route("/opponent/<id>/GamesResults", methods=["GET", "POST"])
@@ -1001,9 +947,7 @@ def opponent_games_results(id):
     return render_template(
         '/opponent/opponent_GamesResults.html',
         title=opponent,
-        opponent=opponent,
-        current_season=getCurrentSeason(),
-        old_seasons=getOldSeasons()
+        opponent=opponent
     )
 
 
@@ -1018,9 +962,7 @@ def opponent_scouting_stats(id):
     return render_template(
         '/opponent/opponent_ScoutingStats.html',
         title=opponent,
-        opponent=opponent,
-        current_season=getCurrentSeason(),
-        old_seasons=getOldSeasons()
+        opponent=opponent
     )
 
 
@@ -1046,9 +988,7 @@ def all_opponents():
 
     return render_template('opponent/all_opponents.html',
                            title="All Opponents",
-                           opponents=opponents,
-                           current_season=getCurrentSeason(),
-                           old_seasons=getOldSeasons())
+                           opponents=opponents)
 
 # ***************-OPPONENT ROSTER-*************** #
 @app.route('/opponent/<id>/roster', methods=['GET', 'POST'])
@@ -1075,9 +1015,7 @@ def opponent_roster(id):
 
     return render_template('opponent/opponent_roster.html',
                            title=opponent,
-                           opponent=opponent,
-                           current_season=getCurrentSeason(),
-                           old_seasons=getOldSeasons())
+                           opponent=opponent)
 
 # ***************-NEW SEASON-*************** #
 @app.route('/new_season', methods=['GET', 'POST'])
@@ -1119,9 +1057,7 @@ def new_season():
 
     return render_template('season/new_season.html',
                            title='New Season',
-                           form=form,
-                           current_season=getCurrentSeason(),
-                           old_seasons=getOldSeasons())
+                           form=form)
 
 # ***************-EDIT SEASON-*************** #
 @app.route('/edit_season/<id>', methods=['GET', 'POST'])
@@ -1177,9 +1113,7 @@ def edit_season(id):
     return render_template('season/edit_season.html',
                            title='New Season',
                            season=season,
-                           form=form,
-                           current_season=getCurrentSeason(),
-                           old_seasons=getOldSeasons())
+                           form=form)
 
 # ***************-NEW OPPONENT-*************** #
 @app.route('/new_opponent', methods=['GET', 'POST'])
@@ -1235,9 +1169,7 @@ def new_opponent():
 
     return render_template('opponent/new_opponent.html',
                            title='New Opponent',
-                           form=form,
-                           current_season=getCurrentSeason(),
-                           old_seasons=getOldSeasons())
+                           form=form)
 
 # ***************-NEW BATTER-*************** #
 @app.route('/new_batter', methods=['GET', 'POST'])
@@ -1288,9 +1220,7 @@ def new_batter():
 
     return render_template('opponent/batter/new_batter.html',
                            title='New Batter',
-                           form=form,
-                           current_season=getCurrentSeason(),
-                           old_seasons=getOldSeasons())
+                           form=form)
 
 # ***************-EDIT OPPONENT-*************** #
 @app.route('/edit_opponent/<id>', methods=['GET', 'POST'])
@@ -1338,9 +1268,7 @@ def edit_opponent(id):
     return render_template('opponent/edit_opponent.html',
                            title='Edit Opponent',
                            opponent=opponent,
-                           form=form,
-                           current_season=getCurrentSeason(),
-                           old_seasons=getOldSeasons())
+                           form=form)
 
 # ***************-EDIT BATTER-*************** #
 @app.route('/edit_batter/<id>', methods=['GET', 'POST'])
@@ -1400,9 +1328,7 @@ def edit_batter(id):
     return render_template('opponent/batter/edit_batter.html',
                            title='Edit Batter',
                            batter=batter,
-                           form=form,
-                           current_season=getCurrentSeason(),
-                           old_seasons=getOldSeasons())
+                           form=form)
 
 # ***************-DELETE BATTER-*************** #
 @app.route('/delete_batter/<id>', methods=['GET', 'POST'])
@@ -1486,9 +1412,7 @@ def new_outing():
 
     return render_template('outing/new_outing.html',
                            title='New Outing',
-                           form=form,
-                           current_season=getCurrentSeason(),
-                           old_seasons=getOldSeasons())
+                           form=form)
 
 # ***************-NEW OUTING PITCHES-*************** #
 @app.route('/new_outing_pitches/<outing_id>', methods=['GET', 'POST'])
@@ -1589,9 +1513,7 @@ def new_outing_pitches(outing_id):
     return render_template(
         'outing/new_outing_pitches.html',
         title='New Outing Pitches',
-        form=form,
-        current_season=getCurrentSeason(),
-        old_seasons=getOldSeasons()
+        form=form
     )
 
 # ***************-EDIT OUTING PITCHES-*************** #
@@ -1742,9 +1664,7 @@ def edit_outing_pitches(outing_id):
                            title='Edit Outing',
                            outing=outing,
                            opponent=opponent,
-                           form=form,
-                           current_season=getCurrentSeason(),
-                           old_seasons=getOldSeasons())
+                           form=form)
 
 # ***************-EDIT OUTING-*************** #
 @app.route('/edit_outing/<outing_id>', methods=['GET', 'POST'])
@@ -1799,9 +1719,7 @@ def edit_outing(outing_id):
                            all_seasons=all_seasons,
                            this_pitcher=this_pitcher,
                            all_pitchers=all_pitchers,
-                           form=form,
-                           current_season=getCurrentSeason(),
-                           old_seasons=getOldSeasons())
+                           form=form)
 
 # ***************-DELETE OUTING-*************** #
 @app.route('/delete_outing/<id>', methods=['GET', 'POST'])
@@ -1907,9 +1825,7 @@ def new_outing_csv():
                                    form=form)
 
     return render_template("csv/upload_csv.html",
-                           form=form,
-                           current_season=getCurrentSeason(),
-                           old_seasons=getOldSeasons())
+                           form=form)
 
 
 # ***************-NEW OUTING CSV PITCHES-*************** #
@@ -2061,9 +1977,19 @@ def new_outing_csv_pitches(file_name, outing_id):
     return render_template("csv/new_outing_csv_pitches.html",
                            form=form,
                            pitches=pitches,
-                           batters=batters,
-                           current_season=getCurrentSeason(),
-                           old_seasons=getOldSeasons())
+                           batters=batters)
+
+
+@app.context_processor
+def season_select_dropdown_data():
+    """Acts as the filler for main.html data. This will provide the seasons for the season selector.
+
+    Returns:
+        [dict] -- [contians season info for drop downs]
+    """
+    return dict(
+        current_season=getCurrentSeason(),
+        old_seasons=getOldSeasons())
 
 
 # ***************-HELPFUL FUNCTIONS-*************** #
