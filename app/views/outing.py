@@ -245,7 +245,7 @@ def new_outing():
 
         # redirects back to home page after outing was successfully created
         flash("New Outing Created!")
-        return redirect(url_for('new_outing_pitches', outing_id=outing.id))
+        return redirect(url_for('outing.new_outing_pitches', outing_id=outing.id))
 
     return render_template('outing/new_outing.html',
                            title='New Outing',
@@ -345,7 +345,7 @@ def new_outing_pitches(outing_id):
                 new_at_bat = True
 
         flash('Pitches added to outing!')
-        return redirect(url_for('outing', id=outing_id))
+        return redirect(url_for('outing.outing_home', id=outing_id))
 
     return render_template(
         'outing/new_outing_pitches.html',
@@ -479,7 +479,7 @@ def edit_outing_pitches(outing_id):
 
         # redirect to user page
         flash('The outing has been adjusted!')
-        return redirect(url_for('outing', id=outing.id))
+        return redirect(url_for('outing.outing_home', id=outing.id))
 
     # sets up subforms so they are visible in edit_outing.html
     num_pitches = 0

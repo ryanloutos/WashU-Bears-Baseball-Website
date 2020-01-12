@@ -171,7 +171,7 @@ def delete_batter(id):
     db.session.delete(batter)
     db.session.commit()
 
-    return redirect(url_for('opponent', id=batter.opponent_id))
+    return redirect(url_for('opponent.opponent_home', id=batter.opponent_id))
 
 # ***************-EDIT BATTER-*************** #
 @batter.route('/edit_batter/<id>', methods=['GET', 'POST'])
@@ -226,7 +226,7 @@ def edit_batter(id):
         db.session.commit()
 
         flash('Batter has been adjusted')
-        return redirect(url_for('opponent_roster', id=batter.opponent_id))
+        return redirect(url_for('opponent.opponent_roster', id=batter.opponent_id))
 
     return render_template('opponent/batter/edit_batter.html',
                            title='Edit Batter',
@@ -278,7 +278,7 @@ def new_batter():
 
         # redirect back to login page
         flash('Congratulations, you just made a new batter!')
-        return redirect(url_for('opponent', id=batter.opponent_id))
+        return redirect(url_for('opponent.opponent_home', id=batter.opponent_id))
 
     return render_template('opponent/batter/new_batter.html',
                            title='New Batter',
