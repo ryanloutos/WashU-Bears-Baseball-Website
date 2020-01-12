@@ -44,7 +44,7 @@
                 {% endfor %}
             </ul>
           </li>
-          <li><a href="{{ url_for('all_opponents') }}">Opponents</a></li>
+          <li><a href="{{ url_for('opponent.all_opponents') }}">Opponents</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
           {% if current_user.is_anonymous %}
@@ -59,7 +59,7 @@
                 <li><a href="{{ url_for('outing.new_outing_csv') }}">New Outing CSV</a></li>
                 <li role="separator" class="divider"></li>
                 <li><a href="{{ url_for('main.register') }}">New User</a></li>
-                <li><a href="{{ url_for('new_opponent') }}">New Opponent</a></li>
+                <li><a href="{{ url_for('opponent.new_opponent') }}">New Opponent</a></li>
                 <li><a href="{{ url_for('new_season') }}">New Season</a></li>
                 <li><a href="{{ url_for('batter.new_batter') }}">New Batter</a></li>
             </ul>

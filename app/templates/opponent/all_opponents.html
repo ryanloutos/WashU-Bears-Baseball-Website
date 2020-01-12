@@ -17,7 +17,7 @@
             {% for o in opponents %}
                 <tr>
                     <td>{{ o }}</td>
-                    <td><a href="{{ url_for('opponent', id=o.id) }}">View</a></td>
+                    <td><a href="{{ url_for('opponent.opponent_home', id=o.id) }}">View</a></td>
                 </tr>
             {% endfor %}
         </table>
