@@ -91,7 +91,6 @@ def outing_pbp(id):
 
     # Get statistical data
     usages, usage_percentages = calcPitchPercentages(outing)
-    counts, counts_percentages = pitchUsageByCount(outing)
     pitch_avg_velo = calcAverageVelo(outing)
     pitch_strike_percentage = calcPitchStrikePercentage(outing)
     pitch_whiff = calcPitchWhiffRate(outing)
@@ -100,7 +99,6 @@ def outing_pbp(id):
     usage_percentages_pie_chart = createPitchPercentagePieChart(usage_percentages)
     velocity_over_time_line_chart = velocityOverTimeLineChart(outing)
     strike_percentage_bar_chart = pitchStrikePercentageBarChart(pitch_strike_percentage)
-    usage_percent_by_count_line_chart = pitchUsageByCountLineCharts(counts_percentages)
 
     # render template with all the statistical data calculated from the outing
     return render_template(
@@ -111,14 +109,11 @@ def outing_pbp(id):
         usages=usages,
         usage_percentages=usage_percentages,
         usage_percentages_pie_chart=usage_percentages_pie_chart,
-        counts=counts,
-        counts_percentages=counts_percentages,
         pitch_avg_velo=pitch_avg_velo,
         pitch_strike_percentage=pitch_strike_percentage,
         pitch_whiff=pitch_whiff,
         velocity_over_time_line_chart=velocity_over_time_line_chart,
         strike_percentage_bar_chart=strike_percentage_bar_chart,
-        usage_percent_by_count_line_chart=usage_percent_by_count_line_chart
     )
 
 # ***************-OUTING ADVANCED STATS-*************** #
@@ -625,6 +620,7 @@ def new_outing_csv():
         # Get upload filename and save it to a temp file we can work with
         file_name = form.file.data.filename
         file_loc = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                                "..",
                                 "csv_files",
                                 file_name)
 
@@ -660,7 +656,7 @@ def new_outing_csv():
                 outing_id=outing.id))
         else:  # delete invalid csv and refresh page
             os.remove(file_loc)
-            return render_template("upload_csv.html",
+            return render_template("csv/upload_csv.html",
                                    form=form)
 
     return render_template("csv/upload_csv.html",
@@ -683,6 +679,7 @@ def new_outing_csv_pitches(file_name, outing_id):
     # location of file name, passed from new_outing_csv via GET
     file_loc = os.path.join(
         os.path.dirname(os.path.realpath(__file__)),
+        "..",
         "csv_files",
         file_name)
 
@@ -894,7 +891,7 @@ def validate_CSV(file_loc):
                 # adjust input.
                 for attr in pitch_attributes:
                     if attr not in keys:
-                        print("Pitch num " + pitch_num + " missing: " + attr)
+                        print(f"Pitch num {pitch_num} missing {attr}")
                 break
 
         if invalid_pitch_found:
