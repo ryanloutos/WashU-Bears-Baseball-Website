@@ -1,6 +1,8 @@
 from flask import Blueprint
 from flask import render_template
 from flask_login import login_required
+from app import db
+
 from app.models import User, Outing, Pitch, Season
 from app.stats import staffBasicStats
 from app.stats import staffPitcherAvgVelo, staffPitchStrikePercentage
