@@ -11,7 +11,7 @@
         <h1>
             {{ season }}
             {% if current_user.admin %}
-                <a href=" {{ url_for('edit_season', id=season.id) }} " style="float: right;">
+                <a href=" {{ url_for('season.edit_season', id=season.id) }} " style="float: right;">
                     Edit Season
                 </a>
             {% endif %}

@@ -37,10 +37,10 @@
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Seasons <span class="caret"></span></a>
             <ul class="dropdown-menu">
-                <li><a href="{{ url_for('season', id=current_season.id) }}">{{ current_season }}</a></li>
+                <li><a href="{{ url_for('season.season_home', id=current_season.id) }}">{{ current_season }}</a></li>
                 <li role="separator" class="divider"></li>
                 {% for s in old_seasons %}
-                  <li><a href="{{ url_for('season', id=s.id) }}">{{ s }}</a></li>
+                  <li><a href="{{ url_for('season.season_home', id=s.id) }}">{{ s }}</a></li>
                 {% endfor %}
             </ul>
           </li>
@@ -60,7 +60,7 @@
                 <li role="separator" class="divider"></li>
                 <li><a href="{{ url_for('main.register') }}">New User</a></li>
                 <li><a href="{{ url_for('opponent.new_opponent') }}">New Opponent</a></li>
-                <li><a href="{{ url_for('new_season') }}">New Season</a></li>
+                <li><a href="{{ url_for('season.new_season') }}">New Season</a></li>
                 <li><a href="{{ url_for('batter.new_batter') }}">New Batter</a></li>
             </ul>
           </li>

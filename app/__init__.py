@@ -25,6 +25,7 @@ from .views.pitcher import pitcher
 from .views.outing import outing
 from .views.batter import batter
 from .views.opponent import opponent
+from .views.season import season
 
 # Register Blueprints
 app.register_blueprint(main)
@@ -33,3 +34,4 @@ app.register_blueprint(pitcher)
 app.register_blueprint(outing)
 app.register_blueprint(batter)
 app.register_blueprint(opponent)
+app.register_blueprint(season)

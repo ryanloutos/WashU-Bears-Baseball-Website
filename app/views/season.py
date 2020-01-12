@@ -1,7 +1,7 @@
+from flask import Blueprint
 from flask import render_template, flash, redirect, url_for, request
 from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.urls import url_parse
-from app import app, db
 from app.forms import LoginForm, RegistrationForm, OutingForm, PitchForm
 from app.forms import NewOutingFromCSV, SeasonForm, OpponentForm, BatterForm
 from app.forms import OutingPitchForm, NewOutingFromCSVPitches, EditUserForm
@@ -25,37 +25,137 @@ import os
 import random
 
 
-@app.context_processor
-def template_variables():
-    """Acts as the filler for main.html data. This will provide the seasons for the season selector.
+season = Blueprint("season", __name__)
 
-    Returns:
-        [dict] -- [contians season info for drop downs]
-    """
-    return dict(
-        current_season=getCurrentSeason(),
-        old_seasons=getOldSeasons())
+# ***************-SEASON HOMEPAGE-*************** #
+@season.route('/season/<id>')
+@login_required
+def season_home(id):
+    '''
+    SEASON HOMEPAGE:
 
+    PARAM:
+        -id: The season id (primary key) of the season
+            that is requested to be displayed
 
-@app.context_processor
-def utility_functions():
-    def truncate(n, decimals=2):
-        """Truncates the passed value to decimal places.
+    RETURN:
+        -season.html which displays all of the outings
+            associated with that season
+    '''
 
-        Arguments :
-            n {number} -- Number to be truncated
+    # gets the Season object associated with the id parameter
+    season = Season.query.filter_by(id=id).first()
 
-        Keyword Arguments :
-            decimals {int} -- Number of decimal places to truncate to(default : {2})
+    # either bug or user trying to access a season id that DNE
+    if not season:
+        flash('URL does not exist')
+        return redirect(url_for('main.index'))
 
-        Returns :
-            [int]-- truncated verison of passed value
-        """
-        multiplier = 10 ** decimals
-        return int(n * multiplier) / multiplier
-    return dict(
-        truncate=truncate
-    )
+    # outings associated with the specific season
+    outings = Outing.query.filter_by(season_id=id).order_by(Outing.date).all()
+
+    return render_template('season/season.html',
+                           title=season,
+                           outings=outings,
+                           season=season)
+
+# ***************-NEW SEASON-*************** #
+@season.route('/new_season', methods=['GET', 'POST'])
+@login_required
+def new_season():
+    '''
+    NEW SEASON:
+    Can create a new season for outings to be associated
+    with
+
+    PARAM:
+        -None
+
+    RETURN:
+        -new_season.html and redirects to index page
+            once a new season was successfully created
+    '''
+    # if user is not an admin, they can't create a new season
+    if not current_user.admin:
+        flash('You are not an admin and cannot create a season')
+        return redirect(url_for('main.index'))
+
+    # when the Create Season button is pressed...
+    form = SeasonForm()
+    if form.validate_on_submit():
+
+        # insert data from form into season table
+        season = Season(semester=form.semester.data,
+                        year=form.year.data,
+                        current_season=form.current_season.data)
+
+        # send Season object to data table
+        db.session.add(season)
+        db.session.commit()
+
+        # redirect back to login page
+        flash('Congratulations, you just made a new season!')
+        return redirect(url_for('main.index'))
+
+    return render_template('season/new_season.html',
+                           title='New Season',
+                           form=form)
+
+# ***************-EDIT SEASON-*************** #
+@season.route('/edit_season/<id>', methods=['GET', 'POST'])
+@login_required
+def edit_season(id):
+    '''
+    EDIT SEASON:
+    Can edit a current season (like making it the new current
+        season)
+
+    PARAM:
+        -id: The season id that wants to be edited
+
+    RETURN:
+        -edit_season.html and redirects to the season page
+            once the season was edited
+    '''
+    # if user is not an admin, they can't create a new season
+    if not current_user.admin:
+        flash('You are not an admin and cannot edit a season')
+        return redirect(url_for('main.index'))
+
+    # get the season that wants to be edited
+    season = Season.query.filter_by(id=id).first()
+
+    # if the season doesn't exist, redirect
+    if not season:
+        flash("This season doesn't exist")
+        return redirect(url_for('main.index'))
+
+    # when the Edit Season button is pressed...
+    form = SeasonForm()
+    if form.validate_on_submit():
+
+        # if this season become the current season
+        if form.current_season.data:
+            seasons = Season.query.all()
+            for s in seasons:
+                s.current_season = False
+
+        # make the changes to the season
+        season.semester = form.semester.data
+        season.year = form.year.data
+        season.current_season = form.current_season.data
+
+        # commit the changes made above
+        db.session.commit()
+
+        # redirect to season homepage
+        flash('Changes made!')
+        return redirect(url_for('season.season_home', id=id))
+
+    return render_template('season/edit_season.html',
+                           title='New Season',
+                           season=season,
+                           form=form)
 
 
 # ***************-HELPFUL FUNCTIONS-*************** #
