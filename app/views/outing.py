@@ -1,15 +1,28 @@
 from flask import Blueprint
-from flask import render_template, flash, redirect, url_for
-from flask_login import current_user, login_required
-from app.forms import OutingForm, PitchForm
-from app.forms import OutingPitchForm
+from flask import render_template, flash, redirect, url_for, request
+from flask_login import login_user, logout_user, current_user, login_required
+from werkzeug.urls import url_parse
+from app.forms import LoginForm, RegistrationForm, OutingForm, PitchForm
+from app.forms import NewOutingFromCSV, SeasonForm, OpponentForm, BatterForm
+from app.forms import OutingPitchForm, NewOutingFromCSVPitches, EditUserForm
+from app.forms import ChangePasswordForm, EditBatterForm, EditOpponentForm
+from app.forms import NewBatterForm
 from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat
 from app.stats import calcPitchPercentages, pitchUsageByCount, calcAverageVelo
 from app.stats import calcPitchStrikePercentage, calcPitchWhiffRate
 from app.stats import createPitchPercentagePieChart, velocityOverTimeLineChart
 from app.stats import pitchStrikePercentageBarChart, avgPitchVeloPitcher
-from app.stats import pitchUsageByCountLineCharts
+from app.stats import pitchUsageByCountLineCharts, pitchStrikePercentageSeason
+from app.stats import pitchUsageSeason, seasonStatLine, staffBasicStats
+from app.stats import staffPitcherAvgVelo, staffPitchStrikePercentage
 from app.stats import outingPitchStatistics, outingTimeToPlate, veloOverTime
+from app.stats import teamImportantStatsSeason
+
+# Handle CSV uploads
+import csv
+import os
+# for file naming duplication problem
+import random
 
 outing = Blueprint("outing", __name__)
 
@@ -589,6 +602,220 @@ def delete_outing(id):
     return redirect(url_for('pitcher.pitcher_home', id=user.id))
 
 
+# ***************-NEW OUTING CSV-*************** #
+@outing.route('/new_outing_csv', methods=['GET', 'POST'])
+@login_required
+def new_outing_csv():
+    '''
+    NEW OUTING CSV
+
+    PARAM:
+        -NONE
+
+    RETURN:
+        -
+    '''
+
+    form = NewOutingFromCSV()
+    form.pitcher.choices = getAvailablePitchers()
+
+    if form.validate_on_submit():
+
+        # Get upload filename and save it to a temp file we can work with
+        file_name = form.file.data.filename
+        file_loc = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                                "csv_files",
+                                file_name)
+
+        # save the file with its current name
+        form.file.data.save(file_loc)
+
+        # WIP make it so that duplicate file names dont appear
+        # while os.path.isfile(file_loc):
+        #     file_name = file_name + random.randint()
+
+        # Analyze *.csv file for errors and discrepencies
+        if validate_CSV(file_loc):
+
+            # gets the user associated the username of the pitcher the outing
+            # is being created for
+            user = User.query.filter_by(username=form.pitcher.data).first_or_404()
+
+            # creates a new outing object based on form data and user
+            outing = Outing(
+                date=form.date.data,
+                opponent_id=form.opponent.data.id,
+                season_id=form.season.data.id,
+                user_id=user.id)
+
+            # add the new outing to the database before pitches so pitches
+            # have a outing_id associated with them
+            db.session.add(outing)
+            db.session.commit()
+
+            return redirect(url_for(
+                'outing.new_outing_csv_pitches',
+                file_name=file_name,
+                outing_id=outing.id))
+        else:  # delete invalid csv and refresh page
+            os.remove(file_loc)
+            return render_template("upload_csv.html",
+                                   form=form)
+
+    return render_template("csv/upload_csv.html",
+                           form=form)
+
+
+# ***************-NEW OUTING CSV PITCHES-*************** #
+@outing.route('/new_outing_csv_pitches/<file_name>/<outing_id>',methods=['GET', 'POST'])
+@login_required
+def new_outing_csv_pitches(file_name, outing_id):
+    '''
+    NEW OUTING CSV
+
+    PARAM:
+        -NONE
+
+    RETURN:
+        -
+    '''
+    # location of file name, passed from new_outing_csv via GET
+    file_loc = os.path.join(
+        os.path.dirname(os.path.realpath(__file__)),
+        "csv_files",
+        file_name)
+
+    # extract pitches from CSV so they can be put in html form
+    pitches = []
+    with open(file_loc) as f:
+        csv_file = csv.DictReader(f)
+        for index, row in enumerate(csv_file):
+            pitch = {
+                "velocity": row['velocity'],
+                "lead_runner": row['lead_runner'],
+                "time_to_plate": row['time_to_plate'],
+                "pitch_type": row['pitch_type'],
+                "pitch_result": row['pitch_result'],
+                "hit_spot": row['hit_spot'],
+                "traj": row['traj'],
+                "ab_result": row['ab_result'],
+                "fielder": row['fielder'],
+                "inning": row['inning']
+            }
+            if 'batter_id' in row.keys():
+                pitch["batter_id"] = row["batter_id"]
+            pitches.append(pitch)
+
+    # Retrieve required DB objects
+    outing = Outing.query.filter_by(id=outing_id).first_or_404()
+    if not outing:
+        flash("URL does not exist")
+        return redirect(url_for('main.index'))
+    user = User.query.filter_by(id=outing.user_id).first_or_404()
+    opponent = Opponent.query.filter_by(id=outing.opponent_id).first_or_404()
+    season = Season.query.filter_by(id=outing.season_id).first_or_404()
+
+    # Setup form and form variables
+    form = NewOutingFromCSVPitches()
+    # set up batter choices
+    for subform in form.pitch:
+        subform.batter_id.choices = getAvailableBatters(outing_id)
+    # batter choices to fill into html
+    batters = []
+    for b in opponent.batters:
+        batters.append(b)
+
+    if form.validate_on_submit():
+
+        # sets up count for first pitch of outing
+        # sets up count for first pitch of outing
+        if (season.semester == 'Fall'):
+            balls = 1
+            strikes = 1
+        else:
+            balls = 0
+            strikes = 0
+        count = f'{balls}-{strikes}'
+
+        # Boolean variable to help with adding AtBat objects to the db
+        new_at_bat = True
+
+        # variable to hold the current AtBat object
+        current_at_bat = None
+
+        # add each individual pitch to the database
+        for index, subform in enumerate(form.pitch):
+
+            # get the batter_id for the AtBat and Pitch objects
+            batter_id = subform.batter_id.data
+
+            # if a new at bat has started, make a new AtBat object
+            if new_at_bat:
+                at_bat = AtBat(
+                    batter_id=batter_id,
+                    outing_id=outing_id)
+
+                # Add the AtBat object to database
+                db.session.add(at_bat)
+                db.session.commit()
+
+                # Set the current_at_bat for subsequent pitches accordingly
+                current_at_bat = at_bat
+
+                # So new at_bat variables aren't made every pitch
+                new_at_bat = False
+
+            # creates Pitch object based on subform data
+            pitch_num = index + 1
+
+            # create Pitch object
+            pitch = Pitch(
+                atbat_id=current_at_bat.id,
+                pitch_num=pitch_num,
+                batter_id=subform.batter_id.data,
+                velocity=subform.velocity.data,
+                lead_runner=subform.lead_runner.data,
+                time_to_plate=subform.time_to_plate.data,
+                pitch_type=subform.pitch_type.data,
+                pitch_result=subform.pitch_result.data,
+                hit_spot=subform.hit_spot.data,
+                count=count,
+                ab_result=subform.ab_result.data,
+                traj=subform.traj.data,
+                fielder=subform.fielder.data,
+                inning=subform.inning.data)
+
+            # update count based on current count and pitch result
+            balls, strikes, count = updateCount(
+                balls,
+                strikes,
+                pitch.pitch_result,
+                pitch.ab_result,
+                season)
+
+            # adds pitch to database
+            db.session.add(pitch)
+            db.session.commit()
+
+            if pitch.ab_result is not '':
+                new_at_bat = True
+
+        # delete temp file and be done with it
+        os.remove(file_loc)
+
+        flash("New Outing Created!")
+        return redirect(url_for('main.index'))
+    else:
+        for fieldName, errorMessages in form.errors.items():
+            for err in errorMessages:
+                print(err)
+
+    return render_template("csv/new_outing_csv_pitches.html",
+                           form=form,
+                           pitches=pitches,
+                           batters=batters)
+
+
 # ***************-HELPFUL FUNCTIONS-*************** #
 def getAvailablePitchers():
     '''
@@ -628,6 +855,53 @@ def getAvailableBatters(outing_id):
     return batters_tuples
 
 
+def validate_CSV(file_loc):
+    '''
+    Validates an uploaded outing csv file to see if we can create pitches
+    from it.
+
+    PARAM:
+        -file_loc {string} -- string location of the file to be validated
+
+    RETURN:
+        [boolean] -- boolean for if the file is determined valid
+    '''
+
+    # fields required to construct a pitch from Pitch class in modals. We need
+    # to check if all of these exist.
+    pitch_attributes = [
+        "velocity", "lead_runner", "time_to_plate", "pitch_type",
+        "pitch_result", "hit_spot", "ab_result", "traj", "fielder",
+        "inning"]
+    with open(file_loc) as f:
+
+        csv_file = csv.DictReader(f)
+        invalid_pitch_found = False  # State var to see if pitches are valid
+
+        for pitch_num, row in enumerate(csv_file):
+            keys = row.keys()
+
+            # Check if the our necessary keys is contained within the csv
+            # keys provided.
+            if set(pitch_attributes).issubset(set(keys)):
+                print("You have the necessary keys")
+
+            else:
+                invalid_pitch_found = True
+
+                # Debug statement. Eventually move to user facing so they can
+                # adjust input.
+                for attr in pitch_attributes:
+                    if attr not in keys:
+                        print("Pitch num " + pitch_num + " missing: " + attr)
+                break
+
+        if invalid_pitch_found:
+            return False
+        else:
+            return True
+
+
 def updateCount(balls, strikes, pitch_result, ab_result, season):
     if ab_result is not '':
         if (season.semester == 'Fall'):
@@ -644,3 +918,13 @@ def updateCount(balls, strikes, pitch_result, ab_result, season):
                 strikes += 1
     count = f'{balls}-{strikes}'
     return (balls, strikes, count)
+
+
+def getCurrentSeason():
+    current_season = Season.query.filter_by(current_season=True).first()
+    return current_season
+
+
+def getOldSeasons():
+    old_seasons = Season.query.filter_by(current_season=False).order_by(Season.year).all()
+    return old_seasons

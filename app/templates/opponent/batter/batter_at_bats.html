@@ -16,7 +16,7 @@
         <div>
             {% for at_bat in batter.at_bats %}
             <p>
-                <a href="{{ url_for('batter_at_bat', batter_id=batter.id, ab_num=at_bat.id) }}">{{ at_bat }}</a>
+                <a href="{{ url_for('batter.batter_at_bat', batter_id=batter.id, ab_num=at_bat.id) }}">{{ at_bat }}</a>
             </p>
             {% endfor %}
         </div>

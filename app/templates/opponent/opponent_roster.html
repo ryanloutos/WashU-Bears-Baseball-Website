@@ -25,7 +25,7 @@
                     <td>{{ b.short_name }}</td>
                     <td>{{ b.bats }}</td>
                     <td>{{ b.grad_year }}</td>
-                    <td><a href="{{ url_for('batter', id=b.id) }}">View</a></td>
+                    <td><a href="{{ url_for('batter.batter_home', id=b.id) }}">View</a></td>
                 </tr>
             {% endfor %}
         </table>

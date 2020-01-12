@@ -1,10 +1,10 @@
 <div class="sidenav">
-    <a href="{{ url_for('batter', id=batter.id) }}">Batter Home</a>
-    <a href="{{ url_for('batter_at_bats', batter_id=batter.id) }}">At Bats</a>
-    <a href="{{ url_for('batter_pitches_against', batter_id=batter.id) }}">Pitches Against</a>
-    <a href="{{ url_for('batter_spray_chart', batter_id=batter.id) }}">Sprays</a>
-    <a href="{{ url_for('batter_sequencing', batter_id=batter.id) }}">Sequencing</a>
+    <a href="{{ url_for('batter.batter_home', id=batter.id) }}">Batter Home</a>
+    <a href="{{ url_for('batter.batter_at_bats', batter_id=batter.id) }}">At Bats</a>
+    <a href="{{ url_for('batter.batter_pitches_against', batter_id=batter.id) }}">Pitches Against</a>
+    <a href="{{ url_for('batter.batter_spray_chart', batter_id=batter.id) }}">Sprays</a>
+    <a href="{{ url_for('batter.batter_sequencing', batter_id=batter.id) }}">Sequencing</a>
     {% if current_user.admin %}
-        <a href="{{ url_for('edit_batter', id=batter.id) }}">Edit Batter</a>
+        <a href="{{ url_for('batter.edit_batter', id=batter.id) }}">Edit Batter</a>
     {% endif %}
 </div>

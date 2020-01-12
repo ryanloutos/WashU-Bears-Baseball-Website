@@ -56,12 +56,12 @@
             <ul class="dropdown-menu">
                 
                 <li><a href="{{ url_for('outing.new_outing') }}">New Outing</a></li>
-                <li><a href="{{ url_for('new_outing_csv') }}">New Outing CSV</a></li>
+                <li><a href="{{ url_for('outing.new_outing_csv') }}">New Outing CSV</a></li>
                 <li role="separator" class="divider"></li>
                 <li><a href="{{ url_for('main.register') }}">New User</a></li>
                 <li><a href="{{ url_for('new_opponent') }}">New Opponent</a></li>
                 <li><a href="{{ url_for('new_season') }}">New Season</a></li>
-                <li><a href="{{ url_for('new_batter') }}">New Batter</a></li>
+                <li><a href="{{ url_for('batter.new_batter') }}">New Batter</a></li>
             </ul>
           </li>
           {% endif %}
