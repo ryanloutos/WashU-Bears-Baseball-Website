@@ -1,4 +1,5 @@
 <div class="sidenav">
+    <a href="{{ url_for('opponent.opponent_roster', id=batter.opponent_id) }}">Team Roster</a>
     <a href="{{ url_for('batter.batter_home', id=batter.id) }}">Batter Home</a>
     <a href="{{ url_for('batter.batter_at_bats', batter_id=batter.id) }}">At Bats</a>
     <a href="{{ url_for('batter.batter_pitches_against', batter_id=batter.id) }}">Pitches Against</a>
