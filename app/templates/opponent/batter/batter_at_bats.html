@@ -3,6 +3,7 @@
 {% block styles %}
     {{ super() }}
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidenav.css') }}">
+    <script src="{{ url_for('static', filename='js/sortable_table.js') }}"></script>
 {% endblock %}
 
 {% block app_content %}
@@ -14,11 +15,23 @@
         <br>
         <h2>At Bats</h2>
         <div>
-            {% for at_bat in batter.at_bats %}
-            <p>
-                <a href="{{ url_for('batter.batter_at_bat', batter_id=batter.id, ab_num=at_bat.id) }}">{{ at_bat }}</a>
-            </p>
-            {% endfor %}
+            <table class="table sortable_table">
+                <tr class="table-headers">
+                    <th onclick="sortTable(0,0)">Date</th>
+                    <th onclick="sortTable(1,0)">Pitcher</th>
+                    <th onclick="sortTable(2,0)">Num Pitches</th>
+                    <th onclick="sortTable(3,0)">View</th>
+                </tr>
+                {% for at_bat in batter.at_bats %}
+                    <tr>
+                        <td>{{ at_bat.get_date() }}</td>
+                        <td>{{ at_bat.get_pitcher() }}</td>
+                        <td>{{ at_bat.get_num_pitches() }}</td>
+                        <td><a href="{{ url_for('batter.batter_at_bat', batter_id=batter.id, ab_num=at_bat.id) }}">View</a></td>
+                    </tr>
+                {% endfor %}
+            </table>
+            
         </div>
     </div>
 {% endblock %}
