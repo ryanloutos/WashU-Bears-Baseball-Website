@@ -108,7 +108,7 @@ def all_opponents():
             the teams opponents
     '''
     # get the Opponent object assicated with the id
-    opponents = Opponent.query.all()
+    opponents = Opponent.query.order_by(Opponent.name).all()
     if not opponents:
         flash("URL does not exist")
         return redurect(url_for('main.index'))
@@ -239,6 +239,7 @@ def edit_opponent(id):
 
         file_name = opponent.id
         file_loc = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                                "..",
                                 "static",
                                 "images",
                                 "team_logos",

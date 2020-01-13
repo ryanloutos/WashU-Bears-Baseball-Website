@@ -2,6 +2,18 @@
 
 {% block styles %}
     {{ super() }}
+    <style>
+        .logos {
+            height: 50px;
+            width: auto;
+        }
+        .opponents {
+            width: 600px;
+        }
+        tr, th, td {
+            font-size: 15pt;
+        }
+    </style>
 {% endblock %}
 
 {% block app_content %}
@@ -9,13 +21,16 @@
         <h1>
             All Opponents
         </h1>
-        <table class="table sortable_table">
+        <table class="table sortable_table opponents">
             <tr class="table-headers">
+                <th></th>
                 <th>Team Name</th>
                 <th>View</th>
             </tr>
             {% for o in opponents %}
+                {% set path = 'images/team_logos/' ~ o.id ~ '.png' %}
                 <tr>
+                    <td><img class="logos" alt="Team-Logo" src="{{ url_for('static', filename=path) }}"></td>
                     <td>{{ o }}</td>
                     <td><a href="{{ url_for('opponent.opponent_home', id=o.id) }}">View</a></td>
                 </tr>
