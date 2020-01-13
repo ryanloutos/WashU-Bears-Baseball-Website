@@ -742,6 +742,8 @@ def seasonStatLine(pitcher):
 
                         if pitch.ab_result in ["Error", "CI", "D3->Safe"]:
                             stat_line["e"] += 1
+                            if pitch.ab_result in ["D3->Safe"]:
+                                stat_line["k"] += 1
                         else:
                             stat_line[pitch.ab_result.lower()] += 1
 
