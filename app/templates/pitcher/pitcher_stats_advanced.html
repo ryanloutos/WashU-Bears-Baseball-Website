@@ -5,6 +5,24 @@
     <script src="{{ url_for('static', filename='js/sortable_table.js') }}"></script>
     <script src="{{ url_for('static', filename='js/season_selector.js') }}"></script>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidenav.css') }}">
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            season_selector("velo-season-selector", "outing-velo-table");
+            updateTotals();
+        });
+
+        function updateTotals () {
+            document.getElementById("All Seasons-average-velo").style.display = "none";
+            {% for season in seasons %}
+                {% set season_name = season.semester ~ " " ~ season.year %}
+                season_name = '{{ season_name }}';
+                document.getElementById(season_name+"-average-velo").style.display = "none";
+            {% endfor %}
+            let season_selected = document.getElementById("velo-season-selector").value;
+            let id = season_selected + "-average-velo";
+            document.getElementById(id).style.display = "table-row";
+        }
+    </script>
 {% endblock %}
 
 {% block app_content %}
@@ -18,15 +36,15 @@
             <h4>Pitch Average Velo by Outing</h4>
             <p>
                 Select Season:
-                <select onchange="season_selector('velo-season-selector', 'outing-velo-table')" name="velo-season-selector" id="velo-season-selector">
-                    <option value="All Seasons" selected>All Seasons</option>
+                <select onchange="season_selector('velo-season-selector', 'outing-velo-table'); updateTotals()" name="velo-season-selector" id="velo-season-selector">
+                    <option value="All Seasons">All Seasons</option>
                     {% for season in seasons %}
-                        <option value="{{ season }}">{{season}}</option>
+                        <option value="{{ season }}" {% if season==current_season %} selected {% endif %}>{{season}}</option>
                     {% endfor %}
                 </select>
             </p>
             <table class="table sortable_table" id="outing-velo-table">
-                <tr class="table-headers">
+                {#<tr class="table-headers">
                     <th onclick="sortTable(0, 0, 2)">Date</th>
                     <th onclick="sortTable(1, 0, 2)">Opponent</th>
                     <th onclick="sortTable(2, 0, 2)">Season</th>
@@ -36,6 +54,17 @@
                     <th onclick="sortTable(6, 0, 2)">CB</th>
                     <th onclick="sortTable(7, 0, 2)">CH</th>
                     <th onclick="sortTable(8, 0, 2)">CT</th>
+                </tr> #}
+                <tr class="table-headers">
+                    <th>Date</th>
+                    <th>Opponent</th>
+                    <th>Season</th>
+                    <th>FB</th>
+                    <th>2SM</th>
+                    <th>SL</th>
+                    <th>CB</th>
+                    <th>CH</th>
+                    <th>CT</th>
                 </tr>
                 {% for outing in avg_pitch_velo_outing %}
                     <tr class="data-row">
@@ -50,17 +79,31 @@
                         <td>{{ outing["velos"]["CT"] }}</td>
                     </tr>
                 {% endfor%}
-                <tr>
+                <tr class="avg-row" id="All Seasons-average-velo" style="display: none;">
                     <td>Career Totals</td>
                     <td></td>
                     <td></td>
-                    <td>{{ avg_pitch_velo_season["FB"] }}</td>
-                    <td>{{ avg_pitch_velo_season["SM"] }}</td>
-                    <td>{{ avg_pitch_velo_season["SL"] }}</td>
-                    <td>{{ avg_pitch_velo_season["CB"] }}</td>
-                    <td>{{ avg_pitch_velo_season["CH"] }}</td>
-                    <td>{{ avg_pitch_velo_season["CT"] }}</td>
+                    <td>{{ avg_pitch_velo_career["FB"] }}</td>
+                    <td>{{ avg_pitch_velo_career["SM"] }}</td>
+                    <td>{{ avg_pitch_velo_career["SL"] }}</td>
+                    <td>{{ avg_pitch_velo_career["CB"] }}</td>
+                    <td>{{ avg_pitch_velo_career["CH"] }}</td>
+                    <td>{{ avg_pitch_velo_career["CT"] }}</td>
                 </tr>
+                {% for season in seasons %}
+                    {% set name = season.semester ~ " " ~ season.year %}
+                    <tr class="avg-row" id="{{ name }}-average-velo" style="display: none;">
+                        <td>Season Totals</td>
+                        <td></td>
+                        <td></td>
+                        <td>{{ avg_pitch_velo_season[name]["FB"] }}</td>
+                        <td>{{ avg_pitch_velo_season[name]["SM"] }}</td>
+                        <td>{{ avg_pitch_velo_season[name]["SL"] }}</td>
+                        <td>{{ avg_pitch_velo_season[name]["CB"] }}</td>
+                        <td>{{ avg_pitch_velo_season[name]["CH"] }}</td>
+                        <td>{{ avg_pitch_velo_season[name]["CT"] }}</td>
+                    </tr>
+                {% endfor %}
             </table>
         </div>
         <div>
@@ -99,7 +142,7 @@
                         <td>{{ outing["percentages"]["CT"] }}</td>
                     </tr>
                 {% endfor %}
-                <tr>
+                <tr class="avg-row">
                     <td>Career Totals</td>
                     <td></td>
                     <td></td>

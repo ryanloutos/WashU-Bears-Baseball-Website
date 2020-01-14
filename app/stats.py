@@ -4,7 +4,7 @@ import pygal
 from pygal.style import DarkSolarizedStyle, DefaultStyle
 import lxml
 import math
-from app.models import Season
+from app.models import Season, Outing
 
 
 class PitchType(Enum):
@@ -469,6 +469,23 @@ def percentage(n, decimals=0):
     percentage = 100 * n
     return int(math.floor(percentage*multiplier + 0.5) / multiplier)
 
+def getSeasons(pitcher):
+    '''
+    gets all of the seasons the pitcher has thrown in
+
+    PARAM:
+        - pitcher {object}
+    
+    RETURN:
+        - seasons {array} which holds the season objects
+    '''
+    outings = Outing.query.filter_by(user_id=pitcher.id).all()
+    seasons = []
+    for outing in outings:
+        if outing.season not in seasons:
+            seasons.append(outing.season)
+    return seasons
+
 # PITCHER ADVANCED STATISTICS -------------------------------------------------
 def avgPitchVeloPitcher(pitcher):
     """Calculates pitch velo by outings and season.
@@ -480,43 +497,78 @@ def avgPitchVeloPitcher(pitcher):
         tuple -- a dictionary containing avg of all pitches in a season and a
             dictionary containing avg of pitches by outing in season
     """
+    # return array for totals by outings
     outings = []
-    pitches_totals = {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0}
-    pitches_total_velo_totals = {
-        "FB": 0, "CB": 0, "SL": 0,
-        "CH": 0, "CT": 0, "SM": 0}
-    pitch_avg_velo_totals = {
-        "FB": 0, "CB": 0, "SL": 0,
-        "CH": 0, "CT": 0, "SM": 0}
 
-    # get totals for player
+    # used to calculate totals for career
+    totals_pitch_num = {
+        "FB": 0, "CB": 0, "SL": 0,
+        "CH": 0, "CT": 0, "SM": 0}
+    totals_pitch_velo_sum = {
+        "FB": 0, "CB": 0, "SL": 0,
+        "CH": 0, "CT": 0, "SM": 0}
+    totals_pitch_velo_avg = {
+        "FB": 0, "CB": 0, "SL": 0,
+        "CH": 0, "CT": 0, "SM": 0}    
+    
+    # set up the dictionary to updated based on which season
+    seasons = getSeasons(pitcher)
+    season_totals = dict()
+    for season in seasons:
+        name = f"{season.semester} {season.year}"
+        season_totals.update({
+            name: {
+                "pitch_num": {
+                    "FB": 0, "CB": 0, "SL": 0,
+                    "CH": 0, "CT": 0, "SM": 0},
+                "pitch_velo_sum": {
+                    "FB": 0, "CB": 0, "SL": 0,
+                    "CH": 0, "CT": 0, "SM": 0}
+            }
+        })
+    
+    # parse through all the outings for the pitcher
     for outing in pitcher.outings:
 
+        # get the season object and set name variable
+        season = Season.query.filter_by(id=outing.season_id).first()
+        season_name = f"{season.semester} {season.year}"
+
+        # set up dictionaries for outing avg velo calculations
         pitches = {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0}
         pitches_total_velo = {
             "FB": 0, "CB": 0, "SL": 0,
             "CH": 0, "CT": 0, "SM": 0}
         pitch_avg_velo = {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0}
 
-        # calculate sums
+        # parse through all the pitches of a given outing
         for at_bat in outing.at_bats:
             for pitch in at_bat.pitches:
-                # for outing specific stats
+
+                # make sure there was a velo reading
                 if pitch.velocity not in [None, ""]:
+
+                    # update dictionary values for outing
                     pitches[PitchType(pitch.pitch_type).name] += 1
                     pitches_total_velo[
                         PitchType(pitch.pitch_type).name] += pitch.velocity
+                    
+                    # update dictionary values for season
+                    season_totals[season_name]["pitch_num"][
+                        PitchType(pitch.pitch_type).name] += 1
+                    season_totals[season_name]["pitch_velo_sum"][
+                        PitchType(pitch.pitch_type).name] += pitch.velocity
 
-                    # for season total stats
-                    pitches_totals[PitchType(pitch.pitch_type).name] += 1
-                    pitches_total_velo_totals[
+                    # update dictionary values for career
+                    totals_pitch_num[PitchType(pitch.pitch_type).name] += 1
+                    totals_pitch_velo_sum[
                         PitchType(pitch.pitch_type).name] += pitch.velocity
 
         # calculate averages for outings
         for key, val in pitches.items():
             if pitches[key] != 0:
                 pitch_avg_velo[key] = truncate(
-                    pitches_total_velo[key]/pitches[key])
+                    pitches_total_velo[key]/pitches[key], 1)
 
         # fill in outings arr
         outings.append(
@@ -529,13 +581,30 @@ def avgPitchVeloPitcher(pitcher):
             }
         )
 
+    # calculate averages for career totals
+    for key, val in totals_pitch_num.items():
+        if totals_pitch_num[key] != 0:
+            totals_pitch_velo_avg[key] = truncate(
+                totals_pitch_velo_sum[key]/totals_pitch_num[key], 1)
+    
     # calculate averages for season totals
-    for key, val in pitches_totals.items():
-        if pitches_totals[key] != 0:
-            pitch_avg_velo_totals[key] = truncate(
-                pitches_total_velo_totals[key]/pitches_totals[key])
+    season_averages = dict()
+    for season in seasons:
+        name = f"{season.semester} {season.year}"
+        averages = {
+            name: {
+                "FB": 0, "CB": 0, "SL": 0,
+                "CH": 0, "CT": 0, "SM": 0
+            }
+        }
+        num = season_totals[name]["pitch_num"]
+        velo = season_totals[name]["pitch_velo_sum"]
+        for key, val in num.items():
+            if num[key] != 0:
+                averages[name][key] = truncate(velo[key]/num[key], 1)
+        season_averages.update(averages)
 
-    return (pitch_avg_velo_totals, outings)
+    return (totals_pitch_velo_avg, outings, season_averages)
 
 
 def pitchStrikePercentageSeason(pitcher):

@@ -209,7 +209,7 @@ def pitcher_stats_advanced(id):
             seasons.append(outing.season)
 
     # gets stats associated with pitcher
-    avg_pitch_velo_season, avg_pitch_velo_outing = avgPitchVeloPitcher(pitcher)
+    avg_pitch_velo_career, avg_pitch_velo_outing, avg_pitch_velo_season = avgPitchVeloPitcher(pitcher)
     strike_percentage_season, strike_percentage_outing = pitchStrikePercentageSeason(pitcher)
     pitch_usage_season, pitch_usage_outing = pitchUsageSeason(pitcher)
 
@@ -217,6 +217,7 @@ def pitcher_stats_advanced(id):
                            title=pitcher,
                            pitcher=pitcher,
                            seasons=seasons,
+                           avg_pitch_velo_career=avg_pitch_velo_career,
                            avg_pitch_velo_season=avg_pitch_velo_season,
                            avg_pitch_velo_outing=avg_pitch_velo_outing,
                            strike_percentage_season=strike_percentage_season,
