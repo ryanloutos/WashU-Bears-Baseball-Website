@@ -1097,7 +1097,7 @@ def staffPitchStrikePercentage(pitchers):
     # for pitch, val in pitch_strike_percentage_totals.items():
     #     pitch_strike_percentage_totals[pitch] = truncate(val / len(players))
 
-    return (pitches_strikes_totals, players)
+    return (pitch_strike_percentage_totals, players)
 
 
 def outingPitchStatistics(outing):
