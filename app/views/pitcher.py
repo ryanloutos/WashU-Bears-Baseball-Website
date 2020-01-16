@@ -210,8 +210,8 @@ def pitcher_stats_advanced(id):
 
     # gets stats associated with pitcher
     avg_pitch_velo_career, avg_pitch_velo_outing, avg_pitch_velo_season = avgPitchVeloPitcher(pitcher)
-    strike_percentage_season, strike_percentage_outing = pitchStrikePercentageSeason(pitcher)
-    pitch_usage_season, pitch_usage_outing = pitchUsageSeason(pitcher)
+    strike_percentage_career, strike_percentage_outing, strike_percentage_season = pitchStrikePercentageSeason(pitcher)
+    pitch_usage_career, pitch_usage_outing, pitch_usage_season = pitchUsageSeason(pitcher)
 
     return render_template('pitcher/pitcher_stats_advanced.html',
                            title=pitcher,
@@ -220,10 +220,12 @@ def pitcher_stats_advanced(id):
                            avg_pitch_velo_career=avg_pitch_velo_career,
                            avg_pitch_velo_season=avg_pitch_velo_season,
                            avg_pitch_velo_outing=avg_pitch_velo_outing,
+                           strike_percentage_career=strike_percentage_career,
                            strike_percentage_season=strike_percentage_season,
                            strike_percentage_outing=strike_percentage_outing,
-                           pitch_usage_season=pitch_usage_season,
-                           pitch_usage_outing=pitch_usage_outing)
+                           pitch_usage_career=pitch_usage_career,
+                           pitch_usage_outing=pitch_usage_outing,
+                           pitch_usage_season=pitch_usage_season)
 
 
 @pitcher.route('/pitcher/<id>/videos', methods=["GET", "POST"])

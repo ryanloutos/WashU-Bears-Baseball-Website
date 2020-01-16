@@ -620,7 +620,8 @@ def pitchStrikePercentageSeason(pitcher):
     """
     # storage array for individual outing data
     outings = []
-    # storage for season totals data
+
+    # storage for career totals data
     pitches_totals = {
         "FB": 0, "CB": 0, "SL": 0,
         "CH": 0, "CT": 0, "SM": 0,
@@ -633,9 +634,32 @@ def pitchStrikePercentageSeason(pitcher):
         "FB": 0, "CB": 0, "SL": 0,
         "CH": 0, "CT": 0, "SM": 0,
         "total": 0}
+    
+    # set up the dictionary to updated based on which season
+    seasons = getSeasons(pitcher)
+    season_totals = dict()
+    for season in seasons:
+        name = f"{season.semester} {season.year}"
+        season_totals.update({
+            name: {
+                "pitch_num": {
+                    "FB": 0, "CB": 0, "SL": 0,
+                    "CH": 0, "CT": 0, "SM": 0,
+                    "total": 0},
+                "pitch_strikes": {
+                    "FB": 0, "CB": 0, "SL": 0,
+                    "CH": 0, "CT": 0, "SM": 0,
+                    "total": 0},
+            }
+        })
 
     # iterate through all pitcher appearances and at_bats
     for outing in pitcher.outings:
+
+        # get the season object and set name variable
+        season = Season.query.filter_by(id=outing.season_id).first()
+        season_name = f"{season.semester} {season.year}"
+
         # storage for individual outing calculations
         pitches = {
             "FB": 0, "CB": 0, "SL": 0,
@@ -652,30 +676,42 @@ def pitchStrikePercentageSeason(pitcher):
 
         for at_bat in outing.at_bats:
             for pitch in at_bat.pitches:
+
                 # for outing specific
                 pitches[PitchType(pitch.pitch_type).name] += 1
                 pitches['total'] += 1
 
-                # for season totals
+                # for career totals
                 pitches_totals[PitchType(pitch.pitch_type).name] += 1
                 pitches_totals['total'] += 1
 
-                if (pitch.pitch_result == 'SS' or pitch.pitch_result == 'CS' or
-                        pitch.pitch_result == 'F' or pitch.pitch_result == 'IP'):
+                # for season totals
+                season_totals[season_name]["pitch_num"][
+                    PitchType(pitch.pitch_type).name] += 1
+                season_totals[season_name]["pitch_num"][
+                    'total'] += 1
+
+                if pitch.pitch_result is not 'B':
 
                     # for outing specific
                     pitches_strikes[PitchType(pitch.pitch_type).name] += 1
                     pitches_strikes['total'] += 1
 
-                    # for season totals
+                    # for career totals
                     pitches_strikes_totals[PitchType(pitch.pitch_type).name] += 1
                     pitches_strikes_totals['total'] += 1
+
+                    # for season totals
+                    season_totals[season_name]["pitch_strikes"][
+                        PitchType(pitch.pitch_type).name] += 1
+                    season_totals[season_name]["pitch_strikes"][
+                        'total'] += 1
 
         # Calculate outing totals
         for key, val in pitches.items():
             if pitches[key] != 0:
                 pitch_strike_percentage[key] = (
-                    truncate(pitches_strikes[key]/pitches[key]*100))
+                    int(truncate(pitches_strikes[key]/pitches[key]*100, 0)))
 
         # place into data array
         outings.append({
@@ -686,13 +722,31 @@ def pitchStrikePercentageSeason(pitcher):
             "percentages": pitch_strike_percentage
         })
 
-    # calculate season totals
+    # calculate career totals
     for key, val in pitches_totals.items():
         if pitches_totals[key] != 0:
             pitch_strike_percentage_totals[key] = (
-                truncate(pitches_strikes_totals[key]/pitches_totals[key]*100))
+                int(truncate(pitches_strikes_totals[key]/pitches_totals[key]*100, 0)))
 
-    return (pitch_strike_percentage_totals, outings)
+    # calculate season totals
+    season_strike_percentage = dict()
+    for season in seasons:
+        name = f"{season.semester} {season.year}"
+        totals = {
+            name: {
+                "FB": 0, "CB": 0, "SL": 0,
+                "CH": 0, "CT": 0, "SM": 0,
+                "total": 0
+            }
+        }
+        num = season_totals[name]["pitch_num"]
+        strikes = season_totals[name]["pitch_strikes"]
+        for key, val in num.items():
+            if num[key] != 0:
+                totals[name][key] = int(truncate(100*strikes[key]/num[key], 0))
+        season_strike_percentage.update(totals)
+
+    return (pitch_strike_percentage_totals, outings, season_strike_percentage)
 
 
 def pitchUsageSeason(pitcher):
@@ -708,10 +762,25 @@ def pitchUsageSeason(pitcher):
     """    
     # return array array for outing specific
     outings = []
-    # storage for season totals
+    # storage for career totals
     num_pitches_total = 0
     pitches_total = {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0}
     pitches_percentages_total = {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0}
+
+    # set up the dictionary to updated based on which season
+    seasons = getSeasons(pitcher)
+    season_totals = dict()
+    for season in seasons:
+        name = f"{season.semester} {season.year}"
+        season_totals.update({
+            name: {
+                "pitch_num": {
+                    "FB": 0, "CB": 0, "SL": 0,
+                    "CH": 0, "CT": 0, "SM": 0},
+                "total": 0
+            }
+        })
+
 
     for outing in pitcher.outings:
         # storage for individual outings
@@ -719,20 +788,30 @@ def pitchUsageSeason(pitcher):
         pitches = {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0}
         pitches_percentages = {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0}
 
+        # get the season object and set name variable
+        season = Season.query.filter_by(id=outing.season_id).first()
+        season_name = f"{season.semester} {season.year}"
+
         for at_bat in outing.at_bats:
             for pitch in at_bat.pitches:
                 # for outing specific calculations
                 pitches[PitchType(pitch.pitch_type).name] += 1
                 num_pitches += 1
 
-                # for season totals
+                # for career totals
                 pitches_total[PitchType(pitch.pitch_type).name] += 1
                 num_pitches_total += 1
+
+                # for season totals
+                season_totals[season_name]["pitch_num"][
+                    PitchType(pitch.pitch_type).name] += 1
+                season_totals[season_name]["total"] += 1
+
 
         # calculate values for individual outings
         if num_pitches != 0:
             for key, val in pitches.items():
-                pitches_percentages[key] = truncate(pitches[key] / num_pitches * 100)
+                pitches_percentages[key] = int(truncate(pitches[key] / num_pitches * 100, 0))
 
         # storage array for individual outing totals
         outings.append({
@@ -744,18 +823,41 @@ def pitchUsageSeason(pitcher):
             "usages": pitches
         })
 
-    # calculate season totals
+    # calculate career totals
     if num_pitches_total != 0:
         for key, val in pitches.items():
-            pitches_percentages_total[key] = truncate(pitches_total[key] / num_pitches_total * 100)
+            pitches_percentages_total[key] = int(truncate(pitches_total[key] / num_pitches_total * 100, 0))
 
-    # storage array for season totals values
-    season = {
+    # storage array for career totals values
+    career = {
         "percentages": pitches_percentages_total,
         "usages": pitches_total
     }
 
-    return (season, outings)
+    # calculate season totals
+    season_percentages = dict()
+    for season in seasons:
+        name = f"{season.semester} {season.year}"
+        totals = {
+            name: {
+                "FB": 0, "CB": 0, "SL": 0,
+                "CH": 0, "CT": 0, "SM": 0,
+            }
+        }
+        num = season_totals[name]["pitch_num"]
+        total = season_totals[name]["total"]
+        for key, val in num.items():
+            if num[key] != 0:
+                totals[name][key] = int(truncate(100*num[key]/total, 0))
+        season_percentages.update(totals)
+    
+    # storage array for season totals
+    season_percentages_usages = {
+        "percentages": season_percentages,
+        "usages": season_totals
+    }
+
+    return (career, outings, season_percentages_usages)
 
 
 # PITCHER BASIC STATISTICS ----------------------------------------------------
@@ -1097,7 +1199,7 @@ def staffPitchStrikePercentage(pitchers):
     # for pitch, val in pitch_strike_percentage_totals.items():
     #     pitch_strike_percentage_totals[pitch] = truncate(val / len(players))
 
-    return (pitch_strike_percentage_totals, players)
+    return (pitches_strikes_totals, players)
 
 
 def outingPitchStatistics(outing):
