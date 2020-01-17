@@ -27,6 +27,14 @@ class User(UserMixin, db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+class Pitcher(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64), index=True)
+    throws = db.Column(db.String(64), index=True)
+    grad_year = db.Column(db.String(8), index=True)
+    opponent_id = db.Column(db.Integer, db.ForeignKey('opponent.id'), index=True)
+    retired = db.Column(db.Boolean, index=True)
+    # outings = db.relationship('Outing', backref='pitcher', lazy='dynamic')
 
 class Outing(db.Model):
     id = db.Column(db.Integer, primary_key=True)
