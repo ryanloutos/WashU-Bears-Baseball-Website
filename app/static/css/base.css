@@ -87,6 +87,10 @@ th, td {
     color: #f9feff;
 }
 
+.table-headers th:hover {
+    color: #acacac;
+}
+
 .main {
     font-family: 'Exo', sans-serif;
     font-weight: 500;
