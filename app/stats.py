@@ -479,7 +479,7 @@ def getSeasons(pitcher):
     RETURN:
         - seasons {array} which holds the season objects
     '''
-    outings = Outing.query.filter_by(user_id=pitcher.id).all()
+    outings = Outing.query.filter_by(pitcher_id=pitcher.id).all()
     seasons = []
     for outing in outings:
         if outing.season not in seasons:

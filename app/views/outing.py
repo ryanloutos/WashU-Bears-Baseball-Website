@@ -530,10 +530,10 @@ def edit_outing(outing_id):
     if form.validate_on_submit():
 
         # get the user object from form
-        pitcher = Pitcher.query.filter_by(id=form.pitcher.data).first_or_404()
+        pitcher = Pitcher.query.filter_by(id=form.pitcher.data).first()
 
         # update data for outing object
-        outing.user_id = form.pitcher.data
+        outing.pitcher_id = pitcher.id
         outing.date = form.date.data
         outing.season_id = form.season.data.id
 
@@ -636,7 +636,7 @@ def new_outing_csv():
 
             # gets the user associated the username of the pitcher the outing
             # is being created for
-            pitcher = Pitcher.query.filter_by(id=form.pitcher.data).first_or_404()
+            pitcher = Pitcher.query.filter_by(id=form.pitcher.data.id).first_or_404()
 
             # creates a new outing object based on form data and user
             outing = Outing(
@@ -834,7 +834,7 @@ def getAvailablePitchers():
 
     if current_user.admin:
         for p in pitchers_objects:
-            available_pitchers.append((p.id, p))
+            available_pitchers.append((f"{p.id}", p))
 
     return available_pitchers
 

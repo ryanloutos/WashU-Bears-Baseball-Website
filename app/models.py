@@ -127,7 +127,7 @@ class AtBat(db.Model):
 
     def __repr__(self):
         outing = Outing.query.filter_by(id=self.outing_id).first()
-        pitcher = User.query.filter_by(id=outing.user_id).first()
+        pitcher = User.query.filter_by(id=outing.pitcher_id).first()
         date = outing.date
         return f"{date} vs. {pitcher}"
 
@@ -139,7 +139,7 @@ class AtBat(db.Model):
 
     def get_pitcher(self):
         outing = Outing.query.filter_by(id=self.outing_id).first()
-        pitcher = User.query.filter_by(id=outing.user_id).first()
+        pitcher = Pitcher.query.filter_by(id=outing.pitcher_id).first()
         return pitcher
 
     def get_date(self):

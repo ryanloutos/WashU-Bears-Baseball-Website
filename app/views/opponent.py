@@ -281,7 +281,7 @@ def getAvailablePitchers():
 
     if current_user.admin:
         for p in pitchers_objects:
-            available_pitchers.append((p.id, p))
+            available_pitchers.append((f"{p.id}", p))
 
     return available_pitchers
 
