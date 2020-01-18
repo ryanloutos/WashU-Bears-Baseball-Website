@@ -8,7 +8,7 @@ from app.forms import NewOutingFromCSV, SeasonForm, OpponentForm, BatterForm
 from app.forms import OutingPitchForm, NewOutingFromCSVPitches, EditUserForm
 from app.forms import ChangePasswordForm, EditBatterForm, EditOpponentForm
 from app.forms import NewBatterForm
-from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat
+from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat, Pitcher
 from app.stats import calcPitchPercentages, pitchUsageByCount, calcAverageVelo
 from app.stats import calcPitchStrikePercentage, calcPitchWhiffRate
 from app.stats import createPitchPercentagePieChart, velocityOverTimeLineChart
@@ -226,13 +226,13 @@ def new_outing():
 
         # gets the user associated the username of the pitcher the outing
         # is being created for
-        user = User.query.filter_by(username=form.pitcher.data).first_or_404()
+        # pitcher = Pitcher.query.filter_by(id=form.pitcher.data).first_or_404()
 
         # creates a new outing object based on form data and user
         outing = Outing(date=form.date.data,
                         opponent_id=form.opponent.data.id,
                         season_id=form.season.data.id,
-                        user_id=user.id)
+                        pitcher_id=form.pitcher.data)
 
         # add the new outing to the database before pitches so pitches have a
         # outing_id associated with them
@@ -373,7 +373,7 @@ def edit_outing_pitches(outing_id):
         flash("URL does not exist")
         return redirect(url_for('main.index'))
 
-    user = User.query.filter_by(id=outing.user_id).first_or_404()
+    pitcher = Pitcher.query.filter_by(id=outing.pitcher_id).first_or_404()
     opponent = Opponent.query.filter_by(id=outing.opponent_id).first_or_404()
     season = Season.query.filter_by(id=outing.season_id).first_or_404()
 
@@ -473,7 +473,7 @@ def edit_outing_pitches(outing_id):
             if pitch.ab_result is not '':
                 new_at_bat = True
 
-        # redirect to user page
+        # redirect to outing page
         flash('The outing has been adjusted!')
         return redirect(url_for('outing.outing_home', id=outing.id))
 
@@ -518,8 +518,8 @@ def edit_outing(outing_id):
     opponent = Opponent.query.filter_by(id=outing.opponent_id).first_or_404()
     this_season = Season.query.filter_by(id=outing.season_id).first_or_404()
     all_seasons = Season.query.all()
-    this_pitcher = User.query.filter_by(id=outing.user_id).first_or_404()
-    all_pitchers = User.query.filter(User.grad_year != 'Coach/Manager').all()
+    this_pitcher = Pitcher.query.filter_by(id=outing.pitcher_id).first_or_404()
+    all_pitchers = Pitcher.query.all()
 
     # only admins can go back and edit outing data
     if not current_user.admin:
@@ -530,10 +530,10 @@ def edit_outing(outing_id):
     if form.validate_on_submit():
 
         # get the user object from form
-        pitcher = User.query.filter_by(username=form.pitcher.data).first_or_404()
+        pitcher = Pitcher.query.filter_by(id=form.pitcher.data).first_or_404()
 
         # update data for outing object
-        outing.user_id = pitcher.id
+        outing.user_id = form.pitcher.data
         outing.date = form.date.data
         outing.season_id = form.season.data.id
 
@@ -576,7 +576,7 @@ def delete_outing(id):
     if not outing:
         flash("URL does not exist")
         return redirect(url_for('main.index'))
-    user = User.query.filter_by(id=outing.user_id).first_or_404()
+    pitcher = Pitcher.query.filter_by(id=outing.pitcher_id).first_or_404()
 
     # only admins have permission to delete an outing
     if not current_user.admin:
@@ -595,7 +595,7 @@ def delete_outing(id):
 
     # redirects to user page associated with deletion
     flash('Outing has been deleted')
-    return redirect(url_for('pitcher.pitcher_home', id=user.id))
+    return redirect(url_for('pitcher.pitcher_home', id=pitcher.id))
 
 
 # ***************-NEW OUTING CSV-*************** #
@@ -636,14 +636,14 @@ def new_outing_csv():
 
             # gets the user associated the username of the pitcher the outing
             # is being created for
-            user = User.query.filter_by(username=form.pitcher.data).first_or_404()
+            pitcher = Pitcher.query.filter_by(id=form.pitcher.data).first_or_404()
 
             # creates a new outing object based on form data and user
             outing = Outing(
                 date=form.date.data,
                 opponent_id=form.opponent.data.id,
                 season_id=form.season.data.id,
-                user_id=user.id)
+                pitcher_id=pitcher.id)
 
             # add the new outing to the database before pitches so pitches
             # have a outing_id associated with them
@@ -709,7 +709,7 @@ def new_outing_csv_pitches(file_name, outing_id):
     if not outing:
         flash("URL does not exist")
         return redirect(url_for('main.index'))
-    user = User.query.filter_by(id=outing.user_id).first_or_404()
+    pitcher = Pitcher.query.filter_by(id=outing.pitcher_id).first_or_404()
     opponent = Opponent.query.filter_by(id=outing.opponent_id).first_or_404()
     season = Season.query.filter_by(id=outing.season_id).first_or_404()
 
@@ -827,14 +827,14 @@ def getAvailablePitchers():
     '''
 
     # gets all the User objects that are players on the team
-    pitchers_objects = User.query.filter(User.grad_year != 'Coach/Manager').all()
+    pitchers_objects = Pitcher.query.all()
 
     # set the available choices that someone can create an outing for
     available_pitchers = []
 
     if current_user.admin:
         for p in pitchers_objects:
-            available_pitchers.append((p.username, p))
+            available_pitchers.append((p.id, p))
 
     return available_pitchers
 

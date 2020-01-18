@@ -3,7 +3,7 @@ from flask import render_template
 from flask_login import login_required
 from app import db
 
-from app.models import User, Outing, Pitch, Season
+from app.models import User, Outing, Pitch, Season, Pitcher
 from app.stats import staffBasicStats
 from app.stats import staffPitcherAvgVelo, staffPitchStrikePercentage
 from app.stats import teamImportantStatsSeason
@@ -25,7 +25,7 @@ def staff_home():
     RETURN:
         -staff.html
     '''
-    pitchers = User.query.filter(User.grad_year != 'Coach/Manager').filter(User.retired == 0).order_by(User.lastname).all()
+    pitchers = Pitcher.query.all()
 
     strike_percentage, fps_percentage, k_to_bb = teamImportantStatsSeason(pitchers)
 
@@ -50,8 +50,7 @@ def staff_roster():
         -staff_roster.html which displays a table of
             the current staff
     '''
-    pitchers = User.query.filter(User.grad_year != 'Coach/Manager').filter(User.retired == 0).order_by(User.lastname).all()
-
+    pitchers = Pitcher.query.all()
     return render_template('staff/staff_roster.html',
                            title='Staff',
                            pitchers=pitchers)
@@ -71,7 +70,7 @@ def staff_basic_stats():
         staff_basic_stats.html -- list of basic stats for all players
         currently on roster
     """
-    pitchers = User.query.filter(User.grad_year != 'Coach/Manager').filter(User.retired == 0).order_by(User.lastname).all()
+    pitchers = Pitcher.query.all()
 
     staff_stat_summary, players_stat_summary = staffBasicStats(pitchers)
 
@@ -85,7 +84,7 @@ def staff_basic_stats():
 @staff.route('/staff/advanced_stats', methods=['GET', 'POST'])
 @login_required
 def staff_advanced_stats():
-    pitchers = User.query.filter(User.grad_year != 'Coach/Manager').filter(User.retired == 0).order_by(User.lastname).all()
+    pitchers = Pitcher.query.all()
 
     team_avg_velo, player_avg_velo = staffPitcherAvgVelo(pitchers)
     team_strike_percentages, player_strike_percentages = staffPitchStrikePercentage(pitchers)
@@ -115,7 +114,7 @@ def staff_retired():
             the retired staff
     '''
 
-    retired_pitchers = User.query.filter(User.grad_year != 'Coach/Manager').filter(User.retired == 1).order_by(User.lastname).all()
+    retired_pitchers = Pitcher.query.filter(Pitcher.retired == 1).all()
 
     return render_template('staff/staff_retired.html',
                            title='Retired Pitchers',

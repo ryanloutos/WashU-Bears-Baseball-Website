@@ -9,7 +9,7 @@ from app.forms import NewOutingFromCSV, SeasonForm, OpponentForm, BatterForm
 from app.forms import OutingPitchForm, NewOutingFromCSVPitches, EditUserForm
 from app.forms import ChangePasswordForm, EditBatterForm, EditOpponentForm
 from app.forms import NewBatterForm
-from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat
+from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat, Pitcher
 from app.stats import calcPitchPercentages, pitchUsageByCount, calcAverageVelo
 from app.stats import calcPitchStrikePercentage, calcPitchWhiffRate
 from app.stats import createPitchPercentagePieChart, velocityOverTimeLineChart
@@ -173,14 +173,14 @@ def getAvailablePitchers():
     '''
 
     # gets all the User objects that are players on the team
-    pitchers_objects = User.query.filter(User.grad_year != 'Coach/Manager').all()
+    pitchers_objects = Pitcher.query.all()
 
     # set the available choices that someone can create an outing for
     available_pitchers = []
 
     if current_user.admin:
         for p in pitchers_objects:
-            available_pitchers.append((p.username, p))
+            available_pitchers.append((p.id, p))
 
     return available_pitchers
 

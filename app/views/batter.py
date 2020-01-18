@@ -299,7 +299,7 @@ def getAvailablePitchers():
     '''
 
     # gets all the User objects that are players on the team
-    pitchers_objects = User.query.filter(User.grad_year != 'Coach/Manager').all()
+    pitchers_objects = Pitcher.query.all()
 
     # set the available choices that someone can create an outing for
     available_pitchers = []

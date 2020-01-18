@@ -15,7 +15,6 @@ class User(UserMixin, db.Model):
     lastname = db.Column(db.String(64))
     grad_year = db.Column(db.String(8), index=True)
     throws = db.Column(db.String(8), index=True)
-    outings = db.relationship('Outing', backref='pitcher', lazy='dynamic')
     # each user will have all their outings accessible through this
 
     def __repr__(self):
@@ -34,7 +33,10 @@ class Pitcher(db.Model):
     grad_year = db.Column(db.String(8), index=True)
     opponent_id = db.Column(db.Integer, db.ForeignKey('opponent.id'), index=True)
     retired = db.Column(db.Boolean, index=True)
-    # outings = db.relationship('Outing', backref='pitcher', lazy='dynamic')
+    outings = db.relationship('Outing', backref='pitcher', lazy='dynamic')
+
+    def __repr__(self):
+        return self.name
 
 class Outing(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -42,7 +44,7 @@ class Outing(db.Model):
     opponent_id = db.Column(db.Integer,
                             db.ForeignKey('opponent.id'),
                             index=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), index=True)
+    pitcher_id = db.Column(db.Integer, db.ForeignKey('pitcher.id'), index=True)
     # represents which pitcher this outing belongs to
     season_id = db.Column(db.Integer, db.ForeignKey('season.id'), index=True)
     at_bats = db.relationship('AtBat', backref='outing', lazy='dynamic')
@@ -52,7 +54,7 @@ class Outing(db.Model):
         year = self.date.year
         month = self.date.month
         day = self.date.day
-        pitcher = User.query.filter_by(id=self.user_id).first()
+        pitcher = Pitcher.query.filter_by(id=self.pitcher_id).first()
 
         return f'{month}/{day}/{year} - {pitcher} vs. {self.opponent}'
 

@@ -4,7 +4,7 @@ from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.urls import url_parse
 from app import db
 
-from app.models import User, Outing, Pitch, Season
+from app.models import User, Outing, Pitch, Season, Pitcher
 from app.stats import avgPitchVeloPitcher
 from app.stats import pitchStrikePercentageSeason
 from app.stats import pitchUsageSeason, seasonStatLine
@@ -34,16 +34,11 @@ def pitcher_home(id):
             and can navigate to other pages using side nav
     '''
     # get the user object associated with the id in the url
-    pitcher = User.query.filter_by(id=id).first()
+    pitcher = Pitcher.query.filter_by(id=id).first()
 
     # either bug or user trying to access pitcher page that DNE
     if not pitcher:
         flash('URL does not exist')
-        return redirect(url_for('main.index'))
-
-    # if pitcher is a coach/manager, redirect to index page
-    if pitcher.grad_year == 'Coach/Manager':
-        flash('Cannot show outings for Coach/Manager')
         return redirect(url_for('main.index'))
 
     # get the outings associated with that player
@@ -94,16 +89,11 @@ def pitcher_outings(id):
             of their outings
     '''
     # get the user object associated with the username in the url
-    pitcher = User.query.filter_by(id=id).first()
+    pitcher = Pitcher.query.filter_by(id=id).first()
 
     # either bug or user trying to access pitcher page that DNE
     if not pitcher:
         flash('URL does not exist')
-        return redirect(url_for('main.index'))
-
-    # if pitcher is a coach/manager, redirect to index page
-    if pitcher.grad_year == 'Coach/Manager':
-        flash('Cannot show outings for Coach/Manager')
         return redirect(url_for('main.index'))
 
     # get the outings associated with that player
@@ -138,16 +128,11 @@ def pitcher_stats_basic(id):
     '''
 
     # get the user object associated with the username in the url
-    pitcher = User.query.filter_by(id=id).first()
+    pitcher = Pitcher.query.filter_by(id=id).first()
 
     # either bug or user trying to access pitcher page that DNE
     if not pitcher:
         flash('URL does not exist')
-        return redirect(url_for('main.index'))
-
-    # if pitcher is a coach/manager, redirect to index page
-    if pitcher.grad_year == 'Coach/Manager':
-        flash('Cannot show outings for Coach/Manager')
         return redirect(url_for('main.index'))
 
     # get the outings associated with that player
@@ -187,16 +172,11 @@ def pitcher_stats_advanced(id):
     '''
 
     # get the user object associated with the username in the url
-    pitcher = User.query.filter_by(id=id).first()
+    pitcher = Pitcher.query.filter_by(id=id).first()
 
     # either bug or user trying to access pitcher page that DNE
     if not pitcher:
         flash('URL does not exist')
-        return redirect(url_for('main.index'))
-
-    # if pitcher is a coach/manager, redirect to index page
-    if pitcher.grad_year == 'Coach/Manager':
-        flash('Cannot show outings for Coach/Manager')
         return redirect(url_for('main.index'))
 
     # get the outings associated with that player
@@ -232,7 +212,7 @@ def pitcher_stats_advanced(id):
 @login_required
 def pitcher_videos(id):
 
-    pitcher = User.query.filter_by(id=id).first()
+    pitcher = Pitcher.query.filter_by(id=id).first()
 
     return render_template(
         '/pitcher/pitcher_videos.html',
