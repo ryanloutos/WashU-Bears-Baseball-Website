@@ -5,6 +5,7 @@
     <a href="{{ url_for('batter.batter_pitches_against', batter_id=batter.id) }}">Pitches Against</a>
     <a href="{{ url_for('batter.batter_spray_chart', batter_id=batter.id) }}">Sprays</a>
     <a href="{{ url_for('batter.batter_sequencing', batter_id=batter.id) }}">Sequencing</a>
+    <a href="{{ url_for('batter.batter_stats', batter_id=batter.id) }}">Stats</a>
     {% if current_user.admin %}
         <a href="{{ url_for('batter.edit_batter', id=batter.id) }}">Edit Batter</a>
     {% endif %}
