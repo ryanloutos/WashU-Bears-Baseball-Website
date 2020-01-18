@@ -1025,7 +1025,7 @@ def staffBasicStats(pitchers):
         # append to storage array
         players.append({
             "details": {
-                "name": f"{pitcher.firstname} {pitcher.lastname}",
+                "name": f"{pitcher.name}",
                 "class": pitcher.grad_year,
                 "throws": pitcher.throws},
             "stat_line": stat_line
@@ -1092,7 +1092,7 @@ def staffPitcherAvgVelo(pitchers):
         players.append(
             {
                 "details": {
-                    "name": f"{pitcher.firstname} {pitcher.lastname}",
+                    "name": f"{pitcher.name}",
                     "class": pitcher.grad_year,
                     "throws": pitcher.throws},
                 "velos": pitch_avg_velo
@@ -1180,7 +1180,7 @@ def staffPitchStrikePercentage(pitchers):
 
         players.append({
             "details": {
-                "name": f"{pitcher.firstname} {pitcher.lastname}",
+                "name": f"{pitcher.name}",
                 "class": pitcher.grad_year,
                 "throws": pitcher.throws},
             "percentages": pitch_strike_percentage
@@ -1383,3 +1383,96 @@ def teamImportantStatsSeason(pitchers):
     return strike_percentage, fps_percentage, k_to_bb
 
 
+def batterSwingWhiffRatebyPitchbyCount(batter):
+    pitches_per_count = {
+        "0-0": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
+        "0-1": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
+        "0-2": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
+        "1-0": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
+        "1-1": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
+        "1-2": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
+        "2-0": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
+        "2-1": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
+        "2-2": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
+        "3-0": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
+        "3-1": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
+        "3-2": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0}
+    }
+    swings_per_count = {
+        "0-0": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
+        "0-1": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
+        "0-2": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
+        "1-0": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
+        "1-1": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
+        "1-2": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
+        "2-0": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
+        "2-1": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
+        "2-2": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
+        "3-0": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
+        "3-1": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
+        "3-2": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0}
+    }
+    whiffs_per_count = {
+        "0-0": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
+        "0-1": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
+        "0-2": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
+        "1-0": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
+        "1-1": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
+        "1-2": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
+        "2-0": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
+        "2-1": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
+        "2-2": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
+        "3-0": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
+        "3-1": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
+        "3-2": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0}
+    }
+    swing_rate_by_count = {
+        "0-0": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
+        "0-1": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
+        "0-2": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
+        "1-0": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
+        "1-1": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
+        "1-2": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
+        "2-0": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
+        "2-1": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
+        "2-2": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
+        "3-0": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
+        "3-1": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
+        "3-2": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0}
+    }
+    whiff_rate_by_count = {
+        "0-0": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
+        "0-1": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
+        "0-2": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
+        "1-0": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
+        "1-1": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
+        "1-2": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
+        "2-0": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
+        "2-1": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
+        "2-2": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
+        "3-0": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
+        "3-1": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
+        "3-2": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0}
+    }
+
+    for at_bat in batter.at_bats:
+        for pitch in at_bat.pitches:
+            pitches_per_count[pitch.count][PitchType(pitch.pitch_type).name] += 1
+
+            if pitch.pitch_result in ["SS", "F", "IP"]:
+                swings_per_count[pitch.count][PitchType(pitch.pitch_type).name] += 1
+                if pitch.pitch_result in ["SS"]:
+                    whiffs_per_count[pitch.count][PitchType(pitch.pitch_type).name] += 1
+
+    # calculate batter totals
+    for count, val in pitches_per_count.items():
+        for pitch, num in val.items():
+            # calculate swing rate
+            if val[pitch] != 0:
+                swing_rate_by_count[count][pitch] = truncate(swings_per_count[count][pitch] / val[pitch])
+
+                # calculate whiff rate
+                if swings_per_count[count][pitch] != 0:
+                    whiff_rate_by_count[count][pitch] = truncate(whiffs_per_count[count][pitch] / swings_per_count[count][pitch])
+
+    return (swing_rate_by_count, whiff_rate_by_count)

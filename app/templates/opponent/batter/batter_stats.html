@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block styles %}
+{{ super() }}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidenav.css') }}">
+{% endblock %}
+
+{% block app_content %}
+{% include "opponent/batter/batter_sidenav.html" %}
+<div class="main">
+    <h1>
+        {{ batter.name }}
+    </h1>
+    <h2>Swing Rate by Pitch by Count</h2>
+    <table class="table">
+        <tr class="table-headers">
+            <th>Count</th>
+            <th>FB</th>
+            <th>2-Seam</th>
+            <th>CB</th>
+            <th>SL</th>
+            <th>CH</th>
+            <th>CT</th>
+        </tr>
+        {% for key, val in swing_rate_by_count.items() %}
+        <tr>
+            <td>{{ key }}</td>
+            <td>{{ val["FB"] }}</td>
+            <td>{{ val["SM"] }}</td>
+            <td>{{ val["CB"] }}</td>
+            <td>{{ val["SL"] }}</td>
+            <td>{{ val["CH"] }}</td>
+            <td>{{ val["CT"] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+        <h2>Whiff Rate by Pitch by Count</h2>
+        <table class="table">
+            <tr class="table-headers">
+                <th>Count</th>
+                <th>FB</th>
+                <th>2-Seam</th>
+                <th>CB</th>
+                <th>SL</th>
+                <th>CH</th>
+                <th>CT</th>
+            </tr>
+            {% for key, val in whiff_rate_by_count.items() %}
+            <tr>
+                <td>{{ key }}</td>
+                <td>{{ val["FB"] }}</td>
+                <td>{{ val["SM"] }}</td>
+                <td>{{ val["CB"] }}</td>
+                <td>{{ val["SL"] }}</td>
+                <td>{{ val["CH"] }}</td>
+                <td>{{ val["CT"] }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+</div>
+{% endblock %}
