@@ -3,6 +3,7 @@
 {% block styles %}
     {{ super() }}
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidenav.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/loader.css') }}">
     <style>
         #team-season-stats {
             width: 300px;
@@ -69,17 +70,17 @@
                 <tr>
                     <td>Strike%</td>
                     <td>65%</td>
-                    <td id="strike-percentage-holder">0</td>
+                    <td id="strike-percentage-holder"><div class="loader"></div></td>
                 </tr>
                 <tr>
                     <td>FPS%</td>
                     <td>60%</td>
-                    <td id="fps-percentage-holder">0</td>
+                    <td id="fps-percentage-holder"><div class="loader"></div></td>
                 </tr>
                 <tr>
                     <td>K/BB</td>
                     <td>2</td>
-                    <td id="k-to-bb-holder">0</td>
+                    <td id="k-to-bb-holder"><div class="loader"></div></td>
                 </tr>
             </table>
         </p>
