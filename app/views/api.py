@@ -13,7 +13,10 @@ def batter_stats_whiffrate():
     req_data = request.get_json()
 
     if req_data is None:
-        return jsonify(request.content_type)
+        return jsonify({
+            "status": "failure",
+            "error": "Request not processable as JSON."
+        })
 
     # check to see if parameter we want is provided
     if "seasons" in req_data and "batter_id" in req_data:

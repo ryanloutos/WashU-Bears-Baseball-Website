@@ -69,6 +69,13 @@
             } 
         ).then(res => res.json())
         .then(function(response){
+            
+            // check to make sure that request was successful
+            if(response.status == "failure"){
+                console.log("Request Status: " + response.status);
+                console.log("Error message: " + response.error);
+                return;
+            }
 
             let holder_div = document.createElement("div");
 
