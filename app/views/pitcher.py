@@ -5,7 +5,7 @@ from werkzeug.urls import url_parse
 from app import db
 
 from app.models import User, Outing, Pitch, Season, Pitcher
-from app.stats import avgPitchVeloPitcher
+from app.stats import avgPitchVeloPitcher, veloOverCareer
 from app.stats import pitchStrikePercentageSeason
 from app.stats import pitchUsageSeason, seasonStatLine
 
@@ -42,12 +42,14 @@ def pitcher_home(id):
         return redirect(url_for('main.index'))
 
     # get the outings associated with that player
-    outings = pitcher.outings
+    outings = Outing.query.filter(Outing.pitcher_id == pitcher.id).order_by(Outing.date)
 
     # get the number of outings they have thrown
     num_outings = 0
     for o in outings:
         num_outings += 1
+
+    velo_over_career = veloOverCareer(outings)
 
     # set the 3 most recent outings thrown by pitcher
     if num_outings >= 3:
@@ -70,7 +72,11 @@ def pitcher_home(id):
     return render_template('pitcher/pitcher_home.html',
                            title=pitcher,
                            pitcher=pitcher,
+                           outings=outings,
+                           velo_over_career=velo_over_career,
                            recent_outings=recent_outings)
+
+# ***************-NEW PITCHER-*************** #
 
 # ***************-PITCHER OUTINGS-*************** #
 @pitcher.route('/pitcher/<id>/outings', methods=['GET', 'POST'])

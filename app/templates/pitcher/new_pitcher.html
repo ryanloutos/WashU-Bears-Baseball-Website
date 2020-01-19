@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    <div class="main">
+        <h1>New Pitcher</h1>
+        <form method="post" novalidate>
+            {{ form.hidden_tag() }} {# Preventing CSRF attacks #}
+            <p>
+                {{ form.name.label }}<br>
+                {{ form.name() }}
+                {% for error in form.name.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.throws.label }}<br>
+                {{ form.throws() }}
+                {% for error in form.throws.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.grad_year.label }}<br>
+                {{ form.grad_year(size=32) }}
+                {% for error in form.grad_year.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.opponent.label }}<br>
+                {{ form.opponent() }}
+                {% for error in form.opponent.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.retired.label }}<br>
+                {{ form.retired() }}
+                {% for error in form.retired.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.submit() }}
+            </p>
+        </form>
+    </div>
+{% endblock %}

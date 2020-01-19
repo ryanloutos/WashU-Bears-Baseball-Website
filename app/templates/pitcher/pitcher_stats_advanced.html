@@ -33,7 +33,7 @@
     {% include "pitcher/pitcher_sidenav.html" %}
     <div class="main">
         <h1>
-            {{ pitcher }}
+            {{ pitcher }} - Advanced Stats
         </h1>
         <br>
         <div>
@@ -113,15 +113,15 @@
             </p>
             <table class="table sortable_table" id="strike-percentage-season-table">
                 <tr class="table-headers">
-                    <th onclick="sortTable(0, 1, 2)">Date</th>
-                    <th onclick="sortTable(1, 1, 2)">Opponent</th>
-                    <th onclick="sortTable(2, 1, 2)">Season</th>
-                    <th onclick="sortTable(3, 1, 2)">FB</th>
-                    <th onclick="sortTable(4, 1, 2)">2SM</th>
-                    <th onclick="sortTable(5, 1, 2)">SL</th>
-                    <th onclick="sortTable(6, 1, 2)">CB</th>
-                    <th onclick="sortTable(7, 1, 2)">CH</th>
-                    <th onclick="sortTable(8, 1, 2)">CT</th>
+                    <th onclick="sortTable(0, 1, {{ ignore }})">Date</th>
+                    <th onclick="sortTable(1, 1, {{ ignore }})">Opponent</th>
+                    <th onclick="sortTable(2, 1, {{ ignore }})">Season</th>
+                    <th onclick="sortTable(3, 1, {{ ignore }})">FB</th>
+                    <th onclick="sortTable(4, 1, {{ ignore }})">2SM</th>
+                    <th onclick="sortTable(5, 1, {{ ignore }})">SL</th>
+                    <th onclick="sortTable(6, 1, {{ ignore }})">CB</th>
+                    <th onclick="sortTable(7, 1, {{ ignore }})">CH</th>
+                    <th onclick="sortTable(8, 1, {{ ignore }})">CT</th>
                 </tr>
                 {% for outing in strike_percentage_outing %}
                     <tr class="data-row">
@@ -177,15 +177,15 @@
             <p>Values are listed as {number thrown}-{percentage}</p>
             <table class="table sortable_table" id="pitch-usage-season-table">
                 <tr class="table-headers">
-                    <th onclick="sortTable(0, 2, 2)">Date</th>
-                    <th onclick="sortTable(1, 2, 2)">Opponent</th>
-                    <th onclick="sortTable(2, 2, 2)">Season</th>
-                    <th onclick="sortTable(3, 2, 2)">FB</th>
-                    <th onclick="sortTable(4, 2, 2)">2SM</th>
-                    <th onclick="sortTable(5, 2, 2)">SL</th>
-                    <th onclick="sortTable(6, 2, 2)">CB</th>
-                    <th onclick="sortTable(7, 2, 2)">CH</th>
-                    <th onclick="sortTable(8, 2, 2)">CT</th>
+                    <th onclick="sortTable(0, 2, {{ ignore }})">Date</th>
+                    <th onclick="sortTable(1, 2, {{ ignore }})">Opponent</th>
+                    <th onclick="sortTable(2, 2, {{ ignore }})">Season</th>
+                    <th onclick="sortTable(3, 2, {{ ignore }})">FB</th>
+                    <th onclick="sortTable(4, 2, {{ ignore }})">2SM</th>
+                    <th onclick="sortTable(5, 2, {{ ignore }})">SL</th>
+                    <th onclick="sortTable(6, 2, {{ ignore }})">CB</th>
+                    <th onclick="sortTable(7, 2, {{ ignore }})">CH</th>
+                    <th onclick="sortTable(8, 2, {{ ignore }})">CT</th>
                 </tr>
                 {% for outing in pitch_usage_outing %}
                     <tr class="data-row">

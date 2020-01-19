@@ -6,6 +6,11 @@
     <script src="{{ url_for('static', filename='js/checkbox_table.js') }}"></script>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidenav.css') }}">
     <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            checkbox_table('basic-stat-season-table', 'season-checkbox', 2); 
+            calc_totals();
+        });
+
         function calc_totals(){
             let data_table = document.getElementById("basic-stat-season-table");
             let data_rows = data_table.getElementsByClassName("data-row");
@@ -51,7 +56,7 @@
                 totals_row.appendChild(table_data);
             }
             document.getElementsByClassName("sum-row")[0].parentNode.removeChild(document.getElementsByClassName("sum-row")[0]);
-            data_table.appendChild(totals_row);
+            data_table.getElementsByTagName("tbody")[0].appendChild(totals_row);
         }
     </script>
 {% endblock %}
@@ -60,18 +65,19 @@
     {% include "pitcher/pitcher_sidenav.html" %}
     <div class="main">
         <h1>
-            {{ pitcher }}
+            {{ pitcher }} - Basic Stats
         </h1>
         <br>
         <div>
-            <h4>Stat Line by Outing Over Career</h4>
             <p>
-                <h6>Select Season(s):</h6>
+                <h4>Select which season(s) to include in table below</h4>
                 <!-- setup checkbox based logic -->
                 <div id="season-checkbox">
                     {% for season in seasons %}
                         <p>
-                            <input type="checkbox" onclick="checkbox_table('basic-stat-season-table', 'season-checkbox', 2); calc_totals()" value="{{ season }}">{{ season }}</input>
+                            <input type="checkbox" onclick="checkbox_table('basic-stat-season-table', 'season-checkbox', 2); calc_totals()" 
+                                value="{{ season }}" {% if current_season==season %} checked {% endif %}> 
+                                {{ season }}
                         </p>
                     {% endfor %}
                 </div>

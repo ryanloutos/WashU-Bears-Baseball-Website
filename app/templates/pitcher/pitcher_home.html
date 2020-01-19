@@ -4,11 +4,69 @@
     {{ super() }}
     <script src="{{ url_for('static', filename='js/sortable_table.js') }}"></script>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidenav.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
     <style>
         #recent-outings {
             width: 300px;
         }
     </style>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var ctx = document.getElementById('velo-over-career').getContext('2d');
+            ctx.canvas.parentNode.style.width = '800px';
+            var chart = new Chart(ctx, {
+                // The type of chart we want to create
+                type: 'line',
+
+                // The data for our dataset
+                data: {
+                    labels: [
+                        {% for o in outings %}
+                            "{{o.getDate()}}",
+                        {% endfor %}
+                    ],
+                    datasets: [{
+                        label: 'FB',
+                        borderColor: 'rgb(230, 25, 75)',
+                        backgroundColor: 'rgba(0, 0, 0, 0)',
+                        pointRadius: 2,
+                        lineTension: 0,
+                        data: [
+                            {% for v in velo_over_career['FB'] %}
+                                {{v}},
+                            {% endfor %}
+                        ]
+                    },{
+                        label: 'SM',
+                        borderColor: 'rgb(0, 128, 128)',
+                        backgroundColor: 'rgba(0, 0, 0, 0)',
+                        pointRadius: 2,
+                        lineTension: 0,
+                        data: [
+                            {% for v in velo_over_career['SM'] %}
+                                {{v}},
+                            {% endfor %}
+                        ] 
+                    }
+                    ]
+                },
+
+                // Configuration options go here
+                options: {
+                    spanGaps: true,
+                    scales: {
+                        xAxes: [{
+                            ticks: {
+                                autoSkip: false,
+                                maxRotation: 90,
+                                minRotation: 45
+                            }
+                        }]
+                    }
+                }
+            });
+        });
+    </script>
 {% endblock %}
 
 {% block app_content %}
@@ -17,9 +75,8 @@
         <h1>
             {{ pitcher }}
         </h1>
-        <h2><- Use the navigation on the left to go to different pages for this pitcher</h2>
         <br>
-        <div>
+        <div id="recent-outings">
             <h4>Recent Outings</h4>
             <table class="table" id="recent-outings">
                 <tr class="table-headers">
@@ -36,6 +93,9 @@
                 {% endfor %}
             </table>
         </div>
+        <h4>Velo Over Career</h4>
+        <canvas id="velo-over-career">
+        </canvas>
         <br>
     </div>
 {% endblock %}

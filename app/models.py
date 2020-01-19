@@ -65,6 +65,12 @@ class Outing(db.Model):
         pitcher = Pitcher.query.filter_by(id=self.pitcher_id).first()
 
         return f'{month}/{day}/{year} - {pitcher} vs. {self.opponent}'
+    
+    def getDate(self):
+        year = self.date.year
+        month = self.date.month
+        day = self.date.day
+        return f"{month}/{year}"
 
 
 class Pitch(db.Model):

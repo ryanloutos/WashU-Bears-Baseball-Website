@@ -5,22 +5,25 @@
     <script src="{{ url_for('static', filename='js/sortable_table.js') }}"></script>
     <script src="{{ url_for('static', filename='js/season_selector.js') }}"></script>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidenav.css') }}">
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            season_selector('outings-season-selector', 'outings-table', 1)
+        });
+    </script>
 {% endblock %}
 
 {% block app_content %}
     {% include "pitcher/pitcher_sidenav.html" %}
     <div class="main">
         <h1>
-            {{ pitcher }}
+            {{ pitcher }} - Outings
         </h1>
-        <br>
-        <h4>Outings</h4>
         <p>
             <h5>Select a Season:</h5>
             <select name="Outings Season Selector" id="outings-season-selector" onchange="season_selector('outings-season-selector', 'outings-table', 1)">
                 <option value="All Seasons">All Seasons</option>
                 {% for season in seasons %}
-                    <option value="{{ season }}">{{ season }}</option>
+                    <option value="{{ season }}" {% if current_season == season %} selected {% endif %}>{{ season }}</option>
                 {% endfor %}
             </select>
         </p>

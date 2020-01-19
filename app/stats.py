@@ -860,6 +860,52 @@ def pitchUsageSeason(pitcher):
     return (career, outings, season_percentages_usages)
 
 
+def veloOverCareer(outings):
+    velo_over_career = {
+        "FB": [],
+        "SM": []
+    }
+    # parse through every outing
+    for outing in outings:
+
+        # set up variables to calc average
+        total_velo_fastball = 0
+        total_velo_2seam = 0
+        num_pitches_fastball = 0
+        num_pitches_2seam = 0
+
+        # go through each pitch
+        for at_bat in outing.at_bats:
+            for pitch in at_bat.pitches:
+
+                # check to see if pitch.velocity is not null
+                if pitch.velocity not in [None, ""]:
+                    if pitch.pitch_type == 1:
+                        total_velo_fastball += pitch.velocity
+                        num_pitches_fastball += 1
+                    if pitch.pitch_type == 7:
+                        total_velo_2seam += pitch.velocity
+                        num_pitches_2seam += 1
+
+        # check for divide by 0
+        if num_pitches_fastball == 0:
+            avg_velo_fastball = "null"
+        else:
+            avg_velo_fastball = truncate(total_velo_fastball/num_pitches_fastball, 1)
+        
+        # check for divide by 0
+        if num_pitches_2seam == 0:
+            avg_velo_2seam = "null"
+        else:
+            avg_velo_2seam = truncate(total_velo_2seam/num_pitches_2seam, 1)
+        
+        # append averages to return array
+        velo_over_career["FB"].append(avg_velo_fastball)
+        velo_over_career["SM"].append(avg_velo_2seam)
+        
+    return velo_over_career
+
+
 # PITCHER BASIC STATISTICS ----------------------------------------------------
 def seasonStatLine(pitcher):
     """Calculates regular stat line for the pitcher desired outing by outing
