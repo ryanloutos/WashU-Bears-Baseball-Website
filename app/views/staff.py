@@ -25,15 +25,9 @@ def staff_home():
     RETURN:
         -staff.html
     '''
-    pitchers = Pitcher.query.all()
-
-    strike_percentage, fps_percentage, k_to_bb = teamImportantStatsSeason(pitchers)
 
     return render_template('staff/staff_home.html',
-                           title='WashU Pitching Staff',
-                           strike_percentage=strike_percentage,
-                           fps_percentage=fps_percentage,
-                           k_to_bb=k_to_bb)
+                           title='WashU Pitching Staff')
 
 # ***************-STAFF ROSTER-*************** # DONE
 @staff.route('/staff/roster', methods=['GET', 'POST'])

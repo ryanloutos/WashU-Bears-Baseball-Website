@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from flask_login import login_required
-from app.stats import batterSwingWhiffRatebyPitchbyCount
-from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat
+from app.stats import batterSwingWhiffRatebyPitchbyCount, teamImportantStatsSeason
+from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat, Pitcher
 
 api = Blueprint("api", __name__)
 
@@ -56,3 +56,28 @@ def batter_stats_whiffrate():
             "status": "failure",
             "error": "Required parameters not given in request."
         })
+
+
+@api.route("/api/staff/stats/importantstats", methods=["POST"])
+def staff_home_importantstats():
+    # req_data = request.get_json()
+
+    # if req_data is None:
+    #     return jsonify({
+    #         "status": "failure",
+    #         "error": "Request not processable as JSON."
+    #     })
+
+    pitchers = Pitcher.query.all()
+
+    strike_percentage, fps_percentage, k_to_bb = teamImportantStatsSeason(pitchers)
+
+    return_data = {
+        "status": "success",
+        "data": {
+            "strike_percentage": strike_percentage,
+            "fps_percentage": fps_percentage,
+            "k_to_bb": k_to_bb
+        }
+    }
+    return jsonify(return_data)

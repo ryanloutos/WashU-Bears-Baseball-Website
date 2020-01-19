@@ -8,6 +8,49 @@
             width: 300px;
         }
     </style>
+    <script>
+        window.addEventListener("DOMContentLoaded", function(){
+            fetch("{{ url_for('api.staff_home_importantstats') }}",
+            {
+                method: "POST"
+            }).then(res => res.json())
+            .then(function(response){
+                if(response.status == "failure"){
+                    console.log("Request status: failure");
+                    console.log("Error message: " + response.error);
+                    return;
+                }
+
+                document.querySelector("#strike-percentage-holder").innerHTML = response.data.strike_percentage + "%";
+                if(response.data.strike_percentage >= 65){
+                    document.querySelector("#strike-percentage-holder").style.backgroundColor = "rgb(0,100,0)";
+                    document.querySelector("#strike-percentage-holder").style.color = "white";
+                } else {
+                    document.querySelector("#strike-percentage-holder").style.backgroundColor = "rgb(200,0,0)";
+                    document.querySelector("#strike-percentage-holder").style.color = "white";
+                }
+
+                document.querySelector("#fps-percentage-holder").innerHTML = response.data.fps_percentage + "%";
+                if(response.data.fps_percentage >= 60){
+                    document.querySelector("#fps-percentage-holder").style.backgroundColor = "rgb(0,100,0)";
+                    document.querySelector("#fps-percentage-holder").style.color = "white";
+                } else {
+                    document.querySelector("#fps-percentage-holder").style.backgroundColor = "rgb(200,0,0)";
+                    document.querySelector("#fps-percentage-holder").style.color = "white";
+                }
+
+                document.querySelector("#k-to-bb-holder").innerHTML = response.data.k_to_bb;
+                if(response.data.k_to_bb >= 2){
+                    document.querySelector("#k-to-bb-holder").style.backgroundColor = "rgb(0,100,0)";
+                    document.querySelector("#k-to-bb-holder").style.color = "white";
+                } else {
+                    document.querySelector("#k-to-bb-holder").style.backgroundColor = "rgb(200,0,0)";
+                    document.querySelector("#k-to-bb-holder").style.color = "white";
+                }
+
+            });
+        });
+    </script>
 {% endblock %}
 
 {% block app_content %}
@@ -26,35 +69,17 @@
                 <tr>
                     <td>Strike%</td>
                     <td>65%</td>
-                    {% if strike_percentage >= 65 %}
-                        <td style="background-color: rgb(0,100,0); color: white">
-                    {% else %}
-                        <td style="background-color: rgb(200,0,0); color: white">
-                    {% endif %}
-                    {{ strike_percentage }}%
-                    </td>
+                    <td id="strike-percentage-holder">0</td>
                 </tr>
                 <tr>
                     <td>FPS%</td>
                     <td>60%</td>
-                    {% if fps_percentage >= 60 %}
-                        <td style="background-color: rgb(0,100,0); color: white">
-                    {% else %}
-                        <td style="background-color: rgb(200,0,0); color: white">
-                    {% endif %}
-                    {{ fps_percentage }}%
-                    </td>
+                    <td id="fps-percentage-holder">0</td>
                 </tr>
                 <tr>
                     <td>K/BB</td>
                     <td>2</td>
-                    {% if k_to_bb >= 2 %}
-                        <td style="background-color: rgb(0,100,0); color: white">
-                    {% else %}
-                        <td style="background-color: rgb(200,0,0); color: white">
-                    {% endif %}
-                    {{ k_to_bb }}
-                    </td>
+                    <td id="k-to-bb-holder">0</td>
                 </tr>
             </table>
         </p>
