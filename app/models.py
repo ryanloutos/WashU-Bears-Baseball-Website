@@ -118,6 +118,14 @@ class Batter(db.Model):
     def __repr__(self):
         return self.short_name
 
+    def get_seasons(self):
+        seasons = []
+        for at_bat in self.at_bats:
+            season = at_bat.get_season()
+            if season not in seasons:
+                seasons.append(season)
+        return seasons
+
 
 class AtBat(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -145,6 +153,16 @@ class AtBat(db.Model):
     def get_date(self):
         outing = Outing.query.filter_by(id=self.outing_id).first()
         return outing.date
+
+    def get_season(self):
+        """Returns the season object for which this outing is in.
+
+        Returns:
+            [season object] -- [season object from models]
+        """
+        outing = Outing.query.filter_by(id=self.outing_id).first()
+        season = Season.query.filter_by(id=self.outing.season_id).first()
+        return season
 
 
 @login.user_loader

@@ -362,6 +362,7 @@ def batter_stats(batter_id):
     if not batter:
         flash("URL does not exist")
         return redirect(url_for('main.index'))
+    seasons = batter.get_seasons()
 
     swing_rate_by_count, whiff_rate_by_count = batterSwingWhiffRatebyPitchbyCount(batter)
 
@@ -370,5 +371,6 @@ def batter_stats(batter_id):
         swing_rate_by_count=swing_rate_by_count,
         whiff_rate_by_count=whiff_rate_by_count,
         title=batter,
-        batter=batter
+        batter=batter,
+        seasons=seasons
         )

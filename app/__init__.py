@@ -27,6 +27,7 @@ from .views.batter import batter
 from .views.opponent import opponent
 from .views.season import season
 from .views.other import other
+from .views.api import api
 
 # Register Blueprints
 app.register_blueprint(main)
@@ -37,3 +38,4 @@ app.register_blueprint(batter)
 app.register_blueprint(opponent)
 app.register_blueprint(season)
 app.register_blueprint(other)
+app.register_blueprint(api)

@@ -1383,7 +1383,7 @@ def teamImportantStatsSeason(pitchers):
     return strike_percentage, fps_percentage, k_to_bb
 
 
-def batterSwingWhiffRatebyPitchbyCount(batter):
+def batterSwingWhiffRatebyPitchbyCount(batter, seasons=[]):
     pitches_per_count = {
         "0-0": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
         "0-1": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
@@ -1456,13 +1456,15 @@ def batterSwingWhiffRatebyPitchbyCount(batter):
     }
 
     for at_bat in batter.at_bats:
-        for pitch in at_bat.pitches:
-            pitches_per_count[pitch.count][PitchType(pitch.pitch_type).name] += 1
+        # check to see if at_bat is in the season(s) we want
+        if (len(seasons) is 0) or at_bat.get_season().id in seasons or str(at_bat.get_season().id) in seasons:
+            for pitch in at_bat.pitches:
+                pitches_per_count[pitch.count][PitchType(pitch.pitch_type).name] += 1
 
-            if pitch.pitch_result in ["SS", "F", "IP"]:
-                swings_per_count[pitch.count][PitchType(pitch.pitch_type).name] += 1
-                if pitch.pitch_result in ["SS"]:
-                    whiffs_per_count[pitch.count][PitchType(pitch.pitch_type).name] += 1
+                if pitch.pitch_result in ["SS", "F", "IP"]:
+                    swings_per_count[pitch.count][PitchType(pitch.pitch_type).name] += 1
+                    if pitch.pitch_result in ["SS"]:
+                        whiffs_per_count[pitch.count][PitchType(pitch.pitch_type).name] += 1
 
     # calculate batter totals
     for count, val in pitches_per_count.items():
