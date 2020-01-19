@@ -24,23 +24,6 @@
                 {% endfor %}
             </p>
             <p>
-                {{ form.year.label }}<br>
-                {{ form.year(size=8) }}<br>
-                {% for error in form.year.errors %}
-                    <span style="color: red;">[{{ error }}]</span>
-                {% endfor %}
-            </p>
-            <p>
-                <label>Throws </label>(If player)<br>
-                {% for subfield in form.throws %}
-                    {{ subfield }}
-                    {{ subfield.label }} <br>
-                {% endfor %}
-                {% for error in form.throws.errors %}
-                    <span style="color: red;">[{{ error }}]</span>
-                {% endfor %}
-            </p>
-            <p>
                 {{ form.username.label }}<br>
                 {{ form.username(size=32) }}<br>
                 {% for error in form.username.errors %}

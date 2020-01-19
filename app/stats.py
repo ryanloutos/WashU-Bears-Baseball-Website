@@ -972,6 +972,8 @@ def staffBasicStats(pitchers):
     }
 
     for pitcher in pitchers:
+        if pitcher.retired:
+            break
         stat_line = {
             "ip": 0.0, "h": 0, "bb": 0, "hbp": 0, "e": 0, "k": 0, "kl": 0, "1b": 0,
             "2b": 0, "3b": 0, "hr": 0, "kp9": 0.0, "bb9": 0.0, "p": 0, "bf": 0

@@ -92,12 +92,6 @@ class EditOpponentForm(FlaskForm):
 class RegistrationForm(FlaskForm):
     firstname = StringField('Firstname', validators=[DataRequired()])
     lastname = StringField('Lastname', validators=[DataRequired()])
-    year = StringField('Year', validators=[DataRequired()])
-    throws = RadioField(
-        'Throws',
-        choices=[('R', 'R'),
-                 ('L', 'L')],
-        validators=[Optional()])
     username = StringField('Username', validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired(), Email()])
     # Email() validator makes sure it's in email form

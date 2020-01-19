@@ -247,8 +247,6 @@ def register():
         # takes in the data from the form and creates a User object (row)
         user = User(firstname=form.firstname.data,
                     lastname=form.lastname.data,
-                    grad_year=form.year.data,
-                    throws=form.throws.data,
                     username=form.username.data,
                     email=form.email.data,
                     admin=form.admin.data,
