@@ -9,6 +9,10 @@
         #recent-outings {
             width: 300px;
         }
+        .pitcher-picture {
+            float: right;
+            border: 5px solid #bd2e1f;
+        }
     </style>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
@@ -72,6 +76,7 @@
 {% block app_content %}
     {% include "pitcher/pitcher_sidenav.html" %}
     <div class="main">
+        <img class="pitcher-picture" alt="Picture" src="{{ url_for('static', filename=file_loc) }}">
         <h1>
             {{ pitcher }}
         </h1>

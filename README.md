@@ -6,7 +6,6 @@ Shorter term (like before our first live matchups at practice)
 - For staff/pitcher pages, create a filter to include/not include matchups
 - Simplify team stats especially for matchups only stats
 - Add more useful, advanced stats to both pitcher/staff pages
-- Add ability to add photos to pitchers (similar to opponents)
 - Organize season pages by games instead of outings
 - Go through all tables and make them as readable as possible (truncate, percentages, etc.)
 - Move outing stats to homepage of outing....make it more like a "report"
