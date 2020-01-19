@@ -13,8 +13,6 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(128))
     firstname = db.Column(db.String(64))
     lastname = db.Column(db.String(64))
-    grad_year = db.Column(db.String(8), index=True)
-    throws = db.Column(db.String(8), index=True)
     # each user will have all their outings accessible through this
 
     def __repr__(self):
@@ -38,6 +36,15 @@ class Pitcher(db.Model):
     def __repr__(self):
         return self.name
 
+class Game(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    date = db.Column(db.Date, index=True)
+    opponent_id = db.Column(db.Integer,
+                            db.ForeignKey('opponent.id'),
+                            index=True)
+    season_id = db.Column(db.Integer, db.ForeignKey('season.id'), index=True)
+    outings = db.relationship('Outing', backref='game', lazy='dynamic')
+
 class Outing(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.Date, index=True)
@@ -48,6 +55,7 @@ class Outing(db.Model):
     # represents which pitcher this outing belongs to
     season_id = db.Column(db.Integer, db.ForeignKey('season.id'), index=True)
     at_bats = db.relationship('AtBat', backref='outing', lazy='dynamic')
+    game_id = db.Column(db.Integer, db.ForeignKey('game.id'), index=True)
     # where all the pitches to the outing are stored
 
     def __repr__(self):

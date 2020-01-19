@@ -50,7 +50,7 @@ def staff_roster():
         -staff_roster.html which displays a table of
             the current staff
     '''
-    pitchers = Pitcher.query.all()
+    pitchers = Pitcher.query.filter(Pitcher.retired != 1).all()
     return render_template('staff/staff_roster.html',
                            title='Staff',
                            pitchers=pitchers)
@@ -70,7 +70,7 @@ def staff_basic_stats():
         staff_basic_stats.html -- list of basic stats for all players
         currently on roster
     """
-    pitchers = Pitcher.query.all()
+    pitchers = Pitcher.query.filter(Pitcher.retired != 1).all()
 
     staff_stat_summary, players_stat_summary = staffBasicStats(pitchers)
 
@@ -84,7 +84,7 @@ def staff_basic_stats():
 @staff.route('/staff/advanced_stats', methods=['GET', 'POST'])
 @login_required
 def staff_advanced_stats():
-    pitchers = Pitcher.query.all()
+    pitchers = Pitcher.query.filter(Pitcher.retired != 1).all()
 
     team_avg_velo, player_avg_velo = staffPitcherAvgVelo(pitchers)
     team_strike_percentages, player_strike_percentages = staffPitchStrikePercentage(pitchers)
