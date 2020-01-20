@@ -121,13 +121,15 @@
 
                 // Configuration options go here
                 options: {
-                    responsive: false,
-                    maintainAspectRatio: true,
                     legend: {
-                        display: false,
-                        position: "left",
-                        align: "right",
+                        display: true,
+                        position: "top",
+                        align: "center",
                     },
+                    title: {
+                        display: false,
+                        text: "Pitch Usage"
+                    }
                 }
             });
             var ctx3 = document.getElementById('strike-percentage-polar').getContext('2d');
@@ -161,13 +163,15 @@
 
                 // Configuration options go here
                 options: {
-                    responsive: false,
-                    maintainAspectRatio: true,
                     legend: {
-                        display: false,
-                        position: "left",
-                        align: "right",
+                        display: true,
+                        position: "top",
+                        align: "center",
                     },
+                    title: {
+                        display: false,
+                        text: "Strike Percentage"
+                    }
                 }
             });
         });
@@ -175,9 +179,13 @@
     <style>
         #pitch-stats {
             width: 500px;
+            text-align: center;
+            margin: 0 auto;
         }
         #time-to-plate {
             width: 200px;
+            text-align: center;
+            margin: 0 auto;
         }
         caption {
             display: table-caption;
@@ -187,13 +195,11 @@
         }
         
         #pitch-usage-pie {
-            display: inline-block;
-            position: absolute;
+            text-align: center;
         }
 
         #strike-percentage-polar {
-            display: inline-block;
-            margin-left: 500px;
+            text-align: center;
         }
     </style>
 {% endblock %}
@@ -208,11 +214,7 @@
         <h4 style="text-align: center; color: black">Velo Throughout Outing</h4>
         <h6 style="text-align: center;">Try clicking on the labels!</h6>
         <canvas id="velo-over-time" width="1000" height="400"></canvas>
-        <br>
-            <canvas id="pitch-usage-pie" width="500"></canvas>
-            <canvas id="strike-percentage-polar" width="500"></canvas>
-        <div>
-        <table id="pitch-stats" class="table">
+        <table style="text-align: center;" id="pitch-stats" class="table">
             <caption>Pitch Stats</caption>
             <tr class="table-headers">
                 <th>Pitch Type</th>
@@ -256,6 +258,20 @@
                 </tr>
             {% endfor %}
         </table>
+        <br><br>
+            <h4 style="text-align: center;">Pitch Usage</h4>
+            <canvas id="pitch-usage-pie" style="text-align: center;"></canvas>
+            <br><br>
+            <h4 style="text-align: center;">Strike Percentage</h4>
+            <canvas id="strike-percentage-polar" style="text-align: center;"></canvas>
+        <br><br>
+        <br><br> 
+        <br><br>
+        <br><br> 
+        <br><br>
+        <br><br> 
+        <div>
+        
         <br>
     </div>
     </div>
