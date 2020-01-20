@@ -8,7 +8,6 @@ Shorter term (like before our first live matchups at practice)
 - Add more useful, advanced stats to both pitcher/staff pages
 - Organize season pages by games instead of outings
 - Go through all tables and make them as readable as possible (truncate, percentages, etc.)
-- Move outing stats to homepage of outing....make it more like a "report"
 - Add "conference" column to opponent table
 
 
