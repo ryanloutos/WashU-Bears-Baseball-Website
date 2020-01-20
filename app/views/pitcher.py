@@ -4,8 +4,9 @@ from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.urls import url_parse
 from app import db
 
-from app.models import User, Outing, Pitch, Season, Pitcher
-from app.stats import avgPitchVeloPitcher
+from app.forms import PitcherForm, EditPitcherForm
+from app.models import User, Outing, Pitch, Season, Pitcher, Opponent
+from app.stats import avgPitchVeloPitcher, veloOverCareer
 from app.stats import pitchStrikePercentageSeason
 from app.stats import pitchUsageSeason, seasonStatLine
 
@@ -42,12 +43,18 @@ def pitcher_home(id):
         return redirect(url_for('main.index'))
 
     # get the outings associated with that player
-    outings = pitcher.outings
+    outings = Outing.query.filter(Outing.pitcher_id == pitcher.id).order_by(Outing.date)
 
     # get the number of outings they have thrown
     num_outings = 0
     for o in outings:
         num_outings += 1
+
+    velo_over_career = veloOverCareer(outings)
+
+    file_loc = os.path.join("images",
+                            "pitcher_photos",
+                            f"{pitcher.id}.png")
 
     # set the 3 most recent outings thrown by pitcher
     if num_outings >= 3:
@@ -70,7 +77,99 @@ def pitcher_home(id):
     return render_template('pitcher/pitcher_home.html',
                            title=pitcher,
                            pitcher=pitcher,
+                           outings=outings,
+                           file_loc=file_loc,
+                           velo_over_career=velo_over_career,
                            recent_outings=recent_outings)
+
+# ***************-NEW PITCHER-*************** #
+@pitcher.route('/new_pitcher', methods=['GET','POST'])
+@login_required
+def new_pitcher():
+
+    if not current_user.admin:
+        flash("Admin feature only")
+        return redirect(url_for('index'))
+    
+    form = PitcherForm()
+
+    # set the opponent choices for the form
+    opponents = Opponent.query.all()
+    opponent_choices = []
+    for o in opponents:
+        opponent_choices.append((str(o.id),o))
+    form.opponent.choices = opponent_choices
+
+    if form.validate_on_submit():
+
+        pitcher = Pitcher(
+            name = form.name.data,
+            throws = form.throws.data,
+            grad_year = form.grad_year.data,
+            opponent_id = form.opponent.data,
+            retired = form.retired.data
+        )
+
+        db.session.add(pitcher)
+        db.session.commit()
+
+        flash("New Pitcher Created!")
+        return redirect(url_for('main.index'))
+    
+    return render_template(
+        'pitcher/new_pitcher.html',
+        form = form)
+
+# ***************-EDIT PITCHER-*************** #
+@pitcher.route('/edit_pitcher/<id>', methods=['GET','POST'])
+@login_required
+def edit_pitcher(id):
+
+    if not current_user.admin:
+        flash("Admin feature only")
+        return redirect(url_for('index'))
+    
+    form = EditPitcherForm()
+
+    pitcher = Pitcher.query.filter_by(id=id).first()
+
+    # set the opponent choices for the form
+    opponents = Opponent.query.all()
+    opponent_choices = []
+    for o in opponents:
+        opponent_choices.append((str(o.id),o))
+    form.opponent.choices = opponent_choices
+
+    if form.validate_on_submit():
+
+        file_name = pitcher.id
+        file_loc = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                                "..",
+                                "static",
+                                "images",
+                                "pitcher_photos",
+                                f"{file_name}.png")
+        
+        form.file.data.save(file_loc)
+
+        pitcher.name = form.name.data
+        pitcher.throws = form.throws.data
+        pitcher.grad_year = form.grad_year.data
+        pitcher.opponent_id = form.opponent.data
+        pitcher.retired = form.retired.data
+
+        db.session.commit()
+
+        flash("Changes made!")
+        return redirect(url_for('pitcher.pitcher_home', id=id))
+    
+    return render_template(
+        'pitcher/edit_pitcher.html',
+        pitcher = pitcher,
+        opponents = opponents,
+        form = form
+    )
+
 
 # ***************-PITCHER OUTINGS-*************** #
 @pitcher.route('/pitcher/<id>/outings', methods=['GET', 'POST'])

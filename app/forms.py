@@ -81,10 +81,7 @@ class OpponentForm(FlaskForm):
 
 class EditOpponentForm(FlaskForm):
     name = StringField('Team Name', validators=[DataRequired()])
-    file = FileField(
-        'Team Logo',
-        validators=[FileRequired()]   
-    )
+    file = FileField('Team Logo', validators=[FileRequired()])
     submit = SubmitField('Save Changes')
 
 
@@ -260,3 +257,27 @@ class NewOutingFromCSVPitches(FlaskForm):
         max_entries=150,
         validators=[Optional()])
     submit = SubmitField('Create Outing')
+
+
+class PitcherForm(FlaskForm):
+    name = StringField('Name', validators=[Optional()])
+    throws = SelectField(
+        'throws',
+        choices=[('R', 'R'), ('L', 'L')],
+        validators=[Optional()])
+    grad_year = StringField('Grad Year', validators=[Optional()])
+    opponent = SelectField('Opponent', validators=[Optional()])
+    retired = BooleanField('Retired?')
+    submit = SubmitField('Submit')
+
+class EditPitcherForm(FlaskForm):
+    name = StringField('Name', validators=[Optional()])
+    throws = SelectField(
+        'throws',
+        choices=[('R', 'R'), ('L', 'L')],
+        validators=[Optional()])
+    grad_year = StringField('Grad Year', validators=[Optional()])
+    opponent = SelectField('Opponent', validators=[Optional()])
+    retired = BooleanField('Retired?')
+    file = FileField('Team Logo', validators=[FileRequired()])
+    submit = SubmitField('Save Changes')
