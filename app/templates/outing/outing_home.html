@@ -27,6 +27,17 @@
                             {% endfor %}
                         ]
                     },{
+                        label: 'SM',
+                        borderColor: 'rgb(0, 128, 128)',
+                        backgroundColor: 'rgba(0, 0, 0, 0)',
+                        pointRadius: 2,
+                        lineTension: 0,
+                        data: [
+                            {% for v in velos['SM'] %}
+                                {{v}},
+                            {% endfor %}
+                        ] 
+                    },{
                         label: 'CB',
                         borderColor: 'rgb(0, 130, 200)',
                         backgroundColor: 'rgba(0, 0, 0, 0)',
@@ -70,17 +81,6 @@
                                 {{v}},
                             {% endfor %}
                         ] 
-                    },{
-                        label: 'SM',
-                        borderColor: 'rgb(0, 128, 128)',
-                        backgroundColor: 'rgba(0, 0, 0, 0)',
-                        pointRadius: 2,
-                        lineTension: 0,
-                        data: [
-                            {% for v in velos['SM'] %}
-                                {{v}},
-                            {% endfor %}
-                        ] 
                     }
                     ]
                 },
@@ -88,6 +88,86 @@
                 // Configuration options go here
                 options: {
                     spanGaps: true,
+                }
+            });
+            var ctx2 = document.getElementById('pitch-usage-pie').getContext('2d');
+            var chart2 = new Chart(ctx2, {
+                // The type of chart we want to create
+                type: 'pie',
+
+                // The data for our dataset
+                data: {
+                    datasets: [{
+                        data: [
+                            {% for data in pitch_usage_pie_data %}
+                                {{data}},
+                            {% endfor %}
+                        ],
+                        backgroundColor: [
+                            'rgb(230, 25, 75)',
+                            'rgb(0, 128, 128)',
+                            'rgb(0, 130, 200)',
+                            'rgb(0, 200, 0)',
+                            'rgb(200, 200, 0)',
+                            'rgb(0, 200, 200)'
+                        ]
+                    }],
+                    labels: [
+                        {% for label in pitch_usage_pie_labels %}
+                            '{{label}}',
+                        {% endfor %}
+                    ]
+                },
+
+                // Configuration options go here
+                options: {
+                    responsive: false,
+                    maintainAspectRatio: true,
+                    legend: {
+                        display: false,
+                        position: "left",
+                        align: "right",
+                    },
+                }
+            });
+            var ctx3 = document.getElementById('strike-percentage-polar').getContext('2d');
+            var chart3 = new Chart(ctx3, {
+                // The type of chart we want to create
+                type: 'polarArea',
+
+                // The data for our dataset
+                data: {
+                    datasets: [{
+                        data: [
+                            {% for data in strike_percentage_polar_data %}
+                                {{data}},
+                            {% endfor %}
+                        ],
+                        backgroundColor: [
+                            'rgb(230, 25, 75)',
+                            'rgb(0, 128, 128)',
+                            'rgb(0, 130, 200)',
+                            'rgb(0, 200, 0)',
+                            'rgb(200, 200, 0)',
+                            'rgb(0, 200, 200)'
+                        ]
+                    }],
+                    labels: [
+                        {% for label in strike_percentage_polar_labels %}
+                            '{{label}}',
+                        {% endfor %}
+                    ]
+                },
+
+                // Configuration options go here
+                options: {
+                    responsive: false,
+                    maintainAspectRatio: true,
+                    legend: {
+                        display: false,
+                        position: "left",
+                        align: "right",
+                    },
                 }
             });
         });
@@ -98,13 +178,22 @@
         }
         #time-to-plate {
             width: 200px;
-            float: right;
         }
         caption {
             display: table-caption;
             text-align: center;
             font-size: 14pt;
             color: black;
+        }
+        
+        #pitch-usage-pie {
+            display: inline-block;
+            position: absolute;
+        }
+
+        #strike-percentage-polar {
+            display: inline-block;
+            margin-left: 500px;
         }
     </style>
 {% endblock %}
@@ -118,23 +207,11 @@
         <br>
         <h4 style="text-align: center; color: black">Velo Throughout Outing</h4>
         <h6 style="text-align: center;">Try clicking on the labels!</h6>
-        <canvas id="velo-over-time" width="1000" height="400">
-        </canvas>
-        <table id="time-to-plate" class="table">
-            <caption>Time to Plate</caption>
-            <tr class="table-headers">
-                <th>Lead RNR</th>
-                <th>No.</th>
-                <th>Average</th>
-            </tr>
-            {% for runner in time_to_plate %}
-                <tr>
-                    <td>{{runner.lead_runner}}</td>
-                    <td>{{runner.num_times}}</td>
-                    <td>{{runner.avg}}</td>
-                </tr>
-            {% endfor %}
-        </table>
+        <canvas id="velo-over-time" width="1000" height="400"></canvas>
+        <br>
+            <canvas id="pitch-usage-pie" width="500"></canvas>
+            <canvas id="strike-percentage-polar" width="500"></canvas>
+        <div>
         <table id="pitch-stats" class="table">
             <caption>Pitch Stats</caption>
             <tr class="table-headers">
@@ -164,6 +241,22 @@
                 </tr>
             {% endfor %}
         </table>
+        <table id="time-to-plate" class="table">
+            <caption>Time to Plate</caption>
+            <tr class="table-headers">
+                <th>Lead RNR</th>
+                <th>No.</th>
+                <th>Average</th>
+            </tr>
+            {% for runner in time_to_plate %}
+                <tr>
+                    <td>{{runner.lead_runner}}</td>
+                    <td>{{runner.num_times}}</td>
+                    <td>{{runner.avg}}</td>
+                </tr>
+            {% endfor %}
+        </table>
         <br>
+    </div>
     </div>
 {% endblock %}

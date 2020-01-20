@@ -62,6 +62,20 @@ def outing_home(id):
     pitch_stats = outingPitchStatistics(outing)
     time_to_plate = outingTimeToPlate(outing)
 
+    pitch_usage_pie_labels = []
+    pitch_usage_pie_data = []
+    strike_percentage_polar_labels = []
+    strike_percentage_polar_data = []
+    for p in pitch_stats:
+        pitch_usage_pie_labels.append(p['pitch_type'])
+        strike_percentage_polar_labels.append(p['pitch_type'])
+        if p['num_thrown'] in [0, None, "", "X", "x"]:
+            pitch_usage_pie_data.append(0)
+            strike_percentage_polar_data.append(0)
+        else:
+            pitch_usage_pie_data.append(p['num_thrown'])
+            strike_percentage_polar_data.append(p['strike_percentage'])
+
     # setting up horizontal axis for line chart
     horizontal_axis = []
     i = 1
@@ -81,7 +95,11 @@ def outing_home(id):
         pitch_stats=pitch_stats,
         time_to_plate=time_to_plate,
         velos=velos,
-        labels=horizontal_axis
+        labels=horizontal_axis,
+        pitch_usage_pie_data=pitch_usage_pie_data,
+        pitch_usage_pie_labels=pitch_usage_pie_labels,
+        strike_percentage_polar_labels=strike_percentage_polar_labels,
+        strike_percentage_polar_data=strike_percentage_polar_data
     )
 
 # ***************-OUTING PBP-*************** #
