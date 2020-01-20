@@ -12,6 +12,7 @@
             document.querySelectorAll(".basic-stats-season-selector").forEach(function(checkbox){
                 checkbox.addEventListener("click", basic_stats_season_selector, false);
             });
+            basic_stats_season_selector();
         });
 
         function basic_stats_season_selector(){
@@ -219,7 +220,10 @@
         <h1>Roster Basic Stat Line</h1> <br>
         <h5>Select Seasons:</h5>
         {% for season in seasons %}
-            <p><input type="checkbox" class="basic-stats-season-selector" value="{{ season.id }}">{{ season }}</p>
+            <p>
+                <input type="checkbox" class="basic-stats-season-selector" value="{{ season.id }}"
+                    {% if current_season==season %} checked {% endif %}>{{ season }}
+            </p>
         {% endfor %}
         <div id="all-seasons-basic-stats" class="basic-stats-season-holder">
             <table class="table sortable_table">

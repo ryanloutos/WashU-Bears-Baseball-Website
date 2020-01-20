@@ -4,9 +4,107 @@
     {{ super() }}
     <script src="{{ url_for('static', filename='js/sortable_table.js') }}"></script>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidenav.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var ctx = document.getElementById('velo-over-time').getContext('2d');
+            var chart = new Chart(ctx, {
+                // The type of chart we want to create
+                type: 'line',
+
+                // The data for our dataset
+                data: {
+                    labels: {{ labels }},
+                    datasets: [{
+                        label: 'FB',
+                        borderColor: 'rgb(230, 25, 75)',
+                        backgroundColor: 'rgba(0, 0, 0, 0)',
+                        pointRadius: 2,
+                        lineTension: 0,
+                        data: [
+                            {% for v in velos['FB'] %}
+                                {{v}},
+                            {% endfor %}
+                        ]
+                    },{
+                        label: 'CB',
+                        borderColor: 'rgb(0, 130, 200)',
+                        backgroundColor: 'rgba(0, 0, 0, 0)',
+                        pointRadius: 2,
+                        lineTension: 0,
+                        data: [
+                            {% for v in velos['CB'] %}
+                                {{v}},
+                            {% endfor %}
+                        ] 
+                    },{
+                        label: 'SL',
+                        borderColor: 'rgb(0, 200, 0)',
+                        backgroundColor: 'rgba(0, 0, 0, 0)',
+                        pointRadius: 2,
+                        lineTension: 0,
+                        data: [
+                            {% for v in velos['SL'] %}
+                                {{v}},
+                            {% endfor %}
+                        ] 
+                    },{
+                        label: 'CH',
+                        borderColor: 'rgb(200, 200, 0)',
+                        backgroundColor: 'rgba(0, 0, 0, 0)',
+                        pointRadius: 2,
+                        lineTension: 0,
+                        data: [
+                            {% for v in velos['CH'] %}
+                                {{v}},
+                            {% endfor %}
+                        ] 
+                    },{
+                        label: 'CT',
+                        borderColor: 'rgb(0, 200, 200)',
+                        backgroundColor: 'rgba(0, 0, 0, 0)',
+                        pointRadius: 2,
+                        lineTension: 0,
+                        data: [
+                            {% for v in velos['CT'] %}
+                                {{v}},
+                            {% endfor %}
+                        ] 
+                    },{
+                        label: 'SM',
+                        borderColor: 'rgb(0, 128, 128)',
+                        backgroundColor: 'rgba(0, 0, 0, 0)',
+                        pointRadius: 2,
+                        lineTension: 0,
+                        data: [
+                            {% for v in velos['SM'] %}
+                                {{v}},
+                            {% endfor %}
+                        ] 
+                    }
+                    ]
+                },
+
+                // Configuration options go here
+                options: {
+                    spanGaps: true,
+                }
+            });
+        });
+    </script>
     <style>
-        #recent-outings {
-            width: 300px;
+        #pitch-stats {
+            width: 500px;
+        }
+        #time-to-plate {
+            width: 200px;
+            float: right;
+        }
+        caption {
+            display: table-caption;
+            text-align: center;
+            font-size: 14pt;
+            color: black;
         }
     </style>
 {% endblock %}
@@ -14,10 +112,58 @@
 {% block app_content %}
     {% include "outing/outing_sidenav.html" %}
     <div class="main">
-        <h1>
+        <h1 style="text-align: center">
             {{ outing }}
         </h1>
-        <h2><- Use the navigation on the left to go to different pages for this outing</h2>
+        <br>
+        <h4 style="text-align: center; color: black">Velo Throughout Outing</h4>
+        <h6 style="text-align: center;">Try clicking on the labels!</h6>
+        <canvas id="velo-over-time" width="1000" height="400">
+        </canvas>
+        <table id="time-to-plate" class="table">
+            <caption>Time to Plate</caption>
+            <tr class="table-headers">
+                <th>Lead RNR</th>
+                <th>No.</th>
+                <th>Average</th>
+            </tr>
+            {% for runner in time_to_plate %}
+                <tr>
+                    <td>{{runner.lead_runner}}</td>
+                    <td>{{runner.num_times}}</td>
+                    <td>{{runner.avg}}</td>
+                </tr>
+            {% endfor %}
+        </table>
+        <table id="pitch-stats" class="table">
+            <caption>Pitch Stats</caption>
+            <tr class="table-headers">
+                <th>Pitch Type</th>
+                <th>No.</th>
+                <th>Velo Avg</th>
+                <th>Velo Max</th>
+                <th>Velo Min</th>
+                <th>Usage %</th>
+                <th>Strike %</th>
+            </tr>
+            {% for pitch in pitch_stats %}
+                <tr>
+                    <td>{{pitch.pitch_type}}</td>
+                    <td>{{pitch.num_thrown}}</td>
+                    <td>{{pitch.velo_avg}}</td>
+                    <td>{{pitch.velo_max}}</td>
+                    <td>{{pitch.velo_min}}</td>
+                    <td>
+                        {{pitch.percentage_thrown}}
+                        {%if pitch.percentage_thrown != "X"%}%{%endif%}
+                    </td>
+                    <td>
+                        {{pitch.strike_percentage}}
+                        {%if pitch.strike_percentage != "X"%}%{%endif%}
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
         <br>
     </div>
 {% endblock %}

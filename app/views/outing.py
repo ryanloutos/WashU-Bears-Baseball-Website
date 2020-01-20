@@ -57,13 +57,32 @@ def outing_home(id):
     if not outing:
         flash("URL does not exits")
         return redirect(url_for('main.index'))
+    
+    # Get statistical data
+    pitch_stats = outingPitchStatistics(outing)
+    time_to_plate = outingTimeToPlate(outing)
+
+    # setting up horizontal axis for line chart
+    horizontal_axis = []
+    i = 1
+    for ab in outing.at_bats:
+        for p in ab.pitches:
+            horizontal_axis.append(i)
+            i += 1
+
+    velos = veloOverTime(outing)
 
     # render template with all the statistical data calculated from the outing
     return render_template(
         'outing/outing_home.html',
         title=outing,
         outing=outing,
-        opponent=opponent)
+        opponent=opponent,
+        pitch_stats=pitch_stats,
+        time_to_plate=time_to_plate,
+        velos=velos,
+        labels=horizontal_axis
+    )
 
 # ***************-OUTING PBP-*************** #
 @outing.route('/outing/<id>/pbp', methods=['GET', 'POST'])
