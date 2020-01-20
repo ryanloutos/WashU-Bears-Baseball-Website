@@ -45,6 +45,9 @@ class Game(db.Model):
     season_id = db.Column(db.Integer, db.ForeignKey('season.id'), index=True)
     outings = db.relationship('Outing', backref='game', lazy='dynamic')
 
+    def __repr__(self):
+        return f"{self.date.month}/{self.date.day}/{self.date.year} vs. {self.opponent}"
+
 class Outing(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.Date, index=True)
@@ -111,6 +114,7 @@ class Opponent(db.Model):
     name = db.Column(db.String(64), index=True)
     outings = db.relationship('Outing', backref='opponent', lazy='dynamic')
     batters = db.relationship('Batter', backref='opponent', lazy='dynamic')
+    games = db.relationship('Game', backref='opponent', lazy='dynamic')
 
     def __repr__(self):
         return self.name

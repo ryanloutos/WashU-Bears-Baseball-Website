@@ -9,7 +9,7 @@ from app.forms import NewOutingFromCSV, SeasonForm, OpponentForm, BatterForm
 from app.forms import OutingPitchForm, NewOutingFromCSVPitches, EditUserForm
 from app.forms import ChangePasswordForm, EditBatterForm, EditOpponentForm
 from app.forms import NewBatterForm
-from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat, Pitcher
+from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat, Pitcher, Game
 from app.stats import calcPitchPercentages, pitchUsageByCount, calcAverageVelo
 from app.stats import calcPitchStrikePercentage, calcPitchWhiffRate
 from app.stats import createPitchPercentagePieChart, velocityOverTimeLineChart
@@ -56,9 +56,12 @@ def season_home(id):
     # outings associated with the specific season
     outings = Outing.query.filter_by(season_id=id).order_by(Outing.date).all()
 
+    games = Game.query.filter_by(season_id=id).order_by(Game.date).all()
+
     return render_template('season/season.html',
                            title=season,
                            outings=outings,
+                           games=games,
                            season=season)
 
 # ***************-NEW SEASON-*************** #

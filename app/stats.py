@@ -4,7 +4,7 @@ import pygal
 from pygal.style import DarkSolarizedStyle, DefaultStyle
 import lxml
 import math
-from app.models import Season, Outing
+from app.models import Season, Outing, Game
 
 
 class PitchType(Enum):
@@ -1525,3 +1525,139 @@ def batterSwingWhiffRatebyPitchbyCount(batter, seasons=[]):
                     whiff_rate_by_count[count][pitch] = truncate(whiffs_per_count[count][pitch] / swings_per_count[count][pitch])
 
     return (swing_rate_by_count, whiff_rate_by_count)
+
+
+def gameBasicStatsByOuting(game):
+
+    stats_by_outing = []
+    game_stats = {
+        "BF": 0,
+        "Pitches": 0,
+        "Hits": 0,
+        "K": 0,
+        "BB": 0,
+        "HBP": 0,
+        "SP": 0,
+        "FPS": 0,
+        "FB Avg": 0,
+        "2S Avg": 0
+    }
+
+    game_strikes = 0
+    game_fps = 0
+    game_total_fb_velo = 0
+    game_total_2s_velo = 0
+    game_total_fb_pitches = 0
+    game_total_2s_pitches = 0
+
+    for outing in game.outings:
+        outing_stats = {
+            "outing_id": outing.id,
+            "Pitcher": outing.pitcher,
+            "BF": 0,
+            "Pitches": 0,
+            "Hits": 0,
+            "K": 0,
+            "BB": 0,
+            "HBP": 0,
+            "SP": 0,
+            "FPS": 0,
+            "FB Avg": 0,
+            "2S Avg": 0
+        }
+        strikes = 0
+        fps = 0
+        total_fb_velo = 0
+        total_2s_velo = 0
+        total_fb_pitches = 0
+        total_2s_pitches = 0
+
+        for at_bat in outing.at_bats:
+            # updated batters faced
+            outing_stats["BF"] += 1
+            game_stats["BF"] += 1
+
+            # set boolean so fps can be analyzed
+            first_pitch = True
+
+            # look at pitches for the at bat
+            for pitch in at_bat.pitches:
+
+                # update total number of pitches
+                outing_stats["Pitches"] += 1
+                game_stats["Pitches"] += 1
+
+                # update total first pitch strikes
+                if first_pitch:
+                    if pitch.pitch_result is not "B":
+                        fps += 1
+                        game_fps += 1
+                    first_pitch = False
+                
+                # update total number of strikes
+                if pitch.pitch_result is not "B":
+                    strikes += 1
+                    game_strikes += 1
+                
+                # check the ab results and update accordingly
+                if pitch.ab_result in ["1B", "2B", "3B", "HR"]:
+                    outing_stats["Hits"] += 1
+                    game_stats["Hits"] += 1
+                if pitch.ab_result in ["K", "KL"]:
+                    outing_stats["K"] += 1
+                    game_stats["K"] += 1
+                if pitch.ab_result == "BB":
+                    outing_stats["BB"] += 1
+                    game_stats["BB"] += 1
+                if pitch.ab_result == "HBP":
+                    outing_stats["HBP"] += 1  
+                    game_stats["HBP"] += 1
+
+                # update pitch velo variables to calc averages
+                if pitch.velocity not in [None, ""]:
+                    if pitch.pitch_type == 1:
+                        total_fb_pitches += 1
+                        game_total_fb_pitches += 1
+                        total_fb_velo += pitch.velocity
+                        game_total_fb_velo += pitch.velocity
+                    if pitch.pitch_type == 7:
+                        total_2s_pitches += 1
+                        game_total_2s_pitches += 1
+                        total_2s_velo += pitch.velocity
+                        game_total_2s_velo += pitch.velocity
+
+        # divide by zero check and calc velo averages
+        if total_fb_pitches == 0:
+            outing_stats["FB Avg"] = 0
+        else:
+            outing_stats["FB Avg"] = truncate(total_fb_velo/total_fb_pitches, 1)
+        
+        if total_2s_pitches == 0:
+            outing_stats["2S Avg"] = 0
+        else:
+            outing_stats["2S Avg"] = truncate(total_2s_velo/total_2s_pitches, 1)
+        
+        # calc FPS and Strike percentages
+        outing_stats["FPS"] = percentage(fps/outing_stats["BF"])
+        outing_stats["SP"] = percentage(strikes/outing_stats["Pitches"])
+
+        # append to return array
+        stats_by_outing.append(outing_stats)
+    
+    # divide by zero check and calc velo averages
+    if game_total_fb_pitches == 0:
+        game_stats["FB Avg"] = 0
+    else:
+        game_stats["FB Avg"] = truncate(game_total_fb_velo/game_total_fb_pitches, 1)
+    
+    if game_total_2s_pitches == 0:
+        game_stats["2S Avg"] = 0
+    else:
+        game_stats["2S Avg"] = truncate(game_total_2s_velo/game_total_2s_pitches, 1)
+    
+    # calc FPS and Strike percentages
+    game_stats["FPS"] = percentage(game_fps/game_stats["BF"])
+    game_stats["SP"] = percentage(game_strikes/game_stats["Pitches"])
+
+    return stats_by_outing, game_stats
+
