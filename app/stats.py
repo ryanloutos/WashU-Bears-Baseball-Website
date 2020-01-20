@@ -954,7 +954,7 @@ def seasonStatLine(pitcher):
 
 
 # STAFF BASIC STATISTICS ------------------------------------------------------
-def staffBasicStats(pitchers):
+def staffBasicStats(pitchers, seasons=[]):
     """Generates basic stat line for group of pitchers passed in
 
     Arguments:
@@ -978,33 +978,34 @@ def staffBasicStats(pitchers):
         }
         for outing in pitcher.outings:
             for at_bat in outing.at_bats:
-                for pitch in at_bat.pitches:
-                    stat_line['p'] += 1  # increase pitches
+                if (len(seasons) is 0) or at_bat.get_season().id in seasons or str(at_bat.get_season().id) in seasons:
+                    for pitch in at_bat.pitches:
+                        stat_line['p'] += 1  # increase pitches
 
-                    # check ball in play or out statistics
-                    if pitch.ab_result is not '':
-                        stat_line["bf"] += 1  # increase batters faced
+                        # check ball in play or out statistics
+                        if pitch.ab_result is not '':
+                            stat_line["bf"] += 1  # increase batters faced
 
-                        # stats that result in hit
-                        if pitch.ab_result in ["1B", "2B", "3B", "HR"]:
-                            stat_line["h"] += 1  # increase hits
-                            stat_line[pitch.ab_result.lower()] += 1  # increase type of hit
+                            # stats that result in hit
+                            if pitch.ab_result in ["1B", "2B", "3B", "HR"]:
+                                stat_line["h"] += 1  # increase hits
+                                stat_line[pitch.ab_result.lower()] += 1  # increase type of hit
 
-                        # stats that result in out
-                        if pitch.ab_result in ["IP->Out", "K", "KL", "FC", "D3->Out"]:
-                            stat_line["ip"] += 1
+                            # stats that result in out
+                            if pitch.ab_result in ["IP->Out", "K", "KL", "FC", "D3->Out"]:
+                                stat_line["ip"] += 1
 
-                            # for outs that were strikeouts
-                            if pitch.ab_result in ["K", "KL"]:
-                                stat_line[pitch.ab_result.lower()] += 1
+                                # for outs that were strikeouts
+                                if pitch.ab_result in ["K", "KL"]:
+                                    stat_line[pitch.ab_result.lower()] += 1
 
-                        # stats where batter reaches base another way
-                        if pitch.ab_result in ["BB", "HBP", "Error", "CI", "D3->Safe"]:
+                            # stats where batter reaches base another way
+                            if pitch.ab_result in ["BB", "HBP", "Error", "CI", "D3->Safe"]:
 
-                            if pitch.ab_result in ["Error", "CI", "D3->Safe"]:
-                                stat_line["e"] += 1
-                            else:
-                                stat_line[pitch.ab_result.lower()] += 1
+                                if pitch.ab_result in ["Error", "CI", "D3->Safe"]:
+                                    stat_line["e"] += 1
+                                else:
+                                    stat_line[pitch.ab_result.lower()] += 1
 
         # sum up a pitchers work to team total
         for stat, val in stat_line.items():

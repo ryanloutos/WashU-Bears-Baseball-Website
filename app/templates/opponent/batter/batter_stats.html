@@ -58,8 +58,6 @@
             batter_id: {{ batter.id }}
         };
 
-        console.log(data);
-
         fetch(
             "{{ url_for('api.batter_stats_whiffrate') }}",
             {

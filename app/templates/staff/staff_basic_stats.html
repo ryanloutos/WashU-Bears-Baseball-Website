@@ -2,77 +2,291 @@
 
 {% block styles %}
     {{ super() }}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/loader.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidenav.css') }}">
     <script src="{{ url_for('static', filename='js/sortable_table.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/checkbox_season_selector.js') }}"></script>
+    <script>
+        // Adds click event listener to all input checkboxes
+        window.addEventListener("DOMContentLoaded", function(){
+            document.querySelectorAll(".basic-stats-season-selector").forEach(function(checkbox){
+                checkbox.addEventListener("click", basic_stats_season_selector, false);
+            });
+        });
+
+        function basic_stats_season_selector(){
+
+            let selected_seasons = get_selected_seasons("basic-stats-season-selector");
+
+            let match = show_selected_seasons(selected_seasons, "basic-stats-season-holder", "basic-stats-season-selector", "basic-stats");
+
+            // If a season holder for currently selected seasons was found and made visible, cause
+            // an early end to function because desired action performed
+            if(match){
+                return;
+            }
+
+            // create loading circle holder so user knows whats going on
+            let loader_div = document.createElement("div");
+            loader_div.classList.add("loader");
+            loader_div.style.height = "120px";
+            loader_div.style.width = "120px";
+            document.querySelectorAll(".main")[0].appendChild(loader_div);
+
+            // Prepare page data for AJAX request
+            let data = {
+                seasons: selected_seasons
+            }
+
+            // AJAX call to server to gather stat date for new table
+            fetch("{{ url_for('api.staff_basic_stats') }}",
+            {
+                method: "POST",
+                body: JSON.stringify(data),
+                headers: {"content-type": "application/json"}
+
+            }).then(res => res.json())
+            .then(function(response){
+
+                // debug statement
+                // console.log(response);
+
+                // If error in request response, print error message and terminate early
+                if(response.status == "failure"){
+                    console.log("Status: Failure");
+                    console.log("Error message: "+ response.error);
+                    return;
+                }
+
+                // Begin creating HTML elements for new Holder and table for season selection.
+                let holder_div = document.createElement("div");
+                holder_div.classList.add("basic-stats-season-holder");
+                holder_div.id = generate_holder_id(selected_seasons, "basic-stats");
+
+                let basic_stats_table = document.createElement("table");
+                basic_stats_table.classList.add("table");
+                basic_stats_table.classList.add("sortable_table");
+
+                let basic_stats_table_body = document.createElement("tbody");
+
+                let header_row = document.createElement("tr");
+                header_row.classList.add("table-headers");
+
+                let header_category_1 = document.createElement("th");
+                let header_category_2 = document.createElement("th");
+                let header_category_3 = document.createElement("th");
+                let header_category_4 = document.createElement("th");
+                let header_category_5 = document.createElement("th");
+                let header_category_6 = document.createElement("th");
+                let header_category_7 = document.createElement("th");
+                let header_category_8 = document.createElement("th");
+                let header_category_9 = document.createElement("th");
+                let header_category_10 = document.createElement("th");
+                let header_category_11 = document.createElement("th");
+                let header_category_12 = document.createElement("th");
+                let header_category_13 = document.createElement("th");
+                let header_category_14 = document.createElement("th");
+                let header_category_15 = document.createElement("th");
+                let header_category_16 = document.createElement("th");
+                let header_category_17 = document.createElement("th");
+                let header_category_18 = document.createElement("th");
+
+                header_category_1.innerHTML = "Name";
+                header_category_2.innerHTML = "Throws";
+                header_category_3.innerHTML = "Grad Year";
+                header_category_4.innerHTML = "IP";
+                header_category_5.innerHTML = "H";
+                header_category_6.innerHTML = "1B";
+                header_category_7.innerHTML = "2B";
+                header_category_8.innerHTML = "3B";
+                header_category_9.innerHTML = "HR";
+                header_category_10.innerHTML = "E";
+                header_category_11.innerHTML = "BB";
+                header_category_12.innerHTML = "HBP";
+                header_category_13.innerHTML = "K";
+                header_category_14.innerHTML = "KL";
+                header_category_15.innerHTML = "K/9";
+                header_category_16.innerHTML = "BB/9";
+                header_category_17.innerHTML = "P";
+                header_category_18.innerHTML = "BF";
+
+                header_row.appendChild(header_category_1);
+                header_row.appendChild(header_category_2);
+                header_row.appendChild(header_category_3);
+                header_row.appendChild(header_category_4);
+                header_row.appendChild(header_category_5);
+                header_row.appendChild(header_category_6);
+                header_row.appendChild(header_category_7);
+                header_row.appendChild(header_category_8);
+                header_row.appendChild(header_category_9);
+                header_row.appendChild(header_category_10);
+                header_row.appendChild(header_category_11);
+                header_row.appendChild(header_category_12);
+                header_row.appendChild(header_category_13);
+                header_row.appendChild(header_category_14);
+                header_row.appendChild(header_category_15);
+                header_row.appendChild(header_category_16);
+                header_row.appendChild(header_category_17);
+                header_row.appendChild(header_category_18);
+
+                basic_stats_table_body.appendChild(header_row);
+
+                for(let pitcher in response.data.player_stat_summary){
+
+                    let data_row = document.createElement("tr");
+                    data_row.classList.add("data-row");
+
+                    let data_category_1 = document.createElement("td");
+                    let data_category_2 = document.createElement("td");
+                    let data_category_3 = document.createElement("td");
+                    let data_category_4 = document.createElement("td");
+                    let data_category_5 = document.createElement("td");
+                    let data_category_6 = document.createElement("td");
+                    let data_category_7 = document.createElement("td");
+                    let data_category_8 = document.createElement("td");
+                    let data_category_9 = document.createElement("td");
+                    let data_category_10 = document.createElement("td");
+                    let data_category_11 = document.createElement("td");
+                    let data_category_12 = document.createElement("td");
+                    let data_category_13 = document.createElement("td");
+                    let data_category_14 = document.createElement("td");
+                    let data_category_15 = document.createElement("td");
+                    let data_category_16 = document.createElement("td");
+                    let data_category_17 = document.createElement("td");
+                    let data_category_18 = document.createElement("td");
+
+                    data_category_1.innerHTML = response.data.player_stat_summary[pitcher].details.name;
+                    data_category_2.innerHTML = response.data.player_stat_summary[pitcher].details.throws;
+                    data_category_3.innerHTML = response.data.player_stat_summary[pitcher].details.class;
+                    data_category_4.innerHTML = response.data.player_stat_summary[pitcher].stat_line["ip"];
+                    data_category_5.innerHTML = response.data.player_stat_summary[pitcher].stat_line["h"];
+                    data_category_6.innerHTML = response.data.player_stat_summary[pitcher].stat_line["1b"];
+                    data_category_7.innerHTML = response.data.player_stat_summary[pitcher].stat_line["2b"];
+                    data_category_8.innerHTML = response.data.player_stat_summary[pitcher].stat_line["3b"];
+                    data_category_9.innerHTML = response.data.player_stat_summary[pitcher].stat_line["hr"];
+                    data_category_10.innerHTML = response.data.player_stat_summary[pitcher].stat_line["e"];
+                    data_category_11.innerHTML = response.data.player_stat_summary[pitcher].stat_line["bb"];
+                    data_category_12.innerHTML = response.data.player_stat_summary[pitcher].stat_line["hbp"];
+                    data_category_13.innerHTML = response.data.player_stat_summary[pitcher].stat_line["k"];
+                    data_category_14.innerHTML = response.data.player_stat_summary[pitcher].stat_line["kl"];
+                    data_category_15.innerHTML = response.data.player_stat_summary[pitcher].stat_line["kp9"];
+                    data_category_16.innerHTML = response.data.player_stat_summary[pitcher].stat_line["bb9"];
+                    data_category_17.innerHTML = response.data.player_stat_summary[pitcher].stat_line["p"];
+                    data_category_18.innerHTML = response.data.player_stat_summary[pitcher].stat_line["bf"];
+
+                    data_row.appendChild(data_category_1);
+                    data_row.appendChild(data_category_2);
+                    data_row.appendChild(data_category_3);
+                    data_row.appendChild(data_category_4);
+                    data_row.appendChild(data_category_5);
+                    data_row.appendChild(data_category_6);
+                    data_row.appendChild(data_category_7);
+                    data_row.appendChild(data_category_8);
+                    data_row.appendChild(data_category_9);
+                    data_row.appendChild(data_category_10);
+                    data_row.appendChild(data_category_11);
+                    data_row.appendChild(data_category_12);
+                    data_row.appendChild(data_category_13);
+                    data_row.appendChild(data_category_14);
+                    data_row.appendChild(data_category_15);
+                    data_row.appendChild(data_category_16);
+                    data_row.appendChild(data_category_17);
+                    data_row.appendChild(data_category_18);
+
+                    basic_stats_table_body.appendChild(data_row);
+                }
+
+                basic_stats_table.appendChild(basic_stats_table_body);
+
+                holder_div.appendChild(basic_stats_table);
+
+                // delete loading circle
+                document.querySelectorAll(".loader").forEach(function(loader){
+                    loader.remove();
+                });
+
+                // add new holder to main
+                document.querySelectorAll(".main")[0].appendChild(holder_div);
+
+            });
+        }
+    </script>
 {% endblock %}
 
 {% block app_content %}
     {% include "staff/staff_sidenav.html" %}
     <div class="main">
         <h1>Roster Basic Stat Line</h1> <br>
-        <table id="staff-basic-stats" class="table sortable_table">
-            <tr class="table-headers">
-                <th onclick="sortTable(0, 0, 2)">Name</th>
-                <th onclick="sortTable(1, 0, 2)">Throws</th>
-                <th onclick="sortTable(2, 0, 2)">Grad Year</th>
-                <th onclick="sortTable(3, 0, 2)">IP</th>
-                <th onclick="sortTable(4, 0, 2)">H</th>
-                <th onclick="sortTable(5, 0, 2)">1B</th>
-                <th onclick="sortTable(6, 0, 2)">2B</th>
-                <th onclick="sortTable(7, 0, 2)">3B</th>
-                <th onclick="sortTable(8, 0, 2)">HR</th>
-                <th onclick="sortTable(9, 0, 2)">E</th>
-                <th onclick="sortTable(10, 0, 2)">BB</th>
-                <th onclick="sortTable(11, 0, 2)">HBP</th>
-                <th onclick="sortTable(12, 0, 2)">K</th>
-                <th onclick="sortTable(13, 0, 2)">KL</th>
-                <th onclick="sortTable(14, 0, 2)">K/9</th>
-                <th onclick="sortTable(15, 0, 2)">BB/9</th>
-                <th onclick="sortTable(16, 0, 2)">P</th>
-                <th onclick="sortTable(17, 0, 2)">BF</th>
-            </tr>
-            {% for pitcher in players_stat_summary %}
-                <tr class="data-row">
-                    <td>{{ pitcher["details"]["name"] }}</td>
-                    <td>{{ pitcher["details"]["throws"] }}</td>
-                    <td>{{ pitcher["details"]["class"] }}</td>
-                    <td>{{ pitcher["stat_line"]["ip"] }}</td>
-                    <td>{{ pitcher["stat_line"]["h"] }}</td>
-                    <td>{{ pitcher["stat_line"]["1b"] }}</td>
-                    <td>{{ pitcher["stat_line"]["2b"] }}</td>
-                    <td>{{ pitcher["stat_line"]["3b"] }}</td>
-                    <td>{{ pitcher["stat_line"]["hr"] }}</td>
-                    <td>{{ pitcher["stat_line"]["e"] }}</td>
-                    <td>{{ pitcher["stat_line"]["bb"] }}</td>
-                    <td>{{ pitcher["stat_line"]["hbp"] }}</td>
-                    <td>{{ pitcher["stat_line"]["k"] }}</td>
-                    <td>{{ pitcher["stat_line"]["kl"] }}</td>
-                    <td>{{ pitcher["stat_line"]["kp9"] }}</td>
-                    <td>{{ pitcher["stat_line"]["bb9"] }}</td>
-                    <td>{{ pitcher["stat_line"]["p"] }}</td>
-                    <td>{{ pitcher["stat_line"]["bf"] }}</td>
+        <h5>Select Seasons:</h5>
+        {% for season in seasons %}
+            <p><input type="checkbox" class="basic-stats-season-selector" value="{{ season.id }}">{{ season }}</p>
+        {% endfor %}
+        <div id="all-seasons-basic-stats" class="basic-stats-season-holder">
+            <table class="table sortable_table">
+                <tr class="table-headers">
+                    <th onclick="sortTable(0, 0, 2)">Name</th>
+                    <th onclick="sortTable(1, 0, 2)">Throws</th>
+                    <th onclick="sortTable(2, 0, 2)">Grad Year</th>
+                    <th onclick="sortTable(3, 0, 2)">IP</th>
+                    <th onclick="sortTable(4, 0, 2)">H</th>
+                    <th onclick="sortTable(5, 0, 2)">1B</th>
+                    <th onclick="sortTable(6, 0, 2)">2B</th>
+                    <th onclick="sortTable(7, 0, 2)">3B</th>
+                    <th onclick="sortTable(8, 0, 2)">HR</th>
+                    <th onclick="sortTable(9, 0, 2)">E</th>
+                    <th onclick="sortTable(10, 0, 2)">BB</th>
+                    <th onclick="sortTable(11, 0, 2)">HBP</th>
+                    <th onclick="sortTable(12, 0, 2)">K</th>
+                    <th onclick="sortTable(13, 0, 2)">KL</th>
+                    <th onclick="sortTable(14, 0, 2)">K/9</th>
+                    <th onclick="sortTable(15, 0, 2)">BB/9</th>
+                    <th onclick="sortTable(16, 0, 2)">P</th>
+                    <th onclick="sortTable(17, 0, 2)">BF</th>
                 </tr>
-            {% endfor %}
-            <tr>
-                <td>Staff Totals</td>
-                <td></td>
-                <td></td>
-                <td>{{ staff_stat_summary["ip"] }}</td>
-                <td>{{ staff_stat_summary["h"] }}</td>
-                <td>{{ staff_stat_summary["1b"] }}</td>
-                <td>{{ staff_stat_summary["2b"] }}</td>
-                <td>{{ staff_stat_summary["3b"] }}</td>
-                <td>{{ staff_stat_summary["hr"] }}</td>
-                <td>{{ staff_stat_summary["e"] }}</td>
-                <td>{{ staff_stat_summary["bb"] }}</td>
-                <td>{{ staff_stat_summary["hbp"] }}</td>
-                <td>{{ staff_stat_summary["k"] }}</td>
-                <td>{{ staff_stat_summary["kl"] }}</td>
-                <td>{{ staff_stat_summary["kp9"] }}</td>
-                <td>{{ staff_stat_summary["bb9"] }}</td>
-                <td>{{ staff_stat_summary["p"] }}</td>
-                <td>{{ staff_stat_summary["bf"] }}</td>
-            </tr>
-        </table>
+                {% for pitcher in players_stat_summary %}
+                    <tr class="data-row">
+                        <td>{{ pitcher["details"]["name"] }}</td>
+                        <td>{{ pitcher["details"]["throws"] }}</td>
+                        <td>{{ pitcher["details"]["class"] }}</td>
+                        <td>{{ pitcher["stat_line"]["ip"] }}</td>
+                        <td>{{ pitcher["stat_line"]["h"] }}</td>
+                        <td>{{ pitcher["stat_line"]["1b"] }}</td>
+                        <td>{{ pitcher["stat_line"]["2b"] }}</td>
+                        <td>{{ pitcher["stat_line"]["3b"] }}</td>
+                        <td>{{ pitcher["stat_line"]["hr"] }}</td>
+                        <td>{{ pitcher["stat_line"]["e"] }}</td>
+                        <td>{{ pitcher["stat_line"]["bb"] }}</td>
+                        <td>{{ pitcher["stat_line"]["hbp"] }}</td>
+                        <td>{{ pitcher["stat_line"]["k"] }}</td>
+                        <td>{{ pitcher["stat_line"]["kl"] }}</td>
+                        <td>{{ pitcher["stat_line"]["kp9"] }}</td>
+                        <td>{{ pitcher["stat_line"]["bb9"] }}</td>
+                        <td>{{ pitcher["stat_line"]["p"] }}</td>
+                        <td>{{ pitcher["stat_line"]["bf"] }}</td>
+                    </tr>
+                {% endfor %}
+                <tr>
+                    <td>Staff Totals</td>
+                    <td></td>
+                    <td></td>
+                    <td>{{ staff_stat_summary["ip"] }}</td>
+                    <td>{{ staff_stat_summary["h"] }}</td>
+                    <td>{{ staff_stat_summary["1b"] }}</td>
+                    <td>{{ staff_stat_summary["2b"] }}</td>
+                    <td>{{ staff_stat_summary["3b"] }}</td>
+                    <td>{{ staff_stat_summary["hr"] }}</td>
+                    <td>{{ staff_stat_summary["e"] }}</td>
+                    <td>{{ staff_stat_summary["bb"] }}</td>
+                    <td>{{ staff_stat_summary["hbp"] }}</td>
+                    <td>{{ staff_stat_summary["k"] }}</td>
+                    <td>{{ staff_stat_summary["kl"] }}</td>
+                    <td>{{ staff_stat_summary["kp9"] }}</td>
+                    <td>{{ staff_stat_summary["bb9"] }}</td>
+                    <td>{{ staff_stat_summary["p"] }}</td>
+                    <td>{{ staff_stat_summary["bf"] }}</td>
+                </tr>
+            </table>
+        </div>
+
     </div>
 {% endblock %}

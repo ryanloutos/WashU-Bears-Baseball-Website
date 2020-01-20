@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from flask_login import login_required
-from app.stats import batterSwingWhiffRatebyPitchbyCount, teamImportantStatsSeason
+from app.stats import batterSwingWhiffRatebyPitchbyCount, teamImportantStatsSeason, staffBasicStats
 from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat, Pitcher
 
 api = Blueprint("api", __name__)
@@ -59,6 +59,7 @@ def batter_stats_whiffrate():
 
 
 @api.route("/api/staff/stats/importantstats", methods=["POST"])
+@login_required
 def staff_home_importantstats():
     # req_data = request.get_json()
 
@@ -81,3 +82,41 @@ def staff_home_importantstats():
         }
     }
     return jsonify(return_data)
+
+
+@api.route("/api/staff/stats/basicstats", methods=["POST"])
+@login_required
+def staff_basic_stats():
+    req_data = request.get_json()
+
+    if req_data is None:
+        return jsonify({
+            "status": "failure",
+            "error": "Request not processable as JSON"
+        })
+
+    if "seasons" not in req_data:
+        return jsonify({
+            "status": "failure",
+            "error": "Request does not contain necessary info"
+        })
+
+    seasons = req_data["seasons"]
+
+    if type(seasons) is not list:
+        return jsonify({
+            "status": "failure",
+            "error": "Seasons request data not in list form"
+        })
+
+    pitchers = Pitcher.query.filter(Pitcher.retired != 1).all()
+
+    staff_stat_summary, players_stat_summary = staffBasicStats(pitchers, seasons=seasons)
+
+    return jsonify({
+        "data": {
+            "staff_stat_summary": staff_stat_summary,
+            "player_stat_summary": players_stat_summary
+        },
+        "status": "success"
+    })

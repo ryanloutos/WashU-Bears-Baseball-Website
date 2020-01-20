@@ -65,13 +65,15 @@ def staff_basic_stats():
         currently on roster
     """
     pitchers = Pitcher.query.filter(Pitcher.retired != 1).all()
+    seasons = Season.query.all()
 
     staff_stat_summary, players_stat_summary = staffBasicStats(pitchers)
 
     return render_template(
         'staff/staff_basic_stats.html',
         staff_stat_summary=staff_stat_summary,
-        players_stat_summary=players_stat_summary)
+        players_stat_summary=players_stat_summary,
+        seasons=seasons)
 
 
 # # ***************-STAFF ADVANCED STATS-*********** #
