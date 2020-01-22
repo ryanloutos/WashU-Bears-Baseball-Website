@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" type="text/css" href="pitch_tracker.css">
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+    <script src="pitch_tracker.js"></script>
+</head>
+
+<body>
+    <div id="page-title">
+        Pitch by Pitch Tracker
+    </div>
+
+    <br><br>
+    
+    <div id="at-bat-info">
+        
+        &nbsp <b>Inning: </b>
+        <input id="inning" type="number" value=1>
+
+        &nbsp
+
+        <b>Batter: </b>
+        <select id="select-batter" size='1'>
+            <option val="Batter1">Batter1</option>
+            <option val="Batter2">Batter2</option>
+        </select>
+        
+        &nbsp
+        
+        <b>Lead Runner: </b>
+        <div value='1' class="lead-runner">1B</div>
+        <div value='2' class="lead-runner">2B</div>
+        <div value='3' class="lead-runner">3B</div>
+
+    </div>
+    <div>
+        <div id="pitch-location">
+            <svg id='main' class=plot height='457' width='457'></svg>
+        </div>
+        
+        <table id="pitch-info">
+            <tr>
+                <td>
+                    <div value=1 class="pitch-type"><span class=ptText>4-Seam</span></div>
+                </td>
+                <td>
+                    <div id="hit-spot">
+                        <div class=area><span class=ptText>Hit Spot</span></div>
+                        <div value=1 class="hit-spot-answer"><span class=ptText>Yes</span></div>
+                        <div value=0 class="hit-spot-answer" style='background-color:navy; color:white;'><span class=ptText>No</span></div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div value=7 class="pitch-type"><span class=ptText>2-Seam</span></div>
+                </td>
+                <td>
+                    <div id="velocity">
+                        <div class="area">
+                            <span class="txt-velo-ttp">Velocity</span>
+                            <input id="velocity-input" type="number" step='.1'>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div value=2 class="pitch-type"><span class=ptText>Curveball</span></div>
+                </td>
+                <td>
+                    <div id="time-to-plate">
+                        <div class="area"><span class="txt-velo-ttp">Time to Plate</span>
+                            <input id="time-to-plate-input" type="number" step='.01'>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div value=3 class="pitch-type"><span class=ptText>Slider</span></div>
+                </td>
+                <td rowspan=2>
+                    <div id="pitch-result">
+                        <div class=area><span class=ptText>Pitch Result</span></div>
+                        <table>
+                            <tr>
+                                <td>
+                                    <div value='SS' class='prAnswer'><span class=ptText>SS</span></div>
+                                </td>
+                                <td>
+                                    <div value='CS' class='prAnswer'><span class=ptText>CS</span></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div value='F' class='prAnswer'><span class=ptText>Foul</span></div>
+                                </td>
+                                <td>
+                                    <div value='B' class='prAnswer'><span class=ptText>Ball</span></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan=2>
+                                    <div value='IP' class='prAnswer' style='width: 96%;'><span class=ptText>In Play</span></div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div value=4 class="pitch-type"><span class=ptText>Change</span></div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div value=5 class="pitch-type"><span class=ptText>Cutter</span></div>
+                </td>
+                <td>
+                    <div class="strikeout" id="K">
+                        <div class=area style='width:100%'>Strikeout?</div>
+                        <div value="K" class="strikeout-answer"><span class=ptText>Yes</span></div>
+                        <div value="" class="strikeout-answer" style='background-color:navy; color:white;'><span class=ptText>No</span></div>
+                    </div>
+                    <div class="strikeout" id="KL">
+                        <div class=area style='width:100%'>Strikeout?</div>
+                        <div value="KL" class="strikeout-answer"><span class=ptText>Yes</span></div>
+                        <div value="" class="strikeout-answer" style='background-color:navy; color:white;'><span class=ptText>No</span></div>
+                    </div>
+                    <div id="bb-or-hbp">
+                        <div class=area style='width:100%'>BB or HBP?</div>
+                        <div value='bb' class="bb-or-hbp-answer"><span class=ptText>BB</span></div>
+                        <div value='hbp' class="bb-or-hbp-answer"><span class=ptText>HBP</span></div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan=2>
+                    <div id="ab-result-other">
+                        <div class=area style='width:100%'>Other AB Results</div>
+                        <div value='D3->Out' class="ab-result-other"><span class=ptText>D3->Out</span></div>
+                        <div value='D3->Safe' class="ab-result-other"><span class=ptText>D3->Safe</span></div>
+                        <div value='CI' class="ab-result-other"><span class=ptText>CI</span></div>
+                        <div value='Other' class="ab-result-other"><span class=ptText>Other</span></div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <div id=fieldDiv>
+            <svg id='field' height='457' width='457'></svg>
+            <table id=ipTable style='visibility: hidden'>
+                <tr class='bipType'>
+                    <td>
+                        <div class=traj-answer value=GB>GB</div>
+                    </td>
+                    <td>
+                        <div class=traj-answer value=FB>FB</div>
+                    </td>
+                    <td>
+                        <div class=traj-answer value=LD>LD</div>
+                    </td>
+                    <td colspan=2>
+                        <div id=fielderDiv style='visibility: hidden'>
+                            &nbsp
+                            <b>Fielder: </b>
+                            <select id="select-fielder" size=1>
+                                <option class=fielder value="">--</option>
+                                <option class=fielder value="1B">1B</option>
+                                <option class=fielder value="2B">2B</option>
+                                <option class=fielder value="3B">3B</option>
+                                <option class=fielder value="SS">SS</option>
+                                <option class=fielder value="LF">LF</option>
+                                <option class=fielder value="CF">CF</option>
+                                <option class=fielder value="RF">RF</option>
+                                <option class=fielder value="C">C</option>
+                                <option class=fielder value="P">P</option>
+                            </select>
+                        </div>
+                    </td>
+                </tr>
+                <tr id="ip-at-bat-result" >
+                    <td>
+                        <div class="ip-at-bat-result" value="1B">1B</div>
+                    </td>
+                    <td>
+                        <div class="ip-at-bat-result" value="2B">2B</div>
+                    </td>
+                    <td>
+                        <div class="ip-at-bat-result" value="3B">3B</div>
+                    </td>
+                    <td>
+                        <div class="ip-at-bat-result" value="HR">HR</div>
+                    </td>
+                    <td>
+                        <div class="ip-at-bat-result" value="Error">Error</div>
+                    </td>
+                    <td>
+                        <div class="ip-at-bat-result" value="FC">FC</div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div id=Add>
+            Add pitch
+        </div>
+    </div>
+    <div>
+        <table>
+            <tr>
+                <th>No.</th>
+                <th>Batter</th>
+                <td>Velo</td>
+                <td>Lead RNR</td>
+                <td>Time to Plate</td>
+                <td>Pitch Type</td>
+                <td>Pitch Result</td>
+                <td>Hit Spot?</td>
+                <td>AB Result</td>
+                <td>Traj</td>
+                <td>Fielder</td>
+                <td>Inning</td>
+            </tr>
+        </table>
+    </div>
+</body>
