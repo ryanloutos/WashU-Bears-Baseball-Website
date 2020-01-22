@@ -10,6 +10,13 @@ body {
     font-weight: bold;
 }
 
+.logos {
+    width: 100px;
+    height: auto;
+    vertical-align: bottom;
+    padding-top: 5px;
+}
+
 #at-bat-info {
     font-size: 25px;
 }
