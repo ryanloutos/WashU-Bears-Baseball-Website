@@ -851,6 +851,70 @@ def new_outing_csv_pitches(file_name, outing_id):
                            batters=batters)
 
 
+@outing.route('/outing_report/<id>',methods=['GET', 'POST'])
+@login_required
+def outing_report(id):
+    # get the outing object associated by the id in the url
+    outing = Outing.query.filter_by(id=id).first()
+
+    # if bug or outing trying to be viewed DNE
+    if not outing:
+        flash("URL does not exits")
+        return redirect(url_for('main.index'))
+
+    # get opponent associated with outing
+    opponent = Opponent.query.filter_by(id=outing.opponent_id).first()
+
+    # if bug or outing trying to be viewed DNE
+    if not outing:
+        flash("URL does not exits")
+        return redirect(url_for('main.index'))
+    
+    # Get statistical data
+    pitch_stats = outingPitchStatistics(outing)
+    time_to_plate = outingTimeToPlate(outing)
+
+    pitch_usage_pie_labels = []
+    pitch_usage_pie_data = []
+    strike_percentage_polar_labels = []
+    strike_percentage_polar_data = []
+    for p in pitch_stats:
+        pitch_usage_pie_labels.append(p['pitch_type'])
+        strike_percentage_polar_labels.append(p['pitch_type'])
+        if p['num_thrown'] in [0, None, "", "X", "x"]:
+            pitch_usage_pie_data.append(0)
+            strike_percentage_polar_data.append(0)
+        else:
+            pitch_usage_pie_data.append(p['num_thrown'])
+            strike_percentage_polar_data.append(p['strike_percentage'])
+
+    # setting up horizontal axis for line chart
+    horizontal_axis = []
+    i = 1
+    for ab in outing.at_bats:
+        for p in ab.pitches:
+            horizontal_axis.append(i)
+            i += 1
+
+    velos = veloOverTime(outing)
+
+    # render template with all the statistical data calculated from the outing
+    return render_template(
+        'outing/outing_report.html',
+        title=outing,
+        outing=outing,
+        opponent=opponent,
+        pitch_stats=pitch_stats,
+        time_to_plate=time_to_plate,
+        velos=velos,
+        labels=horizontal_axis,
+        pitch_usage_pie_data=pitch_usage_pie_data,
+        pitch_usage_pie_labels=pitch_usage_pie_labels,
+        strike_percentage_polar_labels=strike_percentage_polar_labels,
+        strike_percentage_polar_data=strike_percentage_polar_data
+    )
+
+
 # ***************-HELPFUL FUNCTIONS-*************** #
 def getAvailablePitchers():
     '''
