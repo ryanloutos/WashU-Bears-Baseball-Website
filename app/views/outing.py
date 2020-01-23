@@ -18,6 +18,7 @@ from app.stats import pitchUsageSeason, seasonStatLine, staffBasicStats
 from app.stats import staffPitcherAvgVelo, staffPitchStrikePercentage
 from app.stats import outingPitchStatistics, outingTimeToPlate, veloOverTime
 from app.stats import teamImportantStatsSeason
+from datetime import datetime
 
 # Handle CSV uploads
 import csv
@@ -915,10 +916,26 @@ def outing_report(id):
     )
 
 
-@outing.route('/new_outing_pitch_tracker',methods=['GET', 'POST'])
+@outing.route('/new_outing_pitch_tracker/',methods=['GET', 'POST'])
 @login_required
 def new_outing_pitch_tracker():
-    return render_template("outing/pitch_tracker/new_outing_pitch_tracker.html")
+    form=OutingForm()
+    form.pitcher.choices = getAvailablePitchers()
+
+    date = datetime.date(datetime.now())
+
+    this_season = Season.query.filter_by(current_season = 1).first()
+    all_seasons = Season.query.all()
+
+    batters = Batter.query.filter_by(opponent_id=1).all()
+    return render_template(
+        "outing/pitch_tracker/new_outing_pitch_tracker.html",
+        batters=batters,
+        date=date,
+        this_season=this_season,
+        all_seasons=all_seasons,
+        form=form
+    )
 
 
 # ***************-HELPFUL FUNCTIONS-*************** #

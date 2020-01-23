@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
     .attr('height', 430)
     .attr('transform', 'translate(17,17)')
     .style('alignment-baseline', 'middle')
-    .attr("xlink:href", "field.png")
+    .attr("xlink:href", "{{ url_for('static', filename='images/field.png') }}")
 
     // set up the location tracker
     var svg = d3.select("#main")

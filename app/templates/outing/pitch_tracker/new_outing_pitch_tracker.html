@@ -2,294 +2,683 @@
 
 {% block styles %}
     {{ super() }}
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/pitch_tracker.css') }}">
+    <style>
+        @import url('https://fonts.googleapis.com/css?family=Exo:100,200,300,400,500,600,700,800');
+        body {
+            font-family: 'Exo';
+            border: 10pt solid #bd2e1f;
+        }
+
+        #page-title {
+            font-size: 50px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .logos {
+            width: 100px;
+            height: auto;
+            vertical-align: bottom;
+            padding-top: 5px;
+        }
+
+        #at-bat-info {
+            font-size: 25px;
+        }
+
+        #select-batter {
+            margin-left: 10px;
+            font-size: 25px;
+        }
+
+        #inning {
+            margin-left: 10px;
+            font-size: 25px;
+            width: 45px;
+        }
+
+        .lead-runner {
+            border-radius: 3px;
+            background-color: white;
+            border: 1px solid gray;
+            text-align: center;
+            font-size: 23px;
+            padding-left: 7px;
+            padding-right: 7px;
+            padding-top: 2px;
+            padding-bottom: 2px;
+            display: inline-block;
+        }
+
+        #pitch-location {
+            display: inline-block;
+        }
+
+        .plot {
+            border: 1px solid black;
+        }
+
+        #pitch-info {
+            display: inline-block;
+            vertical-align: top;
+            margin-top: 7px;
+        }
+
+        #hit-spot {
+            vertical-align: top;
+            border: 1px solid gray;
+            padding-bottom: 4px;
+            border-radius: 3px;
+        }
+
+        .hit-spot-answer {
+            border-radius: 3px;
+            width: 92px;
+            background-color: white;
+            border: 1px solid gray;
+            text-align: center;
+            font-size: 26px;
+            display: inline-block;
+            margin-right: 3px;
+            margin-left: 3px;
+        }
+
+        #velocity {
+            border: 1px solid gray;
+            border-radius: 3px;
+            text-align: center;
+            vertical-align: top;
+            padding-bottom: 4px;
+        }
+
+        #velocity-input {
+            text-align: center;
+            font-size: 21px;
+            margin-left: 2%;
+            width: 98%;
+        }
+
+        .txt-velo-ttp {
+            font-size: 26px;
+        }
+
+        #time-to-plate {
+            border: 1px solid gray;
+            border-radius: 3px;
+            text-align: center;
+            vertical-align: top;
+            padding-bottom: 4px;
+        }
+
+        #time-to-plate-input {
+            text-align: center;
+            font-size: 21px;
+            margin-left: 2%;
+            width: 98%;
+        }
+
+        #pitch-result {
+            vertical-align: top;
+            border: 1px solid gray;
+            padding-bottom: 4px;
+            border-radius: 3px;
+        }
+
+        .prAnswer {
+            margin-right: 3px;
+            margin-left: 3px;
+            display: inline-block;
+            border-radius: 3px;
+            width: 92px;
+            background-color: white;
+            border: 1px solid gray;
+            text-align: center;
+            font-size: 23.5px;
+        }
+
+        .strikeout {
+            display: none;
+            text-align: center;
+            vertical-align: top;
+            border: 1px solid gray;
+            padding-bottom: 5px;
+            border-radius: 3px;
+            height: 67px;
+        }
+
+        .strikeout-answer {
+            display: inline-block;
+            border-radius: 3px;
+            background-color: white;
+            border: 1px solid gray;
+            text-align: center;
+            font-size: 20px;
+            padding-left: 7px;
+            padding-right: 7px;
+            padding-top: 2px;
+            padding-bottom: 2px;
+            margin-right: 3px;
+            margin-left: 3px;
+        }
+
+        #bb-or-hbp {
+            display: none;
+            text-align: center;
+            vertical-align: top;
+            border: 1px solid gray;
+            padding-bottom: 5px;
+            border-radius: 3px;
+            height: 67px;
+        }
+
+        .bb-or-hbp-answer {
+            display: inline-block;
+            border-radius: 3px;
+            background-color: white;
+            border: 1px solid gray;
+            text-align: center;
+            font-size: 20px;
+            padding-left: 7px;
+            padding-right: 7px;
+            padding-top: 2px;
+            padding-bottom: 2px;
+            margin-right: 3px;
+            margin-left: 3px;
+        }
+
+        #out {
+            display: none;
+            text-align: center;
+            vertical-align: top;
+            border: 1px solid gray;
+            padding-bottom: 5px;
+            border-radius: 3px;
+            height: 67px;
+        }
+
+        .out-answer {
+            display: inline-block;
+            border-radius: 3px;
+            background-color: white;
+            border: 1px solid gray;
+            text-align: center;
+            font-size: 20px;
+            padding-left: 7px;
+            padding-right: 7px;
+            padding-top: 2px;
+            padding-bottom: 2px;
+            margin-right: 3px;
+            margin-left: 3px;
+        }
+
+        #ab-result-other {
+            visibility: hidden;
+            text-align: center;
+            vertical-align: top;
+            border: 1px solid gray;
+            padding-bottom: 4px;
+            padding-top: 4px;
+            border-radius: 3px;
+            text-align: center;
+            width: 100%;
+        }
+
+        .ab-result-other {
+            display: inline-block;
+            border-radius: 3px;
+            background-color: white;
+            border: 1px solid gray;
+            text-align: center;
+            font-size: 23px;
+            padding-left: 7px;
+            padding-right: 7px;
+            padding-top: 2px;
+            padding-bottom: 2px;
+            margin-right: 3px;
+            margin-left: 3px;
+        }
+
+        .pitch-type {
+            border-radius: 3px;
+            width: 200px;
+            background-color: white;
+            border: 1px solid gray;
+            padding-top: 16px;
+            text-align: center;
+            padding-bottom: 16px;
+            font-size: 30px;
+        }
+
+        .area {
+            border-radius: 3px;
+            width: 200px;
+            background-color: white;
+            text-align: center;
+            font-size: 23px;
+        }
+
+        #fieldDiv {
+            display: inline-block;
+            visibility: hidden;
+            vertical-align: top;
+            margin-top: 7px;
+        }
+
+        #field {
+            border: 1px solid black;
+            border-radius: 3px;
+        }
+
+        .traj-answer {
+            border-radius: 3px;
+            background-color: white;
+            border: 1px solid gray;
+            text-align: center;
+            font-size: 23px;
+            padding-left: 7px;
+            padding-right: 7px;
+            padding-top: 2px;
+            padding-bottom: 2px
+        }
+
+        #select-fielder {
+            font-size: 18px;
+        }
+
+        .ip-at-bat-result {
+            border-radius: 3px;
+            background-color: white;
+            border: 1px solid gray;
+            text-align: center;
+            font-size: 23px;
+            padding-left: 7px;
+            padding-right: 7px;
+            padding-top: 2px;
+            padding-bottom: 2px
+        }
+
+        #Add {
+            width: 450px;
+            position: relative;
+            bottom: 75px;
+            font-size: 25px;
+            text-align: center;
+            border-radius: 3px;
+            border: 1px solid black;
+            margin-left: 10px;
+        }
+
+        #Add:hover {
+            color: white;
+            background-color: lightgray;
+        }
+
+        th, td {
+            text-align: center;
+        }
+        .table-headers {
+            background-color: #bd2e1f;
+            color: #f9feff;
+        }
+        
+        .table-headers th:hover {
+            color: #acacac;
+        }
+
+    </style>
     <script src="https://d3js.org/d3.v5.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
     <script>
         var pitches = [];
 
-document.addEventListener('DOMContentLoaded', function() {
-    // set up the field 
-    var field = d3.select("#field")
-    width = +field.attr('width')
-    height = +field.attr('height')
-    x1 = null
-    y1 = null
-    xf = null
-    yf = null
-    g1 = field.append('g').attr('transform', 'translate(0,95)')
-    field.append("svg:image")
-    .attr('x', 0)
-    .attr('y', 0)
-    .attr('width', 435)
-    .attr('height', 430)
-    .attr('transform', 'translate(17,17)')
-    .style('alignment-baseline', 'middle')
-    .attr("xlink:href", "{{ url_for('static', filename='images/field.png') }}")
+        document.addEventListener('DOMContentLoaded', function() {
+            // set up the field 
+            var field = d3.select("#field")
+            width = +field.attr('width')
+            height = +field.attr('height')
+            x1 = null
+            y1 = null
+            xf = null
+            yf = null
+            g1 = field.append('g').attr('transform', 'translate(0,95)')
+            field.append("svg:image")
+            .attr('x', 0)
+            .attr('y', 0)
+            .attr('width', 435)
+            .attr('height', 430)
+            .attr('transform', 'translate(17,17)')
+            .style('alignment-baseline', 'middle')
+            .attr("xlink:href", "{{ url_for('static', filename='images/field.png') }}")
 
-    // set up the location tracker
-    var svg = d3.select("#main")
-    margin = {top: 10, right: 10, bottom: 10, left: 20}
-    width = +svg.attr('width')
-    height = +svg.attr('height')
-    g = svg.append('g').attr('transform', null)
-    svg.style('background-color', 'white').style('border', '1px solid black').style('margin', '10px')
+            // set up the location tracker
+            var svg = d3.select("#main")
+            margin = {top: 10, right: 10, bottom: 10, left: 20}
+            width = +svg.attr('width')
+            height = +svg.attr('height')
+            g = svg.append('g').attr('transform', null)
+            svg.style('background-color', 'white').style('border', '1px solid black').style('margin', '10px')
 
-    var xScale = d3.scaleLinear().range([width, 0]).domain([2,-2])
-    var yScale = d3.scaleLinear().range([height, 0]).domain([0,4])
-    var xScalef = d3.scaleLinear().range([width, 0]).domain([250,-250])
-    var yScalef = d3.scaleLinear().range([height, 0]).domain([-100,400])
+            var xScale = d3.scaleLinear().range([width, 0]).domain([2,-2])
+            var yScale = d3.scaleLinear().range([height, 0]).domain([0,4])
+            var xScalef = d3.scaleLinear().range([width, 0]).domain([250,-250])
+            var yScalef = d3.scaleLinear().range([height, 0]).domain([-100,400])
 
-    function drawCircle(x, y) {
-        svg.append('circle')
-        .attr('class', 'click-circle')
-        .attr('cx', x)
-        .attr('cy', y)
-        .attr('r', '8')
-        .style('fill', 'red')
-    }
+            function drawCircle(x, y) {
+                svg.append('circle')
+                .attr('class', 'click-circle')
+                .attr('cx', x)
+                .attr('cy', y)
+                .attr('r', '8')
+                .style('fill', 'red')
+            }
 
-    g.append('path')
-    .attr('id', 'zone')
-    .attr(
-        'd', 'M ' + xScale(-.833) + ',' + yScale(1.75) + ' L ' + xScale(-.833) + ',' + yScale(3.4) + ' L ' +
-        xScale(.833) + ',' + yScale(3.4) + ' L ' + xScale(.833) + ','  + yScale(1.75) + ' L ' + xScale(-.833) +  ',' + yScale(1.75)
-        + 'M' + xScale(0) + ',' + yScale(0.2) + 'L' + xScale(-.843) + ',' + yScale(0.4) + 'L'  + xScale(-.833) + ',' + yScale(0.6) + 'L' +
-        xScale(.833)+ ',' + yScale(0.6) + 'L' + xScale(.843) + ',' + yScale(0.4) + 'L' + xScale(0) + ',' + yScale(0.2)
-    )
-    .style('stroke', 'black')
-    .style('fill', 'none')
-    .style('stroke-width', 2)
-    
-    // move or place circle on chart
-    svg.on('click', function() {
-        svg.selectAll('circle').remove()
-        svg.selectAll('text').remove()
-        var local = d3.mouse(this)
+            g.append('path')
+            .attr('id', 'zone')
+            .attr(
+                'd', 'M ' + xScale(-.833) + ',' + yScale(1.75) + ' L ' + xScale(-.833) + ',' + yScale(3.4) + ' L ' +
+                xScale(.833) + ',' + yScale(3.4) + ' L ' + xScale(.833) + ','  + yScale(1.75) + ' L ' + xScale(-.833) +  ',' + yScale(1.75)
+                + 'M' + xScale(0) + ',' + yScale(0.2) + 'L' + xScale(-.843) + ',' + yScale(0.4) + 'L'  + xScale(-.833) + ',' + yScale(0.6) + 'L' +
+                xScale(.833)+ ',' + yScale(0.6) + 'L' + xScale(.843) + ',' + yScale(0.4) + 'L' + xScale(0) + ',' + yScale(0.2)
+            )
+            .style('stroke', 'black')
+            .style('fill', 'none')
+            .style('stroke-width', 2)
+            
+            // move or place circle on chart
+            svg.on('click', function() {
+                svg.selectAll('circle').remove()
+                svg.selectAll('text').remove()
+                var local = d3.mouse(this)
 
-        drawCircle(local[0], local[1])
-        x1 = Math.round(xScale.invert(local[0])*100,3)/100
-        y1 = Math.round(yScale.invert(local[1])*100,3)/100
-        svg.append('text')
-            .attr('y', yScale(3.8))
-            .attr('x', xScale(1.8))
-            .style('text-anchor', 'end')
-            .style('font-size', '16px')
-            .text('(' + Math.round(xScale.invert(local[0])*100)/100 + ', ' + y1 + ')');
-        $('#btn').show
-    });
+                drawCircle(local[0], local[1])
+                x1 = Math.round(xScale.invert(local[0])*100,3)/100
+                y1 = Math.round(yScale.invert(local[1])*100,3)/100
+                svg.append('text')
+                    .attr('y', yScale(3.8))
+                    .attr('x', xScale(1.8))
+                    .style('text-anchor', 'end')
+                    .style('font-size', '16px')
+                    .text('(' + Math.round(xScale.invert(local[0])*100)/100 + ', ' + y1 + ')');
+                $('#btn').show
+            });
 
-    // move or place circle on chart
-    field.on('click', function(){
-        field.selectAll('circle').remove()
-        var local = d3.mouse(this)
-        field.append('circle')
-        .attr('class', 'click-circle1')
-        .attr('cx', local[0])
-        .attr('cy', local[1])
-        .attr('r', '8')
-        .style('fill', 'navy')
-        xf = Math.round(xScalef.invert(local[0])*100,3)/100
-        yf = Math.round(yScalef.invert(local[1])*100,3)/100
-        $('#ipTable').css('visibility', 'visible')
-    });
+            // move or place circle on chart
+            field.on('click', function(){
+                field.selectAll('circle').remove()
+                var local = d3.mouse(this)
+                field.append('circle')
+                .attr('class', 'click-circle1')
+                .attr('cx', local[0])
+                .attr('cy', local[1])
+                .attr('r', '8')
+                .style('fill', 'navy')
+                xf = Math.round(xScalef.invert(local[0])*100,3)/100
+                yf = Math.round(yScalef.invert(local[1])*100,3)/100
+                $('.bipType').css('display', 'block')
+                if (ab_result=="IP->Out") {
+                    $('#ip-at-bat-result').css('display', 'none')
+                }
+                else {
+                    $('#ip-at-bat-result').css('display', 'block')
+                }
+            });
 
-    // gather data based on selections
-    var pitch_type = ''
-    $('.pitch-type').click(function(){
-        $('.pitch-type').css('background-color', 'white').css('color', 'black')
-        $(this).css('background-color', 'navy').css('color', 'white')
-        pitch_type = $(this).attr('value')
-    })
+            // gather data based on selections
+            var pitch_type = ''
+            $('.pitch-type').click(function(){
+                $('.pitch-type').css('background-color', 'white').css('color', 'black')
+                $(this).css('background-color', 'navy').css('color', 'white')
+                pitch_type = $(this).attr('value')
+            })
 
-    var hit_spot = 0
-    $('.hit-spot-answer').click(function(){
-        $('.hit-spot-answer').css('background-color', 'white').css('color', 'black')
-        $(this).css('background-color', 'navy').css('color', 'white')
-        hit_spot = $(this).attr('value')
-    })
+            var hit_spot = 0
+            $('.hit-spot-answer').click(function(){
+                $('.hit-spot-answer').css('background-color', 'white').css('color', 'black')
+                $(this).css('background-color', 'navy').css('color', 'white')
+                hit_spot = $(this).attr('value')
+            })
 
-    var traj = ''
-    $('.traj-answer').click(function(){
-        $('.traj-answer').css('background-color', 'white').css('color', 'black')
-        $(this).css('background-color', 'navy').css('color', 'white')
-        $('#outDiv').css('visibility', 'visible')
-        $('#fielderDiv').css('display', 'block')
-        traj = $(this).attr('value')
-    })
+            var traj = ''
+            $('.traj-answer').click(function(){
+                $('.traj-answer').css('background-color', 'white').css('color', 'black')
+                $(this).css('background-color', 'navy').css('color', 'white')
+                $('#outDiv').css('visibility', 'visible')
+                $('#fielderDiv').css('display', 'block')
+                traj = $(this).attr('value')
+            })
 
-    var ab_result = ''
-    $('.ip-at-bat-result').click(function(){
-        $('.ip-at-bat-result').css('background-color', 'white').css('color', 'black')
-        $(".ab-result-other").css('background-color', 'white').css('color', 'black')
-        $(this).css('background-color', 'navy').css('color', 'white')
-        ab_result = $(this).attr('value')
-    })
+            var ab_result = ''
+            $('.strikeout-answer').click(function(){
+                $('.strikeout-answer').css('background-color', 'white').css('color', 'black')
+                $(this).css('background-color', 'navy').css('color', 'white')
+                ab_result = $(this).attr('value')
+            })
 
-    $('.strikeout-answer').click(function(){
-        $('.strikeout-answer').css('background-color', 'white').css('color', 'black')
-        $(this).css('background-color', 'navy').css('color', 'white')
-        ab_result = $(this).attr('value')
-    })
+            $('.bb-or-hbp-answer').click(function(){
+                $('.bb-or-hbp-answer').css('background-color', 'white').css('color', 'black')
+                $(this).css('background-color', 'navy').css('color', 'white')
+                ab_result = $(this).attr('value')
+            })
 
-    $('.bb-or-hbp-answer').click(function(){
-        $('.bb-or-hbp-answer').css('background-color', 'white').css('color', 'black')
-        $(this).css('background-color', 'navy').css('color', 'white')
-        ab_result = $(this).attr('value')
-    })
+            $('.out-answer').click(function(){
+                $('.out-answer').css('background-color', 'white').css('color', 'black')
+                $(this).css('background-color', 'navy').css('color', 'white')
+                $('#fieldDiv').css('visibility', 'visible')
+                $('#field').css('visibility', 'visible')
+                if ($(this).attr('value') == "") {
+                    $("#ab-result-other").css('visibility', 'visible')
+                    $('.ip-at-bat-result').css('display', 'block')
+                }
+                else {
+                    $("#ab-result-other").css('visibility', 'hidden')
+                    $('.ip-at-bat-result').css('display', 'none')
+                    $('.ip-at-bat-result').css('background-color', 'white').css('color', 'black')
+                }
+                ab_result = $(this).attr('value')
+            })
 
-    $(".ab-result-other").click(function(){
-        $(".ab-result-other").css('background-color', 'white').css('color', 'black')
-        $('.ip-at-bat-result').css('background-color', 'white').css('color', 'black')
-        $(this).css('background-color', 'navy').css('color', 'white')
-        ab_result = $(this).attr('value')
-    })
+            $(".ab-result-other").click(function(){
+                $(".ab-result-other").css('background-color', 'white').css('color', 'black')
+                $('.ip-at-bat-result').css('background-color', 'white').css('color', 'black')
+                $(this).css('background-color', 'navy').css('color', 'white')
+                ab_result = $(this).attr('value')
+            })
 
-    var pitch_result = ''
-    $('.prAnswer').click(function(){
-        $('.prAnswer').css('background-color', 'white').css('color', 'black')
-        $(this).css('background-color', 'navy').css('color', 'white')
-        $('#ab-result-other').css('display', 'block')
-        if($(this).attr('value') == 'IP'){
-            $('#fieldDiv').css('visibility', 'visible')
-            $('#field').css('visibility', 'visible')
-            $('#K').css('display', 'none')
-            $('#KL').css('display', 'none')
-            $('#bb-or-hbp').css('display', 'none')
-            pitch_result = 'IP'
+            $('.ip-at-bat-result').click(function(){
+                $('.ip-at-bat-result').css('background-color', 'white').css('color', 'black')
+                $(".ab-result-other").css('background-color', 'white').css('color', 'black')
+                $(this).css('background-color', 'navy').css('color', 'white')
+                ab_result = $(this).attr('value')
+            })
+
+            var pitch_result = ''
+            $('.prAnswer').click(function(){
+                $('.prAnswer').css('background-color', 'white').css('color', 'black')
+                $(this).css('background-color', 'navy').css('color', 'white')
+                if($(this).attr('value') == 'IP'){
+                    $('#fieldDiv').css('visibility', 'hidden')
+                    $('#field').css('visibility', 'hidden')
+                    $('#ipTable').css('visibility', 'visible')
+                    $('#K').css('display', 'none')
+                    $('#KL').css('display', 'none')
+                    $('#bb-or-hbp').css('display', 'none')
+                    $('#out').css('display', 'block')
+                    pitch_result = 'IP'
+                }
+                if($(this).attr('value') == 'F'){
+                    $('#fieldDiv').css('visibility', 'hidden')
+                    $('#ipTable').css('visibility', 'hidden')
+                    $('#K').css('display', 'none')
+                    $('#KL').css('display', 'none')
+                    $('#bb-or-hbp').css('display', 'none')
+                    $('#out').css('display', 'none')
+                    pitch_result = 'F'
+                }
+                if($(this).attr('value') == 'B'){
+                    $('#bb-or-hbp').css('display', 'block')
+                    $('#K').css('display', 'none')
+                    $('#KL').css('display', 'none')
+                    $('#fieldDiv').css('visibility', 'hidden')
+                    $('#ipTable').css('visibility', 'hidden')
+                    $('#out').css('display', 'none')
+                    pitch_result = 'B'
+                }
+                if($(this).attr('value') == 'SS'){
+                    $('#bb-or-hbp').css('display', 'none')
+                    $('#K').css('display', 'block')
+                    $('#KL').css('display', 'none')
+                    $('#fieldDiv').css('visibility', 'hidden')
+                    $('#ipTable').css('visibility', 'hidden')
+                    $('#out').css('display', 'none')
+                    pitch_result = $(this).attr('value')
+                }
+                if($(this).attr('value') == 'CS'){
+                    $('#bb-or-hbp').css('display', 'none')
+                    $('#K').css('display', 'none')
+                    $('#KL').css('display', 'block')
+                    $('#fieldDiv').css('visibility', 'hidden')
+                    $('#ipTable').css('visibility', 'hidden')
+                    $('#out').css('display', 'none')
+                    pitch_result = $(this).attr('value')
+                }
+            })
+
+            var lead_runner = ''
+            $('.lead-runner').click(function(){
+                $('.lead-runner').css('background-color', 'white').css('color', 'black')
+                $(this).css('background-color', 'navy').css('color', 'white')
+                lead_runner = $(this).attr('value')
+            })
+
+            $('#Add').click(function(){
+                // get some more pitch values
+                inning = $('#inning').val()
+                fielder = $('#select-fielder').val()
+                batter_id = $('#select-batter').val()
+                velocity = $('#velocity-input').val()
+                time_to_plate = $('#time-to-plate-input').val()
+
+                // set pitch data
+                pitchData = {
+                    'batter_id': batter_id, 'velocity': velocity, 'lead_runner': lead_runner,
+                    'time_to_plate': time_to_plate, 'pitch_type': pitch_type, 'pitch_result': pitch_result, 
+                    'loc_x': x1, 'loc_y': y1, 'hit_spot': hit_spot, 'ab_result': ab_result, 
+                    'traj': traj, 'fielder': fielder, 'spray_x': xf*1.3, 'spray_y': yf*1.3,
+                    'inning': inning
+                }
+
+                pitches.push(pitchData)
+
+                addPitchToTable(pitches)
+                // clear some of the inputs
+                $('#select-fielder').val('')
+                $('#velocity-input').val('')
+                $('#time-to-plate-input').val('');
+
+                // clear some of the variables set above
+                ab_result = ""
+                pitch_type = ""
+                pitch_result = ""
+                fielder = ""
+                velocity = ""
+                traj = ""
+                time_to_plate = null
+                hit_spot = 0
+                x1, y1, xf, yf = null
+
+                // reset buttons or values that were clicked
+                $('div').not('.lead-runner').not('#Add').css('background-color', 'white').css('color', 'black')
+                
+                // hide certain buttons
+                $('#ipTable').css('visibility', 'hidden')
+                $('#field').css('visibility', 'hidden')
+                $('#ab-result-other').css('visibility', 'hidden')
+                $('#fielderDiv').css('display', 'none')
+                $('#out').css('display', 'none')
+                $('.strikeout').css('display', 'none')
+                $('#bb-or-hbp').css('display', 'none')
+                $('.strikeout-answer').css('background-color', 'white').css('color', 'black')
+                $('.strikeout-no').css('background-color', 'navy').css('color', 'white')
+                $('#hit-spot-no').css('background-color', 'navy').css('color', 'white')
+
+                // remove circles and text from diagrams
+                svg.selectAll('circle').remove()
+                field.selectAll('circle').remove()
+                svg.selectAll('text').remove()
+
+            })
+
+            $('#finish-outing').click(function(){
+
+                outing = {
+                    "pitcher": $("#pitcher").val(),
+                    "date": $("#date").val(),
+                    "opponent": $("#opponent").val(),
+                    "season": $("#season").val()
+                }
+
+                data = {
+                    outing: outing,
+                    pitches: pitches
+                }
+
+                fetch("{{ url_for('api.pitch_tracker') }}",
+                {
+                    method: "POST",
+                    body: JSON.stringify(data),
+                    headers: {"content-type": "application/json"}
+                }).then(res => res.json())
+                .then(function(response){
+                    if(response.status == "failure"){
+                        console.log("Request status: failure");
+                        console.log("Error message: " + response.error);
+                        return;
+                    }
+                    console.log(response)
+                    $('#exit-buttons').css('visibility', 'visibile').css('display', 'block')
+
+                });
+            });
+
+        });
+
+        function addPitchToTable(pitches) {
+            // empty table
+            pitch_table = $("#pitch-table > tbody");
+            pitch_table.empty();
+
+            // add headers to table
+            new_row = pitch_table.append('<tr></tr>');
+            new_row.append("<th>No.</th>");
+            new_row.append("<th>Batter</th>");
+            new_row.append("<th>Velo</th>");
+            new_row.append("<th>Lead RNR</th>");
+            new_row.append("<th>Time to Plate</th>");
+            new_row.append("<th>Pitch Type</th>");
+            new_row.append("<th>Pitch Result</th>");
+            new_row.append("<th>Hit Spot</th>");
+            new_row.append("<th>AB Result</th>");
+            new_row.append("<th>Traj</th>");
+            new_row.append("<th>Fielder</th>");
+            new_row.append("<th>Inning</th>");
+
+            // add all pitches
+            for (let i=0; i<pitches.length; i++) {
+                new_row = pitch_table.append('<tr></tr>');
+                new_row.append("<td>"+(i+1)+"</td>")
+                new_row.append("<td>"+pitches[i]["batter_id"]+"</td>")
+                new_row.append("<td>"+pitches[i]["velocity"]+"</td>")
+                new_row.append("<td>"+pitches[i]["lead_runner"]+"</td>")
+                new_row.append("<td>"+pitches[i]["time_to_plate"]+"</td>")
+                new_row.append("<td>"+pitches[i]["pitch_type"]+"</td>")
+                new_row.append("<td>"+pitches[i]["pitch_result"]+"</td>")
+                new_row.append("<td>"+pitches[i]["hit_spot"]+"</td>")
+                new_row.append("<td>"+pitches[i]["ab_result"]+"</td>")
+                new_row.append("<td>"+pitches[i]["traj"]+"</td>")
+                new_row.append("<td>"+pitches[i]["fielder"]+"</td>")
+                new_row.append("<td>"+pitches[i]["inning"]+"</td>")
+            }
         }
-        if($(this).attr('value') == 'F'){
-            $('#fieldDiv').css('visibility', 'hidden')
-            $('#ipTable').css('visibility', 'hidden')
-            $('#K').css('display', 'none')
-            $('#KL').css('display', 'none')
-            $('#bb-or-hbp').css('display', 'none')
-            pitch_result = 'F'
-        }
-        if($(this).attr('value') == 'B'){
-            $('#bb-or-hbp').css('display', 'block')
-            $('#K').css('display', 'none')
-            $('#KL').css('display', 'none')
-            $('#fieldDiv').css('visibility', 'hidden')
-            $('#ipTable').css('visibility', 'hidden')
-            pitch_result = 'B'
-        }
-        if($(this).attr('value') == 'SS'){
-            $('#bb-or-hbp').css('display', 'none')
-            $('#K').css('display', 'block')
-            $('#KL').css('display', 'none')
-            $('#fieldDiv').css('visibility', 'hidden')
-            $('#ipTable').css('visibility', 'hidden')
-            pitch_result = $(this).attr('value')
-        }
-        if($(this).attr('value') == 'CS'){
-            $('#bb-or-hbp').css('display', 'none')
-            $('#K').css('display', 'none')
-            $('#KL').css('display', 'block')
-            $('#fieldDiv').css('visibility', 'hidden')
-            $('#ipTable').css('visibility', 'hidden')
-            pitch_result = $(this).attr('value')
-        }
-    })
-
-    var lead_runner = ''
-    $('.lead-runner').click(function(){
-        $('.lead-runner').css('background-color', 'white').css('color', 'black')
-        $(this).css('background-color', 'navy').css('color', 'white')
-        lead_runner = $(this).attr('value')
-    })
-
-    $('#Add').click(function(){
-        // get some more pitch values
-        inning = $('#inning').val()
-        fielder = $('#select-fielder').val()
-        batter_id = $('#select-batter').val()
-        velocity = $('#velocity-input').val()
-        time_to_plate = $('#time-to-plate-input').val()
-
-        // set pitch data
-        pitchData = {
-            'batter_id': batter_id, 'velocity': velocity, 'lead_runner': lead_runner,
-            'time_to_plate': time_to_plate, 'pitch_type': pitch_type, 'pitch_result': pitch_result, 
-            'loc_x': x1, 'loc_y': y1, 'hit_spot': hit_spot, 'ab_result': ab_result, 
-            'traj': traj, 'fielder': fielder, 'spray_x': xf*1.3, 'spray_y': yf*1.3,
-            'inning': inning
-        }
-
-        pitches.push(pitchData)
-
-        addPitchToTable(pitches)
-        // clear some of the inputs
-        $('#select-fielder').val('')
-        $('#outSelect').val('')
-        $('#velocity-input').val('')
-        $('#time-to-plate-input').val('')
-
-        // clear some of the variables set above
-        pitch_type, traj, ab_result, pitch_result  =  ""
-        lead_runner, fielder, velocity, time_to_plate = ""
-        hit_spot = 0
-        x1, y1, xf, yf = null
-
-        // reset buttons or values that were clicked
-        $('div').not('.lead-runner').not('#Add').css('background-color', 'white').css('color', 'black')
-        
-        // hide certain buttons
-        $('#ipTable').css('visibility', 'hidden')
-        $('#field').css('visibility', 'hidden')
-        $('#outDiv').css('visibility', 'hidden')
-        $('#fielderDiv').css('display', 'none')
-        $('.strikeout').css('display', 'none')
-        $('#bb-or-hbp').css('display', 'none')
-        $('.strikeout-answer').css('background-color', 'white').css('color', 'black')
-        $('.strikeout-no').css('background-color', 'navy').css('color', 'white')
-        $('#hit-spot-no').css('background-color', 'navy').css('color', 'white')
-
-        // remove circles and text from diagrams
-        svg.selectAll('circle').remove()
-        field.selectAll('circle').remove()
-        svg.selectAll('text').remove()
-
-    })
-});
-
-function addPitchToTable(pitches) {
-    // empty table
-    pitch_table = $("#pitch-table > tbody");
-    pitch_table.empty();
-
-    // add headers to table
-    new_row = pitch_table.append('<tr></tr>');
-    new_row.append("<th>No.</th>");
-    new_row.append("<th>Batter</th>");
-    new_row.append("<th>Velo</th>");
-    new_row.append("<th>Lead RNR</th>");
-    new_row.append("<th>Time to Plate</th>");
-    new_row.append("<th>Pitch Type</th>");
-    new_row.append("<th>Pitch Result</th>");
-    new_row.append("<th>Hit Spot</th>");
-    new_row.append("<th>AB Result</th>");
-    new_row.append("<th>Traj</th>");
-    new_row.append("<th>Fielder</th>");
-    new_row.append("<th>Inning</th>");
-
-    // add all pitches
-    for (let i=0; i<pitches.length; i++) {
-        new_row = pitch_table.append('<tr></tr>');
-        new_row.append("<td>"+(i+1)+"</td>")
-        new_row.append("<td>"+pitches[i]["batter_id"]+"</td>")
-        new_row.append("<td>"+pitches[i]["velocity"]+"</td>")
-        new_row.append("<td>"+pitches[i]["lead_runner"]+"</td>")
-        new_row.append("<td>"+pitches[i]["time_to_plate"]+"</td>")
-        new_row.append("<td>"+pitches[i]["pitch_type"]+"</td>")
-        new_row.append("<td>"+pitches[i]["pitch_result"]+"</td>")
-        new_row.append("<td>"+pitches[i]["hit_spot"]+"</td>")
-        new_row.append("<td>"+pitches[i]["ab_result"]+"</td>")
-        new_row.append("<td>"+pitches[i]["traj"]+"</td>")
-        new_row.append("<td>"+pitches[i]["fielder"]+"</td>")
-        new_row.append("<td>"+pitches[i]["inning"]+"</td>")
-    }
-}
 
     </script>
 {% endblock %}
@@ -301,6 +690,30 @@ function addPitchToTable(pitches) {
             <img class="logos" alt="WashU-Logo" src="{{ url_for('static', filename='images/Bear_Head_Color.png') }}">
             Pitch by Pitch Tracker
             <img class="logos" alt="WashU-Logo" src="{{ url_for('static', filename='images/WashU_Color.png') }}">
+        </div>
+        <br>
+        <div style="text-align: center;">
+            {{ form.pitcher.label }}
+            {{ form.pitcher }}
+            &nbsp &nbsp
+            {{ form.date.label }}
+            {{ form.date(class='datepicker', value=date) }}
+            &nbsp &nbsp
+            {{ form.opponent.label }}
+            {{ form.opponent() }}
+            &nbsp &nbsp
+            <select id="season" name="season">
+                {% for season in all_seasons %}
+                    <option value="{{ season }}" {% if this_season.id==season.id %} selected {% endif %}>{{ season }}</option>
+                {% endfor %}
+            </select>
+            &nbsp &nbsp
+            <button id="finish-outing">Finish Outing</button>
+
+            <div id='exit-buttons' style="display: none;">
+                <button><a href="">Go to outing</a></button>
+                <button><a href="{{ url_for('main.index') }}">Go to index</a></button>
+            </div>
         </div>
 
         <br><br>
@@ -314,8 +727,9 @@ function addPitchToTable(pitches) {
 
             <b>Batter: </b>
             <select id="select-batter" size='1'>
-                <option val="Batter1">Batter1</option>
-                <option val="Batter2">Batter2</option>
+                {% for batter in batters %}
+                    <option value={{ batter.id }}>{{ batter }}</option>
+                {% endfor %}
             </select>
             
             &nbsp
@@ -324,6 +738,7 @@ function addPitchToTable(pitches) {
             <div value='1' class="lead-runner">1B</div>
             <div value='2' class="lead-runner">2B</div>
             <div value='3' class="lead-runner">3B</div>
+            <div value='' class="lead-runner" style='background-color:navy; color:white;'>None</div>
 
         </div>
         <div>
@@ -427,6 +842,11 @@ function addPitchToTable(pitches) {
                             <div value='BB' class="bb-or-hbp-answer"><span class=ptText>BB</span></div>
                             <div value='HBP' class="bb-or-hbp-answer"><span class=ptText>HBP</span></div>
                         </div>
+                        <div id="out">
+                            <div class=area style='width:100%'>Out at first?</div>
+                            <div value='IP->Out' class="out-answer"><span class=ptText>Yes</span></div>
+                            <div value='' id="out-answer-no" class="out-answer"><span class=ptText>No</span></div>
+                        </div>
                     </td>
                 </tr>
                 <tr>
@@ -443,8 +863,8 @@ function addPitchToTable(pitches) {
             </table>
             <div id=fieldDiv>
                 <svg id='field' height='457' width='457'></svg>
-                <table id=ipTable style='visibility: hidden'>
-                    <tr class='bipType'>
+                <table id=ipTable>
+                    <tr class='bipType' style="display: none">
                         <td>
                             <div class=traj-answer value=GB>GB</div>
                         </td>
@@ -473,7 +893,7 @@ function addPitchToTable(pitches) {
                             </div>
                         </td>
                     </tr>
-                    <tr id="ip-at-bat-result" >
+                    <tr id="ip-at-bat-result" style="display: none">
                         <td>
                             <div class="ip-at-bat-result" value="1B">1B</div>
                         </td>
@@ -500,7 +920,7 @@ function addPitchToTable(pitches) {
             </div>
         </div>
         <div>
-            <table id="pitch-table">
+            <table class="table" id="pitch-table">
                 <tr>
                     <th>No.</th>
                     <th>Batter</th>
