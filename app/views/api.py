@@ -1,7 +1,8 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, send_file, url_for, send_from_directory
 from flask_login import login_required
 from app.stats import batterSwingWhiffRatebyPitchbyCount, teamImportantStatsSeason, staffBasicStats
 from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat, Pitcher
+import os
 
 api = Blueprint("api", __name__)
 
@@ -120,3 +121,14 @@ def staff_basic_stats():
         },
         "status": "success"
     })
+
+
+@api.route("/api/staff/arm_care")
+@login_required
+def download_arm_care():
+
+    return send_from_directory(
+        "static", "files/in_season_arm_care.pdf",
+        as_attachment=True,
+        mimetype="application/pdf",
+        attachment_filename="ARM CARE PROGRAM - In-Season - 2020.pdf")
