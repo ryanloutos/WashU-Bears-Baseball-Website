@@ -92,7 +92,7 @@
                             <td>
                                 <select id="pitch-{{loop.index0}}-ab_result" name="pitch-{{loop.index0}}-ab_result" required>
                                     <option value="" {% if pitch["ab_result"] in [None, ''] %} selected='selected' {% endif %}></option>
-                                    <option value="IP->Out" {% if pitch["ab_result"] in ['IP->Out'] %} selected='selected' {% endif %}>IP->Out</option>
+                                    <option value="IP->Out" {% if pitch["ab_result"] in ['IP->Out', 'ip->out', 'IP->OUT'] %} selected='selected' {% endif %}>IP->Out</option>
                                     <option value="K" {% if pitch["ab_result"] in ['K', 'k'] %} selected='selected' {% endif %}>K</option>
                                     <option value="KL" {% if pitch["ab_result"] in ['KL', 'kl'] %} selected='selected' {% endif %}>KL</option>
                                     <option value="BB" {% if pitch["ab_result"] in ['BB', 'bb'] %} selected='selected' {% endif %}>BB</option>
@@ -101,11 +101,11 @@
                                     <option value="2B" {% if pitch["ab_result"] in ['2B', '2b'] %} selected='selected' {% endif %}>2B</option>
                                     <option value="3B" {% if pitch["ab_result"] in ['3B', '3b'] %} selected='selected' {% endif %}>3B</option>
                                     <option value="HR" {% if pitch["ab_result"] in ['HR', 'hr'] %} selected='selected' {% endif %}>HR</option>
-                                    <option value="Error" {% if pitch["ab_result"] in ['Error', 'e', 'E'] %} selected='selected' {% endif %}>Error</option>
+                                    <option value="Error" {% if pitch["ab_result"] in ['Error', 'e', 'E', 'error'] %} selected='selected' {% endif %}>Error</option>
                                     <option value="CI" {% if pitch["ab_result"] in ['CI', 'ci'] %} selected='selected' {% endif %}>CI</option>
                                     <option value="FC" {% if pitch["ab_result"] in ['FC', 'fc'] %} selected='selected' {% endif %}>FC</option>
-                                    <option value="D3->Out" {% if pitch["ab_result"] in ['D3->Out'] %} selected='selected' {% endif %}>D3->Out</option>
-                                    <option value="D3->Safe" {% if pitch["ab_result"] in ['D3->Safe'] %} selected='selected' {% endif %}>D3->Safe</option>
+                                    <option value="D3->Out" {% if pitch["ab_result"] in ['D3->Out', 'd3->out'] %} selected='selected' {% endif %}>D3->Out</option>
+                                    <option value="D3->Safe" {% if pitch["ab_result"] in ['D3->Safe', 'd3->safe'] %} selected='selected' {% endif %}>D3->Safe</option>
                                 </select>
                             </td>
                             <td>

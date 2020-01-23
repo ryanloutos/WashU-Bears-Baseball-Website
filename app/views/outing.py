@@ -673,7 +673,7 @@ def new_outing_csv():
 
             # gets the user associated the username of the pitcher the outing
             # is being created for
-            pitcher = Pitcher.query.filter_by(id=form.pitcher.data.id).first_or_404()
+            pitcher = Pitcher.query.filter_by(id=form.pitcher.data).first_or_404()
 
             # creates a new outing object based on form data and user
             outing = Outing(
