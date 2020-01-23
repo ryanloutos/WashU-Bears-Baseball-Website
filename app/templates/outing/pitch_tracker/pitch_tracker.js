@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', function() {
         pitch_type = $(this).attr('value')
     })
 
-    var hit_spot = ''
+    var hit_spot = 0
     $('.hit-spot-answer').click(function(){
         $('.hit-spot-answer').css('background-color', 'white').css('color', 'black')
         $(this).css('background-color', 'navy').css('color', 'white')
@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', function() {
         $('.traj-answer').css('background-color', 'white').css('color', 'black')
         $(this).css('background-color', 'navy').css('color', 'white')
         $('#outDiv').css('visibility', 'visible')
-        $('#fielderDiv').css('visibility', 'visible')
+        $('#fielderDiv').css('display', 'block')
         traj = $(this).attr('value')
     })
 
@@ -210,6 +210,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         pitches.push(pitchData)
 
+        addPitchToTable(pitches)
         // clear some of the inputs
         $('#select-fielder').val('')
         $('#outSelect').val('')
@@ -217,8 +218,9 @@ document.addEventListener('DOMContentLoaded', function() {
         $('#time-to-plate-input').val('')
 
         // clear some of the variables set above
-        pitch_type, hit_spot, traj, ab_result, pitch_result  =  ""
+        pitch_type, traj, ab_result, pitch_result  =  ""
         lead_runner, fielder, velocity, time_to_plate = ""
+        hit_spot = 0
         x1, y1, xf, yf = null
 
         // reset buttons or values that were clicked
@@ -228,11 +230,55 @@ document.addEventListener('DOMContentLoaded', function() {
         $('#ipTable').css('visibility', 'hidden')
         $('#field').css('visibility', 'hidden')
         $('#outDiv').css('visibility', 'hidden')
-        $('#fielderDiv').css('visibility', 'hidden')
+        $('#fielderDiv').css('display', 'none')
+        $('.strikeout').css('display', 'none')
+        $('#bb-or-hbp').css('display', 'none')
+        $('.strikeout-answer').css('background-color', 'white').css('color', 'black')
+        $('.strikeout-no').css('background-color', 'navy').css('color', 'white')
+        $('#hit-spot-no').css('background-color', 'navy').css('color', 'white')
 
         // remove circles and text from diagrams
         svg.selectAll('circle').remove()
         field.selectAll('circle').remove()
         svg.selectAll('text').remove()
+
     })
 });
+
+function addPitchToTable(pitches) {
+    // empty table
+    pitch_table = $("#pitch-table > tbody");
+    pitch_table.empty();
+
+    // add headers to table
+    new_row = pitch_table.append('<tr></tr>');
+    new_row.append("<th>No.</th>");
+    new_row.append("<th>Batter</th>");
+    new_row.append("<th>Velo</th>");
+    new_row.append("<th>Lead RNR</th>");
+    new_row.append("<th>Time to Plate</th>");
+    new_row.append("<th>Pitch Type</th>");
+    new_row.append("<th>Pitch Result</th>");
+    new_row.append("<th>Hit Spot</th>");
+    new_row.append("<th>AB Result</th>");
+    new_row.append("<th>Traj</th>");
+    new_row.append("<th>Fielder</th>");
+    new_row.append("<th>Inning</th>");
+
+    // add all pitches
+    for (let i=0; i<pitches.length; i++) {
+        new_row = pitch_table.append('<tr></tr>');
+        new_row.append("<td>"+(i+1)+"</td>")
+        new_row.append("<td>"+pitches[i]["batter_id"]+"</td>")
+        new_row.append("<td>"+pitches[i]["velocity"]+"</td>")
+        new_row.append("<td>"+pitches[i]["lead_runner"]+"</td>")
+        new_row.append("<td>"+pitches[i]["time_to_plate"]+"</td>")
+        new_row.append("<td>"+pitches[i]["pitch_type"]+"</td>")
+        new_row.append("<td>"+pitches[i]["pitch_result"]+"</td>")
+        new_row.append("<td>"+pitches[i]["hit_spot"]+"</td>")
+        new_row.append("<td>"+pitches[i]["ab_result"]+"</td>")
+        new_row.append("<td>"+pitches[i]["traj"]+"</td>")
+        new_row.append("<td>"+pitches[i]["fielder"]+"</td>")
+        new_row.append("<td>"+pitches[i]["inning"]+"</td>")
+    }
+}

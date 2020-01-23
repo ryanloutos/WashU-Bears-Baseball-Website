@@ -52,7 +52,7 @@
                     <div id="hit-spot">
                         <div class=area><span class=ptText>Hit Spot</span></div>
                         <div value=1 class="hit-spot-answer"><span class=ptText>Yes</span></div>
-                        <div value=0 class="hit-spot-answer" style='background-color:navy; color:white;'><span class=ptText>No</span></div>
+                        <div value=0 class="hit-spot-answer" id="hit-spot-no" style='background-color:navy; color:white;'><span class=ptText>No</span></div>
                     </div>
                 </td>
             </tr>
@@ -127,17 +127,17 @@
                     <div class="strikeout" id="K">
                         <div class=area style='width:100%'>Strikeout?</div>
                         <div value="K" class="strikeout-answer"><span class=ptText>Yes</span></div>
-                        <div value="" class="strikeout-answer" style='background-color:navy; color:white;'><span class=ptText>No</span></div>
+                        <div value="" class="strikeout-answer strikeout-no" style='background-color:navy; color:white;'><span class=ptText>No</span></div>
                     </div>
                     <div class="strikeout" id="KL">
                         <div class=area style='width:100%'>Strikeout?</div>
                         <div value="KL" class="strikeout-answer"><span class=ptText>Yes</span></div>
-                        <div value="" class="strikeout-answer" style='background-color:navy; color:white;'><span class=ptText>No</span></div>
+                        <div value="" class="strikeout-answer strikeout-no" style='background-color:navy; color:white;'><span class=ptText>No</span></div>
                     </div>
                     <div id="bb-or-hbp">
                         <div class=area style='width:100%'>BB or HBP?</div>
-                        <div value='bb' class="bb-or-hbp-answer"><span class=ptText>BB</span></div>
-                        <div value='hbp' class="bb-or-hbp-answer"><span class=ptText>HBP</span></div>
+                        <div value='BB' class="bb-or-hbp-answer"><span class=ptText>BB</span></div>
+                        <div value='HBP' class="bb-or-hbp-answer"><span class=ptText>HBP</span></div>
                     </div>
                 </td>
             </tr>
@@ -167,20 +167,20 @@
                         <div class=traj-answer value=LD>LD</div>
                     </td>
                     <td colspan=2>
-                        <div id=fielderDiv style='visibility: hidden'>
+                        <div id=fielderDiv style='display: none'>
                             &nbsp
                             <b>Fielder: </b>
                             <select id="select-fielder" size=1>
                                 <option class=fielder value="">--</option>
-                                <option class=fielder value="1B">1B</option>
-                                <option class=fielder value="2B">2B</option>
-                                <option class=fielder value="3B">3B</option>
-                                <option class=fielder value="SS">SS</option>
-                                <option class=fielder value="LF">LF</option>
-                                <option class=fielder value="CF">CF</option>
-                                <option class=fielder value="RF">RF</option>
-                                <option class=fielder value="C">C</option>
-                                <option class=fielder value="P">P</option>
+                                <option class=fielder value="1">1</option>
+                                <option class=fielder value="2">2</option>
+                                <option class=fielder value="3">3</option>
+                                <option class=fielder value="4">4</option>
+                                <option class=fielder value="5">5</option>
+                                <option class=fielder value="6">6</option>
+                                <option class=fielder value="7">7</option>
+                                <option class=fielder value="8">8</option>
+                                <option class=fielder value="9">9</option>
                             </select>
                         </div>
                     </td>
@@ -207,12 +207,12 @@
                 </tr>
             </table>
         </div>
-        <div id=Add>
+        <div id="Add">
             Add pitch
         </div>
     </div>
     <div>
-        <table>
+        <table id="pitch-table">
             <tr>
                 <th>No.</th>
                 <th>Batter</th>

@@ -915,6 +915,12 @@ def outing_report(id):
     )
 
 
+@outing.route('/new_outing_pitch_tracker',methods=['GET', 'POST'])
+@login_required
+def new_outing_pitch_tracker():
+    return render_template("outing/pitch_tracker/new_outing_pitch_tracker.html")
+
+
 # ***************-HELPFUL FUNCTIONS-*************** #
 def getAvailablePitchers():
     '''
