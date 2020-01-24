@@ -1,7 +1,7 @@
 <div class="sidenav">
     <a href="{{ url_for('game.game_outings', id=game.id) }}">Outings</a>
     <a href="">All Pitches</a>
-    <a href="">Opponent Stats</a>
+    <a href="{{ url_for('game.game_opponent_stats', id=game.id) }}">Opponent Stats</a>
     <a href="">Saff Stats</a>
     {% if current_user.admin %}
         <a href="">Edit</a>

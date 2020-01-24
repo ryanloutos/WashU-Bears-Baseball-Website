@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block styles %}
+{{ super() }}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidenav.css') }}">
+<style>
+    .logos {
+        width: 100px;
+        height: auto;
+    }
+</style>
+{% endblock %}
+
+{% block app_content %}
+{% include "game/game_sidenav.html" %}
+<div class="main" style="text-align: center;">
+    <h1>
+        {{ game }}
+        <img class="logos" alt="Team-Logo" src="{{ url_for('static', filename=file_loc) }}">
+    </h1>
+    <h2>Opponent Stats</h2>
+    <table class="table">
+        <tr class="table-headers">
+            <th>Batter</th>
+            <th>AB's</th>
+            <th>Pitches Seen</th>
+            <th>Hits</th>
+            <th>Ks</th>
+            <th>BBs</th>
+            <th>Swing Rate</th>
+            <th>Whiff Rate</th>
+        </tr>
+        {% for batter, stats in game_opponent_stats.items() %}
+            <tr>
+                <td>{{ batter.name }}</td>
+                <td>{{ stats["AB"] }}</td>
+                <td>{{ stats["pitches"] }}</td>
+                <td>{{ stats["hits"] }}</td>
+                <td>{{ stats["ks"] }}</td>
+                <td>{{ stats["bbs"] }}</td>
+                <td>{{ stats["swr"] }}%</td>
+                <td>{{ stats["wfr"] }}%</td>
+            </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

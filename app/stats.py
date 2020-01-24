@@ -4,7 +4,7 @@ import pygal
 from pygal.style import DarkSolarizedStyle, DefaultStyle
 import lxml
 import math
-from app.models import Season, Outing, Game
+from app.models import Season, Outing, Game, Batter
 
 
 class PitchType(Enum):
@@ -1661,3 +1661,69 @@ def gameBasicStatsByOuting(game):
 
     return stats_by_outing, game_stats
 
+
+def game_opponent_stats_calc(game):
+
+    batters = {}
+
+    for outing in game.outings:
+        for at_bat in outing.at_bats:
+
+            # get batter object associated with at bat
+            batter = Batter.query.filter_by(id=at_bat.batter_id).first()
+
+            # Check to see if batter has appeared already
+            if batter not in batters.keys():
+                batters[batter] = {
+                    "AB": 1,       # at bats
+                    "pitches": 0,  # pitches
+                    "hits": 0,     # hits
+                    "ks": 0,       # strikeouts
+                    "bbs": 0,      # walks
+                    "swr": 0,      # swing rate
+                    "wfr": 0       # Whiff rate
+                }
+            else:  # add an at bat to existing batter
+                batters[batter]["AB"] += 1
+
+            # iterate through pitches to get individual stat categories
+            for pitch in at_bat.pitches:
+
+                # add pitch to this batter's count
+                batters[batter]["pitches"] += 1
+
+                # if there was a result to the AB process it correctly
+                if pitch.ab_result not in [None, ""]:
+
+                    # processing for hits
+                    if pitch.ab_result in ["1B", "2B", "3B", "HR"]:
+                        batters[batter]["hits"] += 1
+
+                    # processing for strikeouts
+                    if pitch.ab_result in ["K", "KL"]:
+                        batters[batter]["ks"] += 1
+
+                    # processing for walks and HBP
+                    if pitch.ab_result in ["BB", "HBP"]:
+                        batters[batter]["bbs"] += 1
+
+                # individual pitch processing
+                if pitch.pitch_result in ["SS", "F", "IP"]:
+                    batters[batter]["swr"] += 1
+
+                    # if they swung and missed the pitch
+                    if pitch.pitch_result in ["SS"]:
+                        batters[batter]["wfr"] += 1
+
+    # run calculations for swing rate and whiff rate
+    for stats in batters.values():
+
+        # calculate whiff rate
+        if stats["swr"] != 0:
+            stats["wfr"] = percentage(truncate(stats["wfr"] / stats["swr"]))
+
+        # calculate swing rate
+        if stats["pitches"] != 0:
+            stats["swr"] = percentage(truncate(stats["swr"] / stats["pitches"]))
+
+    return batters

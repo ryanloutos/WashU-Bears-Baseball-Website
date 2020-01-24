@@ -17,7 +17,7 @@ from app.stats import pitchUsageByCountLineCharts, pitchStrikePercentageSeason
 from app.stats import pitchUsageSeason, seasonStatLine, staffBasicStats
 from app.stats import staffPitcherAvgVelo, staffPitchStrikePercentage
 from app.stats import outingPitchStatistics, outingTimeToPlate, veloOverTime
-from app.stats import teamImportantStatsSeason, gameBasicStatsByOuting
+from app.stats import teamImportantStatsSeason, gameBasicStatsByOuting, game_opponent_stats_calc
 
 # Handle CSV uploads
 import csv
@@ -29,7 +29,7 @@ import random
 game = Blueprint("game", __name__)
 
 # ***************-GAME HOMEPAGE-*************** #
-@game.route('/game/<id>', methods=['GET','POST'])
+@game.route('/game/<id>', methods=['GET', 'POST'])
 @login_required
 def game_outings(id):
 
@@ -53,3 +53,31 @@ def game_outings(id):
                            basic_stats_by_outing=basic_stats_by_outing,
                            basic_stats_game=basic_stats_game,
                            file_loc=file_loc)
+
+
+@game.route("/game/<id>/opponent_stats", methods=['GET', 'POST'])
+@login_required
+def game_opponent_stats(id):
+
+    game = Game.query.filter_by(id=id).first()
+
+    # if game id is not correct, let them know and send them home
+    if not game:
+        flash("URL does not exist")
+        return redirect(url_for('main.index'))
+
+    game_stats = game_opponent_stats_calc(game)
+
+    # setup opponent logo file
+    file_loc = os.path.join(
+        "images",
+        "team_logos",
+        f"{game.opponent.id}.png")
+
+    return render_template(
+        'game/game_opponent_stats.html',
+        title=game,
+        game=game,
+        file_loc=file_loc,
+        game_opponent_stats=game_stats
+    )
