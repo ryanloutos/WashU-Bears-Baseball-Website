@@ -24,6 +24,7 @@ class User(UserMixin, db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+
 class Pitcher(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), index=True)
@@ -36,6 +37,7 @@ class Pitcher(db.Model):
     def __repr__(self):
         return self.name
 
+
 class Game(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.Date, index=True)
@@ -47,6 +49,16 @@ class Game(db.Model):
 
     def __repr__(self):
         return f"{self.date.month}/{self.date.day}/{self.date.year} vs. {self.opponent}"
+
+    def get_season(self):
+        return Season.query.filter_by(id=self.season_id).first()
+
+    def get_num_outings(self):
+        count = 0
+        for outing in self.outings:
+            count += 1
+        return count
+
 
 class Outing(db.Model):
     id = db.Column(db.Integer, primary_key=True)

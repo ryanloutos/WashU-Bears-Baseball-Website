@@ -1,7 +1,7 @@
 <div class="sidenav">
     <a href="{{ url_for('opponent.opponent_home', id=opponent.id) }}">Opponent Home</a>
     <a href="{{ url_for('opponent.opponent_roster', id=opponent.id) }}">Roster</a>
-    <a href="{{ url_for('opponent.opponent_games_results', id=opponent.id) }}">Games/Results</a>
+    <a href="{{ url_for('opponent.opponent_games_results', id=opponent.id) }}">Games Against</a>
     <a href="{{ url_for('opponent.opponent_scouting_stats', id=opponent.id) }}">Scouting/Stats</a>
     {% if current_user.admin %}
         <a href="{{ url_for('opponent.edit_opponent', id=opponent.id) }}">Edit</a>
