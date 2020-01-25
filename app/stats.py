@@ -1643,18 +1643,18 @@ def gameBasicStatsByOuting(game):
 
         # append to return array
         stats_by_outing.append(outing_stats)
-    
+
     # divide by zero check and calc velo averages
     if game_total_fb_pitches == 0:
         game_stats["FB Avg"] = 0
     else:
         game_stats["FB Avg"] = truncate(game_total_fb_velo/game_total_fb_pitches, 1)
-    
+
     if game_total_2s_pitches == 0:
         game_stats["2S Avg"] = 0
     else:
         game_stats["2S Avg"] = truncate(game_total_2s_velo/game_total_2s_pitches, 1)
-    
+
     # calc FPS and Strike percentages
     game_stats["FPS"] = percentage(game_fps/game_stats["BF"])
     game_stats["SP"] = percentage(game_strikes/game_stats["Pitches"])
@@ -1727,3 +1727,23 @@ def game_opponent_stats_calc(game):
             stats["swr"] = percentage(truncate(stats["swr"] / stats["pitches"]))
 
     return batters
+
+
+def batter_summary_game_stats(game, batter):
+
+    # stat trackers
+    at_bats = 0
+    pitches_seen = 0
+
+    for outing in game.outings:
+        for at_bat in outing.at_bats:
+            if at_bat.batter_id == batter.id:
+
+                # add to ad_bats
+                at_bats += 1
+
+                # add pitches to counter
+                for pitch in at_bat.pitches:
+                    pitches_seen += 1
+
+    return (at_bats, pitches_seen)

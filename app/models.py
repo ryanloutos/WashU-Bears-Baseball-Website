@@ -53,6 +53,10 @@ class Game(db.Model):
     def get_season(self):
         return Season.query.filter_by(id=self.season_id).first()
 
+    def get_opponent(self):
+        opponent = Opponent.query.filter_by(id=self.opponent_id).first()
+        return opponent
+
     def get_num_outings(self):
         count = 0
         for outing in self.outings:
@@ -80,12 +84,16 @@ class Outing(db.Model):
         pitcher = Pitcher.query.filter_by(id=self.pitcher_id).first()
 
         return f'{month}/{day}/{year} - {pitcher} vs. {self.opponent}'
-    
+
     def getDate(self):
         year = self.date.year
         month = self.date.month
         day = self.date.day
         return f"{month}/{year}"
+
+    def get_game(self):
+        game = Game.query.filter_by(id=self.game_id).first()
+        return game
 
 
 class Pitch(db.Model):
@@ -160,6 +168,15 @@ class Batter(db.Model):
                 seasons.append(season)
         return seasons
 
+    def get_games(self):
+        games = []
+        for at_bat in self.at_bats:
+            game = at_bat.get_game()
+            if game not in games:
+                games.append(game)
+
+        return games
+
 
 class AtBat(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -184,6 +201,10 @@ class AtBat(db.Model):
         pitcher = Pitcher.query.filter_by(id=outing.pitcher_id).first()
         return pitcher
 
+    def get_batter(self):
+        batter = Batter.query.filter_by(id=self.batter_id).first()
+        return batter
+
     def get_date(self):
         outing = Outing.query.filter_by(id=self.outing_id).first()
         return outing.date
@@ -198,6 +219,10 @@ class AtBat(db.Model):
         season = Season.query.filter_by(id=self.outing.season_id).first()
         return season
 
+    def get_game(self):
+        outing = Outing.query.filter_by(id=self.outing_id).first()
+        print(outing)
+        return outing.get_game()
 
 @login.user_loader
 def load_user(id):

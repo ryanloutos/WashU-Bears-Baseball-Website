@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block styles %}
+{{ super() }}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidenav.css') }}">
+<script src="{{ url_for('static', filename='js/sortable_table.js') }}"></script>
+{% endblock %}
+
+{% block app_content %}
+{% include "opponent/batter/batter_sidenav.html" %}
+<div class="main">
+    <h1>
+        {{ batter.name }} - {{ game }}
+    </h1>
+    <div>
+        <div>
+            <h3>Pitches Seen</h3>
+            <table class="table">
+                <tr class="table-headers">
+                    <th>Pitcher</th>
+                    <th>Pitch Num</th>
+                    <th>Velo</th>
+                    <th>Lead RNR</th>
+                    <th>Time to Plate</th>
+                    <th>Pitch Type</th>
+                    <th>Pitch Result</th>
+                    <th>Hit Spot?</th>
+                    <th>Count</th>
+                    <th>AB Result</th>
+                    <th>GB/FB/LD</th>
+                    <th>Fielder</th>
+                    <th>Inning</th>
+                </tr>
+                {% for at_bat in game_at_bats %}
+                    {% if (loop.index % 2 == 0) %}
+                        {% set color="#ececec" %}
+                    {% else %}
+                        {% set color="white" %}
+                    {% endif %}
+                    {% for pitch in at_bat.pitches %}
+                        <tr style="background-color: {{ color }};">
+                            <td>{{ at_bat.get_pitcher() }}</td>
+                            <td>{{ pitch.pitch_num }}</td>
+                            {% if pitch.velocity not in ["None", None] %}
+                                <td>{{ pitch.velocity }}</td>
+                            {% else %}
+                                <td></td>
+                            {% endif %}
+                            <td>{{ pitch.lead_runner }}</td>
+                            {% if pitch.time_to_plate not in ["None", None] %}
+                                <td>{{ pitch.time_to_plate }}</td>
+                            {% else %}
+                                <td></td>
+                            {% endif %}
+                            <td>{{ pitch.pitch_type }}</td>
+                            <td>{{ pitch.pitch_result }}</td>
+                            {% if pitch.hit_spot %}
+                                <td>X</td>
+                            {% else %}
+                                <td></td>
+                            {% endif %}
+                            <td>{{ pitch.count }}</td>
+                            <td>{{ pitch.ab_result }}</td>
+                            <td>{{ pitch.traj }}</td>
+                            <td>{{ pitch.fielder }}</td>
+                            <td>{{ pitch.inning }}</td>
+                        </tr>
+                    {% endfor %}
+                {% endfor %}
+            </table>
+        </div>
+        <div>
+            <h3>Pitch Locations</h3>
+            <p>Coming Soon!</p>
+        </div>
+        <div>
+            <h3>Spray Locations</h3>
+            <p>Coming Soon</p>
+        </div>
+        
+
+    </div>
+</div>
+{% endblock %}
