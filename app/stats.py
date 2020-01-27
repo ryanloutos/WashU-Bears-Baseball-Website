@@ -1631,15 +1631,17 @@ def gameBasicStatsByOuting(game):
             outing_stats["FB Avg"] = 0
         else:
             outing_stats["FB Avg"] = truncate(total_fb_velo/total_fb_pitches, 1)
-        
+
         if total_2s_pitches == 0:
             outing_stats["2S Avg"] = 0
         else:
             outing_stats["2S Avg"] = truncate(total_2s_velo/total_2s_pitches, 1)
-        
+
         # calc FPS and Strike percentages
-        outing_stats["FPS"] = percentage(fps/outing_stats["BF"])
-        outing_stats["SP"] = percentage(strikes/outing_stats["Pitches"])
+        if outing_stats["BF"] > 0:
+            outing_stats["FPS"] = percentage(fps/outing_stats["BF"])
+        if outing_stats["Pitches"] > 0:
+            outing_stats["SP"] = percentage(strikes/outing_stats["Pitches"])
 
         # append to return array
         stats_by_outing.append(outing_stats)

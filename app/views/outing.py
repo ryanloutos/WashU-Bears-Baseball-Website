@@ -8,7 +8,7 @@ from app.forms import NewOutingFromCSV, SeasonForm, OpponentForm, BatterForm
 from app.forms import OutingPitchForm, NewOutingFromCSVPitches, EditUserForm
 from app.forms import ChangePasswordForm, EditBatterForm, EditOpponentForm
 from app.forms import NewBatterForm
-from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat, Pitcher
+from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat, Pitcher, Game
 from app.stats import calcPitchPercentages, pitchUsageByCount, calcAverageVelo
 from app.stats import calcPitchStrikePercentage, calcPitchWhiffRate
 from app.stats import createPitchPercentagePieChart, velocityOverTimeLineChart
@@ -266,12 +266,18 @@ def new_outing():
         # is being created for
         # pitcher = Pitcher.query.filter_by(id=form.pitcher.data).first_or_404()
 
+        # safety check for outing chosen
+        if form.game.data is None:
+            game_id = ""
+        else:
+            game_id = form.game.data.id
+
         # creates a new outing object based on form data and user
         outing = Outing(date=form.date.data,
                         opponent_id=form.opponent.data.id,
                         season_id=form.season.data.id,
                         pitcher_id=form.pitcher.data,
-                        game_id=form.game.data.id)
+                        game_id=game_id)
 
         # add the new outing to the database before pitches so pitches have a
         # outing_id associated with them
@@ -551,14 +557,21 @@ def edit_outing(outing_id):
 
     # get objects from database
     outing = Outing.query.filter_by(id=outing_id).first_or_404()
-    if not outing:
+    if not outing:  # Safety check
         flash("URL does not exist")
         return redirect(url_for('main.index'))
+
     opponent = Opponent.query.filter_by(id=outing.opponent_id).first_or_404()
     this_season = Season.query.filter_by(id=outing.season_id).first_or_404()
     all_seasons = Season.query.all()
     this_pitcher = Pitcher.query.filter_by(id=outing.pitcher_id).first_or_404()
     all_pitchers = Pitcher.query.all()
+    # get the game currently selected and all selectable games
+    if outing.game_id not in [None, ""]:
+        this_game = Game.query.filter_by(id=outing.game_id).first_or_404()
+    else:
+        this_game = ""
+    all_games = Game.query.all()
 
     # only admins can go back and edit outing data
     if not current_user.admin:
@@ -576,6 +589,15 @@ def edit_outing(outing_id):
         outing.date = form.date.data
         outing.season_id = form.season.data.id
 
+        # safety check for outing chosen
+        if form.game.data is None:
+            game_id = ""
+        else:
+            game_id = form.game.data.id
+
+        # Update data for outing object game class
+        outing.game_id = game_id
+
         # commit changes to database
         db.session.commit()
 
@@ -591,6 +613,8 @@ def edit_outing(outing_id):
                            all_seasons=all_seasons,
                            this_pitcher=this_pitcher,
                            all_pitchers=all_pitchers,
+                           this_game=this_game,
+                           all_games=all_games,
                            form=form)
 
 # ***************-DELETE OUTING-*************** #
@@ -677,13 +701,19 @@ def new_outing_csv():
             # is being created for
             pitcher = Pitcher.query.filter_by(id=form.pitcher.data).first_or_404()
 
+            # safety check for outing chosen
+            if form.game.data is None:
+                game_id = ""
+            else:
+                game_id = form.game.data.id
+
             # creates a new outing object based on form data and user
             outing = Outing(
                 date=form.date.data,
                 opponent_id=form.opponent.data.id,
                 season_id=form.season.data.id,
                 pitcher_id=pitcher.id,
-                game_id=form.game.data.id)
+                game_id=game_id)
 
             # add the new outing to the database before pitches so pitches
             # have a outing_id associated with them
