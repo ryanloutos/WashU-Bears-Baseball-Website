@@ -1656,8 +1656,10 @@ def gameBasicStatsByOuting(game):
         game_stats["2S Avg"] = truncate(game_total_2s_velo/game_total_2s_pitches, 1)
 
     # calc FPS and Strike percentages
-    game_stats["FPS"] = percentage(game_fps/game_stats["BF"])
-    game_stats["SP"] = percentage(game_strikes/game_stats["Pitches"])
+    if game_stats["BF"] > 0:
+        game_stats["FPS"] = percentage(game_fps/game_stats["BF"])
+    if game_stats["Pitches"] > 0:
+        game_stats["SP"] = percentage(game_strikes/game_stats["Pitches"])
 
     return stats_by_outing, game_stats
 

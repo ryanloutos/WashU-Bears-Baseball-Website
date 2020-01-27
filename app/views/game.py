@@ -7,7 +7,7 @@ from app.forms import LoginForm, RegistrationForm, OutingForm, PitchForm
 from app.forms import NewOutingFromCSV, SeasonForm, OpponentForm, BatterForm
 from app.forms import OutingPitchForm, NewOutingFromCSVPitches, EditUserForm
 from app.forms import ChangePasswordForm, EditBatterForm, EditOpponentForm
-from app.forms import NewBatterForm
+from app.forms import NewBatterForm, NewGameForm
 from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat, Game
 from app.stats import calcPitchPercentages, pitchUsageByCount, calcAverageVelo
 from app.stats import calcPitchStrikePercentage, calcPitchWhiffRate
@@ -35,6 +35,10 @@ def game_outings(id):
 
     # get the game object assicated with the id
     game = Game.query.filter_by(id=id).first()
+
+    if not game:
+        flash("URL does not exist")
+        return redirect(url_for('main.index'))
 
     basic_stats_by_outing, basic_stats_game = gameBasicStatsByOuting(game)
 
@@ -80,4 +84,28 @@ def game_opponent_stats(id):
         game=game,
         file_loc=file_loc,
         game_opponent_stats=game_stats
+    )
+
+
+@game.route("/game/new_game", methods=["GET", "POST"])
+@login_required
+def game_new_game():
+    form = NewGameForm()
+
+    if form.validate_on_submit():
+        new_game = Game(
+            date=form.date.data,
+            opponent_id=form.opponent.data.id,
+            season_id=form.season.data.id
+        )
+        db.session.add(new_game)
+        db.session.commit()
+
+        # redirects back to home page after outing was successfully created
+        flash("New Game Created!")
+        return redirect(url_for('main.index'))
+
+    return render_template(
+        "game/game_new_game.html",
+        form=form
     )

@@ -9,6 +9,7 @@ from wtforms.validators import EqualTo, Optional
 from .models import User, Season, Opponent, Pitcher, Game
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 
+
 # Basic form for users to login, must type in both username and a password
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
@@ -66,6 +67,7 @@ class EditBatterForm(FlaskForm):
     grad_year = StringField('Grad Year', validators=[Optional()])
     retired = BooleanField('Retired?')
     submit = SubmitField('Save Changes', validators=[Optional()])
+
 
 # Creating a new opponent
 class OpponentForm(FlaskForm):
@@ -137,7 +139,7 @@ class ChangePasswordForm(FlaskForm):
     password2 = PasswordField(  # make sure passwords match
         'Repeat Password', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Update Password')
-    
+
 
 # each field is based on the baseball teams velocity tracking sheets
 class PitchForm(FlaskForm):
@@ -282,6 +284,7 @@ class PitcherForm(FlaskForm):
     retired = BooleanField('Retired?')
     submit = SubmitField('Submit')
 
+
 class EditPitcherForm(FlaskForm):
     name = StringField('Name', validators=[Optional()])
     throws = SelectField(
@@ -293,3 +296,16 @@ class EditPitcherForm(FlaskForm):
     retired = BooleanField('Retired?')
     file = FileField('Team Logo', validators=[FileRequired()])
     submit = SubmitField('Save Changes')
+
+
+class NewGameForm(FlaskForm):
+    date = DateField('Date', validators=[Optional()], format='%Y-%m-%d')
+    opponent = QuerySelectField(
+        query_factory=lambda: Opponent.query,
+        get_pk=lambda o: o,
+        get_label=lambda o: o)
+    season = QuerySelectField(
+        query_factory=lambda: Season.query,
+        get_pk=lambda s: s.id,
+        get_label=lambda s: s)
+    submit = SubmitField("Create Game")
