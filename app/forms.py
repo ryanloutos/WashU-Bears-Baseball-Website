@@ -216,8 +216,14 @@ class OutingForm(FlaskForm):
         get_label=lambda o: o)
     season = QuerySelectField(
         query_factory=lambda: Season.query,
-        get_pk=lambda s: s,
+        get_pk=lambda s: s.id,
         get_label=lambda s: s)
+    game = QuerySelectField(
+        query_factory=lambda: Game.query, # Have to load all games initially because can only submit with something that was in original form
+        get_pk=lambda s: s.id,
+        get_label=lambda s: s,
+        allow_blank=True
+    )
     submit = SubmitField('Create Outing')
 
 

@@ -270,7 +270,8 @@ def new_outing():
         outing = Outing(date=form.date.data,
                         opponent_id=form.opponent.data.id,
                         season_id=form.season.data.id,
-                        pitcher_id=form.pitcher.data)
+                        pitcher_id=form.pitcher.data,
+                        game_id=form.game.data.id)
 
         # add the new outing to the database before pitches so pitches have a
         # outing_id associated with them
