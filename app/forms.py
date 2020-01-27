@@ -6,7 +6,7 @@ from wtforms import FieldList, FormField
 from wtforms.fields.html5 import DateField
 from wtforms.validators import ValidationError, DataRequired, Email
 from wtforms.validators import EqualTo, Optional
-from .models import User, Season, Opponent, Pitcher
+from .models import User, Season, Opponent, Pitcher, Game
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 
 # Basic form for users to login, must type in both username and a password
@@ -239,8 +239,14 @@ class NewOutingFromCSV(FlaskForm):
         get_label=lambda o: o)
     season = QuerySelectField(
         query_factory=lambda: Season.query,
-        get_pk=lambda s: s,
+        get_pk=lambda s: s.id,
         get_label=lambda s: s)
+    game = QuerySelectField(
+        query_factory=lambda: Game.query, # Have to load all games initially because can only submit with something that was in original form
+        get_pk=lambda s: s.id,
+        get_label=lambda s: s,
+        allow_blank=True
+    )
     file = FileField(
         'Outing File',
         validators=[FileRequired()]

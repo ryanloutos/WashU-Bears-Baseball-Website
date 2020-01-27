@@ -681,7 +681,8 @@ def new_outing_csv():
                 date=form.date.data,
                 opponent_id=form.opponent.data.id,
                 season_id=form.season.data.id,
-                pitcher_id=pitcher.id)
+                pitcher_id=pitcher.id,
+                game_id=form.game.data.id)
 
             # add the new outing to the database before pitches so pitches
             # have a outing_id associated with them
@@ -694,6 +695,7 @@ def new_outing_csv():
                 outing_id=outing.id))
         else:  # delete invalid csv and refresh page
             os.remove(file_loc)
+            flash("CSV given is invalid")
             return render_template("csv/upload_csv.html",
                                    form=form)
 
