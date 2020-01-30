@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, request, send_file, url_for, send_from_dir
 from flask_login import login_required
 from app import db
 from app.stats import batterSwingWhiffRatebyPitchbyCount, teamImportantStatsSeason, staffBasicStats
-from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat, Pitcher
+from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat, Pitcher, Game
 from datetime import datetime
 import os
 
@@ -297,3 +297,30 @@ def download_arm_care():
         as_attachment=True,
         mimetype="application/pdf",
         attachment_filename="ARM CARE PROGRAM - In-Season - 2020.pdf")
+
+
+@api.route("/api/season/<season_id>/games")
+@login_required
+def games_in_season(season_id):
+
+    season = Season.query.filter_by(id=season_id).first()
+    if not season:
+        return jsonify({
+            "status": "failure",
+            "error": "Season id provided is invalid"
+        })
+
+    games = Game.query.filter_by(season_id=season.id).all()
+
+    # put games into jsonable format
+    games_ret = []
+    for game in games:
+        games_ret.append({
+            "id": game.id,
+            "label": game.__repr__()
+        })
+
+    return jsonify({
+        "status": "success",
+        "games": games_ret
+    })

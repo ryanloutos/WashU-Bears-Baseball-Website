@@ -40,11 +40,23 @@
                 {{ form.season.label }}<br>
                 <select id="season" name="season">
                     {% for s in all_seasons %}
-                        <option value="{{s}}" {% if s.id == this_season.id %} selected='selected' {% endif %}>{{s}}</option>
+                        <option value="{{ s.id }}" {% if s.id == this_season.id %} selected='selected' {% endif %}>{{s}}</option>
                     {% endfor %}
                 </select>
                 {% for error in form.season.errors %}
                 <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.game.label }} <br>
+                <select name="game" id="game">
+                    <option value=""></option>
+                    {% for g in all_games %}
+                        <option value="{{ g.id }}" {% if g.id == this_game.id %} selected='selected' {% endif %}>{{ g }}</option>
+                    {% endfor %}
+                </select>
+                {% for error in form.season.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
                 {% endfor %}
             </p><br>
             <p>{{ form.submit() }}</p>

@@ -4,6 +4,7 @@
 {{ super() }}
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidenav.css') }}">
 <script src="{{ url_for('static', filename='js/sortable_table.js') }}"></script>
+<script src="https://d3js.org/d3.v5.min.js"></script>
 {% endblock %}
 
 {% block app_content %}
@@ -17,8 +18,9 @@
             <h3>Pitches Seen</h3>
             <table class="table">
                 <tr class="table-headers">
+                    <th>Pitch index</th>
                     <th>Pitcher</th>
-                    <th>Pitch Num</th>
+                    <th>Outing Pitch Num</th>
                     <th>Velo</th>
                     <th>Lead RNR</th>
                     <th>Time to Plate</th>
@@ -31,6 +33,7 @@
                     <th>Fielder</th>
                     <th>Inning</th>
                 </tr>
+                {% set count = [1] %}
                 {% for at_bat in game_at_bats %}
                     {% if (loop.index % 2 == 0) %}
                         {% set color="#ececec" %}
@@ -39,6 +42,7 @@
                     {% endif %}
                     {% for pitch in at_bat.pitches %}
                         <tr style="background-color: {{ color }};">
+                            <td>{{ count[0] }}</td> {% if count.append(count.pop() + 1) %}{% endif %}
                             <td>{{ at_bat.get_pitcher() }}</td>
                             <td>{{ pitch.pitch_num }}</td>
                             {% if pitch.velocity not in ["None", None] %}

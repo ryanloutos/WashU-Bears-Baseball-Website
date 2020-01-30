@@ -1,13 +1,148 @@
 {% extends "base.html" %}
 
 {% block styles %}
-    {{ super() }}
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidenav.css') }}">
-{% endblock %}
+{{ super() }}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidenav.css') }}">
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
 
-{% block app_content %}
+        // get data from server to template
+        let pitch_usage_count = {{ pitch_usage_count|tojson }};
+        let swing_whiff_rate = {{ swing_whiff_rate|tojson }};
+
+        // put pitch_usage_count data in a form that the chart can handle
+        let pitch_usage_count_data = [];
+        for(let pitch_type in pitch_usage_count){
+            if(pitch_type != "thrown"){
+                let dat_temp = [];
+                for(let count in pitch_usage_count[pitch_type]){
+                    dat_temp.push({
+                        x: count,
+                        y: pitch_usage_count[pitch_type][count]["percent"]
+                    });
+                }
+                pitch_usage_count_data.push({
+                    name: pitch_type,
+                    data: dat_temp
+                })
+            }
+        }
+
+        // put swing_whiff_rate_data into form that chart can handle
+        let swing_rate_data = [];
+        let whiff_rate_data = [];
+        for(let pitch_type in swing_whiff_rate){
+            if(pitch_type != "thrown"){
+                let swing_dat_temp = [];
+                let whiff_dat_temp = [];
+                for(let count in swing_whiff_rate[pitch_type]){
+                    swing_dat_temp.push({
+                        x: count,
+                        y: swing_whiff_rate[pitch_type][count]["swings"]
+                    });
+                    whiff_dat_temp.push({
+                        x: count,
+                        y: swing_whiff_rate[pitch_type][count]["whiffs"]
+                    });
+                }
+
+                // append to data options arrays
+                swing_rate_data.push({
+                    name: pitch_type,
+                    data: swing_dat_temp
+                });
+                whiff_rate_data.push({
+                    name: pitch_type,
+                    data: whiff_dat_temp
+                });
+            }
+        }
+
+        // setup data and options for pitch_usage_count_chart
+        var pitch_usage_options = {
+            series: pitch_usage_count_data,
+            chart: {
+                height: 350,
+                type: 'heatmap',
+            },
+            dataLabels: {
+                enabled: true,
+                style: {
+                    colors: ["#000000"]
+                }
+            },
+            colors: ["#bd2e1f"],
+            title: {
+                text: 'Pitch Usage vs {{ opponent }} hitters (% of time)'
+            }
+        };
+
+        var swing_rate_options = {
+            series: swing_rate_data,
+            chart: {
+                height: 350,
+                type: 'heatmap'
+            },
+            dataLabels: {
+                enabled: true,
+                style: {
+                    colors: ["#000000"]
+                }
+            },
+            colors: ["#bd2e1f"],
+            title: {
+                text: 'Swing Rates by Pitch by Count (% of the time)'
+            }
+        };
+
+        var whiff_rate_options = {
+            series: whiff_rate_data,
+            chart: {
+                height: 350,
+                type: 'heatmap'
+            },
+            dataLabels: {
+                enabled: true,
+                style: {
+                    colors: ["#000000"]
+                }
+            },
+            colors: ["#bd2e1f"],
+            title: {
+                text: 'Whiff Rates by Pitch by Count (% of the time)'
+            }
+        };
+
+        // create and render pitch_usage_count_chart
+        var pitch_usage_count_chart = new ApexCharts(document.querySelector("#pitch_usage_count_chart"), pitch_usage_options);
+        var whiff_rate_chart = new ApexCharts(document.querySelector('#whiff_rate_chart'), whiff_rate_options);
+        var swing_rate_chart = new ApexCharts(document.querySelector('#swing_rate_chart'), swing_rate_options);
+
+        pitch_usage_count_chart.render();
+        whiff_rate_chart.render();
+        swing_rate_chart.render();
+    });
+
+    </script>
+    {% endblock %}
+    
+    {% block app_content %}
     {% include "opponent/opponent_sidenav.html" %}
     <div class="main">
-        <h1>Scouting/Stats Support Coming Soon!</h1>
+        <h1>{{ opponent }} - Scouting/Stats</h1>
+        <div >
+            <h3>Carer Pitch Usage vs {{ opponent }} hitters</h3>
+            <div id="pitch_usage_count_chart"></div>
+        </div>
+        <div>
+            <h3>Career Swing Rates of {{ opponent }} hitters</h3>
+            <div id="swing_rate_chart"></div>
+        </div>
+        <div>
+            <h3>Career Whiff Rates of {{ opponent }} hitters</h3>
+            <div id="whiff_rate_chart"></div>
+        </div>
+        
     </div>
-{% endblock %}
+    {% endblock %}
