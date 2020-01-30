@@ -5,7 +5,7 @@
     {% include "outing/pitch_tracker/tracker_css.html" %}
     <script src="https://d3js.org/d3.v5.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
-    {% include "outing/pitch_tracker/tracker_js.html" %}
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@beta/dist/js.cookie.min.js"></script>
 {% endblock %}
 
 {% block content %}
@@ -34,6 +34,8 @@
             </select>
             &nbsp &nbsp
             <button id="finish-outing">Finish Outing</button>
+            <button id="reset-outing">Reset Outing</button>
+
 
             <div id='exit-buttons' style="display: none;">
                 <button><a href="">Go to outing</a></button>
@@ -60,39 +62,55 @@
             &nbsp
             
             <b>Lead Runner: </b>
-            <div value='1' class="lead-runner">1B</div>
-            <div value='2' class="lead-runner">2B</div>
-            <div value='3' class="lead-runner">3B</div>
-            <div value='' class="lead-runner default-selections">None</div>
+            <table style="display: inline-block; vertical-align: bottom;">
+                <tr>
+                    <td style="border-right:hidden" value="1" class="lead-runner box">1B</td>
+                    <td style="border-right:hidden" value="2" class="lead-runner box">2B</td>
+                    <td style="border-right:hidden" value="3" class="lead-runner box">3B</td>
+                    <td value='' class="lead-runner box default-selections">None</td>
+                </tr>
+            </table>
 
             &nbsp
             <b>Count: </b>
             <div id="count">0-0</div>
 
+            &nbsp
+            <b>Pitches: </b>
+            <div id="total-pitches">0</div>
+
         </div>
         <div>
             <div id="pitch-location">
-                <svg id='main' class=plot height='457' width='457'></svg>
+                <svg id='strikezone' class=plot height='457' width='457'></svg>
             </div>
             
             <table id="pitch-info">
                 <tr>
-                    <td>
-                        <div value=1 class="pitch-type"><span class=ptText>4-Seam</span></div>
+                    <td value=1 class="pitch-type box">
+                        <div class="pitch-type-text"><span class=ptText>4-Seam</span></div>
                     </td>
-                    <td>
+                    <td class="box">
                         <div id="hit-spot">
                             <div class=area><span class=ptText>Hit Spot</span></div>
-                            <div value=1 class="hit-spot-answer"><span class=ptText>Yes</span></div>
-                            <div value=0 class="hit-spot-answer default-selections" id="hit-spot-no"><span class=ptText>No</span></div>
+                            <table>
+                                <tr>
+                                    <td value=1 class="hit-spot-answer box">
+                                        <span class=ptText>Yes</span>
+                                    </td>
+                                    <td value=0 class="hit-spot-answer box default-selections" id="hit-spot-no" style="border-left:hidden">
+                                        <span class=ptText>No</span>
+                                    </td>
+                                </tr>
+                            </table>
                         </div>
                     </td>
                 </tr>
                 <tr>
-                    <td>
-                        <div value=7 class="pitch-type"><span class=ptText>2-Seam</span></div>
+                    <td value=7 class="pitch-type box">
+                        <div class="pitch-type-text"><span class=ptText>2-Seam</span></div>
                     </td>
-                    <td>
+                    <td class="box">
                         <div id="velocity">
                             <div class="area">
                                 <span class="txt-velo-ttp">Velocity</span>
@@ -102,10 +120,10 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>
-                        <div value=2 class="pitch-type"><span class=ptText>Curveball</span></div>
+                    <td value=2 class="pitch-type box">
+                        <div class="pitch-type-text"><span class=ptText>Curveball</span></div>
                     </td>
-                    <td>
+                    <td class="box">
                         <div id="time-to-plate">
                             <div class="area"><span class="txt-velo-ttp">Time to Plate</span>
                                 <input id="time-to-plate-input" type="number" step='.01'>
@@ -114,32 +132,32 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>
-                        <div value=3 class="pitch-type"><span class=ptText>Slider</span></div>
+                    <td value=3 class="pitch-type box">
+                        <div class="pitch-type-text"><span class=ptText>Slider</span></div>
                     </td>
-                    <td rowspan=2>
+                    <td class="box" rowspan=2>
                         <div id="pitch-result">
                             <div class=area><span class=ptText>Pitch Result</span></div>
                             <table>
                                 <tr>
-                                    <td>
-                                        <div value='SS' class='prAnswer'><span class=ptText>SS</span></div>
+                                    <td value='SS' class='pitch-result box' style="border-bottom:hidden;">
+                                        <div><span class=ptText>SS</span></div>
                                     </td>
-                                    <td>
-                                        <div value='CS' class='prAnswer'><span class=ptText>CS</span></div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div value='F' class='prAnswer'><span class=ptText>Foul</span></div>
-                                    </td>
-                                    <td>
-                                        <div value='B' class='prAnswer'><span class=ptText>Ball</span></div>
+                                    <td value='CS' class='pitch-result box' style="border-left:hidden; border-bottom:hidden;">
+                                        <div><span class=ptText>CS</span></div>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td colspan=2>
-                                        <div value='IP' class='prAnswer' style='width: 96%;'><span class=ptText>In Play</span></div>
+                                    <td value='F' class='pitch-result box'>
+                                        <div><span class=ptText>Foul</span></div>
+                                    </td>
+                                    <td value='B' class='pitch-result box' style="border-left:hidden;">
+                                        <div><span class=ptText>Ball</span></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td value='IP' class='pitch-result box' style='width: 96%; border-top:hidden' colspan=2>
+                                        <div><span class=ptText>In Play</span></div>
                                     </td>
                                 </tr>
                             </table>
@@ -147,123 +165,159 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>
-                        <div value=4 class="pitch-type"><span class=ptText>Change</span></div>
+                    <td value=4 class="pitch-type box">
+                        <div class="pitch-type-text"><span class=ptText>Change</span></div>
                     </td>
                 </tr>
                 <tr>
-                    <td>
-                        <div value=5 class="pitch-type"><span class=ptText>Cutter</span></div>
+                    <td value=5 class="pitch-type box">
+                        <div class="pitch-type-text"><span class=ptText>Cutter</span></div>
                     </td>
-                    <td>
-                        <div class="strikeout" id="K">
+                    <td class="box">
+                        <div value="" id="end-of-ab" style="display: block">
+                            <div class=area style='width:100%'>End of AB</div>
+                            <table style="width: 50%; margin-left: 25%">
+                                <tr>
+                                    <td value="Yes" class="end-of-ab box"><span class=ptText>Yes</span></td>
+                                    <td value="No" style="border-left:hidden" id="end-ab-no" class="end-of-ab default-selections box"><span class=ptText>No</span></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="strikeout" id="K" style="display: none">
                             <div class=area style='width:100%'>K?</div>
-                            <div value="K" class="strikeout-answer"><span class=ptText>Yes</span></div>
-                            <div value="" class="strikeout-answer strikeout-no"><span class=ptText>No</span></div>
+                            <table style="width: 50%; margin-left: 25%">
+                                <tr>
+                                    <td value="K" class="strikeout-answer box"><span class=ptText>Yes</span></td>
+                                    <td value="" style="border-left:hidden" class="strikeout-answer strikeout-no box"><span class=ptText>No</span></td>
+                                </tr>
+                            </table>
                         </div>
-                        <div class="strikeout" id="KL">
+                        <div class="strikeout" id="KL" style="display: none">
                             <div class=area style='width:100%'>KL?</div>
-                            <div value="KL" class="strikeout-answer"><span class=ptText>Yes</span></div>
-                            <div value="" class="strikeout-answer strikeout-no"><span class=ptText>No</span></div>
+                            <table style="width: 50%; margin-left: 25%">
+                                <tr>
+                                    <td value="KL" class="strikeout-answer box"><span class=ptText>Yes</span></td>
+                                    <td value="" style="border-left:hidden" class="strikeout-answer strikeout-no box"><span class=ptText>No</span></td>
+                                </tr>
+                            </table>
                         </div>
-                        <div id="bb">
-                            <div class=area style='width:100%'>BB?</div>
-                            <div value='BB' class="bb-answer"><span class=ptText>Yes</span></div>
-                            <div value='' class="bb-answer"><span class=ptText>No</span></div>
+                        <div id="bb" style="display: none">
+                            <div class=area style="width:100%;">BB?</div>
+                            <table style="width: 50%; margin-left: 25%">
+                                <tr>
+                                    <td value='BB' class="bb-answer box"><span class=ptText>Yes</span></td>
+                                    <td value='' style="border-left:hidden" class="bb-answer box"><span class=ptText>No</span></td>
+                                </tr>
+                            </table>
                         </div>
-                        <div id="out">
-                            <div class=area style='width:100%'>IP->Out?</div>
-                            <div value='IP->Out' class="out-answer"><span class=ptText>Yes</span></div>
-                            <div value='' id="out-answer-no" class="out-answer"><span class=ptText>No</span></div>
-                        </div>
-                        <div id="end-of-ab">
-                            <div value="" class="end-of-ab"><span class=ptText>End of AB</span></div>
+                        <div id="out" style="display: none;">
+                            <div class=area style="width:100%;">IP->Out?</div>
+                            <table style="width: 50%; margin-left: 25%">
+                                <tr>
+                                    <td value='IP->Out' class="out-answer box"><span class=ptText>Yes</span></td>
+                                    <td value='' style="border-left:hidden" id="out-answer-no" class="out-answer box"><span class=ptText>No</span></td>        
+                                </tr>
+                            </table>
                         </div>
                     </td>
                 </tr>
                 <tr rowspan=2>
-                    <td colspan=2>
-                        <div id="ab-result">
-                            <div>
-                                <div class=area style='width:100%'>AB Results</div>
-                            </div>
-                            <div class="ab-results-div" id="ip-ab-results">
-                                <div class="ab-results" value="1B">1B</div>
-                                <div class="ab-results" value="2B">2B</div>
-                                <div class="ab-results" value="3B">3B</div>
-                                <div class="ab-results" value="HR">HR</div>
-                                <div class="ab-results" value="FC">FC</div>
-                                <div class="ab-results" value="Error">Error</div>
-                            </div>
-                            <div class="ab-results-div" id="strike-three-ab-results" style="display: none;">
-                                <div value='D3->Out' class="ab-results"><span class=ptText>D3->Out</span></div>
-                                <div value='D3->Safe' class="ab-results"><span class=ptText>D3->Safe</span></div>
-                                <div value='Other' class="ab-results"><span class=ptText>Other</span></div>
-                            </div>
-                            <div class="ab-results-div" id="ab-results-other" style="display: none;">
-                                <div value='HBP' class="ab-results"><span class=ptText>HBP</span></div>
-                                <div value='CI' class="ab-results"><span class=ptText>CI</span></div>
-                                <div value='Other' class="ab-results"><span class=ptText>Other</span></div>
-                            </div>
+                    <td colspan=2 class="box" id="ab-result" style="visibility: hidden;">
+                        <div>
+                            <div class=area style='width:100%'>AB Results</div>
+                        </div>
+                        <div class="ab-results-div" id="ip-ab-results">
+                            <table style="width: 100%;">
+                                <tr>
+                                    <td style="border-right:hidden" class="ab-results box" value="1B">1B</td>
+                                    <td style="border-right:hidden" class="ab-results box" value="2B">2B</td>
+                                    <td style="border-right:hidden" class="ab-results box" value="3B">3B</td>
+                                    <td style="border-right:hidden" class="ab-results box" value="HR">HR</td>
+                                    <td style="border-right:hidden" class="ab-results box" value="FC">FC</td>
+                                    <td class="ab-results box" value="Error">Error</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="ab-results-div" id="strike-three-ab-results" style="display: none;">
+                            <table style="width: 100%;">
+                                <tr>
+                                    <td style="border-right:hidden" value='D3->Out' class="ab-results box"><span class=ptText>D3->Out</span></td>
+                                    <td style="border-right:hidden" value='D3->Safe' class="ab-results box"><span class=ptText>D3->Safe</span></td>
+                                    <td value='Other' class="ab-results box"><span class=ptText>Other</span></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="ab-results-div" id="ab-results-other" style="display: none;">
+                            <table style="width: 100%;">
+                                <tr>
+                                    <td style="border-right:hidden" value='HBP' class="ab-results box"><span class=ptText>HBP</span></td>
+                                    <td style="border-right:hidden" value='CI' class="ab-results box"><span class=ptText>CI</span></td>
+                                    <td value='Other' class="ab-results box"><span class=ptText>Other</span></div>
+                                </tr>
+                            </table>
                         </div>
                     </td>
                 </tr>
             </table>
             <div id=fieldDiv style="visibility: hidden;">
                 <svg id='field' height='457' width='457'></svg>
-                <table id=ipTable>
+                <table id="in-play-info-table" style="margin-top: -6px; margin-left: 10px;">
                     <tr class='bipType'>
                         <td>
-                            <div class=traj-answer value=GB>GB</div>
+                            <table>
+                                <caption style="font-size: 18px; text-align: center; color: black; margin-bottom: -5px; margin-top: -5px">Trajectory</caption>
+                                <tr>
+                                    <td class="traj-answer box" value=GB>GB</td>
+                                    <td class="traj-answer box" value=FB>FB</td>
+                                    <td class="traj-answer box" value=LD>LD</td>
+                                </tr>
+                            </table>
                         </td>
-                        <td>
-                            <div class=traj-answer value=FB>FB</div>
-                        </td>
-                        <td>
-                            <div class=traj-answer value=LD>LD</div>
-                        </td>
-                        <td colspan=2>
-                            <div id=fielderDiv>
-                                &nbsp
-                                <b>Fielder: </b>
-                                <select id="select-fielder" size=1>
-                                    <option class=fielder value="">--</option>
-                                    <option class=fielder value="1">1</option>
-                                    <option class=fielder value="2">2</option>
-                                    <option class=fielder value="3">3</option>
-                                    <option class=fielder value="4">4</option>
-                                    <option class=fielder value="5">5</option>
-                                    <option class=fielder value="6">6</option>
-                                    <option class=fielder value="7">7</option>
-                                    <option class=fielder value="8">8</option>
-                                    <option class=fielder value="9">9</option>
-                                </select>
-                            </div>
+                        <td style="padding-left: 20px;">
+                            <table>
+                                <caption style="font-size: 18px; text-align: center; color: black; margin-bottom: -5px; margin-top: -5px">Fielder</caption>
+                                <tr>
+                                    <td class="fielder box" value="1">1</td>
+                                    <td class="fielder box" value="2">2</td>
+                                    <td class="fielder box" value="3">3</td>
+                                    <td class="fielder box" value="4">4</td>
+                                    <td class="fielder box" value="5">5</td>
+                                    <td class="fielder box" value="6">6</td>
+                                    <td class="fielder box" value="7">7</td>
+                                    <td class="fielder box" value="8">8</td>
+                                    <td class="fielder box" value="9">9</td>
+                                </tr>
+                            </table>
                         </td>
                     </tr>
                 </table>
+                
             </div>
         </div>
         <div id="add-pitch">
             Add pitch
         </div>
+        <br><br><br>
         <div>
             <table class="table" id="pitch-table">
-                <tr>
+                <caption id="pitch-table-caption">Pitch by Pitch Table</caption>
+                <tr class="table-headers">
                     <th>No.</th>
                     <th>Batter</th>
-                    <td>Velo</td>
-                    <td>Lead RNR</td>
-                    <td>Time to Plate</td>
-                    <td>Pitch Type</td>
-                    <td>Pitch Result</td>
-                    <td>Hit Spot?</td>
-                    <td>AB Result</td>
-                    <td>Traj</td>
-                    <td>Fielder</td>
-                    <td>Inning</td>
+                    <th>Velo</th>
+                    <th>Lead RNR</th>
+                    <th>Time to Plate</th>
+                    <th>Pitch Type</th>
+                    <th>Pitch Result</th>
+                    <th>Hit Spot?</th>
+                    <th>AB Result</th>
+                    <th>Traj</th>
+                    <th>Fielder</th>
+                    <th>Inning</th>
                 </tr>
             </table>
         </div>
-    </div class="main">
+    </div>
+    <br><br><br><br><br><br>
+    {% include "outing/pitch_tracker/tracker_js.html" %}
 {% endblock %}

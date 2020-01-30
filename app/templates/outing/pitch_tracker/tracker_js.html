@@ -1,560 +1,792 @@
 <script>
+    // to store each pitch once added
     var pitches = [];
-    var background_red = "#bd2e1f";
-    var text_white = "#f9feff";
+    var pitch_num = 0;
+
+    // to keep track of the count
     var strikes = 0;
     var balls = 0;
+    var count = "0-0";
 
-    document.addEventListener('DOMContentLoaded', function() {
-        var bb_div = $("#bb")
+    // check to see cookies already stored
+    var pitchesCookie = Cookies.get("pitches");
+    var numPitchesCookie = Cookies.get("pitch_num")
+    var ballsCookie = Cookies.get("balls");
+    var strikesCookie = Cookies.get("strikes");
+    var countCookie = Cookies.get("count");
+    if (pitchesCookie != null) {
+        pitches = JSON.parse(pitchesCookie);
+        updatePitchTable();
+    }
+    if (numPitchesCookie != null) {
+        pitch_num = parseInt(numPitchesCookie);
+        $("#total-pitches").text(pitch_num);
+    }
+    if (ballsCookie != null) {
+        balls = parseInt(ballsCookie);
+    }
+    if (strikesCookie != null) {
+        strikes = parseInt(strikesCookie);
+    }
+    if (countCookie != null) {
+        count = countCookie;
+        $("#count").text(count);
+    }
 
-        var add_pitch_button = $("#add-pitch");
-        var pitch_type_buttons = $(".pitch-type");
-        var hit_spot_buttons = $(".hit-spot-answer");
-        var traj_buttons = $(".traj-answer");
-        var strikeout_buttons = $(".strikeout-answer");
-        var bb_buttons = $(".bb-answer");
-        var lead_runner_buttons = $(".lead-runner");
-        var out_answer_buttons = $(".out-answer");
-        var end_ab_button = $(".end-of-ab");
+    // variables to hold pitch information that updates on changes
+    var batter_id = "";
+    var velocity = "";
+    var time_to_plate = "";
+    var lead_runner = "";
+    var pitch_type = "";
+    var pitch_result = "";
+    var hit_spot = 0;
+    var ab_result = "";
+    var traj = "";
+    var fielder = "";
+    var inning = "";
+    var endAtBat = "No";
+
+    // the color scheme used for when a button is clicked
+    var background_red = "#bd2e1f";
+    var text_white = "#f9feff";
+
+    // interactive elements to keep track of pitch location and spray info
+    var fieldDiv = $("#fieldDiv");
+    var field = $("#field");
+    var fieldD3 = d3.select("#field");
+    var strikezone = d3.select("#strikezone");
+    var loc_x = "";
+    var loc_y = "";
+    var spray_x = "";
+    var spray_y = "";
+
+    // setting up variables for clickable buttons
+    var leadRunnerButtons = $(".lead-runner");
+    var pitchTypeButtons = $(".pitch-type");
+    var pitchResultButtons = $(".pitch-result");
+    var hitSpotButtons = $(".hit-spot-answer");
+    var endAtBatButtons = $(".end-of-ab");
+    var trajButtons = $(".traj-answer");
+    var strikeoutButtons = $(".strikeout-answer");
+    var walkButtons = $(".bb-answer");
+    var abResultButtons = $(".ab-results");
+    var addPitchButton = $("#add-pitch");
+    var outButtons = $(".out-answer");
+    var finishOutingButton = $("#finish-outing");
+    var resetOutingButton = $("#reset-outing");
+    var exitButtons = $(".exit-buttons");
+    var fielderButtons = $(".fielder");
+
+    // setting up inputs for other types of inputs
+    var inningInput = $("#inning");
+    var batterSelect = $("#select-batter");
+    var velocityInput = $("#velocity-input");
+    var timeToPlateInput = $("#time-to-plate-input");
+    var fielderSelect = $("#select-fielder");
+
+    // setting up variables for certain "div" elements
+    var endAtBatDiv = $("#end-of-ab");
+    var outDiv = $("#out");
+    var walkDiv = $("#bb");
+    var strikeoutSwingDiv = $("#K");
+    var strikeoutLookDiv = $("#KL");
+    var abResultBox = $("#ab-result");
+    var abResultGroups = $(".ab-results-div");
+    var abResultStrikeThreeDiv = $("#strike-three-ab-results");
+    var abResultInPlayDiv = $("#ip-ab-results");
+    var abResultOtherDiv = $("#ab-results-other");
+    var ballFlightInfoTable= $("in-play-info-table");
+
+    // set up the interactive elements of the pitch tracker
+    setUpD3Elements(strikezone, fieldD3);
+
+    /********************- LEAD RUNNER -********************/
+    leadRunnerButtons.click(function(){
+        button = $(this);
+        unclick(leadRunnerButtons);
+        click(button);
+        lead_runner = button.attr("value");
+    });
+
+    /********************- PITCH TYPE -********************/
+    pitchTypeButtons.click(function(){
+        button = $(this);
+        unclick(pitchTypeButtons);
+        click(button);
+        pitch_type = button.attr("value");
+        checkLogic();
+    });
+
+    /********************- HIT SPOT -********************/
+    hitSpotButtons.click(function(){
+        button = $(this);
+        unclick(hitSpotButtons);
+        click(button);
+        hit_spot = button.attr("value");
+    });
+
+    /********************- PITCH RESULT -********************/
+    pitchResultButtons.click(function() {
+        button = $(this);
+        pitch = button.attr("value");
+        unclick(pitchResultButtons);
+        abResultsReset();
+
+        if (pitch == "IP") {
+            // if button already clicked
+            if (pitch_result == "IP") {
+                pitch_result = "";
+                unclick(button);
+            }
+            // if button not clicked
+            else {
+                pitch_result = "IP";
+                click(button);
+                hide(endAtBatDiv);
+                show(outDiv);
+            }
+        }
+
+        if (pitch == "F") {
+            // if button already clicked
+            if (pitch_result == "F") {
+                pitch_result = "";
+                unclick(button);
+            }
+            // if button not clicked
+            else {
+                pitch_result = "F";
+                click(button);
+            }
+        }
+
+        if (pitch == "B") {
+            // if button already clicked
+            if (pitch_result == "B") {
+                pitch_result = "";
+                unclick(button);
+                if (balls == 3) {
+                    hide(walkDiv);
+                    show(endAtBatDiv);
+                }
+            }
+            // if button not clicked
+            else {
+                pitch_result = "B";
+                click(button);
+                if (balls == 3) {
+                    hide(endAtBatDiv);
+                    show(walkDiv);
+                }
+            }
+        }
+
+        if (pitch == "SS") {
+            // if button already clicked
+            if (pitch_result == "SS") {
+                pitch_result = "";
+                unclick(button);
+                if (strikes == 2) {
+                    hide(strikeoutSwingDiv);
+                    show(endAtBatDiv);
+                }
+            }
+            // if button not clicked
+            else {
+                pitch_result = "SS";
+                click(button);
+                if (strikes == 2) {
+                    hide(endAtBatDiv);
+                    show(strikeoutSwingDiv);
+                }
+            }
+        }
+        
+        if (pitch == "CS") {
+            // if button already clicked
+            if (pitch_result == "CS") {
+                pitch_result = "";
+                unclick(button);
+                if (strikes == 2) {
+                    hide(strikeoutLookDiv);
+                    show(endAtBatDiv);
+                }
+            }
+            // if button not clicked
+            else {
+                pitch_result = "CS";
+                click(button);
+                if (strikes == 2) {
+                    hide(endAtBatDiv);
+                    show(strikeoutLookDiv);
+                }
+            }
+        }
+
+        checkLogic();
+    
+    });
+
+    /********************- TRAJ -********************/
+    trajButtons.click(function(){
+        button = $(this);
+        unclick(trajButtons);
+        click(button);
+        traj = button.attr('value');
+    });
+    
+    /********************- FIELDER -********************/
+    fielderButtons.click(function(){
+        button = $(this);
+        unclick(fielderButtons);
+        click(button);
+        fielder = button.attr('value');
+    });
+
+    /********************- K/KL -********************/
+    strikeoutButtons.click(function(){
+        button = $(this);
+        ab_result = button.attr('value');
+        
+        // adjust button colors
+        unclick(strikeoutButtons);
+        click(button);
+
+        // reset all ab result buttons & hide groups of options
+        unclick(abResultButtons);
+        hide(abResultGroups);
+
+        // if strike three wasn't a strikout
+        if (ab_result == "") {
+            makeVisible(abResultBox);
+            show(abResultStrikeThreeDiv);
+            makeInvisible(addPitchButton);
+        }
+        // if strike three was a strikout
+        else {
+            makeInvisible(abResultBox);
+            show(abResultInPlayDiv);
+            makeVisible(addPitchButton);
+        }
+    });
+
+    /********************- BB -********************/
+    walkButtons.click(function(){
+        button = $(this);
+        ab_result = $(this).attr('value')
+
+        // adjust button colors
+        unclick(walkButtons);
+        click(button);
+
+        // reset all ab result buttons & hide groups of options
+        unclick(abResultButtons);
+        hide(abResultGroups);
+
+        // if ball four wasn a walk
+        if (ab_result == "BB") {
+            makeInvisible(abResultBox);
+            show(abResultInPlayDiv);
+            makeVisible(addPitchButton);
+        }
+        // if ball four wasn't a walk
+        else {
+            makeVisible(abResultBox);
+            show(abResultOtherDiv);
+            makeInvisible(addPitchButton);
+        }
+    });
+
+    /********************- IP->Out -********************/
+    outButtons.click(function(){
+        button = $(this);
+        ab_result = button.attr("value");
+
+        // adjust the button colors
+        unclick(outButtons);
+        click(button);
+
+        // show the field div and field itself
+        makeVisible(fieldDiv);
+        makeVisible(field);
+
+        // reset abResultBox stuff
+        hide(abResultGroups);
+        show(abResultInPlayDiv);
+        unclick(abResultButtons);
+
+        // if "Yes" was selected
+        if (ab_result == "IP->Out") {
+            makeInvisible(abResultBox);
+        }
+        // if "No" was selected
+        else {
+            makeVisible(abResultBox);
+        }
+
+        checkLogic();
+    });
+
+    /********************- AB RESULTS -********************/
+    abResultButtons.click(function(){
+        button = $(this);
+        unclick(abResultButtons);
+        click(button);
+        ab_result = button.attr("value");
+        checkLogic();
+    })
+
+    /********************- END AB EARLY -********************/
+    endAtBatButtons.click(function(){
+        button = $(this);
+        endAtBat = button.attr("value");
+        unclick(endAtBatButtons);
+        click(button);
+        ab_result = "";
+
+        // if no is clicked
+        if (endAtBat == "No") {
+            unclick(abResultButtons);
+            makeInvisible(abResultBox);
+            hide(abResultGroups);
+            show(abResultInPlayDiv);
+        }
+        // if yes was clicked
+        else {
+            makeVisible(abResultBox);
+            hide(abResultGroups);
+            show(abResultOtherDiv);
+        }
+        checkLogic();
+    });
+
+    /********************- ADD PITCH -********************/
+    addPitchButton.click(function(){
+        // get values that weren't set above
+        inning = inningInput.val();
+        batter_id = batterSelect.val();
+        velocity = velocityInput.val();
+        time_to_plate = timeToPlateInput.val();
+
+        // set pitch data in a dictionary
+        pitchData = {
+            'batter_id': batter_id, 'velocity': velocity, 'lead_runner': lead_runner,
+            'time_to_plate': time_to_plate, 'pitch_type': pitch_type, 'pitch_result': pitch_result, 
+            'loc_x': loc_x, 'loc_y': loc_y, 'hit_spot': hit_spot, 'ab_result': ab_result, 
+            'traj': traj, 'fielder': fielder, 'spray_x': spray_x*1.3, 'spray_y': spray_y*1.3,
+            'inning': inning
+        };
+
+        // append dictionary to pitches array
+        pitches.push(pitchData);
+        pitch_num += 1;
+
+        // add pitch to table at bottom of page
+        updatePitchTable();
+
+        // set cookie to hold all pitches
+        Cookies.set("pitches", JSON.stringify(pitches));
+
+        // update the count and pitch count and their text displays
+        updateCount();
+        updatePitchCount();
+
+        // clear some of the inputs that change every pitch
+        velocityInput.val("");
+        fielderSelect.val("");
+        timeToPlateInput.val("");
+
+        // clear some of the variables that track pitch info
+        velocity = "";
+        time_to_plate = "";
+        pitch_type = "";
+        pitch_result = "";
+        hit_spot = 0;
+        ab_result = "";
+        traj = "";
+        fielder = "";
+        loc_x = "";
+        loc_y = "";
+        spray_x = "";
+        spray_y = "";
+        endAtBat = "No";
+
+        // reset buttons or values that may have been clicked
+        unclick(pitchTypeButtons);
+        unclick(pitchResultButtons);
+        unclick(hitSpotButtons);
+        unclick(endAtBatButtons);
+        unclick(trajButtons);
+        unclick(strikeoutButtons);
+        unclick(walkButtons);
+        unclick(abResultButtons);
+        unclick(outButtons);
+
+        // hide certain buttons and divs
+        makeInvisible(addPitchButton);
+        makeInvisible(fieldDiv);
+        makeInvisible(ballFlightInfoTable);
+        makeInvisible(abResultBox);
+        hide(outDiv);
+        hide(strikeoutLookDiv);
+        hide(strikeoutSwingDiv);
+        hide(walkDiv);
+        show(endAtBatDiv);
+
+        // click the defaults
+        click($(".default-selections"));
+
+        // remove circles and text from diagrams
+        strikezone.selectAll('circle').remove();
+        strikezone.selectAll('text').remove();
+        fieldD3.selectAll('circle').remove();
+    });
+
+    /********************- FINISH OUTING -********************/
+    finishOutingButton.click(function(){
+
+        // set up outing info for dictionary
+        outing = {
+            "pitcher": $("#pitcher").val(),
+            "date": $("#date").val(),
+            "opponent": $("#opponent").val(),
+            "season": $("#season").val()
+        }
+        
+        // set up data with outing and pitches info to send to db
+        data = {
+            outing: outing,
+            pitches: pitches
+        }
+
+        // send data to api
+        fetch("{{ url_for('api.pitch_tracker') }}", {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: {"content-type": "application/json"}
+        })
+        .then(res => res.json())
+        .then(function(response) {
+            // if sending to database failed
+            if(response.status == "failure"){
+                console.log("Request status: failure");
+                console.log("Error message: " + response.error);
+                return;
+            }
+            // if it was successful
+            console.log(response)
+            show(exitButtons);
+            makeVisible(exitButtons);
+        });
+    });
+
+    /********************- RESET OUTING -********************/
+    resetOutingButton.click(function(){
+        deleteCookies();
+        window.location.reload();
+    })
+
+    /***********************- HELPFUL FUNCTIONS -***********************/
+    function setUpD3Elements(zone, field) {
+        /** Sets up the interactive strikezone and field to store data related to a pitch
+        * @param {svg} zone - The svg element where the strikezone will be placed
+        * @param {svg} field - The svg element where the field for sprays will be placed
+        */
 
         // set up the field 
-        var field = d3.select("#field")
-        width = +field.attr('width')
-        height = +field.attr('height')
-        x1 = null
-        y1 = null
-        xf = null
-        yf = null
-        g1 = field.append('g').attr('transform', 'translate(0,95)')
+        // var field = d3.select("#field");
+        width = +field.attr('width');
+        height = +field.attr('height');
+        g1 = field.append('g').attr('transform', 'translate(0,95)');
         field.append("svg:image")
-        .attr('x', 0)
-        .attr('y', 0)
-        .attr('width', 435)
-        .attr('height', 430)
-        .attr('transform', 'translate(17,17)')
-        .style('alignment-baseline', 'middle')
-        .attr("xlink:href", "{{ url_for('static', filename='images/field.png') }}")
+            .attr('x', 0)
+            .attr('y', 0)
+            .attr('width', 435)
+            .attr('height', 430)
+            .attr('transform', 'translate(17,17)')
+            .style('alignment-baseline', 'middle')
+            .attr("xlink:href", "{{ url_for('static', filename='images/field.png') }}");
 
         // set up the location tracker
-        var svg = d3.select("#main")
-        margin = {top: 10, right: 10, bottom: 10, left: 20}
-        width = +svg.attr('width')
-        height = +svg.attr('height')
-        g = svg.append('g').attr('transform', null)
-        svg.style('background-color', 'white').style('border', '1px solid black').style('margin', '10px')
+        // var svg = d3.select("#main");
+        margin = {top: 10, right: 10, bottom: 10, left: 20};
+        width = +zone.attr('width');
+        height = +zone.attr('height');
+        g = zone.append('g').attr('transform', null);
+        zone.style('background-color', 'white').style('border', '1px solid black').style('margin', '10px');
 
-        var xScale = d3.scaleLinear().range([width, 0]).domain([2,-2])
-        var yScale = d3.scaleLinear().range([height, 0]).domain([0,4])
-        var xScalef = d3.scaleLinear().range([width, 0]).domain([250,-250])
-        var yScalef = d3.scaleLinear().range([height, 0]).domain([-100,400])
+        var xScale = d3.scaleLinear().range([width, 0]).domain([2,-2]);
+        var yScale = d3.scaleLinear().range([height, 0]).domain([0,4]);
+        var xScalef = d3.scaleLinear().range([width, 0]).domain([250,-250]);
+        var yScalef = d3.scaleLinear().range([height, 0]).domain([-100,400]);
 
         function drawCircle(x, y) {
-            svg.append('circle')
-            .attr('class', 'click-circle')
-            .attr('cx', x)
-            .attr('cy', y)
-            .attr('r', '8')
-            .style('fill', background_red)
+            zone.append('circle')
+                .attr('class', 'click-circle')
+                .attr('cx', x)
+                .attr('cy', y)
+                .attr('r', '8')
+                .style('fill', background_red);
         }
 
         g.append('path')
-        .attr('id', 'zone')
-        .attr(
-            'd', 'M ' + xScale(-.833) + ',' + yScale(1.75) + ' L ' + xScale(-.833) + ',' + yScale(3.4) + ' L ' +
-            xScale(.833) + ',' + yScale(3.4) + ' L ' + xScale(.833) + ','  + yScale(1.75) + ' L ' + xScale(-.833) +  ',' + yScale(1.75)
-            + 'M' + xScale(0) + ',' + yScale(0.2) + 'L' + xScale(-.843) + ',' + yScale(0.4) + 'L'  + xScale(-.833) + ',' + yScale(0.6) + 'L' +
-            xScale(.833)+ ',' + yScale(0.6) + 'L' + xScale(.843) + ',' + yScale(0.4) + 'L' + xScale(0) + ',' + yScale(0.2)
-        )
-        .style('stroke', 'black')
-        .style('fill', 'none')
-        .style('stroke-width', 2)
+            .attr('id', 'zone')
+            .attr(
+                'd', 'M ' + xScale(-.833) + ',' + yScale(1.75) + ' L ' + xScale(-.833) + ',' + yScale(3.4) + ' L ' +
+                xScale(.833) + ',' + yScale(3.4) + ' L ' + xScale(.833) + ','  + yScale(1.75) + ' L ' + xScale(-.833) +  ',' + yScale(1.75)
+                + 'M' + xScale(0) + ',' + yScale(0.2) + 'L' + xScale(-.843) + ',' + yScale(0.4) + 'L'  + xScale(-.833) + ',' + yScale(0.6) + 'L' +
+                xScale(.833)+ ',' + yScale(0.6) + 'L' + xScale(.843) + ',' + yScale(0.4) + 'L' + xScale(0) + ',' + yScale(0.2)
+            )
+            .style('stroke', 'black')
+            .style('fill', 'none')
+            .style('stroke-width', 2);
         
         // move or place circle on chart
-        svg.on('click', function() {
-            svg.selectAll('circle').remove()
-            svg.selectAll('text').remove()
-            var local = d3.mouse(this)
+        zone.on('click', function() {
+            zone.selectAll('circle').remove();
+            zone.selectAll('text').remove();
+            var local = d3.mouse(this);
 
-            drawCircle(local[0], local[1])
-            x1 = Math.round(xScale.invert(local[0])*100,3)/100
-            y1 = Math.round(yScale.invert(local[1])*100,3)/100
-            svg.append('text')
+            drawCircle(local[0], local[1]);
+            loc_x = Math.round(xScale.invert(local[0])*100,3)/100;
+            loc_y = Math.round(yScale.invert(local[1])*100,3)/100;
+            zone.append('text')
                 .attr('y', yScale(3.8))
                 .attr('x', xScale(1.8))
                 .style('text-anchor', 'end')
                 .style('font-size', '16px')
-                .text('(' + Math.round(xScale.invert(local[0])*100)/100 + ', ' + y1 + ')');
-            $('#btn').show
+                .text('(' + Math.round(xScale.invert(local[0])*100)/100 + ', ' + loc_y + ')');
+            $('#btn').show;
         });
 
         // move or place circle on chart
-        field.on('click', function(){
-            field.selectAll('circle').remove()
-            var local = d3.mouse(this)
-            field.append('circle')
-            .attr('class', 'click-circle1')
-            .attr('cx', local[0])
-            .attr('cy', local[1])
-            .attr('r', '8')
-            .style('fill', background_red)
-            xf = Math.round(xScalef.invert(local[0])*100,3)/100
-            yf = Math.round(yScalef.invert(local[1])*100,3)/100
-            $('#ipTable').css('visibility', 'visible')
-        });
-
-        function abResultsReset() {
-            xf = null;
-            yf = null;
-            ab_result = "";
+        field.on('click', function() {
             field.selectAll('circle').remove();
-            traj_buttons.css('background-color', 'white').css('color', 'black');
-            $('#select-fielder').val("");
-            out_answer_buttons.css('background-color', 'white').css('color', 'black');
+            var local = d3.mouse(this);
+            field.append('circle')
+                .attr('class', 'click-circle1')
+                .attr('cx', local[0])
+                .attr('cy', local[1])
+                .attr('r', '8')
+                .style('fill', background_red);
+            spray_x = Math.round(xScalef.invert(local[0])*100,3)/100;
+            spray_y = Math.round(yScalef.invert(local[1])*100,3)/100;
+            $('#ipTable').css('visibility', 'visible');
+        });
+    }
 
-            $("#fieldDiv").css("visibility", "hidden");
-            $("#field").css("visibility", "hidden");
-            $("#ipTable").css("visibility", "hidden");
+    function abResultsReset() {
+        /**
+        * Resets ab_result variable and unselects the butttons related to ending an at bat
+        */
 
-            $('#bb').css("display", "none")
-            $('.bb-answer').css('background-color', 'white').css('color', 'black');
+        // reset values
+        ab_result = "";
+        spray_x = "";
+        spray_y = "";
+        traj = "";
 
-            $('#K').css("display", "none")
-            $('.strikeout-answer').css('background-color', 'white').css('color', 'black');
-            $('#KL').css("display", "none")
+        // take away circle from field
+        fieldD3.selectAll('circle').remove();
 
-            $("#ab-result").css("visibility", "hidden")
-            $(".ab-results-div").css('display', 'none');
-            $("#out").css('display', 'none');
+        // reset the fielder selection
+        fielderSelect.val("");
 
-            $("#ip-ab-results").css('display', 'block');
-            $("#end-of-ab").css('display', 'block');
+        // unclick any buttons that may have been clicked
+        unclick(trajButtons);
+        unclick(outButtons);
+        unclick(walkButtons);
+        unclick(strikeoutButtons);
+        unclick(endAtBatButtons);
 
-            $(".ab-results").css('background-color', 'white').css('color', 'black')
+        // hide the field, traj/fielder table, and ab result options
+        makeInvisible(fieldDiv);
+        makeInvisible(field);
+        makeInvisible(ballFlightInfoTable);
+        makeInvisible(abResultBox);
 
+        // hide other ab result stuff
+        hide(outDiv);
+        hide(walkDiv);
+        hide(strikeoutSwingDiv);
+        hide(strikeoutLookDiv);
+        hide(abResultGroups);
+
+        // make display = block for spacing/sizing
+        show(abResultOtherDiv);
+
+        // show the end at bat early div option
+        show(endAtBatDiv);
+
+        // click No for end at ab
+        click($("#end-ab-no"));
+    }
+
+    function updatePitchTable() {
+        /**
+        * Adds the most recent pitch to the table at the bottom of the screen
+        * @param {array} pitches - array of pitches with each element being a dictionary
+        */
+
+        var pitch_table = $("#pitch-table > tbody");
+        pitch_table.empty();
+
+        // add pitch to end of table
+        pitch_table = pitch_table.append(
+            `<tr class="table-headers">
+                <th>No.</th>
+                <th>Batter</th>
+                <th>Velo</th>
+                <th>Lead RNR</th>
+                <th>Time to Plate</th>
+                <th>Pitch Type</th>
+                <th>Pitch Result</th>
+                <th>Hit Spot?</th>
+                <th>AB Result</th>
+                <th>Traj</th>
+                <th>Fielder</th>
+                <th>Inning</th>
+            </tr>`
+        );
+            
+        var atBat = true;
+        var gray = "#ececec";
+        for (var i=0; i<pitches.length; i++) {
+            if (atBat) {
+                pitch_table = pitch_table.append(
+                    `<tr>
+                        <td>${i+1}</td>
+                        <td>${pitches[i]['batter_id']}</td>
+                        <td>${pitches[i]['velocity']}</td>
+                        <td>${pitches[i]['lead_runner']}</td>
+                        <td>${pitches[i]['time_to_plate']}</td>
+                        <td>${pitches[i]['pitch_type']}</td>
+                        <td>${pitches[i]['pitch_result']}</td>
+                        <td>${pitches[i]['hit_spot']}</td>
+                        <td>${pitches[i]['ab_result']}</td>
+                        <td>${pitches[i]['traj']}</td>
+                        <td>${pitches[i]['fielder']}</td>
+                        <td>${pitches[i]['inning']}</td>
+                    </tr>`
+                );
+            }
+            else {
+                pitch_table = pitch_table.append(
+                    `<tr style="background-color: ${gray}">
+                        <td>${i+1}</td>
+                        <td>${pitches[i]['batter_id']}</td>
+                        <td>${pitches[i]['velocity']}</td>
+                        <td>${pitches[i]['lead_runner']}</td>
+                        <td>${pitches[i]['time_to_plate']}</td>
+                        <td>${pitches[i]['pitch_type']}</td>
+                        <td>${pitches[i]['pitch_result']}</td>
+                        <td>${pitches[i]['hit_spot']}</td>
+                        <td>${pitches[i]['ab_result']}</td>
+                        <td>${pitches[i]['traj']}</td>
+                        <td>${pitches[i]['fielder']}</td>
+                        <td>${pitches[i]['inning']}</td>
+                    </tr>`
+                );
+            }
+            if (pitches[i]["ab_result"] != "") {
+                atBat = !atBat;
+            }
         }
+        
+    }
 
-        // gather data based on selections
-        var lead_runner = "";
-        var pitch_type = "";
-        var hit_spot = 0;
-        var traj = "";
-        var ab_result = "";
-        var pitch_result = "";
-
-        lead_runner_buttons.click(function(){
-            lead_runner_buttons.css('background-color', 'white').css('color', 'black')
-            $(this).css('background-color', background_red).css('color', text_white)
-            lead_runner = $(this).attr('value')
-        })
-
-        pitch_type_buttons.click(function(){
-            pitch_type_buttons.css('background-color', 'white').css('color', 'black')
-            $(this).css('background-color', background_red).css('color', text_white)
-            pitch_type = $(this).attr('value')
-
-            // only show add_pitch_button if pitch type and result are clicked
-            if (pitch_type != "" && pitch_result != "") {
-                if (balls == 3 && ab_result == "" && pitch_result == "B") {
-                    add_pitch_button.css("visibility", "hidden")
-                }
-                else if (strikes == 2 && ab_result == "" && (pitch_result == "SS" || pitch_result == "CS")){
-                    add_pitch_button.css("visibility", "hidden")
-                }
-                else if (pitch_result == "IP" && ab_result == "") {
-                    add_pitch_button.css("visibility", "hidden")
-                }
-                else {
-                    add_pitch_button.css("visibility", "visible")
-                }
+    function updateCount() {
+        // update strikes or balls variables
+        if (pitch_result == "B") {
+            balls += 1;
+        } 
+        else {
+            if (pitch_result == "F" && strikes == 2) {
+                strikes = 2;
             }
-            else {
-                add_pitch_button.css("visibility", "hidden")
-            }
-        });
-
-        hit_spot_buttons.click(function(){
-            hit_spot_buttons.css('background-color', 'white').css('color', 'black')
-            $(this).css('background-color', background_red).css('color', text_white)
-            hit_spot = $(this).attr('value')
-        })
-
-        traj_buttons.click(function(){
-            traj_buttons.css('background-color', 'white').css('color', 'black')
-            $(this).css('background-color', background_red).css('color', text_white)
-            traj = $(this).attr('value')
-        })
-
-        strikeout_buttons.click(function(){
-            strikeout_buttons.css('background-color', 'white').css('color', 'black')
-            $(this).css('background-color', background_red).css('color', text_white)
-            ab_result = $(this).attr('value')
-            if (ab_result == "") {
-                $("#ab-result").css("visibility", "visible")
-                $(".ab-results").css('background-color', 'white').css('color', 'black')
-                $('.ab-results-div').css("display", "none")
-                $('#strike-three-ab-results').css("display", "block")
-                add_pitch_button.css("visibility", "hidden")
-            }
-            else {
-                $("#ab-result").css("visibility", "hidden")
-                $(".ab-results").css('background-color', 'white').css('color', 'black')
-                $('.ab-results-div').css("display", "none")
-                $('#ip-ab-results').css("display", "block")
-                add_pitch_button.css("visibility", "visible")
-            }
-        })
-
-        bb_buttons.click(function(){
-            bb_buttons.css('background-color', 'white').css('color', 'black')
-            $(".ab-results").css('background-color', 'white').css('color', 'black')
-            $(this).css('background-color', background_red).css('color', text_white)
-            ab_result = $(this).attr('value')
-            if (ab_result == "") {
-                $("#ab-result").css('visibility', 'visible');
-                $(".ab-results-div").css('display', 'none');
-                $("#ab-results-other").css("display", "block");
-                add_pitch_button.css("visibility", "hidden")
-            }
-            else {
-                $("#ab-result").css('visibility', 'hidden');
-                $(".ab-results-div").css('display', 'none');
-                $("#ip-ab-results").css("display", "block");
-                add_pitch_button.css("visibility", "visible")
-            }
-        })
-
-        $('.out-answer').click(function(){
-            $('.out-answer').css('background-color', 'white').css('color', 'black')
-            $(this).css('background-color', background_red).css('color', text_white)
-            $('#fieldDiv').css('visibility', 'visible')
-            $('#field').css('visibility', 'visible')
-            if ($(this).attr('value') == "") {
-                $("#ab-result").css('visibility', 'visible')
-                $("#ip-ab-results").css('display', 'block')
-                add_pitch_button.css("visibility", "hidden")
-            }
-            else {
-                $("#ab-result").css('visibility', 'hidden')
-                $(".ab-results-div").css('display', 'none')
-                $('#ip-ab-results').css('display', 'block')
-                $('.ab-results').css('background-color', 'white').css('color', 'black')
-                add_pitch_button.css("visibility", "visible")
-            }
-            ab_result = $(this).attr('value')
-        })
-
-        $(".ab-results").click(function(){
-            $(".ab-results").css('background-color', 'white').css('color', 'black')
-            $(this).css('background-color', background_red).css('color', text_white)
-            ab_result = $(this).attr('value')
-
-            if (pitch_type != "" && pitch_result != "") {
-                if (balls == 3 && ab_result == "" && pitch_result == "B") {
-                    add_pitch_button.css("visibility", "hidden")
-                }
-                else if (strikes == 2 && ab_result == "" && (pitch_result == "SS" || pitch_result == "CS")){
-                    add_pitch_button.css("visibility", "hidden")
-                }
-                else if (pitch_result == "IP" && ab_result == "") {
-                    add_pitch_button.css("visibility", "hidden")
-                }
-                else if (end_ab_button.val() == "selected" && ab_result == "") {
-                    add_pitch_button.css("visibility", "hidden")
-                }
-                else {
-                    add_pitch_button.css("visibility", "visible")
-                }
-            }
-            else {
-                add_pitch_button.css("visibility", "hidden")
-            }
-        })
-
-
-        $('.prAnswer').click(function(){
-            $('.prAnswer').css('background-color', 'white').css('color', 'black')
-            abResultsReset();
-            if($(this).attr('value') == 'IP'){
-                if (pitch_result == "IP") {
-                    $(this).css('background-color', 'white').css('color', 'black');
-                    pitch_result = "";
-                }
-                else {
-                    $(this).css('background-color', background_red).css('color', text_white);
-                    $("#end-of-ab").css("display", "none");
-                    $("#out").css("display", "block");
-                    pitch_result = 'IP'
-                }
-            }
-            if($(this).attr('value') == 'F'){
-                if (pitch_result == "F") {
-                    $(this).css('background-color', 'white').css('color', 'black');
-                    pitch_result = "";
-                }
-                else {
-                    $(this).css('background-color', background_red).css('color', text_white);
-                    pitch_result = 'F'
-                }
-            }
-            if($(this).attr('value') == 'B'){
-                if (pitch_result == "B") {
-                    $(this).css('background-color', 'white').css('color', 'black');
-                    pitch_result = "";
-                    if (balls == 3) {
-                        $('#end-of-ab').css('display', 'block')
-                        $('#bb').css('display', 'none')
-                    }
-                }
-                else {
-                    $(this).css('background-color', background_red).css('color', text_white);
-                    pitch_result = 'B'
-                    if (balls == 3) {
-                        $('#end-of-ab').css('display', 'none')
-                        $('#bb').css('display', 'block')
-                    }
-                }
-            }
-            if($(this).attr('value') == 'SS'){
-                if (pitch_result == "SS") {
-                    $(this).css('background-color', 'white').css('color', 'black');
-                    pitch_result = "";
-                    if (strikes == 2) {
-                        $('#end-of-ab').css('display', 'block')
-                        $('#K').css('display', 'none')
-                    }
-                }
-                else {
-                    $(this).css('background-color', background_red).css('color', text_white);
-                    pitch_result = 'SS'
-                    if (strikes == 2) {
-                        $('#end-of-ab').css('display', 'none')
-                        $('#K').css('display', 'block')
-                    }
-                }
-            }
-            if($(this).attr('value') == 'CS'){
-                if (pitch_result == "CS") {
-                    $(this).css('background-color', 'white').css('color', 'black');
-                    pitch_result = "";
-                    if (strikes == 2) {
-                        $('#end-of-ab').css('display', 'block')
-                        $('#KL').css('display', 'none')
-                    }
-                }
-                else {
-                    $(this).css('background-color', background_red).css('color', text_white);
-                    pitch_result = 'CS'
-                    if (strikes == 2) {
-                        $('#end-of-ab').css('display', 'none')
-                        $('#KL').css('display', 'block')
-                    }
-                }
-            }
-
-            // only show add_pitch_button if both pitch type and result are clicked
-            if (pitch_type != "" && pitch_result != "") {
-                if (balls == 3 && ab_result == "" && pitch_result == "B") {
-                    add_pitch_button.css("visibility", "hidden")
-                }
-                else if (strikes == 2 && ab_result == "" && (pitch_result == "SS" || pitch_result == "CS")){
-                    add_pitch_button.css("visibility", "hidden")
-                }
-                else if (pitch_result == "IP" && ab_result == "") {
-                    add_pitch_button.css("visibility", "hidden")
-                }
-                else {
-                    add_pitch_button.css("visibility", "visible")
-                }
-            }
-            else {
-                add_pitch_button.css("visibility", "hidden")
-            }
-        })
-
-        end_ab_button.click(function(){
-            add_pitch_button.css("visibility", "hidden")
-            if (end_ab_button.val() == "") {
-                abResultsReset();
-                end_ab_button.css('background-color', background_red).css('color', text_white);
-                end_ab_button.val("selected");
-                $("#ab-result").css("visibility", "visible");
-                $(".ab-results-div").css("display", "none");
-                $("#ab-results-other").css("display", "block");
-            }
-            else {
-                abResultsReset();
-                end_ab_button.css('background-color', "white").css('color', "black");
-                end_ab_button.val("");
-            }
-
-            if (pitch_type != "" && pitch_result != "") {
-                if (balls == 3 && ab_result == "" && pitch_result == "B") {
-                    add_pitch_button.css("visibility", "hidden")
-                }
-                else if (strikes == 2 && ab_result == "" && (pitch_result == "SS" || pitch_result == "CS")){
-                    add_pitch_button.css("visibility", "hidden")
-                }
-                else if (pitch_result == "IP" && ab_result == "") {
-                    add_pitch_button.css("visibility", "hidden")
-                }
-                else if (end_ab_button.val() == "selected" && (pitch_result == "" || pitch_type == "")) {
-                    add_pitch_button.css("visibility", "hidden")
-                }
-                else {
-                    add_pitch_button.css("visibility", "visible")
-                }
-            }
-            else {
-                add_pitch_button.css("visibility", "hidden")
-            }
-        });
-
-        add_pitch_button.click(function(){
-            // get values that weren't set above
-            inning = $('#inning').val()
-            batter_id = $('#select-batter').val()
-            velocity = $('#velocity-input').val()
-            time_to_plate = $('#time-to-plate-input').val()
-            fielder = $('#select-fielder').val()
-
-            // set pitch data
-            pitchData = {
-                'batter_id': batter_id, 'velocity': velocity, 'lead_runner': lead_runner,
-                'time_to_plate': time_to_plate, 'pitch_type': pitch_type, 'pitch_result': pitch_result, 
-                'loc_x': x1, 'loc_y': y1, 'hit_spot': hit_spot, 'ab_result': ab_result, 
-                'traj': traj, 'fielder': fielder, 'spray_x': xf*1.3, 'spray_y': yf*1.3,
-                'inning': inning
-            }
-
-            pitches.push(pitchData)
-
-            addPitchToTable(pitches)
-            // clear some of the inputs
-            $('#select-fielder').val('')
-            $('#velocity-input').val('')
-            $('#time-to-plate-input').val('');
-
-            // update count
-            if (pitch_result == "B") {
-                balls += 1;
-            } 
             else {
                 strikes += 1;
             }
-
-            // reset count if ab over
-            if (ab_result != "") {
-                balls = 0;
-                strikes = 0;
-            }
-
-            // update count on page
-            $("#count").text(`${balls}-${strikes}`)
-
-            // clear some of the variables set above
-            ab_result = ""
-            pitch_type = ""
-            pitch_result = ""
-            fielder = ""
-            velocity = ""
-            traj = ""
-            time_to_plate = null
-            hit_spot = 0
-            x1, y1, xf, yf = null
-
-            // reset buttons or values that were clicked
-            $('div').not(lead_runner_buttons).not(add_pitch_button).css('background-color', 'white').css('color', 'black')
-            
-            // hide certain buttons
-            $('#ipTable').css('visibility', 'hidden')
-            $('#field').css('visibility', 'hidden')
-            $('#out').css('display', 'none')
-            $('.strikeout').css('display', 'none')
-            $("#end-of-ab").css('display', 'block')
-            $("#ab-result").css('visibility', "hidden")
-            bb_div.css('display', 'none')
-            add_pitch_button.css('visibility', 'hidden')
-            strikeout_buttons.css('background-color', 'white').css('color', 'black')
-            $('#hit-spot-no').css('background-color', background_red).css('color', text_white)
-
-            // remove circles and text from diagrams
-            svg.selectAll('circle').remove()
-            field.selectAll('circle').remove()
-            svg.selectAll('text').remove()
-
-        })
-
-        $('#finish-outing').click(function(){
-
-            outing = {
-                "pitcher": $("#pitcher").val(),
-                "date": $("#date").val(),
-                "opponent": $("#opponent").val(),
-                "season": $("#season").val()
-            }
-
-            data = {
-                outing: outing,
-                pitches: pitches
-            }
-
-            fetch("{{ url_for('api.pitch_tracker') }}",
-            {
-                method: "POST",
-                body: JSON.stringify(data),
-                headers: {"content-type": "application/json"}
-            }).then(res => res.json())
-            .then(function(response){
-                if(response.status == "failure"){
-                    console.log("Request status: failure");
-                    console.log("Error message: " + response.error);
-                    return;
-                }
-                console.log(response)
-                $('#exit-buttons').css('visibility', 'visibile').css('display', 'block')
-
-            });
-        });
-
-    });
-
-    function addPitchToTable(pitches) {
-        // empty table
-        pitch_table = $("#pitch-table > tbody");
-        pitch_table.empty();
-
-        // add headers to table
-        new_row = pitch_table.append('<tr></tr>');
-        new_row.append("<th>No.</th>");
-        new_row.append("<th>Batter</th>");
-        new_row.append("<th>Velo</th>");
-        new_row.append("<th>Lead RNR</th>");
-        new_row.append("<th>Time to Plate</th>");
-        new_row.append("<th>Pitch Type</th>");
-        new_row.append("<th>Pitch Result</th>");
-        new_row.append("<th>Hit Spot</th>");
-        new_row.append("<th>AB Result</th>");
-        new_row.append("<th>Traj</th>");
-        new_row.append("<th>Fielder</th>");
-        new_row.append("<th>Inning</th>");
-
-        // add all pitches
-        for (let i=0; i<pitches.length; i++) {
-            new_row = pitch_table.append('<tr></tr>');
-            new_row.append("<td>"+(i+1)+"</td>")
-            new_row.append("<td>"+pitches[i]["batter_id"]+"</td>")
-            new_row.append("<td>"+pitches[i]["velocity"]+"</td>")
-            new_row.append("<td>"+pitches[i]["lead_runner"]+"</td>")
-            new_row.append("<td>"+pitches[i]["time_to_plate"]+"</td>")
-            new_row.append("<td>"+pitches[i]["pitch_type"]+"</td>")
-            new_row.append("<td>"+pitches[i]["pitch_result"]+"</td>")
-            new_row.append("<td>"+pitches[i]["hit_spot"]+"</td>")
-            new_row.append("<td>"+pitches[i]["ab_result"]+"</td>")
-            new_row.append("<td>"+pitches[i]["traj"]+"</td>")
-            new_row.append("<td>"+pitches[i]["fielder"]+"</td>")
-            new_row.append("<td>"+pitches[i]["inning"]+"</td>")
         }
+
+        // reset count if at bat over
+        if (ab_result != "") {
+            balls = 0;
+            strikes = 0;
+        }
+
+        count = `${balls}-${strikes}`;
+
+        // update count on page
+        $("#count").text(count);
+        Cookies.set("balls", balls);
+        Cookies.set("strikes", strikes);
+        Cookies.set("count", count);
+    }
+
+    function updatePitchCount() {
+        $("#total-pitches").text(pitch_num);
+        Cookies.set("pitch_num", pitch_num);
+    }
+
+    function checkLogic() {
+        /**
+        * Checks to see if the "Add Pitch" button should be shown
+        */
+
+        if (pitch_type != "" && pitch_result != "") {
+            if (balls == 3 && ab_result == "" && pitch_result == "B") {
+                addPitchButton.css("visibility", "hidden");
+            }
+            else if (strikes == 2 && ab_result == "" && (pitch_result == "SS" || pitch_result == "CS")){
+                addPitchButton.css("visibility", "hidden");
+            }
+            else if (pitch_result == "IP" && ab_result == "") {
+                addPitchButton.css("visibility", "hidden");
+            }
+            else if (endAtBat == "Yes" && ab_result == "") {
+                addPitchButton.css("visibility", "hidden");
+            }
+            else {
+                addPitchButton.css("visibility", "visible");
+            }
+        }
+        else {
+            addPitchButton.css("visibility", "hidden");
+        }
+    }
+
+    function unclick(element) {
+        element.css('background-color', 'white').css('color', 'black');
+    }
+
+    function click(element) {
+        element.css('background-color', background_red).css('color', text_white);
+    }
+
+    function makeVisible(element) {
+        element.css("visibility", "visible");
+    }
+
+    function makeInvisible(element) {
+        element.css("visibility", "hidden");
+    }
+
+    function show(element) {
+        element.css("display", "block");
+    }
+
+    function hide(element) {
+        element.css("display", "none");
+    }
+
+    function deleteCookies() {
+        Cookies.remove("pitches");
+        Cookies.remove("pitch_num");
+        Cookies.remove("balls");
+        Cookies.remove("strikes");
+        Cookies.remove("count");
     }
 
 </script>

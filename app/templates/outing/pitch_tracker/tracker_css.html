@@ -39,8 +39,6 @@
     }
 
     .lead-runner {
-        border-radius: 3px;
-        border: 1px solid gray;
         text-align: center;
         font-size: 23px;
         padding-left: 7px;
@@ -50,7 +48,7 @@
         display: inline-block;
     }
 
-    #count {
+    #count, #total-pitches {
         display: inline-block;
     }
 
@@ -65,33 +63,36 @@
     #pitch-info {
         display: inline-block;
         vertical-align: top;
-        margin-top: 7px;
+        margin-top: 10px;
+    } 
+
+    .box {
+        border: 1px solid gray;
     }
 
     #hit-spot {
         vertical-align: top;
-        border: 1px solid gray;
-        padding-bottom: 4px;
+        padding-bottom: 3px;
         border-radius: 3px;
+    }
+
+    #hit-spot table {
+        width: 80%;
+        margin-left: 10%;
     }
 
     .hit-spot-answer {
-        border-radius: 3px;
-        width: 92px;
-        border: 1px solid gray;
         text-align: center;
         font-size: 26px;
+        width: 40%;
         display: inline-block;
-        margin-right: 3px;
-        margin-left: 3px;
     }
 
     #velocity {
-        border: 1px solid gray;
         border-radius: 3px;
         text-align: center;
         vertical-align: top;
-        padding-bottom: 4px;
+        padding-bottom: 3px;
     }
 
     #velocity-input {
@@ -106,11 +107,10 @@
     }
 
     #time-to-plate {
-        border: 1px solid gray;
         border-radius: 3px;
         text-align: center;
         vertical-align: top;
-        padding-bottom: 4px;
+        padding-bottom: 3px;
     }
 
     #time-to-plate-input {
@@ -122,152 +122,78 @@
 
     #pitch-result {
         vertical-align: top;
-        border: 1px solid gray;
-        padding-bottom: 4px;
-        border-radius: 3px;
+        padding-bottom: 3px;
     }
 
-    .prAnswer {
-        margin-right: 3px;
-        margin-left: 3px;
+    .pitch-result {
         display: inline-block;
-        border-radius: 3px;
-        width: 92px;
-        border: 1px solid gray;
         text-align: center;
+        width: 92px;
         font-size: 23.5px;
     }
 
-    .strikeout {
-        display: none;
-        text-align: center;
-        vertical-align: top;
-        border: 1px solid gray;
-        padding-bottom: 5px;
-        border-radius: 3px;
-        height: 67px;
+    #pitch-result table {
+        margin-left: 2%;
+        width: 96%;
     }
 
     .strikeout-answer {
         display: inline-block;
-        border-radius: 3px;
-        border: 1px solid gray;
         text-align: center;
         font-size: 20px;
-        padding-left: 7px;
-        padding-right: 7px;
         padding-top: 2px;
         padding-bottom: 2px;
-        margin-right: 3px;
-        margin-left: 3px;
+        width: 50%;
     }
 
-    #bb {
-        display: none;
+    .end-of-ab {
+        display: inline-block;
         text-align: center;
-        vertical-align: top;
-        border: 1px solid gray;
-        padding-bottom: 5px;
-        border-radius: 3px;
-        height: 67px;
+        font-size: 20px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        width: 50%;
     }
 
     .bb-answer {
         display: inline-block;
-        border-radius: 3px;
-        border: 1px solid gray;
         text-align: center;
         font-size: 20px;
-        padding-left: 7px;
-        padding-right: 7px;
-        padding-top: 2px;
-        padding-bottom: 2px;
-        margin-right: 3px;
-        margin-left: 3px;
-    }
-
-    #out {
-        display: none;
-        text-align: center;
-        vertical-align: top;
-        border: 1px solid gray;
-        padding-bottom: 5px;
-        border-radius: 3px;
-        height: 67px;
+        width: 50%;
     }
 
     .out-answer {
         display: inline-block;
-        border-radius: 3px;
         background-color: white;
-        border: 1px solid gray;
         text-align: center;
         font-size: 20px;
-        padding-left: 7px;
-        padding-right: 7px;
-        padding-top: 2px;
-        padding-bottom: 2px;
-        margin-right: 3px;
-        margin-left: 3px;
-    }
-
-    #end-of-ab {
-        text-align: center;
-        border: 1px solid gray;
-        border-radius: 3px;
-        height: 70px;
-    }
-
-    .end-of-ab {
-        border-radius: 3px;
-        background-color: white;
-        border: 1px solid gray;
-        text-align: center;
-        font-size: 20px;
-        padding-left: 7px;
-        padding-right: 7px;
-        padding-top: 2px;
-        padding-bottom: 2px;
-        margin-right: 3px;
-        margin-left: 3px;
-        margin-top: 15px;
-        vertical-align: center;
+        width: 50%;
     }
 
     #ab-result {
-        visibility: hidden;
         text-align: center;
         vertical-align: top;
-        border: 1px solid gray;
         padding-bottom: 4px;
         padding-top: 4px;
-        border-radius: 3px;
         text-align: center;
         width: 100%;
     }
 
     .ab-results {
         display: inline-block;
-        border-radius: 3px;
-        border: 1px solid gray;
         text-align: center;
         font-size: 23px;
-        padding-left: 7px;
-        padding-right: 7px;
-        padding-top: 2px;
-        padding-bottom: 2px;
-        margin-right: 3px;
-        margin-left: 3px;
+        padding-right: 10px;
+        padding-left: 10px;
     }
 
-    .pitch-type {
-        border-radius: 3px;
+    .pitch-type-text {
+        vertical-align: middle;
         width: 200px;
-        border: 1px solid gray;
-        padding-top: 16px;
         text-align: center;
-        padding-bottom: 16px;
         font-size: 30px;
+        padding-top: 15px;
+        padding-bottom: 15px;
     }
 
     .area {
@@ -290,18 +216,16 @@
     }
 
     .traj-answer {
-        border-radius: 3px;
-        border: 1px solid gray;
         text-align: center;
         font-size: 23px;
-        padding-left: 7px;
-        padding-right: 7px;
-        padding-top: 2px;
-        padding-bottom: 2px
+        padding-left: 10px;
+        padding-right: 10px;
     }
 
-    #select-fielder {
-        font-size: 18px;
+    .fielder {
+        font-size: 23px;
+        padding-left: 8px;
+        padding-right: 8px;
     }
 
     .ip-at-bat-result {
@@ -316,20 +240,31 @@
     }
 
     #add-pitch {
-        width: 450px;
-        position: relative;
-        bottom: 50px;
+        width: 457px;
         font-size: 25px;
+        position: relative;
         text-align: center;
-        border-radius: 3px;
         border: 1px solid black;
         margin-left: 10px;
         visibility: hidden;
+        margin-top: -50px;
     }
 
     #add-pitch:hover {
-        color: white;
-        background-color: lightgray;
+        box-shadow: inset 0 0 5px rgba(0,0,0,.4);
+    }
+
+    #pitch-table {
+        width: 94%;
+        text-align: center;
+        margin-left: 3%;
+        margin-right: 3%;
+    }
+
+    #pitch-table-caption {
+        text-align: center;
+        font-size: 30px;
+        color: black;
     }
 
     th, td {
@@ -340,7 +275,29 @@
         color: #f9feff;
     }
 
-    .table-headers th:hover {
-        color: #acacac;
+    .pitch-type:active, .pitch-result:active {
+        box-shadow: inset 0 0 5px rgba(0,0,0,.4);
     }
+
+    .hit-spot-answer:active, .lead-runner:active {
+        box-shadow: inset 0 0 5px rgba(0,0,0,.4);
+    }
+
+    .strikeout-answer:active, .out-answer:active {
+        box-shadow: inset 0 0 5px rgba(0,0,0,.4);
+    }
+
+    .bb-answer:active, .ab-results:active {
+        box-shadow: inset 0 0 5px rgba(0,0,0,.4);
+    }
+
+    .traj-answer:active, .end-of-ab:active {
+        box-shadow: inset 0 0 5px rgba(0,0,0,.4);
+    }
+
+    .fielder:active {
+        box-shadow: inset 0 0 5px rgba(0,0,0,.4);
+    }
+
+
 </style>
