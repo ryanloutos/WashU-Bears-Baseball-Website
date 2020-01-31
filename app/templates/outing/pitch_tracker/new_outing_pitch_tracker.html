@@ -16,33 +16,11 @@
             Pitch by Pitch Tracker
             <img class="logos" alt="WashU-Logo" src="{{ url_for('static', filename='images/WashU_Color.png') }}">
         </div>
-        <br>
-        <div style="text-align: center;">
-            {{ form.pitcher.label }}
-            {{ form.pitcher }}
-            &nbsp &nbsp
-            {{ form.date.label }}
-            {{ form.date(class='datepicker', value=date) }}
-            &nbsp &nbsp
-            {{ form.opponent.label }}
-            {{ form.opponent() }}
-            &nbsp &nbsp
-            <select id="season" name="season">
-                {% for season in all_seasons %}
-                    <option value="{{ season }}" {% if this_season.id==season.id %} selected {% endif %}>{{ season }}</option>
-                {% endfor %}
-            </select>
-            &nbsp &nbsp
-            <button id="finish-outing">Finish Outing</button>
-            <button id="reset-outing">Reset Outing</button>
-
-
-            <div id='exit-buttons' style="display: none;">
-                <button><a href="">Go to outing</a></button>
-                <button><a href="{{ url_for('main.index') }}">Go to index</a></button>
-            </div>
+        <button id="finish-outing">Finish Outing</button>
+        <div id="buttons-left">
+            <button class="exit-buttons"><a href="{{ url_for('outing.outing_home', id=outing.id) }}" style="color: black">Outing Page</a></button>
+            <button class="exit-buttons" style="margin-left: 20px;"><a href="{{ url_for('main.index') }}" style="color: black">Home Page</a></button>
         </div>
-
         <br><br>
         
         <div id="at-bat-info">
@@ -78,6 +56,9 @@
             &nbsp
             <b>Pitches: </b>
             <div id="total-pitches">0</div>
+
+            &nbsp
+            <button id="reset-outing" style="font-size: 20px; vertical-align: middle; float:right; margin-right: 50px">Reset Outing</button>
 
         </div>
         <div>

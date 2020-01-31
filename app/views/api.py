@@ -310,7 +310,7 @@ def games_in_season(season_id):
             "error": "Season id provided is invalid"
         })
 
-    games = Game.query.filter_by(season_id=season.id).all()
+    games = Game.query.filter_by(season_id=season.id).order_by(Game.date).all()
 
     # put games into jsonable format
     games_ret = []

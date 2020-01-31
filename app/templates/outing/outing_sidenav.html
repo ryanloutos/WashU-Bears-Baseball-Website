@@ -8,5 +8,6 @@
     {% if current_user.admin %}
         <a href="{{ url_for('outing.edit_outing', outing_id=outing.id) }}">Edit Outing</a>
         <a href="{{ url_for('outing.edit_outing_pitches', outing_id=outing.id) }}">Edit Pitches</a>
+        <a href="{{ url_for('outing.new_outing_pitch_tracker', id=outing.id) }}">Continue Tracking</a> 
     {% endif %}
 </div>

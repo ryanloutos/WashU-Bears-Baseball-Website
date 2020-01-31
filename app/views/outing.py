@@ -286,7 +286,7 @@ def new_outing():
 
         # redirects back to home page after outing was successfully created
         flash("New Outing Created!")
-        return redirect(url_for('outing.new_outing_pitches', outing_id=outing.id))
+        return redirect(url_for('outing.new_outing_pitch_tracker', id=outing.id))
 
     return render_template('outing/new_outing.html',
                            title='New Outing',
@@ -949,11 +949,13 @@ def outing_report(id):
     )
 
 
-@outing.route('/new_outing_pitch_tracker/',methods=['GET', 'POST'])
+@outing.route('/new_outing_pitch_tracker/<id>',methods=['GET', 'POST'])
 @login_required
-def new_outing_pitch_tracker():
+def new_outing_pitch_tracker(id):
     form=OutingForm()
     form.pitcher.choices = getAvailablePitchers()
+
+    outing = Outing.query.filter_by(id=id).first_or_404()
 
     date = datetime.date(datetime.now())
 
@@ -967,6 +969,7 @@ def new_outing_pitch_tracker():
         date=date,
         this_season=this_season,
         all_seasons=all_seasons,
+        outing=outing,
         form=form
     )
 
