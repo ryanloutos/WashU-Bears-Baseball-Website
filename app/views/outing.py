@@ -960,8 +960,8 @@ def new_outing_pitch_tracker(id):
 
     # for count and pitch count totals
     num_pitches = 0
-    balls = 0
-    strikes = 0
+    balls = 1
+    strikes = 1
 
     # to know whether to reset at bat
     current_at_bat = ""
