@@ -82,6 +82,15 @@ def batter_at_bat(batter_id, ab_num):
         flash("URL does not exist")
         return redirect(url_for('main.index'))
 
+    pitches = []
+    for p in at_bat.pitches:
+        pitches.append({
+            "pitch_num": p.pitch_num,
+            "pitch_type": p.pitch_type,
+            "x": p.loc_x,
+            "y": p.loc_y
+        })
+
     pitcher = at_bat.get_pitcher()
 
     return render_template(
@@ -89,7 +98,8 @@ def batter_at_bat(batter_id, ab_num):
         at_bat=at_bat,
         pitcher=pitcher,
         batter=batter,
-        title=batter.name
+        title=batter.name,
+        pitches=pitches
     )
 
 
@@ -423,13 +433,27 @@ def batter_game_view(batter_id, game_id):
         return redirect(url_for("main.index"))
 
     game_at_bats = []
+    pitches = []
+    pitch_index = 1
     for at_bat in batter.at_bats:
+        # if the game the at_bat is in is the same as the current game
         if at_bat.get_game() == game:
             game_at_bats.append(at_bat)
+
+            # for pitches for locations chart
+            for p in at_bat.pitches:
+                pitches.append({
+                    "pitch_num": pitch_index,
+                    "pitch_type": p.pitch_type,
+                    "x": p.loc_x,
+                    "y": p.loc_y
+                })
+                pitch_index += 1
 
     return render_template(
         "opponent/batter/batter_game_view.html",
         batter=batter,
         game=game,
-        game_at_bats=game_at_bats
+        game_at_bats=game_at_bats,
+        pitches=pitches
     )

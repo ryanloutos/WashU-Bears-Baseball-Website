@@ -78,7 +78,7 @@ def outing_home(id):
             strike_percentage_polar_data.append(p['strike_percentage'])
 
     # setup var for strike zone pitches
-    pitches = [];
+    pitches = []
 
     # setting up horizontal axis for line chart
     horizontal_axis = []
