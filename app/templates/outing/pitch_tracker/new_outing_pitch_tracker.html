@@ -18,7 +18,7 @@
         </div>
         <div id="buttons-left">
             <button class="exit-buttons"><a href="{{ url_for('outing.outing_home', id=outing.id) }}" style="color: black">Outing Page</a></button>
-            <button class="exit-buttons" style="margin-left: 20px;"><a href="{{ url_for('main.index') }}" style="color: black">Home Page</a></button>
+            <button class="exit-buttons" style="margin-left: 20px;"><a href="{{ url_for('game.game_outings', id=outing.game.id ) }}" style="color: black">Game Page</a></button>
         </div>
         <br><br>
 
