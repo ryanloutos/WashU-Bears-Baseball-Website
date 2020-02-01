@@ -8,7 +8,7 @@ from app.forms import NewOutingFromCSV, SeasonForm, OpponentForm, BatterForm
 from app.forms import OutingPitchForm, NewOutingFromCSVPitches, EditUserForm
 from app.forms import ChangePasswordForm, EditBatterForm, EditOpponentForm
 from app.forms import NewBatterForm
-from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat
+from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat, Game
 from app.stats import calcPitchPercentages, pitchUsageByCount, calcAverageVelo
 from app.stats import calcPitchStrikePercentage, calcPitchWhiffRate
 from app.stats import createPitchPercentagePieChart, velocityOverTimeLineChart
@@ -18,7 +18,7 @@ from app.stats import pitchUsageSeason, seasonStatLine, staffBasicStats
 from app.stats import staffPitcherAvgVelo, staffPitchStrikePercentage
 from app.stats import outingPitchStatistics, outingTimeToPlate, veloOverTime
 from app.stats import teamImportantStatsSeason
-from app.stats import batterSwingWhiffRatebyPitchbyCount
+from app.stats import batterSwingWhiffRatebyPitchbyCount, batter_summary_game_stats
 
 batter = Blueprint('batter', __name__)
 
@@ -374,3 +374,60 @@ def batter_stats(batter_id):
         batter=batter,
         seasons=seasons
         )
+
+
+@batter.route("/batter/<batter_id>/games", methods=["GET", "POST"])
+@login_required
+def batter_games(batter_id):
+
+    batter = Batter.query.filter_by(id=batter_id).first()
+    if not batter:
+        flash("URL does not exist")
+        return redirect(url_for('main.index'))
+
+    games = batter.get_games()
+
+    game_stats = []
+    for game in games:
+        at_bats, pitches_seen = batter_summary_game_stats(game, batter)
+        game_stats.append({
+            "game": game,
+            "stats": {
+                "ab": at_bats,
+                "pitches": pitches_seen
+            }
+        })
+
+    return render_template(
+        "opponent/batter/batter_games.html",
+        batter=batter,
+        games=games,
+        game_stats=game_stats
+    )
+
+
+@batter.route("/batter/<batter_id>/game/<game_id>")
+@login_required
+def batter_game_view(batter_id, game_id):
+
+    batter = Batter.query.filter_by(id=batter_id).first()
+    if not batter:
+        flash("URL does not exist")
+        return redirect(url_for('main.index'))
+
+    game = Game.query.filter_by(id=game_id).first()
+    if not game:
+        flash("URL does not exist")
+        return redirect(url_for("main.index"))
+
+    game_at_bats = []
+    for at_bat in batter.at_bats:
+        if at_bat.get_game() == game:
+            game_at_bats.append(at_bat)
+
+    return render_template(
+        "opponent/batter/batter_game_view.html",
+        batter=batter,
+        game=game,
+        game_at_bats=game_at_bats
+    )

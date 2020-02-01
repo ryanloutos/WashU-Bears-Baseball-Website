@@ -4,6 +4,11 @@ body {
     border: 10pt solid #bd2e1f;
 }
 
+.default-selections {
+    background-color: #bd2e1f; 
+    color: #f9feff;
+}
+
 #page-title {
     font-size: 50px;
     text-align: center;
@@ -34,7 +39,6 @@ body {
 
 .lead-runner {
     border-radius: 3px;
-    background-color: white;
     border: 1px solid gray;
     text-align: center;
     font-size: 23px;
@@ -69,7 +73,6 @@ body {
 .hit-spot-answer {
     border-radius: 3px;
     width: 92px;
-    background-color: white;
     border: 1px solid gray;
     text-align: center;
     font-size: 26px;
@@ -125,7 +128,6 @@ body {
     display: inline-block;
     border-radius: 3px;
     width: 92px;
-    background-color: white;
     border: 1px solid gray;
     text-align: center;
     font-size: 23.5px;
@@ -169,7 +171,6 @@ body {
 .bb-or-hbp-answer {
     display: inline-block;
     border-radius: 3px;
-    background-color: white;
     border: 1px solid gray;
     text-align: center;
     font-size: 20px;
@@ -182,11 +183,11 @@ body {
 }
 
 #out {
-    display: block;
+    display: none;
     text-align: center;
     vertical-align: top;
     border: 1px solid gray;
-    padding-bottom: 3px;
+    padding-bottom: 5px;
     border-radius: 3px;
     height: 67px;
 }
@@ -207,7 +208,7 @@ body {
 }
 
 #ab-result-other {
-    display: none;
+    visibility: hidden;
     text-align: center;
     vertical-align: top;
     border: 1px solid gray;
@@ -221,7 +222,6 @@ body {
 .ab-result-other {
     display: inline-block;
     border-radius: 3px;
-    background-color: white;
     border: 1px solid gray;
     text-align: center;
     font-size: 23px;
@@ -236,7 +236,6 @@ body {
 .pitch-type {
     border-radius: 3px;
     width: 200px;
-    background-color: white;
     border: 1px solid gray;
     padding-top: 16px;
     text-align: center;
@@ -247,7 +246,6 @@ body {
 .area {
     border-radius: 3px;
     width: 200px;
-    background-color: white;
     text-align: center;
     font-size: 23px;
 }
@@ -266,7 +264,6 @@ body {
 
 .traj-answer {
     border-radius: 3px;
-    background-color: white;
     border: 1px solid gray;
     text-align: center;
     font-size: 23px;
@@ -282,7 +279,6 @@ body {
 
 .ip-at-bat-result {
     border-radius: 3px;
-    background-color: white;
     border: 1px solid gray;
     text-align: center;
     font-size: 23px;
@@ -306,4 +302,16 @@ body {
 #Add:hover {
     color: white;
     background-color: lightgray;
+}
+
+th, td {
+    text-align: center;
+}
+.table-headers {
+    background-color: #bd2e1f;
+    color: #f9feff;
+}
+
+.table-headers th:hover {
+    color: #acacac;
 }

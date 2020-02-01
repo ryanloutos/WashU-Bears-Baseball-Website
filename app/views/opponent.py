@@ -8,7 +8,7 @@ from app.forms import NewOutingFromCSV, SeasonForm, OpponentForm, BatterForm
 from app.forms import OutingPitchForm, NewOutingFromCSVPitches, EditUserForm
 from app.forms import ChangePasswordForm, EditBatterForm, EditOpponentForm
 from app.forms import NewBatterForm
-from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat
+from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat, Game
 from app.stats import calcPitchPercentages, pitchUsageByCount, calcAverageVelo
 from app.stats import calcPitchStrikePercentage, calcPitchWhiffRate
 from app.stats import createPitchPercentagePieChart, velocityOverTimeLineChart
@@ -17,7 +17,7 @@ from app.stats import pitchUsageByCountLineCharts, pitchStrikePercentageSeason
 from app.stats import pitchUsageSeason, seasonStatLine, staffBasicStats
 from app.stats import staffPitcherAvgVelo, staffPitchStrikePercentage
 from app.stats import outingPitchStatistics, outingTimeToPlate, veloOverTime
-from app.stats import teamImportantStatsSeason
+from app.stats import teamImportantStatsSeason, stats_opponent_scouting_stats
 
 # Handle CSV uploads
 import csv
@@ -78,18 +78,23 @@ def opponent_games_results(id):
     )
 
 
-@opponent.route("/opponent/<id>/ScoutingStats", methods=["GET", "POST"])
+@opponent.route("/opponent/<opponent_id>/ScoutingStats", methods=["GET", "POST"])
 @login_required
-def opponent_scouting_stats(id):
-    opponent = Opponent.query.filter_by(id=id).first()
+def opponent_scouting_stats(opponent_id):
+
+    opponent = Opponent.query.filter_by(id=opponent_id).first()
     if not opponent:
         flash("URL does not exist")
         return redurect(url_for('main.index'))
 
+    pitch_usage_count, swing_whiff_rate = stats_opponent_scouting_stats(opponent)
+
     return render_template(
         '/opponent/opponent_ScoutingStats.html',
         title=opponent,
-        opponent=opponent
+        opponent=opponent,
+        pitch_usage_count=pitch_usage_count, 
+        swing_whiff_rate=swing_whiff_rate
     )
 
 

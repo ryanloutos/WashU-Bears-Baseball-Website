@@ -2,685 +2,10 @@
 
 {% block styles %}
     {{ super() }}
-    <style>
-        @import url('https://fonts.googleapis.com/css?family=Exo:100,200,300,400,500,600,700,800');
-        body {
-            font-family: 'Exo';
-            border: 10pt solid #bd2e1f;
-        }
-
-        #page-title {
-            font-size: 50px;
-            text-align: center;
-            font-weight: bold;
-        }
-
-        .logos {
-            width: 100px;
-            height: auto;
-            vertical-align: bottom;
-            padding-top: 5px;
-        }
-
-        #at-bat-info {
-            font-size: 25px;
-        }
-
-        #select-batter {
-            margin-left: 10px;
-            font-size: 25px;
-        }
-
-        #inning {
-            margin-left: 10px;
-            font-size: 25px;
-            width: 45px;
-        }
-
-        .lead-runner {
-            border-radius: 3px;
-            background-color: white;
-            border: 1px solid gray;
-            text-align: center;
-            font-size: 23px;
-            padding-left: 7px;
-            padding-right: 7px;
-            padding-top: 2px;
-            padding-bottom: 2px;
-            display: inline-block;
-        }
-
-        #pitch-location {
-            display: inline-block;
-        }
-
-        .plot {
-            border: 1px solid black;
-        }
-
-        #pitch-info {
-            display: inline-block;
-            vertical-align: top;
-            margin-top: 7px;
-        }
-
-        #hit-spot {
-            vertical-align: top;
-            border: 1px solid gray;
-            padding-bottom: 4px;
-            border-radius: 3px;
-        }
-
-        .hit-spot-answer {
-            border-radius: 3px;
-            width: 92px;
-            background-color: white;
-            border: 1px solid gray;
-            text-align: center;
-            font-size: 26px;
-            display: inline-block;
-            margin-right: 3px;
-            margin-left: 3px;
-        }
-
-        #velocity {
-            border: 1px solid gray;
-            border-radius: 3px;
-            text-align: center;
-            vertical-align: top;
-            padding-bottom: 4px;
-        }
-
-        #velocity-input {
-            text-align: center;
-            font-size: 21px;
-            margin-left: 2%;
-            width: 98%;
-        }
-
-        .txt-velo-ttp {
-            font-size: 26px;
-        }
-
-        #time-to-plate {
-            border: 1px solid gray;
-            border-radius: 3px;
-            text-align: center;
-            vertical-align: top;
-            padding-bottom: 4px;
-        }
-
-        #time-to-plate-input {
-            text-align: center;
-            font-size: 21px;
-            margin-left: 2%;
-            width: 98%;
-        }
-
-        #pitch-result {
-            vertical-align: top;
-            border: 1px solid gray;
-            padding-bottom: 4px;
-            border-radius: 3px;
-        }
-
-        .prAnswer {
-            margin-right: 3px;
-            margin-left: 3px;
-            display: inline-block;
-            border-radius: 3px;
-            width: 92px;
-            background-color: white;
-            border: 1px solid gray;
-            text-align: center;
-            font-size: 23.5px;
-        }
-
-        .strikeout {
-            display: none;
-            text-align: center;
-            vertical-align: top;
-            border: 1px solid gray;
-            padding-bottom: 5px;
-            border-radius: 3px;
-            height: 67px;
-        }
-
-        .strikeout-answer {
-            display: inline-block;
-            border-radius: 3px;
-            background-color: white;
-            border: 1px solid gray;
-            text-align: center;
-            font-size: 20px;
-            padding-left: 7px;
-            padding-right: 7px;
-            padding-top: 2px;
-            padding-bottom: 2px;
-            margin-right: 3px;
-            margin-left: 3px;
-        }
-
-        #bb-or-hbp {
-            display: none;
-            text-align: center;
-            vertical-align: top;
-            border: 1px solid gray;
-            padding-bottom: 5px;
-            border-radius: 3px;
-            height: 67px;
-        }
-
-        .bb-or-hbp-answer {
-            display: inline-block;
-            border-radius: 3px;
-            background-color: white;
-            border: 1px solid gray;
-            text-align: center;
-            font-size: 20px;
-            padding-left: 7px;
-            padding-right: 7px;
-            padding-top: 2px;
-            padding-bottom: 2px;
-            margin-right: 3px;
-            margin-left: 3px;
-        }
-
-        #out {
-            display: none;
-            text-align: center;
-            vertical-align: top;
-            border: 1px solid gray;
-            padding-bottom: 5px;
-            border-radius: 3px;
-            height: 67px;
-        }
-
-        .out-answer {
-            display: inline-block;
-            border-radius: 3px;
-            background-color: white;
-            border: 1px solid gray;
-            text-align: center;
-            font-size: 20px;
-            padding-left: 7px;
-            padding-right: 7px;
-            padding-top: 2px;
-            padding-bottom: 2px;
-            margin-right: 3px;
-            margin-left: 3px;
-        }
-
-        #ab-result-other {
-            visibility: hidden;
-            text-align: center;
-            vertical-align: top;
-            border: 1px solid gray;
-            padding-bottom: 4px;
-            padding-top: 4px;
-            border-radius: 3px;
-            text-align: center;
-            width: 100%;
-        }
-
-        .ab-result-other {
-            display: inline-block;
-            border-radius: 3px;
-            background-color: white;
-            border: 1px solid gray;
-            text-align: center;
-            font-size: 23px;
-            padding-left: 7px;
-            padding-right: 7px;
-            padding-top: 2px;
-            padding-bottom: 2px;
-            margin-right: 3px;
-            margin-left: 3px;
-        }
-
-        .pitch-type {
-            border-radius: 3px;
-            width: 200px;
-            background-color: white;
-            border: 1px solid gray;
-            padding-top: 16px;
-            text-align: center;
-            padding-bottom: 16px;
-            font-size: 30px;
-        }
-
-        .area {
-            border-radius: 3px;
-            width: 200px;
-            background-color: white;
-            text-align: center;
-            font-size: 23px;
-        }
-
-        #fieldDiv {
-            display: inline-block;
-            visibility: hidden;
-            vertical-align: top;
-            margin-top: 7px;
-        }
-
-        #field {
-            border: 1px solid black;
-            border-radius: 3px;
-        }
-
-        .traj-answer {
-            border-radius: 3px;
-            background-color: white;
-            border: 1px solid gray;
-            text-align: center;
-            font-size: 23px;
-            padding-left: 7px;
-            padding-right: 7px;
-            padding-top: 2px;
-            padding-bottom: 2px
-        }
-
-        #select-fielder {
-            font-size: 18px;
-        }
-
-        .ip-at-bat-result {
-            border-radius: 3px;
-            background-color: white;
-            border: 1px solid gray;
-            text-align: center;
-            font-size: 23px;
-            padding-left: 7px;
-            padding-right: 7px;
-            padding-top: 2px;
-            padding-bottom: 2px
-        }
-
-        #Add {
-            width: 450px;
-            position: relative;
-            bottom: 75px;
-            font-size: 25px;
-            text-align: center;
-            border-radius: 3px;
-            border: 1px solid black;
-            margin-left: 10px;
-        }
-
-        #Add:hover {
-            color: white;
-            background-color: lightgray;
-        }
-
-        th, td {
-            text-align: center;
-        }
-        .table-headers {
-            background-color: #bd2e1f;
-            color: #f9feff;
-        }
-        
-        .table-headers th:hover {
-            color: #acacac;
-        }
-
-    </style>
+    {% include "outing/pitch_tracker/tracker_css.html" %}
     <script src="https://d3js.org/d3.v5.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
-    <script>
-        var pitches = [];
-
-        document.addEventListener('DOMContentLoaded', function() {
-            // set up the field 
-            var field = d3.select("#field")
-            width = +field.attr('width')
-            height = +field.attr('height')
-            x1 = null
-            y1 = null
-            xf = null
-            yf = null
-            g1 = field.append('g').attr('transform', 'translate(0,95)')
-            field.append("svg:image")
-            .attr('x', 0)
-            .attr('y', 0)
-            .attr('width', 435)
-            .attr('height', 430)
-            .attr('transform', 'translate(17,17)')
-            .style('alignment-baseline', 'middle')
-            .attr("xlink:href", "{{ url_for('static', filename='images/field.png') }}")
-
-            // set up the location tracker
-            var svg = d3.select("#main")
-            margin = {top: 10, right: 10, bottom: 10, left: 20}
-            width = +svg.attr('width')
-            height = +svg.attr('height')
-            g = svg.append('g').attr('transform', null)
-            svg.style('background-color', 'white').style('border', '1px solid black').style('margin', '10px')
-
-            var xScale = d3.scaleLinear().range([width, 0]).domain([2,-2])
-            var yScale = d3.scaleLinear().range([height, 0]).domain([0,4])
-            var xScalef = d3.scaleLinear().range([width, 0]).domain([250,-250])
-            var yScalef = d3.scaleLinear().range([height, 0]).domain([-100,400])
-
-            function drawCircle(x, y) {
-                svg.append('circle')
-                .attr('class', 'click-circle')
-                .attr('cx', x)
-                .attr('cy', y)
-                .attr('r', '8')
-                .style('fill', 'red')
-            }
-
-            g.append('path')
-            .attr('id', 'zone')
-            .attr(
-                'd', 'M ' + xScale(-.833) + ',' + yScale(1.75) + ' L ' + xScale(-.833) + ',' + yScale(3.4) + ' L ' +
-                xScale(.833) + ',' + yScale(3.4) + ' L ' + xScale(.833) + ','  + yScale(1.75) + ' L ' + xScale(-.833) +  ',' + yScale(1.75)
-                + 'M' + xScale(0) + ',' + yScale(0.2) + 'L' + xScale(-.843) + ',' + yScale(0.4) + 'L'  + xScale(-.833) + ',' + yScale(0.6) + 'L' +
-                xScale(.833)+ ',' + yScale(0.6) + 'L' + xScale(.843) + ',' + yScale(0.4) + 'L' + xScale(0) + ',' + yScale(0.2)
-            )
-            .style('stroke', 'black')
-            .style('fill', 'none')
-            .style('stroke-width', 2)
-            
-            // move or place circle on chart
-            svg.on('click', function() {
-                svg.selectAll('circle').remove()
-                svg.selectAll('text').remove()
-                var local = d3.mouse(this)
-
-                drawCircle(local[0], local[1])
-                x1 = Math.round(xScale.invert(local[0])*100,3)/100
-                y1 = Math.round(yScale.invert(local[1])*100,3)/100
-                svg.append('text')
-                    .attr('y', yScale(3.8))
-                    .attr('x', xScale(1.8))
-                    .style('text-anchor', 'end')
-                    .style('font-size', '16px')
-                    .text('(' + Math.round(xScale.invert(local[0])*100)/100 + ', ' + y1 + ')');
-                $('#btn').show
-            });
-
-            // move or place circle on chart
-            field.on('click', function(){
-                field.selectAll('circle').remove()
-                var local = d3.mouse(this)
-                field.append('circle')
-                .attr('class', 'click-circle1')
-                .attr('cx', local[0])
-                .attr('cy', local[1])
-                .attr('r', '8')
-                .style('fill', 'navy')
-                xf = Math.round(xScalef.invert(local[0])*100,3)/100
-                yf = Math.round(yScalef.invert(local[1])*100,3)/100
-                $('.bipType').css('display', 'block')
-                if (ab_result=="IP->Out") {
-                    $('#ip-at-bat-result').css('display', 'none')
-                }
-                else {
-                    $('#ip-at-bat-result').css('display', 'block')
-                }
-            });
-
-            // gather data based on selections
-            var pitch_type = ''
-            $('.pitch-type').click(function(){
-                $('.pitch-type').css('background-color', 'white').css('color', 'black')
-                $(this).css('background-color', 'navy').css('color', 'white')
-                pitch_type = $(this).attr('value')
-            })
-
-            var hit_spot = 0
-            $('.hit-spot-answer').click(function(){
-                $('.hit-spot-answer').css('background-color', 'white').css('color', 'black')
-                $(this).css('background-color', 'navy').css('color', 'white')
-                hit_spot = $(this).attr('value')
-            })
-
-            var traj = ''
-            $('.traj-answer').click(function(){
-                $('.traj-answer').css('background-color', 'white').css('color', 'black')
-                $(this).css('background-color', 'navy').css('color', 'white')
-                $('#outDiv').css('visibility', 'visible')
-                $('#fielderDiv').css('display', 'block')
-                traj = $(this).attr('value')
-            })
-
-            var ab_result = ''
-            $('.strikeout-answer').click(function(){
-                $('.strikeout-answer').css('background-color', 'white').css('color', 'black')
-                $(this).css('background-color', 'navy').css('color', 'white')
-                ab_result = $(this).attr('value')
-            })
-
-            $('.bb-or-hbp-answer').click(function(){
-                $('.bb-or-hbp-answer').css('background-color', 'white').css('color', 'black')
-                $(this).css('background-color', 'navy').css('color', 'white')
-                ab_result = $(this).attr('value')
-            })
-
-            $('.out-answer').click(function(){
-                $('.out-answer').css('background-color', 'white').css('color', 'black')
-                $(this).css('background-color', 'navy').css('color', 'white')
-                $('#fieldDiv').css('visibility', 'visible')
-                $('#field').css('visibility', 'visible')
-                if ($(this).attr('value') == "") {
-                    $("#ab-result-other").css('visibility', 'visible')
-                    $('.ip-at-bat-result').css('display', 'block')
-                }
-                else {
-                    $("#ab-result-other").css('visibility', 'hidden')
-                    $('.ip-at-bat-result').css('display', 'none')
-                    $('.ip-at-bat-result').css('background-color', 'white').css('color', 'black')
-                }
-                ab_result = $(this).attr('value')
-            })
-
-            $(".ab-result-other").click(function(){
-                $(".ab-result-other").css('background-color', 'white').css('color', 'black')
-                $('.ip-at-bat-result').css('background-color', 'white').css('color', 'black')
-                $(this).css('background-color', 'navy').css('color', 'white')
-                ab_result = $(this).attr('value')
-            })
-
-            $('.ip-at-bat-result').click(function(){
-                $('.ip-at-bat-result').css('background-color', 'white').css('color', 'black')
-                $(".ab-result-other").css('background-color', 'white').css('color', 'black')
-                $(this).css('background-color', 'navy').css('color', 'white')
-                ab_result = $(this).attr('value')
-            })
-
-            var pitch_result = ''
-            $('.prAnswer').click(function(){
-                $('.prAnswer').css('background-color', 'white').css('color', 'black')
-                $(this).css('background-color', 'navy').css('color', 'white')
-                if($(this).attr('value') == 'IP'){
-                    $('#fieldDiv').css('visibility', 'hidden')
-                    $('#field').css('visibility', 'hidden')
-                    $('#ipTable').css('visibility', 'visible')
-                    $('#K').css('display', 'none')
-                    $('#KL').css('display', 'none')
-                    $('#bb-or-hbp').css('display', 'none')
-                    $('#out').css('display', 'block')
-                    pitch_result = 'IP'
-                }
-                if($(this).attr('value') == 'F'){
-                    $('#fieldDiv').css('visibility', 'hidden')
-                    $('#ipTable').css('visibility', 'hidden')
-                    $('#K').css('display', 'none')
-                    $('#KL').css('display', 'none')
-                    $('#bb-or-hbp').css('display', 'none')
-                    $('#out').css('display', 'none')
-                    pitch_result = 'F'
-                }
-                if($(this).attr('value') == 'B'){
-                    $('#bb-or-hbp').css('display', 'block')
-                    $('#K').css('display', 'none')
-                    $('#KL').css('display', 'none')
-                    $('#fieldDiv').css('visibility', 'hidden')
-                    $('#ipTable').css('visibility', 'hidden')
-                    $('#out').css('display', 'none')
-                    pitch_result = 'B'
-                }
-                if($(this).attr('value') == 'SS'){
-                    $('#bb-or-hbp').css('display', 'none')
-                    $('#K').css('display', 'block')
-                    $('#KL').css('display', 'none')
-                    $('#fieldDiv').css('visibility', 'hidden')
-                    $('#ipTable').css('visibility', 'hidden')
-                    $('#out').css('display', 'none')
-                    pitch_result = $(this).attr('value')
-                }
-                if($(this).attr('value') == 'CS'){
-                    $('#bb-or-hbp').css('display', 'none')
-                    $('#K').css('display', 'none')
-                    $('#KL').css('display', 'block')
-                    $('#fieldDiv').css('visibility', 'hidden')
-                    $('#ipTable').css('visibility', 'hidden')
-                    $('#out').css('display', 'none')
-                    pitch_result = $(this).attr('value')
-                }
-            })
-
-            var lead_runner = ''
-            $('.lead-runner').click(function(){
-                $('.lead-runner').css('background-color', 'white').css('color', 'black')
-                $(this).css('background-color', 'navy').css('color', 'white')
-                lead_runner = $(this).attr('value')
-            })
-
-            $('#Add').click(function(){
-                // get some more pitch values
-                inning = $('#inning').val()
-                fielder = $('#select-fielder').val()
-                batter_id = $('#select-batter').val()
-                velocity = $('#velocity-input').val()
-                time_to_plate = $('#time-to-plate-input').val()
-
-                // set pitch data
-                pitchData = {
-                    'batter_id': batter_id, 'velocity': velocity, 'lead_runner': lead_runner,
-                    'time_to_plate': time_to_plate, 'pitch_type': pitch_type, 'pitch_result': pitch_result, 
-                    'loc_x': x1, 'loc_y': y1, 'hit_spot': hit_spot, 'ab_result': ab_result, 
-                    'traj': traj, 'fielder': fielder, 'spray_x': xf*1.3, 'spray_y': yf*1.3,
-                    'inning': inning
-                }
-
-                pitches.push(pitchData)
-
-                addPitchToTable(pitches)
-                // clear some of the inputs
-                $('#select-fielder').val('')
-                $('#velocity-input').val('')
-                $('#time-to-plate-input').val('');
-
-                // clear some of the variables set above
-                ab_result = ""
-                pitch_type = ""
-                pitch_result = ""
-                fielder = ""
-                velocity = ""
-                traj = ""
-                time_to_plate = null
-                hit_spot = 0
-                x1, y1, xf, yf = null
-
-                // reset buttons or values that were clicked
-                $('div').not('.lead-runner').not('#Add').css('background-color', 'white').css('color', 'black')
-                
-                // hide certain buttons
-                $('#ipTable').css('visibility', 'hidden')
-                $('#field').css('visibility', 'hidden')
-                $('#ab-result-other').css('visibility', 'hidden')
-                $('#fielderDiv').css('display', 'none')
-                $('#out').css('display', 'none')
-                $('.strikeout').css('display', 'none')
-                $('#bb-or-hbp').css('display', 'none')
-                $('.strikeout-answer').css('background-color', 'white').css('color', 'black')
-                $('.strikeout-no').css('background-color', 'navy').css('color', 'white')
-                $('#hit-spot-no').css('background-color', 'navy').css('color', 'white')
-
-                // remove circles and text from diagrams
-                svg.selectAll('circle').remove()
-                field.selectAll('circle').remove()
-                svg.selectAll('text').remove()
-
-            })
-
-            $('#finish-outing').click(function(){
-
-                outing = {
-                    "pitcher": $("#pitcher").val(),
-                    "date": $("#date").val(),
-                    "opponent": $("#opponent").val(),
-                    "season": $("#season").val()
-                }
-
-                data = {
-                    outing: outing,
-                    pitches: pitches
-                }
-
-                fetch("{{ url_for('api.pitch_tracker') }}",
-                {
-                    method: "POST",
-                    body: JSON.stringify(data),
-                    headers: {"content-type": "application/json"}
-                }).then(res => res.json())
-                .then(function(response){
-                    if(response.status == "failure"){
-                        console.log("Request status: failure");
-                        console.log("Error message: " + response.error);
-                        return;
-                    }
-                    console.log(response)
-                    $('#exit-buttons').css('visibility', 'visibile').css('display', 'block')
-
-                });
-            });
-
-        });
-
-        function addPitchToTable(pitches) {
-            // empty table
-            pitch_table = $("#pitch-table > tbody");
-            pitch_table.empty();
-
-            // add headers to table
-            new_row = pitch_table.append('<tr></tr>');
-            new_row.append("<th>No.</th>");
-            new_row.append("<th>Batter</th>");
-            new_row.append("<th>Velo</th>");
-            new_row.append("<th>Lead RNR</th>");
-            new_row.append("<th>Time to Plate</th>");
-            new_row.append("<th>Pitch Type</th>");
-            new_row.append("<th>Pitch Result</th>");
-            new_row.append("<th>Hit Spot</th>");
-            new_row.append("<th>AB Result</th>");
-            new_row.append("<th>Traj</th>");
-            new_row.append("<th>Fielder</th>");
-            new_row.append("<th>Inning</th>");
-
-            // add all pitches
-            for (let i=0; i<pitches.length; i++) {
-                new_row = pitch_table.append('<tr></tr>');
-                new_row.append("<td>"+(i+1)+"</td>")
-                new_row.append("<td>"+pitches[i]["batter_id"]+"</td>")
-                new_row.append("<td>"+pitches[i]["velocity"]+"</td>")
-                new_row.append("<td>"+pitches[i]["lead_runner"]+"</td>")
-                new_row.append("<td>"+pitches[i]["time_to_plate"]+"</td>")
-                new_row.append("<td>"+pitches[i]["pitch_type"]+"</td>")
-                new_row.append("<td>"+pitches[i]["pitch_result"]+"</td>")
-                new_row.append("<td>"+pitches[i]["hit_spot"]+"</td>")
-                new_row.append("<td>"+pitches[i]["ab_result"]+"</td>")
-                new_row.append("<td>"+pitches[i]["traj"]+"</td>")
-                new_row.append("<td>"+pitches[i]["fielder"]+"</td>")
-                new_row.append("<td>"+pitches[i]["inning"]+"</td>")
-            }
-        }
-
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@beta/dist/js.cookie.min.js"></script>
 {% endblock %}
 
 {% block content %}
@@ -691,31 +16,11 @@
             Pitch by Pitch Tracker
             <img class="logos" alt="WashU-Logo" src="{{ url_for('static', filename='images/WashU_Color.png') }}">
         </div>
-        <br>
-        <div style="text-align: center;">
-            {{ form.pitcher.label }}
-            {{ form.pitcher }}
-            &nbsp &nbsp
-            {{ form.date.label }}
-            {{ form.date(class='datepicker', value=date) }}
-            &nbsp &nbsp
-            {{ form.opponent.label }}
-            {{ form.opponent() }}
-            &nbsp &nbsp
-            <select id="season" name="season">
-                {% for season in all_seasons %}
-                    <option value="{{ season }}" {% if this_season.id==season.id %} selected {% endif %}>{{ season }}</option>
-                {% endfor %}
-            </select>
-            &nbsp &nbsp
-            <button id="finish-outing">Finish Outing</button>
-
-            <div id='exit-buttons' style="display: none;">
-                <button><a href="">Go to outing</a></button>
-                <button><a href="{{ url_for('main.index') }}">Go to index</a></button>
-            </div>
+        <button id="finish-outing">Finish Outing</button>
+        <div id="buttons-left">
+            <button class="exit-buttons"><a href="{{ url_for('outing.outing_home', id=outing.id) }}" style="color: black">Outing Page</a></button>
+            <button class="exit-buttons" style="margin-left: 20px;"><a href="{{ url_for('main.index') }}" style="color: black">Home Page</a></button>
         </div>
-
         <br><br>
         
         <div id="at-bat-info">
@@ -735,35 +40,58 @@
             &nbsp
             
             <b>Lead Runner: </b>
-            <div value='1' class="lead-runner">1B</div>
-            <div value='2' class="lead-runner">2B</div>
-            <div value='3' class="lead-runner">3B</div>
-            <div value='' class="lead-runner" style='background-color:navy; color:white;'>None</div>
+            <table style="display: inline-block; vertical-align: bottom;">
+                <tr>
+                    <td style="border-right:hidden" value="1" class="lead-runner box">1B</td>
+                    <td style="border-right:hidden" value="2" class="lead-runner box">2B</td>
+                    <td style="border-right:hidden" value="3" class="lead-runner box">3B</td>
+                    <td value='' class="lead-runner box default-selections">None</td>
+                </tr>
+            </table>
+
+            &nbsp
+            <b>Count: </b>
+            <div id="count">0-0</div>
+
+            &nbsp
+            <b>Pitches: </b>
+            <div id="total-pitches">0</div>
+
+            &nbsp
+            <button id="reset-outing" style="font-size: 20px; vertical-align: middle; float:right; margin-right: 50px">Reset Outing</button>
 
         </div>
         <div>
             <div id="pitch-location">
-                <svg id='main' class=plot height='457' width='457'></svg>
+                <svg id='strikezone' class=plot height='457' width='457'></svg>
             </div>
             
             <table id="pitch-info">
                 <tr>
-                    <td>
-                        <div value=1 class="pitch-type"><span class=ptText>4-Seam</span></div>
+                    <td value=1 class="pitch-type box">
+                        <div class="pitch-type-text"><span class=ptText>4-Seam</span></div>
                     </td>
-                    <td>
+                    <td class="box">
                         <div id="hit-spot">
                             <div class=area><span class=ptText>Hit Spot</span></div>
-                            <div value=1 class="hit-spot-answer"><span class=ptText>Yes</span></div>
-                            <div value=0 class="hit-spot-answer" id="hit-spot-no" style='background-color:navy; color:white;'><span class=ptText>No</span></div>
+                            <table>
+                                <tr>
+                                    <td value=1 class="hit-spot-answer box">
+                                        <span class=ptText>Yes</span>
+                                    </td>
+                                    <td value=0 class="hit-spot-answer box default-selections" id="hit-spot-no" style="border-left:hidden">
+                                        <span class=ptText>No</span>
+                                    </td>
+                                </tr>
+                            </table>
                         </div>
                     </td>
                 </tr>
                 <tr>
-                    <td>
-                        <div value=7 class="pitch-type"><span class=ptText>2-Seam</span></div>
+                    <td value=7 class="pitch-type box">
+                        <div class="pitch-type-text"><span class=ptText>2-Seam</span></div>
                     </td>
-                    <td>
+                    <td class="box">
                         <div id="velocity">
                             <div class="area">
                                 <span class="txt-velo-ttp">Velocity</span>
@@ -773,10 +101,10 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>
-                        <div value=2 class="pitch-type"><span class=ptText>Curveball</span></div>
+                    <td value=2 class="pitch-type box">
+                        <div class="pitch-type-text"><span class=ptText>Curveball</span></div>
                     </td>
-                    <td>
+                    <td class="box">
                         <div id="time-to-plate">
                             <div class="area"><span class="txt-velo-ttp">Time to Plate</span>
                                 <input id="time-to-plate-input" type="number" step='.01'>
@@ -785,32 +113,32 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>
-                        <div value=3 class="pitch-type"><span class=ptText>Slider</span></div>
+                    <td value=3 class="pitch-type box">
+                        <div class="pitch-type-text"><span class=ptText>Slider</span></div>
                     </td>
-                    <td rowspan=2>
+                    <td class="box" rowspan=2>
                         <div id="pitch-result">
                             <div class=area><span class=ptText>Pitch Result</span></div>
                             <table>
                                 <tr>
-                                    <td>
-                                        <div value='SS' class='prAnswer'><span class=ptText>SS</span></div>
+                                    <td value='SS' class='pitch-result box' style="border-bottom:hidden;">
+                                        <div><span class=ptText>SS</span></div>
                                     </td>
-                                    <td>
-                                        <div value='CS' class='prAnswer'><span class=ptText>CS</span></div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div value='F' class='prAnswer'><span class=ptText>Foul</span></div>
-                                    </td>
-                                    <td>
-                                        <div value='B' class='prAnswer'><span class=ptText>Ball</span></div>
+                                    <td value='CS' class='pitch-result box' style="border-left:hidden; border-bottom:hidden;">
+                                        <div><span class=ptText>CS</span></div>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td colspan=2>
-                                        <div value='IP' class='prAnswer' style='width: 96%;'><span class=ptText>In Play</span></div>
+                                    <td value='F' class='pitch-result box'>
+                                        <div><span class=ptText>Foul</span></div>
+                                    </td>
+                                    <td value='B' class='pitch-result box' style="border-left:hidden;">
+                                        <div><span class=ptText>Ball</span></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td value='IP' class='pitch-result box' style='width: 96%; border-top:hidden' colspan=2>
+                                        <div><span class=ptText>In Play</span></div>
                                     </td>
                                 </tr>
                             </table>
@@ -818,124 +146,159 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>
-                        <div value=4 class="pitch-type"><span class=ptText>Change</span></div>
+                    <td value=4 class="pitch-type box">
+                        <div class="pitch-type-text"><span class=ptText>Change</span></div>
                     </td>
                 </tr>
                 <tr>
-                    <td>
-                        <div value=5 class="pitch-type"><span class=ptText>Cutter</span></div>
+                    <td value=5 class="pitch-type box">
+                        <div class="pitch-type-text"><span class=ptText>Cutter</span></div>
                     </td>
-                    <td>
-                        <div class="strikeout" id="K">
-                            <div class=area style='width:100%'>Strikeout?</div>
-                            <div value="K" class="strikeout-answer"><span class=ptText>Yes</span></div>
-                            <div value="" class="strikeout-answer strikeout-no" style='background-color:navy; color:white;'><span class=ptText>No</span></div>
+                    <td class="box">
+                        <div value="" id="end-of-ab" style="display: block">
+                            <div class=area style='width:100%'>End of AB</div>
+                            <table style="width: 50%; margin-left: 25%">
+                                <tr>
+                                    <td value="Yes" class="end-of-ab box"><span class=ptText>Yes</span></td>
+                                    <td value="No" style="border-left:hidden" id="end-ab-no" class="end-of-ab default-selections box"><span class=ptText>No</span></td>
+                                </tr>
+                            </table>
                         </div>
-                        <div class="strikeout" id="KL">
-                            <div class=area style='width:100%'>Strikeout?</div>
-                            <div value="KL" class="strikeout-answer"><span class=ptText>Yes</span></div>
-                            <div value="" class="strikeout-answer strikeout-no" style='background-color:navy; color:white;'><span class=ptText>No</span></div>
+                        <div class="strikeout" id="K" style="display: none">
+                            <div class=area style='width:100%'>K?</div>
+                            <table style="width: 50%; margin-left: 25%">
+                                <tr>
+                                    <td value="K" class="strikeout-answer box"><span class=ptText>Yes</span></td>
+                                    <td value="" style="border-left:hidden" class="strikeout-answer strikeout-no box"><span class=ptText>No</span></td>
+                                </tr>
+                            </table>
                         </div>
-                        <div id="bb-or-hbp">
-                            <div class=area style='width:100%'>BB or HBP?</div>
-                            <div value='BB' class="bb-or-hbp-answer"><span class=ptText>BB</span></div>
-                            <div value='HBP' class="bb-or-hbp-answer"><span class=ptText>HBP</span></div>
+                        <div class="strikeout" id="KL" style="display: none">
+                            <div class=area style='width:100%'>KL?</div>
+                            <table style="width: 50%; margin-left: 25%">
+                                <tr>
+                                    <td value="KL" class="strikeout-answer box"><span class=ptText>Yes</span></td>
+                                    <td value="" style="border-left:hidden" class="strikeout-answer strikeout-no box"><span class=ptText>No</span></td>
+                                </tr>
+                            </table>
                         </div>
-                        <div id="out">
-                            <div class=area style='width:100%'>Out at first?</div>
-                            <div value='IP->Out' class="out-answer"><span class=ptText>Yes</span></div>
-                            <div value='' id="out-answer-no" class="out-answer"><span class=ptText>No</span></div>
+                        <div id="bb" style="display: none">
+                            <div class=area style="width:100%;">BB?</div>
+                            <table style="width: 50%; margin-left: 25%">
+                                <tr>
+                                    <td value='BB' class="bb-answer box"><span class=ptText>Yes</span></td>
+                                    <td value='' style="border-left:hidden" class="bb-answer box"><span class=ptText>No</span></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div id="out" style="display: none;">
+                            <div class=area style="width:100%;">IP->Out?</div>
+                            <table style="width: 50%; margin-left: 25%">
+                                <tr>
+                                    <td value='IP->Out' class="out-answer box"><span class=ptText>Yes</span></td>
+                                    <td value='' style="border-left:hidden" id="out-answer-no" class="out-answer box"><span class=ptText>No</span></td>        
+                                </tr>
+                            </table>
                         </div>
                     </td>
                 </tr>
-                <tr>
-                    <td colspan=2>
-                        <div id="ab-result-other">
-                            <div class=area style='width:100%'>Other AB Results</div>
-                            <div value='D3->Out' class="ab-result-other"><span class=ptText>D3->Out</span></div>
-                            <div value='D3->Safe' class="ab-result-other"><span class=ptText>D3->Safe</span></div>
-                            <div value='CI' class="ab-result-other"><span class=ptText>CI</span></div>
-                            <div value='Other' class="ab-result-other"><span class=ptText>Other</span></div>
+                <tr rowspan=2>
+                    <td colspan=2 class="box" id="ab-result" style="visibility: hidden;">
+                        <div>
+                            <div class=area style='width:100%'>AB Results</div>
+                        </div>
+                        <div class="ab-results-div" id="ip-ab-results">
+                            <table style="width: 100%;">
+                                <tr>
+                                    <td style="border-right:hidden" class="ab-results box" value="1B">1B</td>
+                                    <td style="border-right:hidden" class="ab-results box" value="2B">2B</td>
+                                    <td style="border-right:hidden" class="ab-results box" value="3B">3B</td>
+                                    <td style="border-right:hidden" class="ab-results box" value="HR">HR</td>
+                                    <td style="border-right:hidden" class="ab-results box" value="FC">FC</td>
+                                    <td class="ab-results box" value="Error">Error</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="ab-results-div" id="strike-three-ab-results" style="display: none;">
+                            <table style="width: 100%;">
+                                <tr>
+                                    <td style="border-right:hidden" value='D3->Out' class="ab-results box"><span class=ptText>D3->Out</span></td>
+                                    <td style="border-right:hidden" value='D3->Safe' class="ab-results box"><span class=ptText>D3->Safe</span></td>
+                                    <td value='Other' class="ab-results box"><span class=ptText>Other</span></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="ab-results-div" id="ab-results-other" style="display: none;">
+                            <table style="width: 100%;">
+                                <tr>
+                                    <td style="border-right:hidden" value='HBP' class="ab-results box"><span class=ptText>HBP</span></td>
+                                    <td style="border-right:hidden" value='CI' class="ab-results box"><span class=ptText>CI</span></td>
+                                    <td value='Other' class="ab-results box"><span class=ptText>Other</span></div>
+                                </tr>
+                            </table>
                         </div>
                     </td>
                 </tr>
             </table>
-            <div id=fieldDiv>
+            <div id=fieldDiv style="visibility: hidden;">
                 <svg id='field' height='457' width='457'></svg>
-                <table id=ipTable>
-                    <tr class='bipType' style="display: none">
+                <table id="in-play-info-table" style="margin-top: -6px; margin-left: 10px;">
+                    <tr class='bipType'>
                         <td>
-                            <div class=traj-answer value=GB>GB</div>
+                            <table>
+                                <caption style="font-size: 18px; text-align: center; color: black; margin-bottom: -5px; margin-top: -5px">Trajectory</caption>
+                                <tr>
+                                    <td class="traj-answer box" value=GB>GB</td>
+                                    <td class="traj-answer box" value=FB>FB</td>
+                                    <td class="traj-answer box" value=LD>LD</td>
+                                </tr>
+                            </table>
                         </td>
-                        <td>
-                            <div class=traj-answer value=FB>FB</div>
-                        </td>
-                        <td>
-                            <div class=traj-answer value=LD>LD</div>
-                        </td>
-                        <td colspan=2>
-                            <div id=fielderDiv style='display: none'>
-                                &nbsp
-                                <b>Fielder: </b>
-                                <select id="select-fielder" size=1>
-                                    <option class=fielder value="">--</option>
-                                    <option class=fielder value="1">1</option>
-                                    <option class=fielder value="2">2</option>
-                                    <option class=fielder value="3">3</option>
-                                    <option class=fielder value="4">4</option>
-                                    <option class=fielder value="5">5</option>
-                                    <option class=fielder value="6">6</option>
-                                    <option class=fielder value="7">7</option>
-                                    <option class=fielder value="8">8</option>
-                                    <option class=fielder value="9">9</option>
-                                </select>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr id="ip-at-bat-result" style="display: none">
-                        <td>
-                            <div class="ip-at-bat-result" value="1B">1B</div>
-                        </td>
-                        <td>
-                            <div class="ip-at-bat-result" value="2B">2B</div>
-                        </td>
-                        <td>
-                            <div class="ip-at-bat-result" value="3B">3B</div>
-                        </td>
-                        <td>
-                            <div class="ip-at-bat-result" value="HR">HR</div>
-                        </td>
-                        <td>
-                            <div class="ip-at-bat-result" value="Error">Error</div>
-                        </td>
-                        <td>
-                            <div class="ip-at-bat-result" value="FC">FC</div>
+                        <td style="padding-left: 20px;">
+                            <table>
+                                <caption style="font-size: 18px; text-align: center; color: black; margin-bottom: -5px; margin-top: -5px">Fielder</caption>
+                                <tr>
+                                    <td class="fielder box" value="1">1</td>
+                                    <td class="fielder box" value="2">2</td>
+                                    <td class="fielder box" value="3">3</td>
+                                    <td class="fielder box" value="4">4</td>
+                                    <td class="fielder box" value="5">5</td>
+                                    <td class="fielder box" value="6">6</td>
+                                    <td class="fielder box" value="7">7</td>
+                                    <td class="fielder box" value="8">8</td>
+                                    <td class="fielder box" value="9">9</td>
+                                </tr>
+                            </table>
                         </td>
                     </tr>
                 </table>
-            </div>
-            <div id="Add">
-                Add pitch
+                
             </div>
         </div>
+        <div id="add-pitch">
+            Add pitch
+        </div>
+        <br><br><br>
         <div>
             <table class="table" id="pitch-table">
-                <tr>
+                <caption id="pitch-table-caption">Pitch by Pitch Table</caption>
+                <tr class="table-headers">
                     <th>No.</th>
                     <th>Batter</th>
-                    <td>Velo</td>
-                    <td>Lead RNR</td>
-                    <td>Time to Plate</td>
-                    <td>Pitch Type</td>
-                    <td>Pitch Result</td>
-                    <td>Hit Spot?</td>
-                    <td>AB Result</td>
-                    <td>Traj</td>
-                    <td>Fielder</td>
-                    <td>Inning</td>
+                    <th>Velo</th>
+                    <th>Lead RNR</th>
+                    <th>Time to Plate</th>
+                    <th>Pitch Type</th>
+                    <th>Pitch Result</th>
+                    <th>Hit Spot?</th>
+                    <th>AB Result</th>
+                    <th>Traj</th>
+                    <th>Fielder</th>
+                    <th>Inning</th>
                 </tr>
             </table>
         </div>
-    </div class="main">
+    </div>
+    <br><br><br><br><br><br>
+    {% include "outing/pitch_tracker/tracker_js.html" %}
 {% endblock %}

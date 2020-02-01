@@ -8,6 +8,24 @@
 {% block app_content %}
     {% include "opponent/opponent_sidenav.html" %}
     <div class="main">
-        <h1>Game/Result Support Coming Soon!</h1>
+        <h1>{{ opponent }} - Games</h1>
+        <div>
+            <table class="table">
+                <tr class="table-headers">
+                    <th>Date</th>
+                    <th>Season</th>
+                    <th># of Pitchers</th>
+                    <th>View</th>
+                </tr>
+                {% for game in opponent.games %}
+                <tr>
+                    <td>{{ game.date }}</td>
+                    <td>{{ game.get_season() }}</td>
+                    <td>{{ game.get_num_outings() }}</td>
+                    <td><a href="{{ url_for('game.game_outings', id=game.id) }}">View Me</a></td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
     </div>
 {% endblock %}
