@@ -990,6 +990,8 @@ def new_outing_pitch_tracker(id):
     balls = 1
     strikes = 1
 
+    inning = 1
+
     # to know whether to reset at bat
     current_at_bat = ""
 
