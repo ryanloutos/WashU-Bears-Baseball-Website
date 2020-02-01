@@ -39,28 +39,20 @@
             .style('stroke', 'black')
             .style('fill', 'none')
             .style('stroke-width', 2);
-        
-
-        // if somewhere is clicked on the chart, delete all old circles and place new one
-        zone.on('click', function() {
-            zone.selectAll('circle').remove();
-            zone.selectAll('text').remove();
-            var local = d3.mouse(this);
-
-            drawCircle(local[0], local[1]);
-            loc_x = Math.round(xScale.invert(local[0])*100,3)/100;
-            loc_y = Math.round(yScale.invert(local[1])*100,3)/100;
-            zone.append('text')
-                .attr('y', yScale(3.8))
-                .attr('x', xScale(1.8))
-                .style('text-anchor', 'end')
-                .style('font-size', '16px')
-                .text('(' + Math.round(xScale.invert(local[0])*100)/100 + ', ' + loc_y + ')');
-            $('#btn').show;
-        });
 
         // Adds a circle to the strikezone at the (x,y) given
-        function drawCircle(x, y, pitch_type="") {
+        function drawCircle(x, y, pitch_type="", pitch_num="") {
+
+            // Set colors for pitch types
+            let pitch_colors = {
+                "1": 'rgb(230, 25, 75)',
+                "2": 'rgb(0, 130, 200)',
+                "3": 'rgb(0, 200, 0)',
+                "4": 'rgb(200, 200, 0)',
+                "5": 'rgb(0, 200, 200)',
+                "7": 'rgb(255, 128, 0)',
+                "": 'rgb(0,0,0)'
+            };
 
             // adds the circle to the strikezone
             zone.append('circle')
@@ -68,7 +60,7 @@
                 .attr('cx', xScale(x))
                 .attr('cy', yScale(y))
                 .attr('r', '8')
-                .style('fill', "#bd2e1f");
+                .style('fill', pitch_colors[pitch_type]);
 
             // Adds pitch type text to circle
             zone.append('text')
@@ -76,10 +68,10 @@
                 .attr('x', xScale(x))
                 .attr('y', yScale(y))
                 .attr('dy', 5)
-                .attr('font-size', '10pt')
+                .attr('font-size', '9pt')
                 .attr('text-anchor', 'middle')
                 .attr('fill', 'black')
-                .text(pitch_type);
+                .text(pitch_num);
 
         }
 
@@ -88,7 +80,7 @@
         
         pitches.forEach(function(pitch){
             if(pitch.x != null || pitch.y != null){
-                drawCircle(pitch.x, pitch.y, pitch_type=pitch.pitch_type);
+                drawCircle(pitch.x, pitch.y, pitch_type=pitch.pitch_type, pitch.pitch_num);
             }
         });
     });
@@ -116,7 +108,7 @@
                         ]
                     },{
                         label: 'SM',
-                        borderColor: 'rgb(0, 128, 128)',
+                        borderColor: 'rgb(255, 128, 0)',
                         backgroundColor: 'rgba(0, 0, 0, 0)',
                         pointRadius: 2,
                         lineTension: 0,
@@ -193,7 +185,7 @@
                         ],
                         backgroundColor: [
                             'rgb(230, 25, 75)',
-                            'rgb(0, 128, 128)',
+                            'rgb(255, 128, 0)',
                             'rgb(0, 130, 200)',
                             'rgb(0, 200, 0)',
                             'rgb(200, 200, 0)',
@@ -235,7 +227,7 @@
                         ],
                         backgroundColor: [
                             'rgb(230, 25, 75)',
-                            'rgb(0, 128, 128)',
+                            'rgb(255, 128, 0)',
                             'rgb(0, 130, 200)',
                             'rgb(0, 200, 0)',
                             'rgb(200, 200, 0)',
