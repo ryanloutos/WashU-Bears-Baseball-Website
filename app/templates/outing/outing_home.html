@@ -5,6 +5,132 @@
     <script src="{{ url_for('static', filename='js/sortable_table.js') }}"></script>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidenav.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <!-- D3 Plugins -->
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@beta/dist/js.cookie.min.js"></script>
+    <script>// Script holding the D3.js pitch location tracker
+    document.addEventListener("DOMContentLoaded", function(){
+    
+        var zone = d3.select("#strikezone");
+
+        // Set colors for pitch types ----- make universal var at some point
+        let pitch_colors = {
+            "1": 'rgb(230, 25, 75)',
+            "2": 'rgb(0, 130, 200)',
+            "3": 'rgb(0, 200, 0)',
+            "4": 'rgb(200, 200, 0)',
+            "5": 'rgb(0, 200, 200)',
+            "7": 'rgb(255, 128, 0)'
+        };
+
+        // setup legend variables
+        var zone_legend = d3.select("#strikezone-legend");
+        g_legend = zone_legend.append('g').attr('transform', null);
+        g_legend.append('text')
+            .attr('class', 'legend-text')
+            .attr('font-size', '14pt')
+            .attr('fill', 'black')
+            .attr('x', 10)
+            .attr('y', 50)
+            .text("Pitch Types:");
+
+        var x_index = 0;
+        for(var color in pitch_colors){
+            // setup legend circle
+            g_legend.append('circle')
+                .attr('class', 'legend-circle')
+                .attr('r', '8')
+                .attr('cy', 50)
+                .attr('cx', 145+x_index)
+                .attr('fill', pitch_colors[color]);
+            // setup legend text
+            g_legend.append('text')
+                .attr('class', 'legend-text')
+                .attr('font-size', "9pt")
+                .attr('fill', 'black')
+                .attr('y', 50)
+                .attr('dy', 5)
+                .attr('x', 145+x_index)
+                .attr('text-anchor', 'middle')
+                .text(color);
+            
+            x_index += 20;
+        }
+       
+
+
+        // set up the zone location tracker variables
+        margin = {top: 10, right: 10, bottom: 10, left: 20};
+        width = +zone.attr('width');
+        height = +zone.attr('height');
+        g = zone.append('g').attr('transform', null);
+        zone.style('background-color', 'white').style('border', '1px solid black').style('margin', '10px');
+
+        // setup variables for drawing strikezone appearance
+        var xScale = d3.scaleLinear().range([width, 0]).domain([2,-2]);
+        var yScale = d3.scaleLinear().range([height, 0]).domain([0,4]);
+        var xScalef = d3.scaleLinear().range([width, 0]).domain([250,-250]);
+        var yScalef = d3.scaleLinear().range([height, 0]).domain([-100,400]);
+
+        // draw the appearance of the strikezone
+        g.append('path')
+            .attr('id', 'zone')
+            .attr(
+                'd', 'M ' + xScale(-.833) + ',' + yScale(1.75) + ' L ' + xScale(-.833) + ',' + yScale(3.4) + ' L ' +
+                xScale(.833) + ',' + yScale(3.4) + ' L ' + xScale(.833) + ','  + yScale(1.75) + ' L ' + xScale(-.833) +  ',' + yScale(1.75)
+                + 'M' + xScale(0) + ',' + yScale(0.2) + 'L' + xScale(-.843) + ',' + yScale(0.4) + 'L'  + xScale(-.833) + ',' + yScale(0.6) + 'L' +
+                xScale(.833)+ ',' + yScale(0.6) + 'L' + xScale(.843) + ',' + yScale(0.4) + 'L' + xScale(0) + ',' + yScale(0.2)
+            )
+            .style('stroke', 'black')
+            .style('fill', 'none')
+            .style('stroke-width', 2);
+
+        // Adds a circle to the strikezone at the (x,y) given
+        function drawCircle(x, y, pitch_type="", pitch_num="") {
+
+            // Set colors for pitch types
+            let pitch_colors = {
+                "1": 'rgb(230, 25, 75)',
+                "2": 'rgb(0, 130, 200)',
+                "3": 'rgb(0, 200, 0)',
+                "4": 'rgb(200, 200, 0)',
+                "5": 'rgb(0, 200, 200)',
+                "7": 'rgb(255, 128, 0)',
+                "": 'rgb(0,0,0)'
+            };
+
+            // adds the circle to the strikezone
+            zone.append('circle')
+                .attr('class', 'click-circle')
+                .attr('cx', xScale(x))
+                .attr('cy', yScale(y))
+                .attr('r', '8')
+                .style('fill', pitch_colors[pitch_type]);
+
+            // Adds pitch type text to circle
+            zone.append('text')
+                .attr('class', 'pitch-circle-text')
+                .attr('x', xScale(x))
+                .attr('y', yScale(y))
+                .attr('dy', 5)
+                .attr('font-size', '9pt')
+                .attr('text-anchor', 'middle')
+                .attr('fill', 'black')
+                .text(pitch_num);
+
+        }
+
+        // get pitches data from server
+        var pitches = {{ pitches|tojson }};
+        
+        pitches.forEach(function(pitch){
+            if(pitch.x != null || pitch.y != null){
+                drawCircle(pitch.x, pitch.y, pitch_type=pitch.pitch_type, pitch.pitch_num);
+            }
+        });
+    });
+    </script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             var ctx = document.getElementById('velo-over-time').getContext('2d');
@@ -28,7 +154,7 @@
                         ]
                     },{
                         label: 'SM',
-                        borderColor: 'rgb(0, 128, 128)',
+                        borderColor: 'rgb(255, 128, 0)',
                         backgroundColor: 'rgba(0, 0, 0, 0)',
                         pointRadius: 2,
                         lineTension: 0,
@@ -105,7 +231,7 @@
                         ],
                         backgroundColor: [
                             'rgb(230, 25, 75)',
-                            'rgb(0, 128, 128)',
+                            'rgb(255, 128, 0)',
                             'rgb(0, 130, 200)',
                             'rgb(0, 200, 0)',
                             'rgb(200, 200, 0)',
@@ -147,7 +273,7 @@
                         ],
                         backgroundColor: [
                             'rgb(230, 25, 75)',
-                            'rgb(0, 128, 128)',
+                            'rgb(255, 128, 0)',
                             'rgb(0, 130, 200)',
                             'rgb(0, 200, 0)',
                             'rgb(200, 200, 0)',
@@ -270,9 +396,16 @@
         <br><br> 
         <br><br>
         <br><br> 
+        <div id="pitch-location" style="text-align: center;">
+            <h4 style="text-align: center;">Pitch Locations</h4>
+            <p>The color of the circle represents the type of pitch that was thrown. The number inside the circle
+                represents the pitch number of the pitch.</p>
+            <svg id='strikezone-legend' class=chart height='70' width='457' align='center'></svg>
+            <br>
+            <svg id='strikezone' class=plot height='457' width='457' align='center'></svg>
+        </div>
         <div>
-        
         <br>
-    </div>
+        </div>
     </div>
 {% endblock %}
