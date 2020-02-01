@@ -16,12 +16,17 @@
             Pitch by Pitch Tracker
             <img class="logos" alt="WashU-Logo" src="{{ url_for('static', filename='images/WashU_Color.png') }}">
         </div>
-        <button id="finish-outing">Finish Outing</button>
         <div id="buttons-left">
             <button class="exit-buttons"><a href="{{ url_for('outing.outing_home', id=outing.id) }}" style="color: black">Outing Page</a></button>
             <button class="exit-buttons" style="margin-left: 20px;"><a href="{{ url_for('main.index') }}" style="color: black">Home Page</a></button>
         </div>
         <br><br>
+
+        <div id="outing-info"> 
+            {{ outing }}
+        </div>
+
+        <br>
         
         <div id="at-bat-info">
             
@@ -30,13 +35,14 @@
 
             &nbsp
 
+            {#
             <b>Batter: </b>
             <select id="select-batter" size='1'>
                 {% for batter in batters %}
                     <option value={{ batter.id }}>{{ batter }}</option>
                 {% endfor %}
             </select>
-            
+            #}
             &nbsp
             
             <b>Lead Runner: </b>
@@ -45,7 +51,7 @@
                     <td style="border-right:hidden" value="1" class="lead-runner box">1B</td>
                     <td style="border-right:hidden" value="2" class="lead-runner box">2B</td>
                     <td style="border-right:hidden" value="3" class="lead-runner box">3B</td>
-                    <td value='' class="lead-runner box default-selections">None</td>
+                    <td value='' class="lead-runner box">None</td>
                 </tr>
             </table>
 
@@ -57,10 +63,18 @@
             <b>Pitches: </b>
             <div id="total-pitches">0</div>
 
-            &nbsp
-            <button id="reset-outing" style="font-size: 20px; vertical-align: middle; float:right; margin-right: 50px">Reset Outing</button>
-
         </div>
+        <br>
+        <div>
+            <table id="batters">
+                <tr>
+                    {% for batter in batters %}
+                        <td class="batters" value={{ batter.id }}>{{ batter.name }}</td>
+                    {% endfor %}
+                </tr>
+            </table>
+        </div>
+        <br>
         <div>
             <div id="pitch-location">
                 <svg id='strikezone' class=plot height='457' width='457'></svg>

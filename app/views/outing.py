@@ -1,4 +1,4 @@
-from flask import Blueprint
+from flask import Blueprint, make_response
 from flask import render_template, flash, redirect, url_for, request
 from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.urls import url_parse
@@ -19,7 +19,7 @@ from app.stats import staffPitcherAvgVelo, staffPitchStrikePercentage
 from app.stats import outingPitchStatistics, outingTimeToPlate, veloOverTime
 from app.stats import teamImportantStatsSeason
 from datetime import datetime
-
+import json
 # Handle CSV uploads
 import csv
 import os
@@ -952,25 +952,103 @@ def outing_report(id):
 @outing.route('/new_outing_pitch_tracker/<id>',methods=['GET', 'POST'])
 @login_required
 def new_outing_pitch_tracker(id):
-    form=OutingForm()
-    form.pitcher.choices = getAvailablePitchers()
-
+    
     outing = Outing.query.filter_by(id=id).first_or_404()
 
-    date = datetime.date(datetime.now())
+    # to hold all the pitches from outing to be displayed in table
+    pitches = []
 
-    this_season = Season.query.filter_by(current_season = 1).first()
-    all_seasons = Season.query.all()
+    # for count and pitch count totals
+    num_pitches = 0
+    balls = 0
+    strikes = 0
 
-    batters = Batter.query.filter_by(opponent_id=1).all()
+    # to know whether to reset at bat
+    current_at_bat = ""
+
+    # in case of in middle of at bat
+    current_batter = ""
+    lead_runner = ""
+
+    # looks through all pitches and set variables accordingly
+    for at_bat in outing.at_bats:
+
+        # set the current at bat (last one is the only one that matters)
+        current_at_bat = at_bat.id
+
+        for p in at_bat.pitches:
+
+            num_pitches += 1
+
+            # add pitch to array
+            pitch = {
+                "batter_id": p.batter_id,
+                "velocity": p.velocity,
+                "lead_runner": p.lead_runner,
+                "time_to_plate": p.time_to_plate,
+                "pitch_type": p.pitch_type,
+                "pitch_result": p.pitch_result,
+                "loc_x": p.loc_x,
+                "loc_y": p.loc_y,
+                "hit_spot": p.hit_spot,
+                "ab_result": p.ab_result,
+                "traj": p.traj,
+                "fielder": p.fielder,
+                "spray_x": p.spray_x,
+                "spray_y": p.spray_y,
+                "inning": p.inning
+            }
+            pitches.append(pitch)
+
+            # update count based on pitch result
+            count = p.count.split("-")
+            balls = int(count[0])
+            strikes = int(count[1])
+            if p.pitch_result == "B":
+                balls += 1
+            elif p.pitch_result == "F" and strikes == 2:
+                strikes = 2
+            else:
+                strikes += 1
+
+            # send the current_batter back to tracker
+            current_batter = p.batter_id
+            lead_runner = p.lead_runner
+
+            # if the at bat was over, alter variables
+            if p.ab_result != "":
+                balls = 1
+                strikes = 1
+                current_at_bat = ""
+                current_batter = ""
+                lead_runner = ""
+
+
+    # clean up pitch data info for javascript
+    for key, val in enumerate(pitches):
+        if val in ["", None]:
+            pitches[key] = ""
+        elif val == True:
+            pitches[key] = 1
+        elif val == False:
+            pitches[key] = 0
+        else:
+            pitches[key] = val
+
+    # set the batters associated with the opponent
+    batters = Batter.query.filter_by(opponent_id=outing.opponent_id).all()
+
     return render_template(
         "outing/pitch_tracker/new_outing_pitch_tracker.html",
         batters=batters,
-        date=date,
-        this_season=this_season,
-        all_seasons=all_seasons,
         outing=outing,
-        form=form
+        pitches=pitches,
+        num_pitches=num_pitches,
+        balls=balls,
+        strikes=strikes,
+        at_bat=current_at_bat,
+        batter=current_batter,
+        lead_runner=lead_runner
     )
 
 
