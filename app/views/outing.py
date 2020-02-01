@@ -77,13 +77,26 @@ def outing_home(id):
             pitch_usage_pie_data.append(p['num_thrown'])
             strike_percentage_polar_data.append(p['strike_percentage'])
 
+    # setup var for strike zone pitches
+    pitches = [];
+
     # setting up horizontal axis for line chart
     horizontal_axis = []
     i = 1
     for ab in outing.at_bats:
         for p in ab.pitches:
+            # line chart
             horizontal_axis.append(i)
             i += 1
+
+            # strike zone append
+            pitches.append({
+                "pitch_num": p.pitch_num,
+                "pitch_type": p.pitch_type,
+                "x": p.loc_x,
+                "y": p.loc_y
+            })
+
 
     velos = veloOverTime(outing)
 
@@ -100,7 +113,8 @@ def outing_home(id):
         pitch_usage_pie_data=pitch_usage_pie_data,
         pitch_usage_pie_labels=pitch_usage_pie_labels,
         strike_percentage_polar_labels=strike_percentage_polar_labels,
-        strike_percentage_polar_data=strike_percentage_polar_data
+        strike_percentage_polar_data=strike_percentage_polar_data,
+        pitches=pitches
     )
 
 # ***************-OUTING PBP-*************** #
