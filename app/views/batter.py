@@ -389,14 +389,16 @@ def batter_games(batter_id):
 
     game_stats = []
     for game in games:
-        at_bats, pitches_seen = batter_summary_game_stats(game, batter)
-        game_stats.append({
-            "game": game,
-            "stats": {
-                "ab": at_bats,
-                "pitches": pitches_seen
-            }
-        })
+        # line here for some weird error with appending games ending in None
+        if game is not None:
+            at_bats, pitches_seen = batter_summary_game_stats(game, batter)
+            game_stats.append({
+                "game": game,
+                "stats": {
+                    "ab": at_bats,
+                    "pitches": pitches_seen
+                }
+            })
 
     return render_template(
         "opponent/batter/batter_games.html",

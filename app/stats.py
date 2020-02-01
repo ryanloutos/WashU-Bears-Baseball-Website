@@ -1806,7 +1806,7 @@ scouting/stats page. Combined so loop processing must only occur once.
                         if pitch.pitch_result in ["SS"]:
                             swing_whiff_rate_new[PitchType(pitch.pitch_type).name][pitch.count]["whiffs"] += 1
 
-    print(swing_whiff_rate_new)
+    # print(swing_whiff_rate_new)
 
     # Usage rate calc
     for pitch_type, pitch_vals in pitches_per_count.items():

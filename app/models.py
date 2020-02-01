@@ -221,8 +221,8 @@ class AtBat(db.Model):
 
     def get_game(self):
         outing = Outing.query.filter_by(id=self.outing_id).first()
-        print(outing)
         return outing.get_game()
+
 
 @login.user_loader
 def load_user(id):
