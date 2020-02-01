@@ -451,6 +451,10 @@ def edit_outing_pitches(outing_id):
             balls = 1
             strikes = 1
             count = f'{balls}-{strikes}'
+        elif opponent.id == 1:
+            balls = 1
+            strikes = 1
+            count = f'{balls}-{strikes}'
         else:
             balls = 0
             strikes = 0
@@ -1036,7 +1040,7 @@ def new_outing_pitch_tracker(id):
             pitches[key] = val
 
     # set the batters associated with the opponent
-    batters = Batter.query.filter_by(opponent_id=outing.opponent_id).all()
+    batters = Batter.query.filter_by(opponent_id=outing.opponent_id).filter_by(retired = 0).all()
 
     return render_template(
         "outing/pitch_tracker/new_outing_pitch_tracker.html",
@@ -1140,7 +1144,10 @@ def validate_CSV(file_loc):
 
 def updateCount(balls, strikes, pitch_result, ab_result, season):
     if ab_result is not '':
-        if (season.semester == 'Fall'):
+        if (season.semester == 'Spring' and season.year == "2020"):
+            balls = 1
+            strikes = 1
+        elif season.semester == 'Fall':
             balls = 1
             strikes = 1
         else:
