@@ -5,7 +5,15 @@
 
     // update pitch nums
     var pitch_num = {{ num_pitches }};
-    $("#total-pitches").text(pitch_num);
+    // pitches by inning
+    var pitchCountInning = {};
+    {% if inning == "" %}
+        var inning = 1;
+    {% else %}
+        var inning = {{ inning }};
+    {% endif %}
+    setPitchCountInning();
+    $("#total-pitches").text(`${pitch_num} (${pitchCountInning[inning]})`);
 
     // set the atBat id if present
     var atBat = "";
@@ -35,7 +43,7 @@
     var ab_result = "";
     var traj = "";
     var fielder = "";
-    var inning = "";
+    var hit_hard = 0;
     var endAtBat = "No";
 
     // the color scheme used for when a button is clicked
@@ -69,6 +77,7 @@
     var resetOutingButton = $("#reset-outing");
     var exitButtons = $(".exit-buttons");
     var fielderButtons = $(".fielder");
+    var hitHardButtons = $(".hit-hard");
 
     // setting up inputs for other types of inputs
     var inningInput = $("#inning");
@@ -119,6 +128,14 @@
         if (button.attr("value") == lead_runner) {
             click(button);
         }
+    });
+
+    inningInput.val(inning);
+
+    /********************- INNING -********************/
+    inningInput.change(function() {
+        value = inningInput.val();
+        $("#total-pitches").text(`${pitch_num} (${pitchCountInning[value]})`);
     });
 
     /********************- BATTER -********************/
@@ -270,7 +287,15 @@
         button = $(this);
         unclick(fielderButtons);
         click(button);
-        fielder = button.attr('value');
+        fielder = button.attr("value");
+    });
+
+    /********************- HIT HARD -********************/
+    hitHardButtons.click(function(){
+        button = $(this);
+        unclick(hitHardButtons);
+        click(button);
+        hit_hard = button.attr("value");
     });
 
     /********************- K/KL -********************/
@@ -403,12 +428,13 @@
             'time_to_plate': time_to_plate, 'pitch_type': pitch_type, 'pitch_result': pitch_result, 
             'loc_x': loc_x, 'loc_y': loc_y, 'hit_spot': hit_spot, 'ab_result': ab_result, 
             'traj': traj, 'fielder': fielder, 'spray_x': spray_x*1.3, 'spray_y': spray_y*1.3,
-            'inning': inning
+            'hit_hard': hit_hard, 'inning': inning
         };
 
         // append dictionary to pitches array
         pitches.push(pitchData);
         pitch_num += 1;
+        pitchCountInning[pitchData['inning']] += 1
 
         // add pitch to table at bottom of page
         updatePitchTable();
@@ -433,6 +459,7 @@
         ab_result = "";
         traj = "";
         fielder = "";
+        hit_hard = 0;
         loc_x = "";
         loc_y = "";
         spray_x = "";
@@ -449,10 +476,13 @@
         unclick(walkButtons);
         unclick(abResultButtons);
         unclick(outButtons);
+        unclick(hitHardButtons);
+        unclick(fielderButtons);
 
         // hide certain buttons and divs
         makeInvisible(addPitchButton);
         makeInvisible(fieldDiv);
+        makeInvisible(field);
         makeInvisible(ballFlightInfoTable);
         makeInvisible(abResultBox);
         hide(outDiv);
@@ -470,11 +500,6 @@
         fieldD3.selectAll('circle').remove();
 
     });
-
-    /********************- RESET OUTING -********************/
-    resetOutingButton.click(function(){
-        window.location.reload();
-    })
 
     /***********************- HELPFUL FUNCTIONS -***********************/
     function sendPitchToDatabase(pitchInfo) {
@@ -578,6 +603,7 @@
                 .style('font-size', '16px')
                 .text('(' + Math.round(xScale.invert(local[0])*100)/100 + ', ' + loc_y + ')');
             $('#btn').show;
+            checkLogic();
         });
 
         // move or place circle on chart
@@ -606,6 +632,7 @@
         spray_x = "";
         spray_y = "";
         traj = "";
+        endAtBat = "No";
 
         // take away circle from field
         fieldD3.selectAll('circle').remove();
@@ -619,6 +646,8 @@
         unclick(walkButtons);
         unclick(strikeoutButtons);
         unclick(endAtBatButtons);
+        unclick(fielderButtons);
+        unclick(hitHardButtons);
 
         // hide the field, traj/fielder table, and ab result options
         makeInvisible(fieldDiv);
@@ -641,6 +670,7 @@
 
         // click No for end at ab
         click($("#end-ab-no"));
+        click(hitHardButtons.last());
     }
 
     function updatePitchTable() {
@@ -666,6 +696,7 @@
                 <th>AB Result</th>
                 <th>Traj</th>
                 <th>Fielder</th>
+                <th>Hit Hard?</th>
                 <th>Inning</th>
             </tr>`
         );
@@ -687,6 +718,7 @@
                         <td>${pitches[i]['ab_result']}</td>
                         <td>${pitches[i]['traj']}</td>
                         <td>${pitches[i]['fielder']}</td>
+                        <td>${pitches[i]['hit_hard']}</td>
                         <td>${pitches[i]['inning']}</td>
                     </tr>`
                 );
@@ -705,6 +737,7 @@
                         <td>${pitches[i]['ab_result']}</td>
                         <td>${pitches[i]['traj']}</td>
                         <td>${pitches[i]['fielder']}</td>
+                        <td>${pitches[i]['hit_hard']}</td>
                         <td>${pitches[i]['inning']}</td>
                     </tr>`
                 );
@@ -740,7 +773,7 @@
     }
 
     function updatePitchCount() {
-        $("#total-pitches").text(pitch_num);
+        $("#total-pitches").text(`${pitch_num} (${pitchCountInning[inning]})`);
     }
 
     function checkLogic() {
@@ -748,25 +781,25 @@
         * Checks to see if the "Add Pitch" button should be shown
         */
 
-        if (pitch_type != "" && pitch_result != "") {
+        if (pitch_type != "" && pitch_result != "" && loc_x != "") {
             if (balls == 3 && ab_result == "" && pitch_result == "B") {
-                addPitchButton.css("visibility", "hidden");
+                makeInvisible(addPitchButton);
             }
             else if (strikes == 2 && ab_result == "" && (pitch_result == "SS" || pitch_result == "CS")){
-                addPitchButton.css("visibility", "hidden");
+                makeInvisible(addPitchButton);
             }
             else if (pitch_result == "IP" && ab_result == "") {
-                addPitchButton.css("visibility", "hidden");
+                makeInvisible(addPitchButton);
             }
             else if (endAtBat == "Yes" && ab_result == "") {
-                addPitchButton.css("visibility", "hidden");
+                makeInvisible(addPitchButton);
             }
             else {
-                addPitchButton.css("visibility", "visible");
+                makeVisible(addPitchButton);
             }
         }
         else {
-            addPitchButton.css("visibility", "hidden");
+            makeInvisible(addPitchButton);
         }
     }
 
@@ -811,9 +844,16 @@
                 "fielder": {% if p.fielder in [None, ""] %}""{% else %}{{ p.fielder }}{% endif %},
                 "spray_x": {% if p.spray_x in [None, ""] %}""{% else %}{{ p.spray_x }}{% endif %},
                 "spray_y": {% if p.spray_y in [None, ""] %}""{% else %}{{ p.spray_y }}{% endif %},
+                "hit_hard": {% if p.hit_hard == True %}1{% else %}0{% endif %},
                 "inning": {% if p.inning in [None, ""] %}""{% else %}{{ p.inning }}{% endif %}
             }
             pitches.push(pitch);
+        {% endfor %}
+    }
+
+    function setPitchCountInning() {
+        {% for key, value in pitch_count_inning.items() %}
+            pitchCountInning[{{key}}] = {{value}};
         {% endfor %}
     }
 

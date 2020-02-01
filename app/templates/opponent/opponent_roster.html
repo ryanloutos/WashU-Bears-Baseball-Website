@@ -21,7 +21,7 @@
             </tr>
             {% for b in opponent.batters %}
                 <tr>
-                    <td>{{ b.name }}</td>
+                    <td>{{ b.name() }}</td>
                     <td>{{ b.short_name }}</td>
                     <td>{{ b.bats }}</td>
                     <td>{{ b.grad_year }}</td>

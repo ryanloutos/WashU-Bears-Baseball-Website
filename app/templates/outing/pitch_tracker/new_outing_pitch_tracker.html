@@ -34,15 +34,6 @@
             <input id="inning" type="number" value=1>
 
             &nbsp
-
-            {#
-            <b>Batter: </b>
-            <select id="select-batter" size='1'>
-                {% for batter in batters %}
-                    <option value={{ batter.id }}>{{ batter }}</option>
-                {% endfor %}
-            </select>
-            #}
             &nbsp
             
             <b>Lead Runner: </b>
@@ -69,7 +60,7 @@
             <table id="batters">
                 <tr>
                     {% for batter in batters %}
-                        <td class="batters" value={{ batter.id }}>{{ batter.name }}</td>
+                        <td class="batters" value={{ batter.id }}>{{ batter.name() }}</td>
                     {% endfor %}
                 </tr>
             </table>
@@ -245,8 +236,12 @@
                         <div class="ab-results-div" id="ab-results-other" style="display: none;">
                             <table style="width: 100%;">
                                 <tr>
+                                    <td style="border-right:hidden" value='K' class="ab-results box"><span class=ptText>K</span></td>
+                                    <td style="border-right:hidden" value='KL' class="ab-results box"><span class=ptText>KL</span></td>
+                                    <td style="border-right:hidden" value='BB' class="ab-results box"><span class=ptText>BB</span></td>
                                     <td style="border-right:hidden" value='HBP' class="ab-results box"><span class=ptText>HBP</span></td>
                                     <td style="border-right:hidden" value='CI' class="ab-results box"><span class=ptText>CI</span></td>
+                                    <td style="border-right:hidden" value='D3->Out' class="ab-results box"><span class=ptText>D3</span></td>
                                     <td value='Other' class="ab-results box"><span class=ptText>Other</span></div>
                                 </tr>
                             </table>
@@ -256,7 +251,7 @@
             </table>
             <div id=fieldDiv style="visibility: hidden;">
                 <svg id='field' height='457' width='457'></svg>
-                <table id="in-play-info-table" style="margin-top: -6px; margin-left: 10px;">
+                <table id="in-play-info-table" style="margin-top: -6px; margin-left: 5px;">
                     <tr class='bipType'>
                         <td>
                             <table>
@@ -268,7 +263,7 @@
                                 </tr>
                             </table>
                         </td>
-                        <td style="padding-left: 20px;">
+                        <td style="padding-left: 15px;">
                             <table>
                                 <caption style="font-size: 18px; text-align: center; color: black; margin-bottom: -5px; margin-top: -5px">Fielder</caption>
                                 <tr>
@@ -281,6 +276,15 @@
                                     <td class="fielder box" value="7">7</td>
                                     <td class="fielder box" value="8">8</td>
                                     <td class="fielder box" value="9">9</td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td style="padding-left: 15px;">
+                            <table style="width: 100%">
+                                <caption style="font-size: 18px; text-align: center; color: black; margin-bottom: -5px; margin-top: -5px">Hit Hard?</caption>
+                                <tr>
+                                    <td value=1 class="hit-hard box">Yes</td>
+                                    <td value=0 class="hit-hard box default-selections">No</td>
                                 </tr>
                             </table>
                         </td>

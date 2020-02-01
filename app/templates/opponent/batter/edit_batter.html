@@ -7,7 +7,7 @@
             {{ form.hidden_tag() }} {# Preventing CSRF attacks #}
             <p>
                 {{ form.fullname.label }}<br>
-                {{ form.fullname(size=32, value=batter.name) }}
+                {{ form.fullname(size=32, value=batter.name()) }}
                 {% for error in form.fullname.errors %}
                     <span style="color: red;">[{{ error }}]</span>
                 {% endfor %}

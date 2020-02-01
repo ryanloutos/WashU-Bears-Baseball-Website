@@ -504,6 +504,7 @@ def edit_outing_pitches(outing_id):
                           ab_result=subform.ab_result.data,
                           traj=subform.traj.data,
                           fielder=subform.fielder.data,
+                          hit_hard=subform.hit_hard.data,
                           inning=subform.inning.data)
 
             # update count based on current count and pitch result
@@ -962,6 +963,14 @@ def new_outing_pitch_tracker(id):
     # to hold all the pitches from outing to be displayed in table
     pitches = []
 
+    # to hold the pitch count by inning
+    pitch_count_inning = {
+        "1": 0, "2": 0, "3": 0,
+        "4": 0, "5": 0, "6": 0,
+        "7": 0, "8": 0, "9": 0,
+        "10": 0, "11": 0, "12": 0
+    }
+
     # for count and pitch count totals
     num_pitches = 0
     balls = 1
@@ -984,6 +993,8 @@ def new_outing_pitch_tracker(id):
 
             num_pitches += 1
 
+            pitch_count_inning[f"{p.inning}"] += 1
+
             # add pitch to array
             pitch = {
                 "batter_id": p.batter_id,
@@ -1000,6 +1011,7 @@ def new_outing_pitch_tracker(id):
                 "fielder": p.fielder,
                 "spray_x": p.spray_x,
                 "spray_y": p.spray_y,
+                "hit_hard": p.hit_hard,
                 "inning": p.inning
             }
             pitches.append(pitch)
@@ -1018,6 +1030,7 @@ def new_outing_pitch_tracker(id):
             # send the current_batter back to tracker
             current_batter = p.batter_id
             lead_runner = p.lead_runner
+            inning = p.inning
 
             # if the at bat was over, alter variables
             if p.ab_result != "":
@@ -1040,7 +1053,7 @@ def new_outing_pitch_tracker(id):
             pitches[key] = val
 
     # set the batters associated with the opponent
-    batters = Batter.query.filter_by(opponent_id=outing.opponent_id).filter_by(retired = 0).all()
+    batters = Batter.query.filter_by(opponent_id=outing.opponent_id).filter_by(retired = 0).order_by(Batter.lastname).all()
 
     return render_template(
         "outing/pitch_tracker/new_outing_pitch_tracker.html",
@@ -1048,10 +1061,12 @@ def new_outing_pitch_tracker(id):
         outing=outing,
         pitches=pitches,
         num_pitches=num_pitches,
+        pitch_count_inning=pitch_count_inning,
         balls=balls,
         strikes=strikes,
         at_bat=current_at_bat,
         batter=current_batter,
+        inning=inning,
         lead_runner=lead_runner
     )
 
