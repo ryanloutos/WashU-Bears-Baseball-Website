@@ -14,6 +14,52 @@
     
         var zone = d3.select("#strikezone");
 
+        // Set colors for pitch types ----- make universal var at some point
+        let pitch_colors = {
+            "1": 'rgb(230, 25, 75)',
+            "2": 'rgb(0, 130, 200)',
+            "3": 'rgb(0, 200, 0)',
+            "4": 'rgb(200, 200, 0)',
+            "5": 'rgb(0, 200, 200)',
+            "7": 'rgb(255, 128, 0)'
+        };
+
+        // setup legend variables
+        var zone_legend = d3.select("#strikezone-legend");
+        g_legend = zone_legend.append('g').attr('transform', null);
+        g_legend.append('text')
+            .attr('class', 'legend-text')
+            .attr('font-size', '14pt')
+            .attr('fill', 'black')
+            .attr('x', 10)
+            .attr('y', 50)
+            .text("Pitch Types:");
+
+        var x_index = 0;
+        for(var color in pitch_colors){
+            // setup legend circle
+            g_legend.append('circle')
+                .attr('class', 'legend-circle')
+                .attr('r', '8')
+                .attr('cy', 50)
+                .attr('cx', 145+x_index)
+                .attr('fill', pitch_colors[color]);
+            // setup legend text
+            g_legend.append('text')
+                .attr('class', 'legend-text')
+                .attr('font-size', "9pt")
+                .attr('fill', 'black')
+                .attr('y', 50)
+                .attr('dy', 5)
+                .attr('x', 145+x_index)
+                .attr('text-anchor', 'middle')
+                .text(color);
+            
+            x_index += 20;
+        }
+       
+
+
         // set up the zone location tracker variables
         margin = {top: 10, right: 10, bottom: 10, left: 20};
         width = +zone.attr('width');
@@ -350,9 +396,11 @@
         <br><br> 
         <br><br>
         <br><br> 
-        <div id="pitch-location">
+        <div id="pitch-location" style="text-align: center;">
             <h4 style="text-align: center;">Pitch Locations</h4>
-            <svg id='strikezone' class=plot height='457' width='457'></svg>
+            <svg id='strikezone-legend' class=chart height='70' width='457' align='center'></svg>
+            <br>
+            <svg id='strikezone' class=plot height='457' width='457' align='center'></svg>
         </div>
         <div>
         
