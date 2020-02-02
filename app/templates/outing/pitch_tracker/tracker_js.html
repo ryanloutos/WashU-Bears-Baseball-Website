@@ -104,7 +104,7 @@
     // set up batter
     {% if batter == "" %}
         click(batterButtons.first());
-        var batter_id = "";
+        var batter_id = batterButtons.first().attr("value");
     {% else %}
         var batter_id = {{ batter }};
     {% endif %}
