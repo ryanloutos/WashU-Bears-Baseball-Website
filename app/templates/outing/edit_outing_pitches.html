@@ -25,6 +25,7 @@
                 <th>AB Result</th>
                 <th>GB/LD/FB</th>
                 <th>Fielder</th>
+                <th>Hit Hard?</th>
                 <th>Inning</th>
                 <th>Delete Row</th>
             </tr>
@@ -130,6 +131,13 @@
                             </select>
                         </td>
                         <td>
+                            {% if pitch.hit_hard %}
+                                <input id="pitch-{{ pitch.pitch_num-1 }}-hit_hard" name="pitch-{{ pitch.pitch_num-1 }}-hit_hard" type="checkbox" checked>
+                            {% else %}
+                                <input id="pitch-{{ pitch.pitch_num-1 }}-hit_hard" name="pitch-{{ pitch.pitch_num-1 }}-hit_hard" type="checkbox">
+                            {% endif %}
+                        </td>
+                        <td>
                             {% if pitch.inning == None %}
                                 <input id="pitch-{{ pitch.pitch_num-1 }}-inning" name="pitch-{{ pitch.pitch_num-1 }}-inning" size="4" type="text" value="">
                             {% else %}
@@ -144,6 +152,5 @@
         <p>{{ form.submit() }}</p>
     </form>
     <button id="add">Add Row</button>
-    <a href="{{ url_for('outing.delete_outing', id=outing.id) }}">Delete Outing</a>
 </div>
 {% endblock %}

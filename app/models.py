@@ -116,6 +116,7 @@ class Pitch(db.Model):
     fielder = db.Column(db.String(8), index=True)
     spray_x = db.Column(db.Float)
     spray_y = db.Column(db.Float)
+    hit_hard = db.Column(db.Boolean, index=True)
     inning = db.Column(db.Integer, index=True)
 
     def __repr__(self):
@@ -146,7 +147,8 @@ class Opponent(db.Model):
 
 class Batter(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64), index=True)
+    firstname = db.Column(db.String(64))
+    lastname = db.Column(db.String(64))
     short_name = db.Column(db.String(8), index=True)
     bats = db.Column(db.String(8), index=True)
     grad_year = db.Column(db.String(8), index=True)
@@ -159,6 +161,9 @@ class Batter(db.Model):
 
     def __repr__(self):
         return self.short_name
+    
+    def name(self):
+        return f"{self.firstname} {self.lastname}"
 
     def get_seasons(self):
         seasons = []

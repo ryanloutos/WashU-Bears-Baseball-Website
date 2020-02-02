@@ -30,6 +30,7 @@
                     <th>AB Result</th>
                     <th>GB/FB/LD</th>
                     <th>Fielder</th>
+                    <th>Hit Hard?</th>
                     <th>Inning</th>
                 </tr>
                 {% for at_bat in outing.at_bats %}
@@ -70,6 +71,11 @@
                             <td>{{ pitch.ab_result }}</td>
                             <td>{{ pitch.traj }}</td>
                             <td>{{ pitch.fielder }}</td>
+                            {% if pitch.hit_hard %}
+                                <td>X</td>
+                            {% else %}
+                                <td></td>
+                            {% endif %}
                             <td>{{ pitch.inning }}</td>
                         </tr>
                     {% endfor %}

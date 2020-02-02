@@ -166,6 +166,12 @@ def pitch_tracker():
         hit_spot = False
     if hit_spot == '1':
         hit_spot = True
+    
+    hit_hard = pitch_data["hit_hard"]
+    if hit_hard == '0':
+        hit_hard = False
+    if hit_hard == '1':
+        hit_hard = True
 
     time_to_plate = pitch_data["time_to_plate"]
     if time_to_plate == "":
@@ -202,6 +208,7 @@ def pitch_tracker():
         ab_result=pitch_data["ab_result"],
         traj=pitch_data["traj"],
         fielder=pitch_data["fielder"],
+        hit_hard=hit_hard,
         inning=pitch_data["inning"],
         loc_x=loc_x,
         loc_y=loc_y,

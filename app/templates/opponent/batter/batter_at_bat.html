@@ -141,7 +141,7 @@
     {% include "opponent/batter/batter_sidenav.html" %}
     <div class="main">
         <h1>
-            {{ batter.name }} vs. {{ pitcher }}
+            {{ batter.name() }} vs. {{ pitcher }}
         </h1> 
         <h2>Pitches</h2>
         <table class="table">
@@ -157,6 +157,7 @@
                 <th>AB Result</th>
                 <th>GB/FB/LD</th>
                 <th>Fielder</th>
+                <th>Hit Hard?</th>
                 <th>Inning</th>
             </tr>
             {% for pitch in at_bat.pitches %}
@@ -184,6 +185,11 @@
                     <td>{{ pitch.ab_result }}</td>
                     <td>{{ pitch.traj }}</td>
                     <td>{{ pitch.fielder }}</td>
+                    {% if pitch.hit_hard %}
+                        <td>X</td>
+                    {% else %}
+                        <td></td>
+                    {% endif %}
                     <td>{{ pitch.inning }}</td>
                 </tr>
             {% endfor %}
