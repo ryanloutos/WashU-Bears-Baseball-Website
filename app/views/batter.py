@@ -434,6 +434,7 @@ def batter_game_view(batter_id, game_id):
 
     game_at_bats = []
     pitches = []
+    hits = []
     pitch_index = 1
     for at_bat in batter.at_bats:
         # if the game the at_bat is in is the same as the current game
@@ -450,10 +451,19 @@ def batter_game_view(batter_id, game_id):
                 })
                 pitch_index += 1
 
+                # if there was an ab_coutome
+                if p.ab_result in ["1B", "2B", "3B", "HR", "IP->Out", "Error", "FC"]:
+                    hits.append({
+                        "x": p.spray_x,
+                        "y": p.spray_y,
+                        "traj": p.traj
+                    })
+
     return render_template(
         "opponent/batter/batter_game_view.html",
         batter=batter,
         game=game,
         game_at_bats=game_at_bats,
-        pitches=pitches
+        pitches=pitches,
+        hits=hits
     )
