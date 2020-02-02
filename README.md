@@ -1,6 +1,9 @@
 Baseball-Pitching-Portal
 Collaborators: Ryan Loutos, Mitchell Black, Brian Hall, Kenny Dorian
 
+URGENT
+- Change create batter and edit batter to include first name and last name fields
+
 Shorter term (like before our first live matchups at practice)
 - Make load times more even with API/Ajax
 - For staff/pitcher pages, create a filter to include/not include matchups
@@ -16,6 +19,9 @@ Longer term (like before first game?)
 - Add a lot of scouting features (sprays, notes, etc.)
 - Add "position" column to batter?
 - Create opponent pitcher roster table
+- Add support for pitch location in new outing csv
+- Add pitch location randomization for basic pitch locations in upload outing and edit pitches
+- Add hit location randomization for field spray charts from fielder location (1-9 on gb, ld, fb)
 
 
 - Global Improvement Goals:
