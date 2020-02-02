@@ -519,7 +519,11 @@ def edit_outing_pitches(outing_id):
                           traj=subform.traj.data,
                           fielder=subform.fielder.data,
                           hit_hard=subform.hit_hard.data,
-                          inning=subform.inning.data)
+                          inning=subform.inning.data,
+                          loc_x=subform.loc_x.data,
+                          loc_y=subform.loc_y.data,
+                          spray_x=subform.spray_x.data,
+                          spray_y=subform.spray_y.data)
 
             # update count based on current count and pitch result
             balls, strikes, count = updateCount(balls,

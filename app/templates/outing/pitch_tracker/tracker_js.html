@@ -618,6 +618,8 @@
                 .style('fill', background_red);
             spray_x = Math.round(xScalef.invert(local[0])*100,3)/100;
             spray_y = Math.round(yScalef.invert(local[1])*100,3)/100;
+            spray_x = Math.round(spray_x*100)/100;
+            spray_y = Math.round(spray_y*100)/100;
             $('#ipTable').css('visibility', 'visible');
         });
     }

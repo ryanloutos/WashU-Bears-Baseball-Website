@@ -190,6 +190,22 @@ class PitchForm(FlaskForm):
         validators=[Optional()])
     hit_hard = BooleanField('Hit Hard?', validators=[Optional()])
     inning = IntegerField('Inning', validators=[Optional()])
+    loc_x = DecimalField(
+        'loc_x',
+        places=2,
+        validators=[Optional()])
+    loc_y = DecimalField(
+        'loc_y',
+        places=2,
+        validators=[Optional()])
+    spray_x = DecimalField(
+        'spray_x',
+        places=2,
+        validators=[Optional()])
+    spray_y = DecimalField(
+        'spray_y',
+        places=2,
+        validators=[Optional()])
     submit = SubmitField('Finish', validators=[Optional()])
 
     # disables CSRF tokens for subforms, but keeps it for the big

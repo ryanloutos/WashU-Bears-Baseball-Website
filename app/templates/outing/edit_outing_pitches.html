@@ -27,6 +27,10 @@
                 <th>Fielder</th>
                 <th>Hit Hard?</th>
                 <th>Inning</th>
+                <th>loc_x</th>
+                <th>loc_y</th>
+                <th>spray_x</th>
+                <th>spray_y</th>
                 <th>Delete Row</th>
             </tr>
             {% for at_bat in outing.at_bats %}
@@ -142,6 +146,34 @@
                                 <input id="pitch-{{ pitch.pitch_num-1 }}-inning" name="pitch-{{ pitch.pitch_num-1 }}-inning" size="4" type="text" value="">
                             {% else %}
                                 <input id="pitch-{{ pitch.pitch_num-1 }}-inning" name="pitch-{{ pitch.pitch_num-1 }}-inning" size="4" type="text" value="{{ pitch.inning }}">
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if pitch.loc_x == None %}
+                                <input id="pitch-{{ pitch.pitch_num-1 }}-loc_x" name="pitch-{{ pitch.pitch_num-1 }}-loc_x" size="4" type="text" value="">
+                            {% else %}
+                                <input id="pitch-{{ pitch.pitch_num-1 }}-loc_x" name="pitch-{{ pitch.pitch_num-1 }}-loc_x" size="4" type="text" value="{{ pitch.loc_x }}">
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if pitch.loc_y == None %}
+                                <input id="pitch-{{ pitch.pitch_num-1 }}-loc_y" name="pitch-{{ pitch.pitch_num-1 }}-loc_y" size="4" type="text" value="">
+                            {% else %}
+                                <input id="pitch-{{ pitch.pitch_num-1 }}-loc_y" name="pitch-{{ pitch.pitch_num-1 }}-loc_y" size="4" type="text" value="{{ pitch.loc_y }}">
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if pitch.spray_x == None %}
+                                <input id="pitch-{{ pitch.pitch_num-1 }}-spray_x" name="pitch-{{ pitch.pitch_num-1 }}-spray_x" size="4" type="text" value="">
+                            {% else %}
+                                <input id="pitch-{{ pitch.pitch_num-1 }}-spray_x" name="pitch-{{ pitch.pitch_num-1 }}-spray_x" size="4" type="text" value="{{ pitch.spray_x }}">
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if pitch.spray_y == None %}
+                                <input id="pitch-{{ pitch.pitch_num-1 }}-spray_y" name="pitch-{{ pitch.pitch_num-1 }}-spray_y" size="4" type="text" value="">
+                            {% else %}
+                                <input id="pitch-{{ pitch.pitch_num-1 }}-spray_y" name="pitch-{{ pitch.pitch_num-1 }}-spray_y" size="4" type="text" value="{{ pitch.spray_y }}">
                             {% endif %}
                         </td>
                         <td><a class="delete" data-index="{{ pitch.pitch_num-1 }}">Delete</a></td>
