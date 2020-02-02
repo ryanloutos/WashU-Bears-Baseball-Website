@@ -32,6 +32,10 @@
                     <th>Fielder</th>
                     <th>Hit Hard?</th>
                     <th>Inning</th>
+                    <th>loc_x</th>
+                    <th>loc_y</th>
+                    <th>spray_x</th>
+                    <th>spray_y</th>
                 </tr>
                 {% for at_bat in outing.at_bats %}
                     {% if (loop.index % 2 == 0) %}
@@ -77,6 +81,26 @@
                                 <td></td>
                             {% endif %}
                             <td>{{ pitch.inning }}</td>
+                            {% if pitch.loc_x==None %}
+                                <td></td>
+                            {% else %}
+                                <td>{{ pitch.loc_x }}</td>
+                            {% endif %}
+                            {% if pitch.loc_y==None %}
+                                <td></td>
+                            {% else %}
+                                <td>{{ pitch.loc_y }}</td>
+                            {% endif %}
+                            {% if pitch.spray_x==None %}
+                                <td></td>
+                            {% else %}
+                                <td>{{ pitch.spray_x }}</td>
+                            {% endif %}
+                            {% if pitch.spray_y==None %}
+                                <td></td>
+                            {% else %}
+                                <td>{{ pitch.spray_y }}</td>
+                            {% endif %}
                         </tr>
                     {% endfor %}
                 {% endfor %}
