@@ -7,7 +7,112 @@
 <script src="https://d3js.org/d3.v5.min.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", function(){
-    
+
+    implement_zone_tracker();
+    implement_spray_tracker();
+});
+
+function implement_spray_tracker(){
+    var field = d3.select("#field");
+
+    var traj_colors = {
+        "GB": "rgb(255, 0, 0)",
+        "LD": "rgb(0, 255, 0)",
+        "FB": "rgb(0, 0, 255)",
+        "": "rgb(0,0,0)"  // outcomes with no trajectory will be black
+    }
+
+    // setup trajectory legend
+    // setup legend variables
+    var field_legend = d3.select("#field-legend");
+    g_legend = field_legend.append('g').attr('transform', null);
+    // legend description text
+    g_legend.append('text')
+        .attr('class', 'legend-text')
+        .attr('font-size', '14pt')
+        .attr('fill', 'black')
+        .attr('x', 10)
+        .attr('y', 50)
+        .text("Hit Types:");
+
+    // legend content loop
+    var x_index = 0;
+    for(var color in traj_colors){
+        // setup legend circle
+        g_legend.append('circle')
+            .attr('class', 'legend-circle')
+            .attr('r', '8')
+            .attr('cy', 50)
+            .attr('cx', 175+x_index)
+            .attr('fill', traj_colors[color]);
+
+        // setup legend text
+        if(color == ""){
+            g_legend.append('text')
+                .attr('class', 'legend-text')
+                .attr('font-size', "9pt")
+                .attr('fill', 'black')
+                .attr('y', 50)
+                .attr('dy', 5)
+                .attr('x', 145+x_index)
+                .attr('text-anchor', 'middle')
+                .text("Other:");
+        } else {
+            g_legend.append('text')
+                .attr('class', 'legend-text')
+                .attr('font-size', "9pt")
+                .attr('fill', 'black')
+                .attr('y', 50)
+                .attr('dy', 5)
+                .attr('x', 145+x_index)
+                .attr('text-anchor', 'middle')
+                .text(color + ":");
+        }
+        
+        
+        x_index += 60;
+    }
+
+    // set up the field 
+    width = +field.attr('width');
+    height = +field.attr('height');
+    g1 = field.append('g').attr('transform', 'translate(0,95)');
+    field.append("svg:image")
+        .attr('x', 0)
+        .attr('y', 0)
+        .attr('width', 435)
+        .attr('height', 430)
+        .attr('transform', 'translate(17,17)')
+        .style('alignment-baseline', 'middle')
+        .attr("xlink:href", "{{ url_for('static', filename='images/field.png') }}");
+
+        // Scale variables for field image
+        var xScalef = d3.scaleLinear().range([width, 0]).domain([250,-250]);
+        var yScalef = d3.scaleLinear().range([height, 0]).domain([-100,400]);
+
+        function drawCircle(x, y, traj){
+            field.append('circle')
+                .attr('class', 'field-circle')
+                .attr('cx', xScalef(x))
+                .attr('cy', yScalef(y))
+                .attr('r', '8')
+                .style('fill', traj_colors[traj]);
+        }
+
+        let hits = {{ hits|tojson }};
+
+        hits.forEach(function(hit){
+            if(hit.x != null && hit.y !=null){
+                drawCircle(hit.x, hit.y, hit.traj);
+            }
+            
+        });
+
+}
+
+function implement_zone_tracker(){
+
+    // get zone svg from DOM
     var zone = d3.select("#strikezone");
 
     // Set colors for pitch types ----- make universal var at some point
@@ -23,6 +128,7 @@ document.addEventListener("DOMContentLoaded", function(){
     // setup legend variables
     var zone_legend = d3.select("#strikezone-legend");
     g_legend = zone_legend.append('g').attr('transform', null);
+    // legend description text
     g_legend.append('text')
         .attr('class', 'legend-text')
         .attr('font-size', '14pt')
@@ -31,6 +137,7 @@ document.addEventListener("DOMContentLoaded", function(){
         .attr('y', 50)
         .text("Pitch Types:");
 
+    // legend content loop
     var x_index = 0;
     for(var color in pitch_colors){
         // setup legend circle
@@ -40,6 +147,7 @@ document.addEventListener("DOMContentLoaded", function(){
             .attr('cy', 50)
             .attr('cx', 145+x_index)
             .attr('fill', pitch_colors[color]);
+
         // setup legend text
         g_legend.append('text')
             .attr('class', 'legend-text')
@@ -53,8 +161,6 @@ document.addEventListener("DOMContentLoaded", function(){
         
         x_index += 20;
     }
-    
-
 
     // set up the zone location tracker variables
     margin = {top: 10, right: 10, bottom: 10, left: 20};
@@ -66,8 +172,6 @@ document.addEventListener("DOMContentLoaded", function(){
     // setup variables for drawing strikezone appearance
     var xScale = d3.scaleLinear().range([width, 0]).domain([2,-2]);
     var yScale = d3.scaleLinear().range([height, 0]).domain([0,4]);
-    var xScalef = d3.scaleLinear().range([width, 0]).domain([250,-250]);
-    var yScalef = d3.scaleLinear().range([height, 0]).domain([-100,400]);
 
     // draw the appearance of the strikezone
     g.append('path')
@@ -114,18 +218,18 @@ document.addEventListener("DOMContentLoaded", function(){
             .attr('text-anchor', 'middle')
             .attr('fill', 'black')
             .text(pitch_num);
-
     }
 
     // get pitches data from server
     var pitches = {{ pitches|tojson }};
     
+    // for each pitch from server, add circle in chart
     pitches.forEach(function(pitch){
-        if(pitch.x != null || pitch.y != null){
+        if(pitch.x != null && pitch.y != null){
             drawCircle(pitch.x, pitch.y, pitch_type=pitch.pitch_type, pitch.pitch_num);
         }
     });
-});
+}
 
 </script>
 {% endblock %}
@@ -204,9 +308,11 @@ document.addEventListener("DOMContentLoaded", function(){
             <br>
             <svg id='strikezone' class=plot height='457' width='457' align='center'></svg>
         </div>
-        <div>
-            <h3>Spray Locations</h3>
-            <p>Coming Soon</p>
+        <div id="spray-location" style="text-align: center;">
+            <h4>Spray Locations</h4>
+            <svg id='field-legend' class=chart height='70' width='457' align='center'></svg>
+            <br>
+            <svg id='field' height='457' width='457'></svg>
         </div>
         
 
