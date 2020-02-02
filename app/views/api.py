@@ -166,7 +166,7 @@ def pitch_tracker():
         hit_spot = False
     if hit_spot == '1':
         hit_spot = True
-    
+
     hit_hard = pitch_data["hit_hard"]
     if hit_hard == '0':
         hit_hard = False
@@ -178,13 +178,15 @@ def pitch_tracker():
         time_to_plate = None
 
     loc_x = pitch_data["loc_x"]
+    print(loc_x)
     if loc_x in ["", "null", None]:
         loc_x = None
+    print(loc_x)
 
     loc_y = pitch_data["loc_y"]
     if loc_y in ["", "null", None]:
         loc_y = None
-    
+
     spray_x = pitch_data["spray_x"]
     if spray_x in ["", "null", None, 0]:
         spray_x = None
@@ -192,7 +194,7 @@ def pitch_tracker():
     spray_y = pitch_data["spray_y"]
     if spray_y in ["", "null", None, 0]:
         spray_y = None
-    
+
     # make a Pitch object
     pitch = Pitch(
         atbat_id=at_bat,
