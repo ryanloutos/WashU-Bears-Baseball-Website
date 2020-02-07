@@ -100,9 +100,4 @@ def new_video_batter():
         form=form,
         current_season=current_season
     )
-
-# ***************-DELETE VIDEO PITCHER-*************** #
-@video.route('/new_video_pitcher', methods=['GET', 'POST'])
-@login_required
-def delete_video_pitcher():
     
