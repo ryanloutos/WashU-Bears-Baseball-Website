@@ -16,8 +16,8 @@
             // Script holding the D3.js pitch location tracker
             document.addEventListener("DOMContentLoaded", function () {
 
-                var legend = new strikezone_legend("pitch-location");
-                var zone = new strikezone("pitch-location");
+                var legend = new strikezone_legend("zone-legend-div");
+                var zone = new strikezone("zone-div");
 
                 // get pitches data from server
                 var pitches = {{ pitches|tojson }};
@@ -132,6 +132,9 @@
             <h4 style="text-align: center;">Pitch Locations</h4>
             <p>The color of the circle represents the type of pitch that was thrown. The number inside the circle
                 represents the pitch number of the pitch.</p>
+                <div id="zone-legend-div"></div>
+                <br>
+                <div id="zone-div"></div>
         </div>
     </div>
 {% endblock %}

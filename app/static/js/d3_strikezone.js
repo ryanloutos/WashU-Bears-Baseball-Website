@@ -130,7 +130,8 @@ class strikezone_legend {
                 .attr("width", '457')
                 .attr("height", '70')
                 .attr("align", "center")
-                .attr("class", "chart");
+                .attr("class", "chart")
+                .style("margin", "10px");
 
         //setup graphics element of svg
         this.g = this.legend
