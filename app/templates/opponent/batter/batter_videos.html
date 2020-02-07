@@ -27,10 +27,10 @@
 
     function updateVideos() {
         season = select_season.value;
-        pitcher = {{ pitcher.id }};
+        batter = {{ batter.id }};
 
         fetch(
-            "/api/videos/season/"+season+"/pitcher/"+pitcher,
+            "/api/videos/season/"+season+"/batter/"+batter,
         ).then(res => res.json())
         .then(function(response){
             if (response.status == "failure"){
@@ -60,9 +60,9 @@
 {% endblock %}
 
 {% block app_content %}
-    {% include "pitcher/pitcher_sidenav.html" %}
+    {% include "opponent/batter/batter_sidenav.html" %}
     <div class="main">
-        <h1>{{ pitcher }} - Videos</h1>
+        <h1>{{ batter.name() }} - Videos</h1>
         <br>
         <div style="font-size: 20px;">
             Season:
