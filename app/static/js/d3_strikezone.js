@@ -1,5 +1,5 @@
 //import d3 so can build objects out of it
-var d3 = import("../packages/d3/d3.js");
+// var d3 = import("../packages/d3/d3.js");
 /** Class representing a d3 strikezone as an object*/
 class strikezone {
 
