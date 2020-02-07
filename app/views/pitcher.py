@@ -5,7 +5,7 @@ from werkzeug.urls import url_parse
 from app import db
 
 from app.forms import PitcherForm, EditPitcherForm
-from app.models import User, Outing, Pitch, Season, Pitcher, Opponent
+from app.models import User, Outing, Pitch, Season, Pitcher, Opponent, Video
 from app.stats import avgPitchVeloPitcher, veloOverCareer
 from app.stats import pitchStrikePercentageSeason
 from app.stats import pitchUsageSeason, seasonStatLine
@@ -15,6 +15,7 @@ import csv
 import os
 # for file naming duplication problem
 import random
+import re
 
 pitcher = Blueprint("pitcher", __name__)
 
@@ -312,8 +313,28 @@ def pitcher_stats_advanced(id):
 def pitcher_videos(id):
 
     pitcher = Pitcher.query.filter_by(id=id).first()
+    videos = Video.query.filter_by(pitcher_id=id).all()
+    video_ids = []
+    seasons = []
+    for v in videos:
+
+        if v.season not in seasons:
+            seasons.append(v.season)
+
+        # https://gist.github.com/silentsokolov/f5981f314bc006c82a41
+        # gets the id from a youtube linke
+        regex = re.compile(r'(https?://)?(www\.)?(youtube|youtu|youtube-nocookie)\.(com|be)/(watch\?v=|embed/|v/|.+\?v=)?(?P<id>[A-Za-z0-9\-=_]{11})')
+        match = regex.match(v.link)
+        if not match:
+            video_ids.append("")
+        else:
+            video_ids.append(match.group("id"))
 
     return render_template(
         '/pitcher/pitcher_videos.html',
         title=pitcher,
-        pitcher=pitcher)
+        pitcher=pitcher,
+        seasons=seasons,
+        video_objects=videos,
+        videos=video_ids
+    )

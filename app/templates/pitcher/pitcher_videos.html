@@ -3,12 +3,54 @@
 {% block styles %}
 {{ super() }}
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidenav.css') }}">
+<style>
+    .video-title {
+        font-size: 25px;
+    }
+    .video-div {
+        overflow: hidden;
+        display: inline-block;
+        white-space: nowrap;
+        padding-right: 50px;
+        padding-bottom: 25px;
+    }
+</style>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        select_season = document.getElementById("season-selector");
+        select_season.addEventListener("change", function() {
+            updateVideos();
+        });
+    });
+
+    function updateVideos() {
+        select_s
+    }
+
+</script>
 {% endblock %}
 
 {% block app_content %}
     {% include "pitcher/pitcher_sidenav.html" %}
     <div class="main">
-        <h1>Staff Video Support Coming Soon!</h1>
-        <iframe width="560" height="315" src="https://www.youtube.com/embed/d5nhcIYK1Ig" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-        <iframe src="https://drive.google.com/embeddedfolderview?id=1UUxK1C51d6dA0r8LeKZSPzMhU_9g2BzE#list" width="600" height="500" frameborder="0"></iframe>
+        <h1>{{ pitcher }} - Videos</h1>
+        <br>
+        <div style="font-size: 20px;">
+            Season:
+            <select id="season-selector">
+                {% for season in seasons %}
+                    <option value="{{ season.id }}">{{ season }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <br>
+        <div>
+            {% for video in videos %}
+                <div class="video-div">
+                    <iframe width="352" height="198" src="https://www.youtube-nocookie.com/embed/{{video}}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+                    </iframe>
+                    <div class="video-title">{{video_objects[loop.index0]}}</div>
+                </div>
+            {% endfor %}
+        </div>
 {% endblock %}

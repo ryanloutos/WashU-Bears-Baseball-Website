@@ -306,3 +306,38 @@ def games_in_season(season_id):
         "status": "success",
         "games": games_ret
     })
+
+@api.route("/api/outings/season/<season_id>/pitcher/<pitcher_id>")
+@login_required
+def outings_in_season(season_id, pitcher_id):
+    season = Season.query.filter_by(id=season_id).first()
+    pitcher = Pitcher.query.filter_by(id=pitcher_id).first()
+    if not season:
+        return jsonify({
+            "status": "failure",
+            "error": "Season id provided is invalid"
+        })
+    if not pitcher:
+        return jsonify({
+            "status": "failure",
+            "error": "Pitcher id provided is invalid"
+        })
+    
+    outings = Outing.query.filter_by(season_id=season.id).filter_by(pitcher_id=pitcher.id).order_by(Outing.date).all()
+
+    outings_ret = []
+    for outing in outings:
+        outings_ret.append({
+            "id": outing.id,
+            "label": outing.__repr__()
+        })
+    
+    return jsonify({
+        "status": "success",
+        "outings": outings_ret
+    })
+
+@api.route("/api/videos/season/<season_id>")
+@login_required
+def videos_in_season(season_id):
+    a = 1

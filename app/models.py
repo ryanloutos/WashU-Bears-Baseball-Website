@@ -129,6 +129,7 @@ class Season(db.Model):
     year = db.Column(db.String(8), index=True)
     current_season = db.Column(db.Boolean, index=True)
     outings = db.relationship('Outing', backref='season', lazy='dynamic')
+    videos = db.relationship('Video', backref='season', lazy='dynamic')
 
     def __repr__(self):
         return f'{self.semester} {self.year}'
@@ -228,6 +229,19 @@ class AtBat(db.Model):
         outing = Outing.query.filter_by(id=self.outing_id).first()
         return outing.get_game()
 
+
+class Video(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(128))
+    date = db.Column(db.Date, index=True)
+    pitcher_id = db.Column(db.Integer, db.ForeignKey('pitcher.id'), index=True)
+    batter_id = db.Column(db.Integer, db.ForeignKey('batter.id'), index=True)
+    season_id = db.Column(db.Integer, db.ForeignKey('season.id'), index=True)
+    outing_id = db.Column(db.Integer, db.ForeignKey('outing.id'), index=True)
+    link = db.Column(db.String(128))
+
+    def __repr__(self):
+        return f"{self.date.month}/{self.date.day} - {self.title}"
 
 @login.user_loader
 def load_user(id):

@@ -6,7 +6,7 @@ from wtforms import FieldList, FormField
 from wtforms.fields.html5 import DateField
 from wtforms.validators import ValidationError, DataRequired, Email
 from wtforms.validators import EqualTo, Optional
-from .models import User, Season, Opponent, Pitcher, Game
+from .models import User, Season, Opponent, Pitcher, Game, Outing, Batter
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 
 
@@ -326,3 +326,41 @@ class NewGameForm(FlaskForm):
         get_pk=lambda s: s.id,
         get_label=lambda s: s)
     submit = SubmitField("Create Game")
+
+
+class PitcherNewVideoForm(FlaskForm):
+    title = StringField("Title", validators=[Optional()])
+    date = DateField("Date", validators=[DataRequired()], format="%Y-%m-%d")
+    season = QuerySelectField(
+        query_factory=lambda: Season.query,
+        get_pk=lambda s: s.id,
+        get_label=lambda s: s,
+        allow_blank=True
+    )
+    outing = QuerySelectField(
+        query_factory=lambda: Outing.query, 
+        get_pk=lambda o: o.id,
+        get_label=lambda o: o,
+        allow_blank=True
+    )
+    pitcher = QuerySelectField(
+        query_factory=lambda: Pitcher.query, 
+        get_pk=lambda p: p.id,
+        get_label=lambda p: p,
+    )
+    link = StringField("Link", validators=[Optional()])
+    submit = SubmitField("Post Video")
+
+class BatterNewVideoForm(FlaskForm):
+    title = StringField("Title", validators=[Optional()])
+    date = DateField("Date", validators=[DataRequired()], format="%Y-%m-%d")
+    season = QuerySelectField(
+        query_factory=lambda: Season.query,
+        get_pk=lambda s: s.id,
+        get_label=lambda s: s,
+        allow_blank=True
+    )
+    batter = SelectField("Batter", validators=[Optional()])
+    link = StringField("Link", validators=[Optional()])
+    submit = SubmitField("Post Video")
+
