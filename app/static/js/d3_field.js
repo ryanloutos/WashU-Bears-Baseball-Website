@@ -165,7 +165,9 @@ class field {
             .attr('cx', this.xScalef(x))
             .attr('cy', this.yScalef(y))
             .attr('r', field_circle_size)
-            .style('fill', traj_colors[traj]);
+            .style('fill', traj_colors[traj])
+            .style("stroke", "black")
+            .style("stroke-width", 1);
         
         //add hard hit star if needed
         if(hard_hit != false){
@@ -174,17 +176,6 @@ class field {
                 .attr("transform", "translate("+this.xScalef(x)+","+this.yScalef(y)+")")
                 .attr("fill", "black");
         }
-    }
-
-    drawEncodedCircle(x, y, data){
-        this.field_svg.append('circle')
-            .attr('class', 'field-circle')
-            .attr('cx', this.xScalef(x))
-            .attr('cy', this.yScalef(y))
-            .attr('r', field_circle_size)
-            .style('fill', traj_colors[traj]);
-
-        
     }
 }
 

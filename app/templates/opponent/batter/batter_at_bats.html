@@ -6,6 +6,8 @@
     <script src="{{ url_for('static', filename='js/sortable_table.js') }}"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function(){
+            //done twice so that most recent is at top
+            sortTable(0,0);
             sortTable(0,0);
         });
     </script>
