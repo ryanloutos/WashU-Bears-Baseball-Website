@@ -56,6 +56,13 @@ class field {
         this.create_field()
     }
 
+    /**
+     * This class is meant to be called by the constructor only. If called externally, 
+     * no action will happen. 
+     * 
+     * create_field contains the variables and statements to create an svg baseball field, which should 
+     * scale to both the height and width variables in the constructor.
+     */
     create_field(){
 
         //path to create field outline
