@@ -8,7 +8,7 @@ from app.forms import NewOutingFromCSV, SeasonForm, OpponentForm, BatterForm
 from app.forms import OutingPitchForm, NewOutingFromCSVPitches, EditUserForm
 from app.forms import ChangePasswordForm, EditBatterForm, EditOpponentForm
 from app.forms import NewBatterForm
-from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat, Game
+from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat, Game, Video
 from app.stats import calcPitchPercentages, pitchUsageByCount, calcAverageVelo
 from app.stats import calcPitchStrikePercentage, calcPitchWhiffRate
 from app.stats import createPitchPercentagePieChart, velocityOverTimeLineChart
@@ -19,6 +19,8 @@ from app.stats import staffPitcherAvgVelo, staffPitchStrikePercentage
 from app.stats import outingPitchStatistics, outingTimeToPlate, veloOverTime
 from app.stats import teamImportantStatsSeason
 from app.stats import batterSwingWhiffRatebyPitchbyCount, batter_summary_game_stats
+
+import re
 
 batter = Blueprint('batter', __name__)
 
@@ -128,10 +130,39 @@ def batter_spray_chart(batter_id):
         flash("URL does not exist")
         return redirect(url_for('main.index'))
 
+    # Var setup
+    sprays = []  # setup for dots on spraychart
+    density_vals = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    d_total = 0
+    for ab in batter.at_bats:
+        for p in ab.pitches:
+            # if there was an ab_outcome
+            if p.ab_result in ["1B", "2B", "3B", "HR", "IP->Out", "Error", "FC"]:
+                # for d3 field object dots
+                sprays.append({
+                    "x": p.spray_x,
+                    "y": p.spray_y,
+                    "traj": p.traj,
+                    "hard_hit": p.hit_hard
+                })
+
+                if p.fielder not in ["", None]:
+                    density_vals[int(p.fielder)] += 1
+                    d_total += 1
+
+    print(d_total)
+    print(density_vals)
+    for i in range(len(density_vals)):
+        density_vals[i] = density_vals[i] / d_total
+
+    print(density_vals)
+
     return render_template(
         'opponent/batter/batter_spray_chart.html',
         title=batter,
-        batter=batter
+        batter=batter,
+        sprays=sprays,
+        d_vals=density_vals
     )
 
 
@@ -447,7 +478,8 @@ def batter_game_view(batter_id, game_id):
                     "pitch_num": pitch_index,
                     "pitch_type": p.pitch_type,
                     "x": p.loc_x,
-                    "y": p.loc_y
+                    "y": p.loc_y,
+                    "hard_hit": p.hit_hard
                 })
                 pitch_index += 1
 
@@ -456,7 +488,8 @@ def batter_game_view(batter_id, game_id):
                     hits.append({
                         "x": p.spray_x,
                         "y": p.spray_y,
-                        "traj": p.traj
+                        "traj": p.traj,
+                        "hard_hit": p.hit_hard
                     })
 
     return render_template(
@@ -466,4 +499,35 @@ def batter_game_view(batter_id, game_id):
         game_at_bats=game_at_bats,
         pitches=pitches,
         hits=hits
+    )
+
+@batter.route('/batter/<id>/videos', methods=["GET", "POST"])
+@login_required
+def batter_videos(id):
+
+    batter = Batter.query.filter_by(id=id).first()
+    videos = Video.query.filter_by(batter_id=id).all()
+    video_ids = []
+    seasons = []
+    for v in videos:
+
+        if v.season not in seasons:
+            seasons.append(v.season)
+
+        # https://gist.github.com/silentsokolov/f5981f314bc006c82a41
+        # gets the id from a youtube linke
+        regex = re.compile(r'(https?://)?(www\.)?(youtube|youtu|youtube-nocookie)\.(com|be)/(watch\?v=|embed/|v/|.+\?v=)?(?P<id>[A-Za-z0-9\-=_]{11})')
+        match = regex.match(v.link)
+        if not match:
+            video_ids.append("")
+        else:
+            video_ids.append(match.group("id"))
+
+    return render_template(
+        'opponent/batter/batter_videos.html',
+        title=batter,
+        batter=batter,
+        seasons=seasons,
+        video_objects=videos,
+        videos=video_ids
     )

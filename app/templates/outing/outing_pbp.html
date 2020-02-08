@@ -7,6 +7,28 @@
     <script src="http://kozea.github.com/pygal.js/javascripts/svg.jquery.js"></script>
     <script src="http://kozea.github.com/pygal.js/javascripts/pygal-tooltips.js"></script>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidenav.css') }}">
+        <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/js-cookie@beta/dist/js.cookie.min.js"></script>
+        <script src="https://d3js.org/d3.v5.js"></script>
+        <script src="{{ url_for('static', filename='js/d3_strikezone.js') }}"></script>
+
+        <script>
+            // Script holding the D3.js pitch location tracker
+            document.addEventListener("DOMContentLoaded", function () {
+
+                var legend = new strikezone_legend("zone-legend-div");
+                var zone = new strikezone("zone-div");
+
+                // get pitches data from server
+                var pitches = {{ pitches|tojson }};
+
+                pitches.forEach(function(pitch) {
+                    if (pitch.x != null || pitch.y != null) {
+                        zone.drawCircle(pitch.x, pitch.y, pitch_type = pitch.pitch_type, pitch.pitch_num);
+                    }
+                });
+            });
+        </script>
 {% endblock %}
 
 {% block app_content %}
@@ -105,6 +127,14 @@
                     {% endfor %}
                 {% endfor %}
             </table>
+        </div>
+        <div id="pitch-location" style="text-align: center;">
+            <h4 style="text-align: center;">Pitch Locations</h4>
+            <p>The color of the circle represents the type of pitch that was thrown. The number inside the circle
+                represents the pitch number of the pitch.</p>
+                <div id="zone-legend-div"></div>
+                <br>
+                <div id="zone-div"></div>
         </div>
     </div>
 {% endblock %}

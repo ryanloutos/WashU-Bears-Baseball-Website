@@ -8,7 +8,7 @@ from app.forms import NewOutingFromCSV, SeasonForm, OpponentForm, BatterForm
 from app.forms import OutingPitchForm, NewOutingFromCSVPitches, EditUserForm
 from app.forms import ChangePasswordForm, EditBatterForm, EditOpponentForm
 from app.forms import NewBatterForm
-from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat, Pitcher, Game
+from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat, Pitcher, Game, Video
 from app.stats import calcPitchPercentages, pitchUsageByCount, calcAverageVelo
 from app.stats import calcPitchStrikePercentage, calcPitchWhiffRate
 from app.stats import createPitchPercentagePieChart, velocityOverTimeLineChart
@@ -25,6 +25,7 @@ import csv
 import os
 # for file naming duplication problem
 import random
+import re
 
 outing = Blueprint("outing", __name__)
 
@@ -77,9 +78,6 @@ def outing_home(id):
             pitch_usage_pie_data.append(p['num_thrown'])
             strike_percentage_polar_data.append(p['strike_percentage'])
 
-    # setup var for strike zone pitches
-    pitches = []
-
     # setting up horizontal axis for line chart
     horizontal_axis = []
     i = 1
@@ -89,13 +87,6 @@ def outing_home(id):
             horizontal_axis.append(i)
             i += 1
 
-            # strike zone append
-            pitches.append({
-                "pitch_num": p.pitch_num,
-                "pitch_type": p.pitch_type,
-                "x": p.loc_x,
-                "y": p.loc_y
-            })
 
 
     velos = veloOverTime(outing)
@@ -113,8 +104,7 @@ def outing_home(id):
         pitch_usage_pie_data=pitch_usage_pie_data,
         pitch_usage_pie_labels=pitch_usage_pie_labels,
         strike_percentage_polar_labels=strike_percentage_polar_labels,
-        strike_percentage_polar_data=strike_percentage_polar_data,
-        pitches=pitches
+        strike_percentage_polar_data=strike_percentage_polar_data
     )
 
 # ***************-OUTING PBP-*************** #
@@ -152,6 +142,17 @@ def outing_pbp(id):
     velocity_over_time_line_chart = velocityOverTimeLineChart(outing)
     strike_percentage_bar_chart = pitchStrikePercentageBarChart(pitch_strike_percentage)
 
+    # for pitch location graph
+    pitches = []
+    for ab in outing.at_bats:
+        for p in ab.pitches:
+            pitches.append({
+                "pitch_num": p.pitch_num,
+                "pitch_type": p.pitch_type,
+                "x": p.loc_x,
+                "y": p.loc_y
+            })
+
     # render template with all the statistical data calculated from the outing
     return render_template(
         'outing/outing_pbp.html',
@@ -166,6 +167,7 @@ def outing_pbp(id):
         pitch_whiff=pitch_whiff,
         velocity_over_time_line_chart=velocity_over_time_line_chart,
         strike_percentage_bar_chart=strike_percentage_bar_chart,
+        pitches=pitches
     )
 
 # ***************-OUTING ADVANCED STATS-*************** #
@@ -240,14 +242,25 @@ def outing_stats_basic(id):
 def outing_videos(id):
 
     outing = Outing.query.filter_by(id=id).first()
-    if not outing:
-        flash("URL does not exist")
-        return redirect(url_for('main.index'))
+    videos = Video.query.filter_by(outing_id=id).all()
+    video_ids = []
+    for v in videos:
+
+        # https://gist.github.com/silentsokolov/f5981f314bc006c82a41
+        # gets the id from a youtube linke
+        regex = re.compile(r'(https?://)?(www\.)?(youtube|youtu|youtube-nocookie)\.(com|be)/(watch\?v=|embed/|v/|.+\?v=)?(?P<id>[A-Za-z0-9\-=_]{11})')
+        match = regex.match(v.link)
+        if not match:
+            video_ids.append("")
+        else:
+            video_ids.append(match.group("id"))
 
     return render_template(
         '/outing/outing_videos.html',
         title=outing,
-        outing=outing
+        outing=outing,
+        video_objects=videos,
+        videos=video_ids
     )
 
 # ***************-NEW OUTING-*************** #
@@ -1089,6 +1102,7 @@ def new_outing_pitch_tracker(id):
         inning=inning,
         lead_runner=lead_runner
     )
+
 
 
 # ***************-HELPFUL FUNCTIONS-*************** #
