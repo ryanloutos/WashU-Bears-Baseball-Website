@@ -8,7 +8,7 @@ from app.forms import NewOutingFromCSV, SeasonForm, OpponentForm, BatterForm
 from app.forms import OutingPitchForm, NewOutingFromCSVPitches, EditUserForm
 from app.forms import ChangePasswordForm, EditBatterForm, EditOpponentForm
 from app.forms import NewBatterForm
-from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat, Game
+from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat, Game, Video
 from app.stats import calcPitchPercentages, pitchUsageByCount, calcAverageVelo
 from app.stats import calcPitchStrikePercentage, calcPitchWhiffRate
 from app.stats import createPitchPercentagePieChart, velocityOverTimeLineChart
@@ -19,6 +19,8 @@ from app.stats import staffPitcherAvgVelo, staffPitchStrikePercentage
 from app.stats import outingPitchStatistics, outingTimeToPlate, veloOverTime
 from app.stats import teamImportantStatsSeason
 from app.stats import batterSwingWhiffRatebyPitchbyCount, batter_summary_game_stats
+
+import re
 
 batter = Blueprint('batter', __name__)
 
@@ -497,4 +499,35 @@ def batter_game_view(batter_id, game_id):
         game_at_bats=game_at_bats,
         pitches=pitches,
         hits=hits
+    )
+
+@batter.route('/batter/<id>/videos', methods=["GET", "POST"])
+@login_required
+def batter_videos(id):
+
+    batter = Batter.query.filter_by(id=id).first()
+    videos = Video.query.filter_by(batter_id=id).all()
+    video_ids = []
+    seasons = []
+    for v in videos:
+
+        if v.season not in seasons:
+            seasons.append(v.season)
+
+        # https://gist.github.com/silentsokolov/f5981f314bc006c82a41
+        # gets the id from a youtube linke
+        regex = re.compile(r'(https?://)?(www\.)?(youtube|youtu|youtube-nocookie)\.(com|be)/(watch\?v=|embed/|v/|.+\?v=)?(?P<id>[A-Za-z0-9\-=_]{11})')
+        match = regex.match(v.link)
+        if not match:
+            video_ids.append("")
+        else:
+            video_ids.append(match.group("id"))
+
+    return render_template(
+        'opponent/batter/batter_videos.html',
+        title=batter,
+        batter=batter,
+        seasons=seasons,
+        video_objects=videos,
+        videos=video_ids
     )
