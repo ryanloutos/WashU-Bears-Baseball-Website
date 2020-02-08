@@ -175,6 +175,17 @@ class field {
                 .attr("fill", "black");
         }
     }
+
+    drawEncodedCircle(x, y, data){
+        this.field_svg.append('circle')
+            .attr('class', 'field-circle')
+            .attr('cx', this.xScalef(x))
+            .attr('cy', this.yScalef(y))
+            .attr('r', field_circle_size)
+            .style('fill', traj_colors[traj]);
+
+        
+    }
 }
 
 /**
