@@ -427,7 +427,7 @@ class field_density{
     set_position_shade(position, shade){
         let gradient_val = Math.round(255 - shade * 255);
         let rgb_val = "rgb(" + gradient_val + ", " + gradient_val + ", " + gradient_val + ")";
-        console.log(rgb_val);
+
         if(position == 3){
             this.pos_1b.style("fill", rgb_val);
             this.g.append("text")
