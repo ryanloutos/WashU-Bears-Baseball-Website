@@ -128,10 +128,39 @@ def batter_spray_chart(batter_id):
         flash("URL does not exist")
         return redirect(url_for('main.index'))
 
+    # Var setup
+    sprays = []  # setup for dots on spraychart
+    density_vals = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    d_total = 0
+    for ab in batter.at_bats:
+        for p in ab.pitches:
+            # if there was an ab_outcome
+            if p.ab_result in ["1B", "2B", "3B", "HR", "IP->Out", "Error", "FC"]:
+                # for d3 field object dots
+                sprays.append({
+                    "x": p.spray_x,
+                    "y": p.spray_y,
+                    "traj": p.traj,
+                    "hard_hit": p.hit_hard
+                })
+
+                if p.fielder not in ["", None]:
+                    density_vals[int(p.fielder)] += 1
+                    d_total += 1
+
+    print(d_total)
+    print(density_vals)
+    for i in range(len(density_vals)):
+        density_vals[i] = density_vals[i] / d_total
+
+    print(density_vals)
+
     return render_template(
         'opponent/batter/batter_spray_chart.html',
         title=batter,
-        batter=batter
+        batter=batter,
+        sprays=sprays,
+        d_vals=density_vals
     )
 
 
@@ -447,7 +476,8 @@ def batter_game_view(batter_id, game_id):
                     "pitch_num": pitch_index,
                     "pitch_type": p.pitch_type,
                     "x": p.loc_x,
-                    "y": p.loc_y
+                    "y": p.loc_y,
+                    "hard_hit": p.hit_hard
                 })
                 pitch_index += 1
 
@@ -456,7 +486,8 @@ def batter_game_view(batter_id, game_id):
                     hits.append({
                         "x": p.spray_x,
                         "y": p.spray_y,
-                        "traj": p.traj
+                        "traj": p.traj,
+                        "hard_hit": p.hit_hard
                     })
 
     return render_template(
