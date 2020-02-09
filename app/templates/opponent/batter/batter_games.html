@@ -4,6 +4,13 @@
 {{ super() }}
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidenav.css') }}">
 <script src="{{ url_for('static', filename='js/sortable_table.js') }}"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+        //sort by date twice so most recent at top
+        sortTable(0,0);
+        sortTable(0,0);
+    });
+</script>
 {% endblock %}
 
 {% block app_content %}
@@ -13,7 +20,7 @@
         {{ batter.name() }} - Games
     </h1>
     <div>
-        <table class="table">
+        <table class="table sortable_table">
             <tr class="table-headers">
                 <th>Date</th>
                 <th>Opponent</th>

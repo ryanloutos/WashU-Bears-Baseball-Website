@@ -28,6 +28,7 @@ class field {
      */
     constructor(div_id, width=457, height=457){
 
+
         this.field_svg = d3.select("#"+div_id)
             .append("svg")
                 .attr("width", width)
@@ -36,9 +37,9 @@ class field {
 
         //add graphics object
         this.g = this.field_svg.append("g")
-            .attr("transform", "translate(0, 95)");
-        
-            //add image to svg
+            // .attr("transform", "translate(0, 95)");
+/*
+        //add image to svg
         this.field_svg.append("svg:image")
             .attr('x', 0)
             .attr('y', 0)
@@ -47,10 +48,106 @@ class field {
             .attr('transform', 'translate(17,17)')
             .style('alignment-baseline', 'middle')
             .attr("xlink:href", window.location.origin + "/static/images/field.png");
-
+*/
         //scale variables for field image
         this.xScalef = d3.scaleLinear().range([width, 0]).domain([250, -250]);
         this.yScalef = d3.scaleLinear().range([height, 0]).domain([-100, 400]);
+
+        this.create_field()
+    }
+
+    /**
+     * This class is meant to be called by the constructor only. If called externally, 
+     * no action will happen. 
+     * 
+     * create_field contains the variables and statements to create an svg baseball field, which should 
+     * scale to both the height and width variables in the constructor.
+     */
+    create_field(){
+
+        //path to create field outline
+        let field_outline_path =
+            "M " + this.xScalef(0) + " " + this.yScalef(-85) + " " + 
+            "L " + this.xScalef(55) + " " + this.yScalef(-65) + " " + 
+            "L " + this.xScalef(190) + " " + this.yScalef(105) + " " + 
+            "L " + this.xScalef(240) + " " + this.yScalef(155) + " " + 
+            "L " + this.xScalef(138) + " " + this.yScalef(250) + " " +
+            "L " + this.xScalef(46) + " " + this.yScalef(300) + " " +
+            "L " + this.xScalef(-46) + " " + this.yScalef(300) + " " +
+            "L " + this.xScalef(-138) + " " + this.yScalef(250) + " " +
+            "L " + this.xScalef(-240) + " " + this.yScalef(155) + " " +
+            "L " + this.xScalef(-190) + " " + this.yScalef(105) + " " +
+            "L " + this.xScalef(-55) + " " + this.yScalef(-65) + " " +
+            "L " + this.xScalef(0) + " " + this.yScalef(-85) + " " + 
+            "Z";
+
+        let field_inner_outline_path =
+            "M " + this.xScalef(0) + " " + this.yScalef(-80) + " " + 
+            "L " + this.xScalef(50) + " " + this.yScalef(-60) + " " + 
+            "L " + this.xScalef(180) + " " + this.yScalef(100) + " " + 
+            "L " + this.xScalef(232) + " " + this.yScalef(153) + " " + 
+            "L " + this.xScalef(133) + " " + this.yScalef(245) + " " +
+            "L " + this.xScalef(41) + " " + this.yScalef(295) + " " +
+            "L " + this.xScalef(-41) + " " + this.yScalef(295) + " " +
+            "L " + this.xScalef(-133) + " " + this.yScalef(245) + " " +
+            "L " + this.xScalef(-232) + " " + this.yScalef(153) + " " +
+            "L " + this.xScalef(-180) + " " + this.yScalef(100) + " " +
+            "L " + this.xScalef(-50) + " " + this.yScalef(-60) + " " +
+            "L " + this.xScalef(0) + " " + this.yScalef(-80) + " " + 
+            "Z";
+
+        let infield_dirt = 
+            "M " + this.xScalef(60) + " " + this.yScalef(-5) + " " + //move to first base
+            "L " + this.xScalef(0) + " " + this.yScalef(55) + " " +
+            "L " + this.xScalef(-60) + " " + this.yScalef(-5) + " " +
+            "L " + this.xScalef(0) + " " + this.yScalef( -65) + " " + 
+            "L " + this.xScalef(75) + " " + this.yScalef(10) + " " +
+            "C " + this.xScalef(65) + " " + this.yScalef(90) + " " + this.xScalef(-65) + " " + this.yScalef(90) + " " + this.xScalef(-75) + " " + this.yScalef(10) + " " +
+            "L " + this.xScalef(0) + " " + this.yScalef(-65) + " " + 
+            "Z";
+        
+        let infield_grass = 
+            "M " + this.xScalef(0) + " " + this.yScalef(-55) + " " + 
+            "L " + this.xScalef(50) + " " + this.yScalef(-5) + " " +
+            "L " + this.xScalef(0) + " " + this.yScalef(45) + " " +
+            "L " + this.xScalef(-50) + " " + this.yScalef(-5) + " " +
+            "Z";
+
+
+        let foul_lines = 
+            "M " + this.xScalef(-230) + " " + this.yScalef(170) + " " + 
+            "L " + this.xScalef(0) + " " + this.yScalef(-60) + " " + 
+            "L " + this.xScalef(230) + " " + this.yScalef(170) + " " + 
+            "L " + this.xScalef(0) + " " + this.yScalef(-60) + " " + 
+            "Z";
+
+        
+
+
+        this.g.append("path")
+            .attr("id", "field-outline")
+            .attr("d", field_outline_path)
+            .style('stroke', 'black')
+            .style("fill", "rgb(233, 152, 30)")
+            .style('stroke-width', 1);
+        this.g.append("path")
+            .attr("id", "field-inner-outline")
+            .attr("d", field_inner_outline_path)
+            .style("fill", "rgb(25, 151, 49)");
+        this.g.append("path")
+            .attr("id", "field-infield-dirt")
+            .attr("d", infield_dirt)
+            .style("fill", "rgb(233, 152, 30)");
+        this.g.append("path")
+            .attr("id", "field-infield-grass")
+            .attr("d", infield_grass)
+            .style("fill", "rgb(25, 151, 49)");
+        this.g.append("path")
+            .attr("id", "field-foul-line")
+            .attr("d", foul_lines)
+            .style("stroke", "white")
+            .style('stroke-width', 2);
+
     }
 
     /**
@@ -68,7 +165,9 @@ class field {
             .attr('cx', this.xScalef(x))
             .attr('cy', this.yScalef(y))
             .attr('r', field_circle_size)
-            .style('fill', traj_colors[traj]);
+            .style('fill', traj_colors[traj])
+            .style("stroke", "black")
+            .style("stroke-width", 1);
         
         //add hard hit star if needed
         if(hard_hit != false){
@@ -330,7 +429,7 @@ class field_density{
     set_position_shade(position, shade){
         let gradient_val = Math.round(255 - shade * 255);
         let rgb_val = "rgb(" + gradient_val + ", " + gradient_val + ", " + gradient_val + ")";
-        console.log(rgb_val);
+
         if(position == 3){
             this.pos_1b.style("fill", rgb_val);
             this.g.append("text")

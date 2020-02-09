@@ -122,6 +122,14 @@ class Pitch(db.Model):
     def __repr__(self):
         return f'<outing: {self.outing_id}, pitch: {self.pitch_num}>'
 
+    def get_pitcher(self):
+        at_bat = AtBat.query.filter_by(id=self.atbat_id).first()
+        return at_bat.get_pitcher()
+
+    def get_date(self):
+        at_bat = AtBat.query.filter_by(id=self.atbat_id).first()
+        return at_bat.get_date()
+
 
 class Season(db.Model):
     id = db.Column(db.Integer, primary_key=True)

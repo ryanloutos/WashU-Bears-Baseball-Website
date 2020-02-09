@@ -12,8 +12,10 @@ Shorter term (like before our first live matchups at practice)
 - Go through all tables and make them as readable as possible (truncate, percentages, etc.)
 - Add "conference" column to opponent table
 - When showing tables, make it so that it only shows stats for pitches you throw or threw that outing. Have others hidden to stats
-- Add hard hit variable coding to pitch locations and sprays chart
-
+- [x] Add hard hit variable coding to pitch locations and sprays chart
+- Create system where you can add spray chart locations retroactively. 
+- Add an edit at_bat page to the batter pages where you can edit the at bat pitches without having to go to pitcher outing
+- Add result columt to batter at_bats page
 
 Longer term (like before first game?)
 - Create filter to look at over a certain time frame? 

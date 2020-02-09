@@ -134,6 +134,7 @@ def batter_spray_chart(batter_id):
     sprays = []  # setup for dots on spraychart
     density_vals = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     d_total = 0
+    outcomes = []
     for ab in batter.at_bats:
         for p in ab.pitches:
             # if there was an ab_outcome
@@ -146,12 +147,16 @@ def batter_spray_chart(batter_id):
                     "hard_hit": p.hit_hard
                 })
 
+                # For density chart
                 if p.fielder not in ["", None]:
                     density_vals[int(p.fielder)] += 1
                     d_total += 1
 
-    print(d_total)
-    print(density_vals)
+            # for table containing all the outcomes from spray chart
+            if p.ab_result not in ["", None]:
+                outcomes.append(p)
+
+    # Change density vals to percentages
     for i in range(len(density_vals)):
         density_vals[i] = density_vals[i] / d_total
 
@@ -162,7 +167,8 @@ def batter_spray_chart(batter_id):
         title=batter,
         batter=batter,
         sprays=sprays,
-        d_vals=density_vals
+        d_vals=density_vals,
+        outcomes=outcomes
     )
 
 
