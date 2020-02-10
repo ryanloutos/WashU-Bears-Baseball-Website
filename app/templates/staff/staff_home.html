@@ -2,15 +2,27 @@
 
 {% block styles %}
     {{ super() }}
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidenav.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/pitcher_sidenav.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/loader.css') }}">
+    <script src="{{ url_for('static', filename='js/sidenav.js') }}"></script>
     <style>
+        #page-title {
+            border-bottom: 5px solid #bd231f;
+            font-size: 45px;
+            font-weight: 600;
+            text-align: center;
+        }
+        #pitcher-icon {
+            height: 40px;
+            width: auto;
+        }
         #team-season-stats {
             width: 300px;
         }
     </style>
     <script>
         window.addEventListener("DOMContentLoaded", function(){
+
             fetch("{{ url_for('api.staff_home_importantstats') }}",
             {
                 method: "POST"
@@ -56,11 +68,13 @@
 
 {% block app_content %}
     {% include "staff/staff_sidenav.html" %}
-    <div class="main">
-        <h1>Pitching Staff 19-20</h1>
-        <h2><- View Information About Our Staff to the Left</h2>
-        <h4>Current Season: {{ current_season }}</h4> 
+    <div class="main" style="text-align: center;">
+        <h1 id="page-title">
+            {% include "staff/pitcher.svg" %}
+            BEARS PITCHING 2019-2020
+        </h1>
         <p>
+            <h2>Staff Goals For {{ current_season }}</h2>
             <table class="table" id="team-season-stats">
                 <tr>
                     <th>Statistic</th>
