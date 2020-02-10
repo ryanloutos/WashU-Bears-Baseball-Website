@@ -2,20 +2,42 @@
 
 {% block styles %}
     {{ super() }}
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/index.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/index.css' ) }}">
 {% endblock %}
 
 {% block app_content %}
     <div class="main">
-        <h1>
+        <h1 class="title">
             <img class="logos" alt="WashU-Logo" src="{{ url_for('static', filename='images/Bear_Head_Color.png') }}">
-            WashU Bears Pitching
+            WashU Bears Baseball
             <img class="logos" alt="WashU-Logo" src="{{ url_for('static', filename='images/WashU_Color.png') }}">
-            <br>
-            
         </h1>
-        <img class="team-pic" alt="Team Pic" src="{{ url_for('static', filename='images/Anthem.jpg') }}">
-        <img class="team-pic" alt="Team Pic" src="{{ url_for('static', filename='images/Dom.jpg') }}">
+        <br>
+        <div class="navigation">
+            <a href="{{ url_for('staff.staff_home') }}" class="links">
+                <div class="icon-div">
+                    {% include "main/index_svg/pitcher.svg" %}<br>
+                    <h1 class="icon-title">PITCHING</h1>
+                </div>
+            </a>
+            <a href="{{ url_for('opponent.opponent_home', id=1) }}" class="links">
+                <div class="icon-div">
+                    {% include "main/index_svg/batter.svg" %}<br>
+                    <h1 class="icon-title">HITTING</h1>
+                </div>
+            </a>
+            <a href="{{ url_for('season.season_home', id=current_season.id ) }}" class="links">
+                <div class="icon-div">
+                    {% include "main/index_svg/calendar.svg" %}<br>
+                    <h1 class="icon-title">THIS SEASON</h1>
+                </div>
+            </a>
+            <a href="{{ url_for('opponent.all_opponents') }}" class="links">
+                <div class="icon-div">
+                    {% include "main/index_svg/pencil.svg" %}<br>
+                    <h1 class="icon-title">SCOUTING</h1>
+                </div>
+            </a>
+        </div>
     </div>
-    
 {% endblock %}
