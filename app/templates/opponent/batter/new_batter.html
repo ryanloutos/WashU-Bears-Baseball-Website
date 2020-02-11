@@ -13,9 +13,16 @@
                 {% endfor %}
             </p>
             <p>
-                {{ form.fullname.label }}<br>
-                {{ form.fullname(size=32) }}
-                {% for error in form.fullname.errors %}
+                {{ form.firstname.label }}<br>
+                {{ form.firstname(size=32) }}
+                {% for error in form.firstname.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.lastname.label }}<br>
+                {{ form.lastname(size=32) }}
+                {% for error in form.lastname.errors %}
                     <span style="color: red;">[{{ error }}]</span>
                 {% endfor %}
             </p>
@@ -37,6 +44,13 @@
                 {{ form.grad_year.label }}<br>
                 {{ form.grad_year(size=32) }}
                 {% for error in form.grad_year.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.retired.label }}<br>
+                {{ form.retired(size=32) }}
+                {% for error in form.retired.errors %}
                     <span style="color: red;">[{{ error }}]</span>
                 {% endfor %}
             </p>

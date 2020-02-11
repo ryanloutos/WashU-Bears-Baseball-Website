@@ -7,27 +7,11 @@
 <script>
     document.addEventListener("DOMContentLoaded", function(){
 
+        setup_pitch_usage();
         // get data from server to template
-        let pitch_usage_count = {{ pitch_usage_count|tojson }};
         let swing_whiff_rate = {{ swing_whiff_rate|tojson }};
 
-        // put pitch_usage_count data in a form that the chart can handle
-        let pitch_usage_count_data = [];
-        for(let pitch_type in pitch_usage_count){
-            if(pitch_type != "thrown"){
-                let dat_temp = [];
-                for(let count in pitch_usage_count[pitch_type]){
-                    dat_temp.push({
-                        x: count,
-                        y: pitch_usage_count[pitch_type][count]["percent"]
-                    });
-                }
-                pitch_usage_count_data.push({
-                    name: pitch_type,
-                    data: dat_temp
-                })
-            }
-        }
+
 
         // put swing_whiff_rate_data into form that chart can handle
         let swing_rate_data = [];
@@ -59,24 +43,7 @@
             }
         }
 
-        // setup data and options for pitch_usage_count_chart
-        var pitch_usage_options = {
-            series: pitch_usage_count_data,
-            chart: {
-                height: 350,
-                type: 'heatmap',
-            },
-            dataLabels: {
-                enabled: true,
-                style: {
-                    colors: ["#000000"]
-                }
-            },
-            colors: ["#bd2e1f"],
-            title: {
-                text: 'Pitch Usage vs {{ opponent }} hitters (% of time)'
-            }
-        };
+
 
         var swing_rate_options = {
             series: swing_rate_data,
@@ -115,14 +82,59 @@
         };
 
         // create and render pitch_usage_count_chart
-        var pitch_usage_count_chart = new ApexCharts(document.querySelector("#pitch_usage_count_chart"), pitch_usage_options);
+        
         var whiff_rate_chart = new ApexCharts(document.querySelector('#whiff_rate_chart'), whiff_rate_options);
         var swing_rate_chart = new ApexCharts(document.querySelector('#swing_rate_chart'), swing_rate_options);
 
-        pitch_usage_count_chart.render();
+        
         whiff_rate_chart.render();
         swing_rate_chart.render();
     });
+
+    function setup_pitch_usage(){
+        //get data from server
+        let pitch_usage_count = {{ pitch_usage_count|tojson }};
+
+        // put pitch_usage_count data in a form that the chart can handle
+        let pitch_usage_count_data = [];
+        for(let pitch_type in pitch_usage_count){
+            if(pitch_type != "thrown"){
+                let dat_temp = [];
+                for(let count in pitch_usage_count[pitch_type]){
+                    dat_temp.push({
+                        x: count,
+                        y: pitch_usage_count[pitch_type][count]["percent"]
+                    });
+                }
+                pitch_usage_count_data.push({
+                    name: pitch_type,
+                    data: dat_temp
+                });
+            }
+        }
+
+        // setup data and options for pitch_usage_count_chart
+        var pitch_usage_options = {
+            series: pitch_usage_count_data,
+            chart: {
+                height: 350,
+                type: 'heatmap',
+            },
+            dataLabels: {
+                enabled: true,
+                style: {
+                    colors: ["#000000"]
+                }
+            },
+            colors: ["#bd2e1f"],
+            title: {
+                text: 'Pitch Usage vs {{ opponent }} hitters (% of time)'
+            }
+        };
+
+        var pitch_usage_count_chart = new ApexCharts(document.querySelector("#pitch_usage_count_chart"), pitch_usage_options);
+        pitch_usage_count_chart.render();
+    }
 
     </script>
     {% endblock %}

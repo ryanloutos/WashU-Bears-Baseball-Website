@@ -1,0 +1,39 @@
+#page-title {
+    border-bottom: 5px solid #bd231f;
+    font-size: 45px;
+    font-weight: 600;
+    text-align: center;
+}
+#pitcher-icon {
+    height: 40px;
+    width: auto;
+}
+#team-season-stats {
+    width: 80%;
+    margin-left: 10%;
+}
+#team-season-stats td {
+    height: 40px;
+    font-weight: 600;
+}
+#team-season-stats th {
+    height: 30px;
+    font-weight: 600;
+}
+.table-headers {
+    height: 30px;
+}
+#staff-roster {
+    width: 80%;
+    margin-left: 10%;
+}
+#staff-roster td{
+    text-align: center;
+    padding-left: 5px;
+    height: 30px;
+}
+#staff-roster th {
+    height: 30px;
+    text-align: center;
+    padding-left: 5px;
+}

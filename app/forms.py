@@ -45,7 +45,8 @@ class BatterForm(FlaskForm):
 # Creating a new batter
 class NewBatterForm(FlaskForm):
     opponent = SelectField('Opponent', validators=[Optional()])
-    fullname = StringField('Name', validators=[Optional()])
+    firstname = StringField('First Name', validators=[Optional()])
+    lastname = StringField('Last Name', validators=[Optional()])
     nickname = StringField('Initials/Number', validators=[Optional()])
     bats = SelectField(
         'Bats',
@@ -58,7 +59,8 @@ class NewBatterForm(FlaskForm):
 
 class EditBatterForm(FlaskForm):
     opponent = SelectField('Opponent', validators=[Optional()])
-    fullname = StringField('Name', validators=[Optional()])
+    firstname = StringField('First Name', validators=[Optional()])
+    lastname = StringField('Last Name', validators=[Optional()])
     nickname = StringField('Initials/Number', validators=[Optional()])
     bats = SelectField(
         'Bats',

@@ -35,94 +35,92 @@
         <h1>
             {{ batter.name() }} - At Bats
         </h1> 
-        <div class="container">
-            <table class="table">
-                <thead>
-                    <tr class="table-headers">
-                        <th><div class="row">
-                            <div class="col-xs-3">Date</div>
-                            <div class="col-xs-3">Pitcher</div>
-                            <div class="col-xs-3">Num Pitches</div>
-                            <div class="col-xs-3">View</div>
-                        </div></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for at_bat in batter.at_bats %}
-                        <tr>
-                            <td>
-                                <div>
-                                    <div class="row">
-                                        <div class="col-xs-3"><a href="#pitches-{{loop.index}}" class="btn btn-red" data-toggle="collapse">{{ at_bat.get_date() }}</a></div>
-                                        <div class="col-xs-3">{{ at_bat.get_pitcher() }}</div>
-                                        <div class="col-xs-3">{{ at_bat.get_num_pitches() }}</div>
-                                        <div class="col-xs-3"><a href="{{ url_for('batter.batter_at_bat', batter_id=batter.id, ab_num=at_bat.id) }}">View</a></div>
-                                    </div>
-                                    <div id="pitches-{{loop.index}}" class="collapse">
-                                        <table class="table table-condensed">
-                                            <thead>
-                                                <tr class="table-headers">
-                                                    <th>Pitcher</th>
-                                                    <th>Pitch</th>
-                                                    <th>Velo</th>
-                                                    <th>Lead RNR</th>
-                                                    <th>Time to Plate</th>
-                                                    <th>Pitch Type</th>
-                                                    <th>Pitch Result</th>
-                                                    <th>Hit Spot?</th>
-                                                    <th>Count</th>
-                                                    <th>AB Result</th>
-                                                    <th>GB/FB/LD</th>
-                                                    <th>Fielder</th>
-                                                    <th>Hit Hard?</th>
-                                                    <th>Inning</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {% for pitch in at_bat.pitches %}
-                                                    <tr>
-                                                        <td>{{ at_bat.get_pitcher() }}</td>
-                                                        <td>{{ pitch.pitch_num }}</td>
-                                                        {% if pitch.velocity==None %}
-                                                            <td></td>
-                                                        {% else %}
-                                                            <td>{{ pitch.velocity }}</td>
-                                                        {% endif %}
-                                                        <td>{{ pitch.lead_runner }}</td>
-                                                        {% if pitch.time_to_plate==None %}
-                                                            <td></td>
-                                                        {% else %}
-                                                            <td>{{ pitch.time_to_plate }}</td>
-                                                        {% endif %}
-                                                        <td>{{ pitch.pitch_type }}</td>
-                                                        <td>{{ pitch.pitch_result }}</td>
-                                                        {% if pitch.hit_spot %}
-                                                            <td>X</td>
-                                                        {% else %}
-                                                            <td></td>
-                                                        {% endif %}
-                                                        <td>{{ pitch.count }}</td>
-                                                        <td>{{ pitch.ab_result }}</td>
-                                                        <td>{{ pitch.traj }}</td>
-                                                        <td>{{ pitch.fielder }}</td>
-                                                        {% if pitch.hit_hard %}
-                                                            <td>X</td>
-                                                        {% else %}
-                                                            <td></td>
-                                                        {% endif %}
-                                                        <td>{{ pitch.inning }}</td>
-                                                    </tr>
-                                                {% endfor %}
-                                            </tbody>
-                                        </table>
-                                    </div>
+        <table class="table">
+            <thead>
+                <tr class="table-headers">
+                    <th><div class="row">
+                        <div class="col-xs-3">Date</div>
+                        <div class="col-xs-3">Pitcher</div>
+                        <div class="col-xs-3">Num Pitches</div>
+                        <div class="col-xs-3">View</div>
+                    </div></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for at_bat in batter.at_bats %}
+                    <tr>
+                        <td>
+                            <div>
+                                <div class="row">
+                                    <div class="col-xs-3"><a href="#pitches-{{loop.index}}" class="btn btn-red" data-toggle="collapse">{{ at_bat.get_date() }}</a></div>
+                                    <div class="col-xs-3">{{ at_bat.get_pitcher() }}</div>
+                                    <div class="col-xs-3">{{ at_bat.get_num_pitches() }}</div>
+                                    <div class="col-xs-3"><a href="{{ url_for('batter.batter_at_bat', batter_id=batter.id, ab_num=at_bat.id) }}">View</a></div>
                                 </div>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-                
-            </table>
-        </div>
+                                <div id="pitches-{{loop.index}}" class="collapse">
+                                    <table class="table table-condensed">
+                                        <thead>
+                                            <tr class="table-headers">
+                                                <th>Pitcher</th>
+                                                <th>Pitch</th>
+                                                <th>Velo</th>
+                                                <th>Lead RNR</th>
+                                                <th>Time to Plate</th>
+                                                <th>Pitch Type</th>
+                                                <th>Pitch Result</th>
+                                                <th>Hit Spot?</th>
+                                                <th>Count</th>
+                                                <th>AB Result</th>
+                                                <th>GB/FB/LD</th>
+                                                <th>Fielder</th>
+                                                <th>Hit Hard?</th>
+                                                <th>Inning</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for pitch in at_bat.pitches %}
+                                                <tr>
+                                                    <td>{{ at_bat.get_pitcher() }}</td>
+                                                    <td>{{ pitch.pitch_num }}</td>
+                                                    {% if pitch.velocity==None %}
+                                                        <td></td>
+                                                    {% else %}
+                                                        <td>{{ pitch.velocity }}</td>
+                                                    {% endif %}
+                                                    <td>{{ pitch.lead_runner }}</td>
+                                                    {% if pitch.time_to_plate==None %}
+                                                        <td></td>
+                                                    {% else %}
+                                                        <td>{{ pitch.time_to_plate }}</td>
+                                                    {% endif %}
+                                                    <td>{{ pitch.pitch_type }}</td>
+                                                    <td>{{ pitch.pitch_result }}</td>
+                                                    {% if pitch.hit_spot %}
+                                                        <td>X</td>
+                                                    {% else %}
+                                                        <td></td>
+                                                    {% endif %}
+                                                    <td>{{ pitch.count }}</td>
+                                                    <td>{{ pitch.ab_result }}</td>
+                                                    <td>{{ pitch.traj }}</td>
+                                                    <td>{{ pitch.fielder }}</td>
+                                                    {% if pitch.hit_hard %}
+                                                        <td>X</td>
+                                                    {% else %}
+                                                        <td></td>
+                                                    {% endif %}
+                                                    <td>{{ pitch.inning }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+            
+        </table>
     </div>
 {% endblock %}

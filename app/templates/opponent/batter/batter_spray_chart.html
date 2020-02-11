@@ -57,90 +57,88 @@
         <h1>
             {{batter.name()}} - Spray Charts
         </h1> 
-        <div class="container">
-            <div class="row">
-                <div class="col-xs-12 col-md-6" id="spray-location">
-                    <h4>Spray Locations</h4>
-                    <div>
-                        <div id="field-legend"></div>
-                        <br>
-                        <div id="field"></div>
-                    </div>
-                    
+        <div class="row">
+            <div class="col-xs-12 col-md-6" id="spray-location">
+                <h4>Spray Locations</h4>
+                <div>
+                    <div id="field-legend"></div>
+                    <br>
+                    <div id="field"></div>
                 </div>
-                <div class="col-xs-12 col-md-6" id="fielder-location">
-                    <h4>Spray Density</h4>
-                    <div id="field-density"></div>
-                </div>
+                
             </div>
-            <div class="row">
-                <table class="table table-striped table-condensed sortable_table">
-                    <thead>
-                        <tr class="table-headers">
-                            <th>Index</th>
-                            <th>Date</th>
-                            <th>Pitcher</th>
-                            <th>Outing Pitch Num</th>
-                            <th>Velo</th>
-                            <th>Lead RNR</th>
-                            <th>Time to Plate</th>
-                            <th>Pitch Type</th>
-                            <th>Hit Spot?</th>
-                            <th>Count</th>
-                            <th>AB Result</th>
-                            <th>GB/FB/LD</th>
-                            <th>Fielder</th>
-                            <th>Hit Hard?</th>
-                            <th>Inning</th>
+            <div class="col-xs-12 col-md-6" id="fielder-location">
+                <h4>Spray Density</h4>
+                <div id="field-density"></div>
+            </div>
+        </div>
+        <div class="row">
+            <table class="table table-striped table-condensed sortable_table">
+                <thead>
+                    <tr class="table-headers">
+                        <th>Index</th>
+                        <th>Date</th>
+                        <th>Pitcher</th>
+                        <th>Outing Pitch Num</th>
+                        <th>Velo</th>
+                        <th>Lead RNR</th>
+                        <th>Time to Plate</th>
+                        <th>Pitch Type</th>
+                        <th>Hit Spot?</th>
+                        <th>Count</th>
+                        <th>AB Result</th>
+                        <th>GB/FB/LD</th>
+                        <th>Fielder</th>
+                        <th>Hit Hard?</th>
+                        <th>Inning</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for outcome in outcomes %}
+                        <tr>
+                            <td class="outcome-index"></td>
+                            <td>{{ outcome.get_date() }}</td>
+                            <td>{{ outcome.get_pitcher() }}</td>
+                            <td>{{ outcome.pitch_num }}</td>
+
+                            {% if outcome.velocity not in ["None", None] %}
+                                <td>{{ outcome.velocity }}</td>
+                            {% else %}
+                                <td></td>
+                            {% endif %}
+
+                            <td>{{ outcome.lead_runner }}</td>
+
+                            {% if outcome.time_to_plate not in ["None", None] %}
+                                <td>{{ outcome.time_to_plate }}</td>
+                            {% else %}
+                                <td></td>
+                            {% endif %}
+
+                            <td>{{ outcome.pitch_type }}</td>
+
+                            {% if outcome.hit_spot %}
+                                <td>X</td>
+                            {% else %}
+                                <td></td>
+                            {% endif %}
+
+                            <td>{{ outcome.count }}</td>
+                            <td>{{ outcome.ab_result }}</td>
+                            <td>{{ outcome.traj }}</td>
+                            <td>{{ outcome.fielder }}</td>
+
+                            {% if outcome.hit_hard %}
+                                <td>X</td>
+                            {% else %}
+                                <td></td>
+                            {% endif %}
+
+                            <td>{{ outcome.inning }}</td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        {% for outcome in outcomes %}
-                            <tr>
-                                <td class="outcome-index"></td>
-                                <td>{{ outcome.get_date() }}</td>
-                                <td>{{ outcome.get_pitcher() }}</td>
-                                <td>{{ outcome.pitch_num }}</td>
-
-                                {% if outcome.velocity not in ["None", None] %}
-                                    <td>{{ outcome.velocity }}</td>
-                                {% else %}
-                                    <td></td>
-                                {% endif %}
-
-                                <td>{{ outcome.lead_runner }}</td>
-
-                                {% if outcome.time_to_plate not in ["None", None] %}
-                                    <td>{{ outcome.time_to_plate }}</td>
-                                {% else %}
-                                    <td></td>
-                                {% endif %}
-
-                                <td>{{ outcome.pitch_type }}</td>
-
-                                {% if outcome.hit_spot %}
-                                    <td>X</td>
-                                {% else %}
-                                    <td></td>
-                                {% endif %}
-
-                                <td>{{ outcome.count }}</td>
-                                <td>{{ outcome.ab_result }}</td>
-                                <td>{{ outcome.traj }}</td>
-                                <td>{{ outcome.fielder }}</td>
-
-                                {% if outcome.hit_hard %}
-                                    <td>X</td>
-                                {% else %}
-                                    <td></td>
-                                {% endif %}
-
-                                <td>{{ outcome.inning }}</td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
 {% endblock %}

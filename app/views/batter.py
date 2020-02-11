@@ -15,10 +15,11 @@ from app.stats import createPitchPercentagePieChart, velocityOverTimeLineChart
 from app.stats import pitchStrikePercentageBarChart, avgPitchVeloPitcher
 from app.stats import pitchUsageByCountLineCharts, pitchStrikePercentageSeason
 from app.stats import pitchUsageSeason, seasonStatLine, staffBasicStats
-from app.stats import staffPitcherAvgVelo, staffPitchStrikePercentage
+from app.stats import staffPitchStrikePercentage
 from app.stats import outingPitchStatistics, outingTimeToPlate, veloOverTime
 from app.stats import teamImportantStatsSeason
 from app.stats import batterSwingWhiffRatebyPitchbyCount, batter_summary_game_stats
+from app.stats import batterSwingWhiffRatebyPitchbyCount2
 
 import re
 
@@ -265,7 +266,8 @@ def edit_batter(id):
     if form.validate_on_submit():
 
         # update info with data from form
-        batter.name = form.fullname.data
+        batter.firstname = form.firstname.data
+        batter.lastname = form.lastname.data
         batter.short_name = form.nickname.data
         batter.bats = form.bats.data
         batter.grad_year = form.grad_year.data
@@ -315,18 +317,21 @@ def new_batter():
     if form.validate_on_submit():
 
         # insert data from form into season table
-        batter = Batter(name=form.fullname.data,
-                        short_name=form.nickname.data,
-                        bats=form.bats.data,
-                        grad_year=form.grad_year.data,
-                        opponent_id=form.opponent.data)
+        batter = Batter(
+            firstname=form.firstname.data,
+            lastname=form.lastname.data,
+            short_name=form.nickname.data,
+            bats=form.bats.data,
+            grad_year=form.grad_year.data,
+            opponent_id=form.opponent.data,
+            retired=form.retired.data)
 
         # send Season object to data table
         db.session.add(batter)
         db.session.commit()
 
         # redirect back to login page
-        flash('Congratulations, you just made a new batter!')
+        flash('New batter created!')
         return redirect(url_for('opponent.opponent_home', id=batter.opponent_id))
 
     return render_template('opponent/batter/new_batter.html',
@@ -412,11 +417,14 @@ def batter_stats(batter_id):
     seasons = batter.get_seasons()
 
     swing_rate_by_count, whiff_rate_by_count = batterSwingWhiffRatebyPitchbyCount(batter)
+    pitch_usage_count, swing_whiff_rate = batterSwingWhiffRatebyPitchbyCount2(batter)
 
     return render_template(
         "opponent/batter/batter_stats.html",
         swing_rate_by_count=swing_rate_by_count,
         whiff_rate_by_count=whiff_rate_by_count,
+        pitch_usage_count=pitch_usage_count,
+        swing_whiff_rate=swing_whiff_rate,
         title=batter,
         batter=batter,
         seasons=seasons

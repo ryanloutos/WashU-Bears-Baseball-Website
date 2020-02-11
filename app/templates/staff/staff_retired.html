@@ -2,35 +2,32 @@
 
 {% block styles %}
     {{ super() }}
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidenav.css') }}">
-    <style>
-        #staff-roster {
-            width: 500px;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/staff_sidenav.css') }}">
+    <script src="{{ url_for('static', filename='js/sidenav.js') }}"></script>
     <script src="{{ url_for('static', filename='js/sortable_table.js') }}"></script>
 {% endblock %}
 
 {% block app_content %}
     {% include "staff/staff_sidenav.html" %}
     <div class="main">
-        <h1>Retired</h1> <br>
-        <table id="staff-roster" class="table sortable_table">
-            <tr class="table-headers">
-                <th onclick="sortTable(0, 0)">Name</th>
-                <th onclick="sortTable(1, 0)">Throws</th>
-                <th onclick="sortTable(2, 0)">Grad Year</th>
-                <th>Player Homepage</th>
-            </tr>
-            {% for p in retired_pitchers %}
-                <tr>
-                    <td>{{ p }}</td>
-                    <td>{{ p.throws }}</td>
-                    <td>{{ p.grad_year }}</td>
-                    <td><a href="{{ url_for('pitcher.pitcher_home', id=p.id) }}">View</a></td>
+        {% include "staff/staff_title.html" %}
+        <div class="col-xs-12 col-md-12">
+            <h2 style="text-align: center;">Retired Pitchers</h2>
+            <table style="width: 40%; margin-left: 30%">
+                <tr class="table-headers">
+                    <th style="height: 30px; width: 50%">Name</th>
+                    <th style="height: 30px; width: 25%">Throws</th>
+                    <th style="height: 30px; width: 25%">Year</th>
                 </tr>
-            {% endfor %}
-        </table>
+                {% for p in retired_pitchers %}
+                    <tr>
+                        <td><a style="color: #bd231f; height: 30px; width: 50%" href="{{ url_for('pitcher.pitcher_home', id=p.id) }}">{{ p }}</a></td>
+                        <td style="height: 30px; width: 25%">{{ p.throws }}</td>
+                        <td style="height: 30px; width: 25%">{{ p.grad_year }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
     </div>
 
 {% endblock %}
