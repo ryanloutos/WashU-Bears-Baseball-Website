@@ -3,7 +3,7 @@
 {% block styles %}
     {{ super() }}
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/loader.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/pitcher_sidenav.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/staff_sidenav.css') }}">
     <script src="{{ url_for('static', filename='js/sidenav.js') }}"></script>
     <script src="{{ url_for('static', filename='js/sortable_table.js') }}"></script>
     <script src="{{ url_for('static', filename='js/checkbox_season_selector.js') }}"></script>
@@ -223,7 +223,7 @@
         {% for season in seasons %}
             <p>
                 <input type="checkbox" class="basic-stats-season-selector" value="{{ season.id }}"
-                    {% if current_season==season %} checked {% endif %}>{{ season }}
+                    {% if current_season==season %} checked {% endif %}> {{ season }}
             </p>
         {% endfor %}
         <div id="all-seasons-basic-stats" class="basic-stats-season-holder">

@@ -1,0 +1,70 @@
+<script>
+    let pickoffs = 0;
+    let errors = 0;
+    let num_pitchers_with_pick = 0;
+    let blown_leads_after_7 = 0;
+    document.addEventListener("DOMContentLoaded", function(){
+
+        fetch("{{ url_for('api.staff_home_importantstats') }}",
+        {
+            method: "POST"
+        }).then(res => res.json())
+        .then(function(response){
+            if(response.status == "failure"){
+                console.log("Request status: failure");
+                console.log("Error message: " + response.error);
+                return;
+            }
+
+            document.querySelector("#strike-percentage-holder").innerHTML = response.data.strike_percentage + "%";
+            if(response.data.strike_percentage >= 65){
+                document.querySelector("#strike-percentage-holder").style.color = "rgb(0,100,0)";
+            } else {
+                document.querySelector("#strike-percentage-holder").style.color = "rgb(200,0,0)";
+            }
+
+            document.querySelector("#fps-percentage-holder").innerHTML = response.data.fps_percentage + "%";
+            if(response.data.fps_percentage >= 65){
+                document.querySelector("#fps-percentage-holder").style.color = "rgb(0,100,0)";
+            } else {
+                document.querySelector("#fps-percentage-holder").style.color = "rgb(200,0,0)";
+            }
+
+            document.querySelector("#k-to-bb-holder").innerHTML = response.data.k_to_bb;
+            if(response.data.k_to_bb >= 2){
+                document.querySelector("#k-to-bb-holder").style.color = "rgb(0,100,0)";
+            } else {
+                document.querySelector("#k-to-bb-holder").style.color = "rgb(200,0,0)";
+            }
+
+            document.querySelector("#pickoffs-holder").innerHTML = pickoffs;
+            if(pickoffs >= 15){
+                document.querySelector("#pickoffs-holder").style.color = "rgb(0,100,0)";
+            } else {
+                document.querySelector("#pickoffs-holder").style.color = "rgb(200,0,0)";
+            }
+
+            document.querySelector("#errors-holder").innerHTML = errors;
+            if(errors <= 5){
+                document.querySelector("#errors-holder").style.color = "rgb(0,100,0)";
+            } else {
+                document.querySelector("#errors-holder").style.color = "rgb(200,0,0)";
+            }
+            
+            document.querySelector("#num-pitchers-with-pickoffs-holder").innerHTML = num_pitchers_with_pick;
+            if(num_pitchers_with_pick >= 5){
+                document.querySelector("#num-pitchers-with-pickoffs-holder").style.color = "rgb(0,100,0)";
+            } else {
+                document.querySelector("#num-pitchers-with-pickoffs-holder").style.color = "rgb(200,0,0)";
+            }
+
+            document.querySelector("#blown-leads-holder").innerHTML = blown_leads_after_7;
+            if(blown_leads_after_7 == 0){
+                document.querySelector("#blown-leads-holder").style.color = "rgb(0,100,0)";
+            } else {
+                document.querySelector("#blown-leads-holder").style.color = "rgb(200,0,0)";
+            }
+
+        });
+    });
+</script>
