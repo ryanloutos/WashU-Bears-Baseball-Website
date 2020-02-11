@@ -5,7 +5,7 @@ from app import db
 
 from app.models import User, Outing, Pitch, Season, Pitcher
 from app.stats import staffBasicStats
-from app.stats import staffPitcherAvgVelo, staffPitchStrikePercentage
+from app.stats import staffAdvancedStats
 from app.stats import teamImportantStatsSeason
 
 # setup blueprint
@@ -54,7 +54,7 @@ def staff_basic_stats():
         currently on roster
     """
     pitchers = Pitcher.query.filter(Pitcher.retired != 1).all()
-    seasons = Season.query.all()
+    seasons = Season.query.order_by(Season.year).all()
 
     staff_stat_summary, players_stat_summary = staffBasicStats(pitchers)
 
@@ -71,15 +71,13 @@ def staff_basic_stats():
 def staff_advanced_stats():
     pitchers = Pitcher.query.filter(Pitcher.retired != 1).all()
 
-    team_avg_velo, player_avg_velo = staffPitcherAvgVelo(pitchers)
-    team_strike_percentages, player_strike_percentages = staffPitchStrikePercentage(pitchers)
+    players, total_velo_averages, total_pct_averages = staffAdvancedStats(pitchers)
 
     return render_template(
         'staff/staff_advanced_stats.html',
-        team_avg_velo=team_avg_velo,
-        player_avg_velo=player_avg_velo,
-        team_strike_percentages=team_strike_percentages,
-        player_strike_percentages=player_strike_percentages
+        players = players,
+        total_velo_averages = total_velo_averages,
+        total_pct_averages = total_pct_averages
     )
 
 
@@ -99,7 +97,7 @@ def staff_retired():
             the retired staff
     '''
 
-    retired_pitchers = Pitcher.query.filter(Pitcher.retired == 1).all()
+    retired_pitchers = Pitcher.query.filter(Pitcher.retired == 1).order_by(Pitcher.grad_year).all()
 
     return render_template('staff/staff_retired.html',
                            title='Retired Pitchers',

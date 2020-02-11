@@ -217,15 +217,17 @@
 
 {% block app_content %}
     {% include "staff/staff_sidenav.html" %}
-    <div class="main">
-        <h1>Roster Basic Stat Line</h1> <br>
+    <div class="main" style="text-align: center;">
+        {% include "staff/staff_title.html" %}
+        <h1>Roster Basic Stat Line</h1>
         <h5>Select Seasons:</h5>
         {% for season in seasons %}
-            <p>
+            <div style="display: inline-block;">
                 <input type="checkbox" class="basic-stats-season-selector" value="{{ season.id }}"
                     {% if current_season==season %} checked {% endif %}> {{ season }}
-            </p>
+            </div>
         {% endfor %}
+        <br>
         <div id="all-seasons-basic-stats" class="basic-stats-season-holder">
             <table class="table sortable_table">
                 <tr class="table-headers">

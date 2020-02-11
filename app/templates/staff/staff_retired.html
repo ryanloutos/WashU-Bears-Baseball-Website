@@ -21,9 +21,9 @@
                 </tr>
                 {% for p in retired_pitchers %}
                     <tr>
-                        <td><a style="color: #bd231f; width: 50%" href="{{ url_for('pitcher.pitcher_home', id=p.id) }}">{{ p }}</a></td>
-                        <td style="width: 25%">{{ p.throws }}</td>
-                        <td style="width: 25%">{{ p.grad_year }}</td>
+                        <td><a style="color: #bd231f; height: 30px; width: 50%" href="{{ url_for('pitcher.pitcher_home', id=p.id) }}">{{ p }}</a></td>
+                        <td style="height: 30px; width: 25%">{{ p.throws }}</td>
+                        <td style="height: 30px; width: 25%">{{ p.grad_year }}</td>
                     </tr>
                 {% endfor %}
             </table>
