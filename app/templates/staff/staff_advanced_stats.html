@@ -2,91 +2,75 @@
 
 {% block styles %}
     {{ super() }}
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidenav.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/staff_sidenav.css') }}">
+    <script src="{{ url_for('static', filename='js/sidenav.js') }}"></script>
     <script src="{{ url_for('static', filename='js/sortable_table.js') }}"></script>
 {% endblock %}
 
 {% block app_content %}
     {% include "staff/staff_sidenav.html" %}
-    <div class="main">
-        <p><h1>Staff Advanced Stats</h1></p>
-        <div>
-            <h4>Pitcher Pitch Average Velo</h4>
+    <div class="main" style="text-align: center;">
+        {% include "staff/staff_title.html" %}
+        <p><h1>Advanced Stats For {{current_season}}</h1></p>
+        <div class="col-xs-12 col-md-6">
+            <h4>Fastball Velocity</h4>
             <table class="table sortable_table">
                 <tr class="table-headers">
-                    <th onclick="sortTable(0, 0, 2)">Name</th>
-                    <th onclick="sortTable(1, 0, 2)">Throws</th>
-                    <th onclick="sortTable(2, 0, 2)">Grad Year</th>
-                    <th onclick="sortTable(3, 0, 2)">FB</th>
-                    <th onclick="sortTable(4, 0, 2)">2SM</th>
-                    <th onclick="sortTable(5, 0, 2)">SL</th>
-                    <th onclick="sortTable(6, 0, 2)">CB</th>
-                    <th onclick="sortTable(7, 0, 2)">CH</th>
-                    <th onclick="sortTable(8, 0, 2)">CT</th>
+                    <th style="width: 40%" onclick="sortTable(0, 0, 2)">Name</th>
+                    <!-- <th onclick="sortTable(1, 0, 2)">Throws</th>
+                    <th onclick="sortTable(2, 0, 2)">Grad Year</th> -->
+                    <th style="width: 20%" onclick="sortTable(1, 0, 2)">FB</th>
+                    <th style="width: 20%" onclick="sortTable(2, 0, 2)">2SM</th>
+                    <th style="width: 20%" onclick="sortTable(3, 0, 2)">Total</th>
                 </tr>
-                {% for pitcher in player_avg_velo %}
+                {% for pitcher in players %}
                     <tr class="data-row">
-                        <td>{{ pitcher["details"]["name"] }}</td>
-                        <td>{{ pitcher["details"]["throws"] }}</td>
-                        <td>{{ pitcher["details"]["class"] }}</td>
-                        <td>{{ pitcher["velos"]["FB"] }}</td>
-                        <td>{{ pitcher["velos"]["SM"] }}</td>
-                        <td>{{ pitcher["velos"]["SL"] }}</td>
-                        <td>{{ pitcher["velos"]["CB"] }}</td>
-                        <td>{{ pitcher["velos"]["CH"] }}</td>
-                        <td>{{ pitcher["velos"]["CT"] }}</td>
+                        <td style="width: 40%">{{ pitcher["details"]["name"] }}</td>
+                        <!-- <td>{{ pitcher["details"]["throws"] }}</td>
+                        <td>{{ pitcher["details"]["class"] }}</td> -->
+                        <td style="width: 20%">{{ pitcher["velos"]["FB"] }}</td>
+                        <td style="width: 20%">{{ pitcher["velos"]["SM"] }}</td>
+                        <td style="width: 20%">{{ pitcher["velos"]["total"] }}</td>
                     </tr>
                 {% endfor %}
                 <tr>
-                    <td>Team Averages</td>
-                    <td></td>
-                    <td></td>
-                    <td>{{ team_avg_velo["FB"] }}</td>
-                    <td>{{ team_avg_velo["SM"] }}</td>
-                    <td>{{ team_avg_velo["SL"] }}</td>
-                    <td>{{ team_avg_velo["CB"] }}</td>
-                    <td>{{ team_avg_velo["CH"] }}</td>
-                    <td>{{ team_avg_velo["CT"] }}</td>
+                    <td style="width: 40%"><b>Staff Averages</b></td>
+                    <!-- <td></td>
+                    <td></td> -->
+                    <td style="width: 20%"><b>{{ total_velo_averages["FB"] }}</b></td>
+                    <td style="width: 20%"><b>{{ total_velo_averages["SM"] }}</b></td>
+                    <td style="width: 20%"><b>{{ total_velo_averages["total"] }}</b></td>
                 </tr>
             </table>
         </div>
-        <div>
-            <h4>Pitcher Pitch Strike Percentage</h4>
+        <div class="col-xs-12 col-md-6">
+            <h4>Strike Percentages</h4>
             <table class="table sortable_table">
                 <tr class="table-headers">
-                    <th onclick="sortTable(0, 1, 2)">Name</th>
-                    <th onclick="sortTable(1, 1, 2)">Throws</th>
-                    <th onclick="sortTable(2, 1, 2)">Grad Year</th>
-                    <th onclick="sortTable(3, 1, 2)">FB</th>
-                    <th onclick="sortTable(4, 1, 2)">2SM</th>
-                    <th onclick="sortTable(5, 1, 2)">SL</th>
-                    <th onclick="sortTable(6, 1, 2)">CB</th>
-                    <th onclick="sortTable(7, 1, 2)">CH</th>
-                    <th onclick="sortTable(8, 1, 2)">CT</th>
+                    <th style="width: 40%" onclick="sortTable(0, 1, 2)">Name</th>
+                    <!-- <th onclick="sortTable(1, 1, 2)">Throws</th>
+                    <th onclick="sortTable(2, 1, 2)">Grad Year</th> -->
+                    <th style="width: 20%" onclick="sortTable(1, 1, 2)">Fastball</th>
+                    <th style="width: 20%" onclick="sortTable(2, 1, 2)">Offspeed</th>
+                    <th style="width: 20%" onclick="sortTable(3, 1, 2)">Total</th>
                 </tr>
-                {% for pitcher in player_strike_percentages %}
+                {% for pitcher in players %}
                 <tr>
-                    <td>{{ pitcher["details"]["name"] }}</td>
-                    <td>{{ pitcher["details"]["throws"] }}</td>
-                    <td>{{ pitcher["details"]["class"] }}</td>
-                    <td>{{ pitcher["percentages"]["FB"] }}</td>
-                    <td>{{ pitcher["percentages"]["SM"] }}</td>
-                    <td>{{ pitcher["percentages"]["SL"] }}</td>
-                    <td>{{ pitcher["percentages"]["CB"] }}</td>
-                    <td>{{ pitcher["percentages"]["CH"] }}</td>
-                    <td>{{ pitcher["percentages"]["CT"] }}</td>
+                    <td style="width: 40%">{{ pitcher["details"]["name"] }}</td>
+                    <!-- <td>{{ pitcher["details"]["throws"] }}</td>
+                    <td>{{ pitcher["details"]["class"] }}</td> -->
+                    <td style="width: 20%">{{ pitcher["strike_percentages"]["fastball"] }}%</td>
+                    <td style="width: 20%">{{ pitcher["strike_percentages"]["offspeed"] }}%</td>
+                    <td style="width: 20%">{{ pitcher["strike_percentages"]["total"] }}%</td>
                 </tr>
                 {% endfor %}
                 <tr>
-                    <td>Staff Averages</td>
-                    <td></td>
-                    <td></td>
-                    <td>{{ team_strike_percentages["FB"] }}</td>
-                    <td>{{ team_strike_percentages["SM"] }}</td>
-                    <td>{{ team_strike_percentages["SL"] }}</td>
-                    <td>{{ team_strike_percentages["CB"] }}</td>
-                    <td>{{ team_strike_percentages["CH"] }}</td>
-                    <td>{{ team_strike_percentages["CT"] }}</td>
+                    <td style="width: 40%"><b>Staff Averages</b></td>
+                    <!-- <td></td>
+                    <td></td> -->
+                    <td style="width: 20%"><b>{{ total_pct_averages["fastball"] }}%</b></td>
+                    <td style="width: 20%"><b>{{ total_pct_averages["offspeed"] }}%</b></td>
+                    <td style="width: 20%"><b>{{ total_pct_averages["total"] }}%</b></td>
                 </tr>
             </table>
         </div>

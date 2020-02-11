@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block styles %}
+    {{ super() }}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/staff_sidenav.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/loader.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/staff_home.css') }}">
+    <script src="{{ url_for('static', filename='js/sortable_table.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/sidenav.js') }}"></script>
+    {% include "staff/home/staff_home_js.html" %}
+{% endblock %}
+
+{% block app_content %}
+    {% include "staff/staff_sidenav.html" %}
+    <div class="main">
+        {% include "staff/staff_title.html" %}
+        <br>
+        <div class="col-xs-12 col-md-6" style="text-align: center; margin-top: -20px;">
+            <h2>Roster</h2>
+            <table id="staff-roster" class="sortable_table">
+                <tr class="table-headers">
+                    <th style="width: 50%;">Name</th>
+                    <th style="width: 25%;">Throws</th>
+                    <th style="width: 25%;">Year</th>
+                </tr>
+                {% for p in pitchers %}
+                    <tr>
+                        <td style="width: 50%;"><a style="color:#bd231f" href="{{ url_for('pitcher.pitcher_home', id=p.id) }}">{{ p }}</a></td>
+                        <td style="width: 25%;">{{ p.throws }}</td>
+                        <td style="width: 25%;">{{ p.grad_year }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-md-6" style="text-align: center; margin-top: -20px;">
+                <h2>Season Goals</h2>
+                <table id="team-season-stats">
+                    <tr class="table-headers">
+                        <th style="width: 30%;">Statistic</th>
+                        <th style="width: 35%">Goal</th>
+                        <th style="width: 35%">Current</th>
+                    </tr>
+                    <tr>
+                        <td style="width: 30%; text-align: center">Strike%</td>
+                        <td style="width: 35%">65%</td>
+                        <td style="width: 35%" id="strike-percentage-holder"><div class="loader"></div></td>
+                    </tr>
+                    <tr>
+                        <td style="width: 30%; text-align: center">FPS%</td>
+                        <td style="width: 35%">65%</td>
+                        <td style="width: 35%" id="fps-percentage-holder"><div class="loader"></div></td>
+                    </tr>
+                    <tr>
+                        <td style="width: 30%; text-align: center">K/BB</td>
+                        <td style="width: 35%">4</td>
+                        <td style="width: 35%" id="k-to-bb-holder"><div class="loader"></div></td>
+                    </tr>
+                    <tr>
+                        <td style="width: 30%; text-align: center">Pickoffs</td>
+                        <td style="width: 35%">&gt;15</td>
+                        <td style="width: 35%" id="pickoffs-holder"><div class="loader"></div></td>
+                    </tr>
+                    <tr>
+                        <td style="width: 30%; text-align: center">Errors</td>
+                        <td style="width: 35%">&lt;5</td>
+                        <td style="width: 35%" id="errors-holder"><div class="loader"></div></td>
+                    </tr>
+                    <tr>
+                        <td style="width: 30%; text-align: center">Num P's w/Pickoff</td>
+                        <td style="width: 35%">&gt;5</td>
+                        <td style="width: 35%" id="num-pitchers-with-pickoffs-holder"><div class="loader"></div></td>
+                    </tr>
+                    <tr>
+                        <td style="width: 30%; text-align: center">Blown Leads</td>
+                        <td style="width: 35%">0</td>
+                        <td style="width: 35%" id="blown-leads-holder"><div class="loader"></div></td>
+                    </tr>
+                </table>
+                <br>
+                <br>
+            </div>
+        </div>
+    </div>
+{% endblock %}

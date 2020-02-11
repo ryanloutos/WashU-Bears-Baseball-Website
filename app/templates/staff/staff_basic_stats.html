@@ -3,7 +3,8 @@
 {% block styles %}
     {{ super() }}
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/loader.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidenav.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/staff_sidenav.css') }}">
+    <script src="{{ url_for('static', filename='js/sidenav.js') }}"></script>
     <script src="{{ url_for('static', filename='js/sortable_table.js') }}"></script>
     <script src="{{ url_for('static', filename='js/checkbox_season_selector.js') }}"></script>
     <script>
@@ -216,15 +217,17 @@
 
 {% block app_content %}
     {% include "staff/staff_sidenav.html" %}
-    <div class="main">
-        <h1>Roster Basic Stat Line</h1> <br>
+    <div class="main" style="text-align: center;">
+        {% include "staff/staff_title.html" %}
+        <h1>Roster Basic Stat Line</h1>
         <h5>Select Seasons:</h5>
         {% for season in seasons %}
-            <p>
+            <div style="display: inline-block;">
                 <input type="checkbox" class="basic-stats-season-selector" value="{{ season.id }}"
-                    {% if current_season==season %} checked {% endif %}>{{ season }}
-            </p>
+                    {% if current_season==season %} checked {% endif %}> {{ season }}
+            </div>
         {% endfor %}
+        <br>
         <div id="all-seasons-basic-stats" class="basic-stats-season-holder">
             <table class="table sortable_table">
                 <tr class="table-headers">
