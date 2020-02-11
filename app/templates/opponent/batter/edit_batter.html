@@ -6,9 +6,16 @@
         <form method="post" novalidate>
             {{ form.hidden_tag() }} {# Preventing CSRF attacks #}
             <p>
-                {{ form.fullname.label }}<br>
-                {{ form.fullname(size=32, value=batter.name()) }}
-                {% for error in form.fullname.errors %}
+                {{ form.firstname.label }}<br>
+                {{ form.firstname(size=32, value=batter.firstname) }}
+                {% for error in form.firstname.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.lastname.label }}<br>
+                {{ form.lastname(size=32, value=batter.lastname) }}
+                {% for error in form.lastname.errors %}
                     <span style="color: red;">[{{ error }}]</span>
                 {% endfor %}
             </p>

@@ -265,7 +265,8 @@ def edit_batter(id):
     if form.validate_on_submit():
 
         # update info with data from form
-        batter.name = form.fullname.data
+        batter.firstname = form.firstname.data
+        batter.lastname = form.lastname.data
         batter.short_name = form.nickname.data
         batter.bats = form.bats.data
         batter.grad_year = form.grad_year.data
@@ -315,18 +316,21 @@ def new_batter():
     if form.validate_on_submit():
 
         # insert data from form into season table
-        batter = Batter(name=form.fullname.data,
-                        short_name=form.nickname.data,
-                        bats=form.bats.data,
-                        grad_year=form.grad_year.data,
-                        opponent_id=form.opponent.data)
+        batter = Batter(
+            firstname=form.firstname.data,
+            lastname=form.lastname.data,
+            short_name=form.nickname.data,
+            bats=form.bats.data,
+            grad_year=form.grad_year.data,
+            opponent_id=form.opponent.data,
+            retired=form.retired.data)
 
         # send Season object to data table
         db.session.add(batter)
         db.session.commit()
 
         # redirect back to login page
-        flash('Congratulations, you just made a new batter!')
+        flash('New batter created!')
         return redirect(url_for('opponent.opponent_home', id=batter.opponent_id))
 
     return render_template('opponent/batter/new_batter.html',
