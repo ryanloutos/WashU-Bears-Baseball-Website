@@ -3,229 +3,134 @@
 {% block styles %}
 {{ super() }}
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidenav.css') }}">
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script>
     window.addEventListener("DOMContentLoaded", function(){
-        document.querySelectorAll(".whiff-swing-season-selector").forEach(function(checkbox){
-            checkbox.addEventListener("click", get_whiff_swing_season_data, false);
-        });
+
+        setup_pitch_usage();
+        setup_swing_whiff_rate();
     });
 
-    function get_whiff_swing_season_data(){
+    function setup_pitch_usage(){
+        //get data from server
+        let pitch_usage_count = {{ pitch_usage_count|tojson }};
 
-        // get the currently selected seasons
-        let selected_seasons = [];
-        document.querySelectorAll(".whiff-swing-season-selector").forEach(function(checkbox){
-            if(checkbox.checked ==  true){
-                selected_seasons.push(checkbox.value);
+        // put pitch_usage_count data in a form that the chart can handle
+        let pitch_usage_count_data = [];
+        for(let pitch_type in pitch_usage_count){
+            if(pitch_type != "thrown"){
+                let dat_temp = [];
+                for(let count in pitch_usage_count[pitch_type]){
+                    dat_temp.push({
+                        x: count,
+                        y: pitch_usage_count[pitch_type][count]["percent"]
+                    });
+                }
+                pitch_usage_count_data.push({
+                    name: pitch_type,
+                    data: dat_temp
+                });
             }
-        });
-
-        // check if all or no seasoons are selected, to see if query needs to be run
-        if( selected_seasons.length == 0 || selected_seasons.length == document.querySelectorAll('.whiff-swing-season-selector').length){
-            document.querySelectorAll(".whiff-swing-holder").forEach(function(holder){
-                holder.style.display = "None";
-            });
-            document.querySelector("#all-seasons-whiff-swing").style.display = "block";
-            return;
         }
 
-        // check existing div holders to see if there is a match. 
-        let holder_id = "";
-        let match = false;
-        selected_seasons.forEach(function(season){
-            holder_id = holder_id + season + "-";
-        });
-        holder_id += "whiff-swing";
-        document.querySelectorAll(".whiff-swing-holder").forEach(function(holder){
-            // If match, make that holder visible, and all others invisible.
-            // Return early so that ajax is not run
-            if(holder.id == holder_id){
-                holder.style.display = "block";
-                match = true;
-            } else {
-                holder.style.display = "None";
+        // setup data and options for pitch_usage_count_chart
+        var pitch_usage_options = {
+            series: pitch_usage_count_data,
+            chart: {
+                height: 350,
+                type: 'heatmap',
+            },
+            dataLabels: {
+                enabled: true,
+                style: {
+                    colors: ["#000000"]
+                }
+            },
+            colors: ["#bd2e1f"],
+            title: {
+                text: 'Pitch Usage vs {{ batter.name() }} (% of time)'
             }
-        });
-        // if there is a match, dont need to run the ajax query
-        if(match){
-            return;
-        }
-
-        // prepare data for ajax
-        // ignore the errors it works anyway
-        let data = {
-            seasons: selected_seasons,
-            batter_id: {{ batter.id }}
         };
 
-        fetch(
-            "{{ url_for('api.batter_stats_whiffrate') }}",
-            {
-                method: "POST",
-                body: JSON.stringify(data),
-                headers: {"content-type": "application/json"}
-            }
-        ).then(res => res.json())
-        .then(function(response){
-            
-            // check to make sure that request was successful
-            if(response.status == "failure"){
-                console.log("Request Status: " + response.status);
-                console.log("Error message: " + response.error);
-                return;
-            }
-
-            let holder_div = document.createElement("div");
-
-            // create id name for new div
-            holder_div.classList.add("whiff-swing-holder");
-            let div_id = "";
-            selected_seasons.forEach(function(season){
-                div_id = div_id + season + "-";
-            });
-            holder_div.id = div_id + "whiff-swing";
-
-            // begin creating div contents
-            let whiff_rate_table = document.createElement("table");
-            let swing_rate_table = document.createElement("table");
-            whiff_rate_table.classList.add("table");
-            swing_rate_table.classList.add("table");
-
-            let whiff_rate_table_body = document.createElement("tbody");
-            let swing_rate_table_body = document.createElement("tbody");
-
-            let swing_header_row = document.createElement("tr");
-            let whiff_header_row = document.createElement("tr");
-            swing_header_row.classList.add("table-headers");
-            whiff_header_row.classList.add("table-headers");
-
-
-            let swing_header_category_1 = document.createElement("th");
-            let swing_header_category_2 = document.createElement("th");
-            let swing_header_category_3 = document.createElement("th");
-            let swing_header_category_4 = document.createElement("th");
-            let swing_header_category_5 = document.createElement("th");
-            let swing_header_category_6 = document.createElement("th");
-            let swing_header_category_7 = document.createElement("th");
-
-            let whiff_header_category_1 = document.createElement("th");
-            let whiff_header_category_2 = document.createElement("th");
-            let whiff_header_category_3 = document.createElement("th");
-            let whiff_header_category_4 = document.createElement("th");
-            let whiff_header_category_5 = document.createElement("th");
-            let whiff_header_category_6 = document.createElement("th");
-            let whiff_header_category_7 = document.createElement("th");
-
-            swing_header_category_1.innerHTML = "Count";
-            swing_header_category_2.innerHTML = "FB";
-            swing_header_category_3.innerHTML = "2-Seam";
-            swing_header_category_4.innerHTML = "CB";
-            swing_header_category_5.innerHTML = "SL";
-            swing_header_category_6.innerHTML = "CH";
-            swing_header_category_7.innerHTML = "CT";
-
-            whiff_header_category_1.innerHTML = "Count";
-            whiff_header_category_2.innerHTML = "FB";
-            whiff_header_category_3.innerHTML = "2-Seam";
-            whiff_header_category_4.innerHTML = "CB";
-            whiff_header_category_5.innerHTML = "SL";
-            whiff_header_category_6.innerHTML = "CH";
-            whiff_header_category_7.innerHTML = "CT";
-
-            swing_header_row.appendChild(swing_header_category_1);
-            swing_header_row.appendChild(swing_header_category_2);
-            swing_header_row.appendChild(swing_header_category_3);
-            swing_header_row.appendChild(swing_header_category_4);
-            swing_header_row.appendChild(swing_header_category_5);
-            swing_header_row.appendChild(swing_header_category_6);
-            swing_header_row.appendChild(swing_header_category_7);
-
-            whiff_header_row.appendChild(whiff_header_category_1);
-            whiff_header_row.appendChild(whiff_header_category_2);
-            whiff_header_row.appendChild(whiff_header_category_3);
-            whiff_header_row.appendChild(whiff_header_category_4);
-            whiff_header_row.appendChild(whiff_header_category_5);
-            whiff_header_row.appendChild(whiff_header_category_6);
-            whiff_header_row.appendChild(whiff_header_category_7);
-
-            whiff_rate_table_body.appendChild(whiff_header_row);
-            swing_rate_table_body.appendChild(swing_header_row);
-
-            // create row elements for both swing rate and whiff rate tables
-            for(let count in response.data.swing_rate_by_count){
-                let swing_data_row = document.createElement("tr");
-                let whiff_data_row = document.createElement("tr");
-                
-                let swing_data_category_1 = document.createElement("td");
-                let swing_data_category_2 = document.createElement("td");
-                let swing_data_category_3 = document.createElement("td");
-                let swing_data_category_4 = document.createElement("td");
-                let swing_data_category_5 = document.createElement("td");
-                let swing_data_category_6 = document.createElement("td");
-                let swing_data_category_7 = document.createElement("td");
-
-                let whiff_data_category_1 = document.createElement("td");
-                let whiff_data_category_2 = document.createElement("td");
-                let whiff_data_category_3 = document.createElement("td");
-                let whiff_data_category_4 = document.createElement("td");
-                let whiff_data_category_5 = document.createElement("td");
-                let whiff_data_category_6 = document.createElement("td");
-                let whiff_data_category_7 = document.createElement("td");
-
-                swing_data_category_1.innerHTML = count;
-                swing_data_category_2.innerHTML = response.data.swing_rate_by_count[count]["FB"];
-                swing_data_category_3.innerHTML = response.data.swing_rate_by_count[count]["SM"];
-                swing_data_category_4.innerHTML = response.data.swing_rate_by_count[count]["CB"];
-                swing_data_category_5.innerHTML = response.data.swing_rate_by_count[count]["SL"];
-                swing_data_category_6.innerHTML = response.data.swing_rate_by_count[count]["CH"];
-                swing_data_category_7.innerHTML = response.data.swing_rate_by_count[count]["CT"];
-
-                whiff_data_category_1.innerHTML = count;
-                whiff_data_category_2.innerHTML = response.data.whiff_rate_by_count[count]["FB"];
-                whiff_data_category_3.innerHTML = response.data.whiff_rate_by_count[count]["SM"];
-                whiff_data_category_4.innerHTML = response.data.whiff_rate_by_count[count]["CB"];
-                whiff_data_category_5.innerHTML = response.data.whiff_rate_by_count[count]["SL"];
-                whiff_data_category_6.innerHTML = response.data.whiff_rate_by_count[count]["CH"];
-                whiff_data_category_7.innerHTML = response.data.whiff_rate_by_count[count]["CT"];
-
-                swing_data_row.appendChild(swing_data_category_1);
-                swing_data_row.appendChild(swing_data_category_2);
-                swing_data_row.appendChild(swing_data_category_3);
-                swing_data_row.appendChild(swing_data_category_4);
-                swing_data_row.appendChild(swing_data_category_5);
-                swing_data_row.appendChild(swing_data_category_6);
-                swing_data_row.appendChild(swing_data_category_7);
-
-                whiff_data_row.appendChild(whiff_data_category_1);
-                whiff_data_row.appendChild(whiff_data_category_2);
-                whiff_data_row.appendChild(whiff_data_category_3);
-                whiff_data_row.appendChild(whiff_data_category_4);
-                whiff_data_row.appendChild(whiff_data_category_5);
-                whiff_data_row.appendChild(whiff_data_category_6);
-                whiff_data_row.appendChild(whiff_data_category_7);
-
-                swing_rate_table_body.appendChild(swing_data_row);
-                whiff_rate_table_body.appendChild(whiff_data_row);
-            }
-            
-            let swing_rate_title = document.createElement("h2");
-            swing_rate_title.innerHTML = "Swing Rate by Pitch by Count";
-            let whiff_rate_title = document.createElement("h2");
-            whiff_rate_title.innerHTML = "Whiff Rate by Pitch by Count";
-
-            swing_rate_table.appendChild(swing_rate_table_body);
-            whiff_rate_table.appendChild(whiff_rate_table_body)
-
-            holder_div.appendChild(swing_rate_title);
-            holder_div.appendChild(swing_rate_table);
-            holder_div.appendChild(whiff_rate_title);
-            holder_div.appendChild(whiff_rate_table);
-
-            document.querySelectorAll(".main")[0].appendChild(holder_div);
-
-        });
+        var pitch_usage_count_chart = new ApexCharts(document.querySelector("#pitch_usage_count_chart"), pitch_usage_options);
+        pitch_usage_count_chart.render();
     }
 
+    function setup_swing_whiff_rate(){
+        let swing_whiff_rate = {{ swing_whiff_rate|tojson }};
+
+        // put swing_whiff_rate_data into form that chart can handle
+        let swing_rate_data = [];
+        let whiff_rate_data = [];
+        for(let pitch_type in swing_whiff_rate){
+            if(pitch_type != "thrown"){
+                let swing_dat_temp = [];
+                let whiff_dat_temp = [];
+                for(let count in swing_whiff_rate[pitch_type]){
+                    swing_dat_temp.push({
+                        x: count,
+                        y: swing_whiff_rate[pitch_type][count]["swings"]
+                    });
+                    whiff_dat_temp.push({
+                        x: count,
+                        y: swing_whiff_rate[pitch_type][count]["whiffs"]
+                    });
+                }
+
+                // append to data options arrays
+                swing_rate_data.push({
+                    name: pitch_type,
+                    data: swing_dat_temp
+                });
+                whiff_rate_data.push({
+                    name: pitch_type,
+                    data: whiff_dat_temp
+                });
+            }
+        }
+
+        var swing_rate_options = {
+            series: swing_rate_data,
+            chart: {
+                height: 350,
+                type: 'heatmap'
+            },
+            dataLabels: {
+                enabled: true,
+                style: {
+                    colors: ["#000000"]
+                }
+            },
+            colors: ["#bd2e1f"],
+            title: {
+                text: 'Swing Rates by Pitch by Count (% of the time)'
+            }
+        };
+
+        var whiff_rate_options = {
+            series: whiff_rate_data,
+            chart: {
+                height: 350,
+                type: 'heatmap'
+            },
+            dataLabels: {
+                enabled: true,
+                style: {
+                    colors: ["#000000"]
+                }
+            },
+            colors: ["#bd2e1f"],
+            title: {
+                text: 'Whiff Rates by Pitch by Count (% of the time)'
+            }
+        };
+
+        var whiff_rate_chart = new ApexCharts(document.querySelector('#whiff_rate_chart'), whiff_rate_options);
+        var swing_rate_chart = new ApexCharts(document.querySelector('#swing_rate_chart'), swing_rate_options);
+
+        whiff_rate_chart.render();
+        swing_rate_chart.render();
+    }
 </script>
 {% endblock %}
 
@@ -235,58 +140,17 @@
     <h1>
         {{ batter.name() }} Stats
     </h1>
-
-    {% for season in seasons %}
-        <p><input class="whiff-swing-season-selector" type="checkbox" id="{{ season }}-checkbox"" value="{{season.id}}"> {{ season }}</p>
-    {% endfor %}
-
-    <div class="whiff-swing-holder" id="all-seasons-whiff-swing">
-        <h2>Swing Rate by Pitch by Count</h2>
-        <table class="table">
-            <tr class="table-headers">
-                <th>Count</th>
-                <th>FB</th>
-                <th>2-Seam</th>
-                <th>CB</th>
-                <th>SL</th>
-                <th>CH</th>
-                <th>CT</th>
-            </tr>
-            {% for key, val in swing_rate_by_count.items() %}
-            <tr>
-                <td>{{ key }}</td>
-                <td>{{ val["FB"] }}</td>
-                <td>{{ val["SM"] }}</td>
-                <td>{{ val["CB"] }}</td>
-                <td>{{ val["SL"] }}</td>
-                <td>{{ val["CH"] }}</td>
-                <td>{{ val["CT"] }}</td>
-            </tr>
-            {% endfor %}
-        </table>
-        <h2>Whiff Rate by Pitch by Count</h2>
-        <table class="table">
-            <tr class="table-headers">
-                <th>Count</th>
-                <th>FB</th>
-                <th>2-Seam</th>
-                <th>CB</th>
-                <th>SL</th>
-                <th>CH</th>
-                <th>CT</th>
-            </tr>
-            {% for key, val in whiff_rate_by_count.items() %}
-            <tr>
-                <td>{{ key }}</td>
-                <td>{{ val["FB"] }}</td>
-                <td>{{ val["SM"] }}</td>
-                <td>{{ val["CB"] }}</td>
-                <td>{{ val["SL"] }}</td>
-                <td>{{ val["CH"] }}</td>
-                <td>{{ val["CT"] }}</td>
-            </tr>
-            {% endfor %}
-        </table>
+    <div >
+        <h3>Carer Pitch Usage vs {{ batter.name() }}</h3>
+        <div id="pitch_usage_count_chart"></div>
+    </div>
+    <div>
+        <h3>Career Swing Rates of {{ batter.name() }}</h3>
+        <div id="swing_rate_chart"></div>
+    </div>
+    <div>
+        <h3>Career Whiff Rates of {{ batter.name() }}</h3>
+        <div id="whiff_rate_chart"></div>
     </div>
 </div>
 {% endblock %}
