@@ -416,13 +416,13 @@ def batter_stats(batter_id):
         return redirect(url_for('main.index'))
     seasons = batter.get_seasons()
 
-    swing_rate_by_count, whiff_rate_by_count = batterSwingWhiffRatebyPitchbyCount(batter)
+    # swing_rate_by_count, whiff_rate_by_count = batterSwingWhiffRatebyPitchbyCount(batter)
     pitch_usage_count, swing_whiff_rate = batterSwingWhiffRatebyPitchbyCount2(batter)
 
     return render_template(
         "opponent/batter/batter_stats.html",
-        swing_rate_by_count=swing_rate_by_count,
-        whiff_rate_by_count=whiff_rate_by_count,
+        # swing_rate_by_count=swing_rate_by_count,
+        # whiff_rate_by_count=whiff_rate_by_count,
         pitch_usage_count=pitch_usage_count,
         swing_whiff_rate=swing_whiff_rate,
         title=batter,

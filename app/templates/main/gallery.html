@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block styles %}
+    {{ super() }}
+<style>
+    .gallery {
+        -webkit-column-count: 3;
+        -moz-column-count: 3;
+        column-count: 3;
+        -webkit-column-width: 33%;
+        -moz-column-width: 33%;
+        column-width: 33%; }
+
+    .gallery .pics {
+        -webkit-transition: all 350ms ease;
+        transition: all 350ms ease; }
+
+    .gallery .animation {
+        -webkit-transform: scale(1);
+        -ms-transform: scale(1);
+        transform: scale(1); }
+
+    @media (max-width: 450px) {
+        .gallery {
+            -webkit-column-count: 1;
+            -moz-column-count: 1;
+            column-count: 1;
+            -webkit-column-width: 100%;
+            -moz-column-width: 100%;
+            column-width: 100%;
+        }
+    }
+    </style>
+{% endblock %}
+
+{% block app_content %}
+    <div class="main">
+        <h1 class="title">
+            WashU Bears Baseball Gallery
+        </h1>
+        <br>
+        <ul class="nav nav-tabs">
+              <li class="active"><a data-toggle="tab" href="#team">Team</a></li>
+              <li><a data-toggle="tab" href="#headshots">Headshots</a></li>
+              <li><a data-toggle="tab" href="#game1">Game 1</a></li>
+              <li><a data-toggle="tab" href="#">Menu 3</a></li>
+        </ul>
+        <div class="tab-content">
+            <div id="team" class="tab-pane fade in active">
+                <br>
+                <div class="gallery">
+                    <div class="">
+                        <img src="{{url_for('static', filename='images/Dom.jpg')}}" alt="hype pic :)" class="img-thumbnail img-fluid">
+                    </div>
+                    <div class="">
+                        <img src="{{url_for('static', filename='images/Anthem.jpg')}}" alt="hype pic :)" class="img-thumbnail img-fluid">
+                    </div>
+                </div>
+            </div>
+            <div id="headshots" class="tab-pane fade">
+                <div class="gallery">
+                    {% for headshot in headshots %}
+                        <div>
+                            <img src="/static/images/pitcher_photos/{{headshot}}" alt="headshot" class="img-thumbnail img-fluid">
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div id="game1" class="tab-pane fade"></div>
+        </div>
+
+    </div>
+{% endblock %}

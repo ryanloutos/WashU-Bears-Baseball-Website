@@ -6,6 +6,8 @@ from app import db
 from ..forms import LoginForm, RegistrationForm
 from ..forms import EditUserForm, ChangePasswordForm, User
 
+import os
+
 main = Blueprint('main', __name__)
 
 # ***************-INDEX-*************** # DONE
@@ -266,3 +268,19 @@ def register():
     return render_template('main/register.html',
                            title='Register',
                            form=form)
+
+
+@main.route("/gallery")
+@login_required
+def gallery():
+
+    # Get filenames of all headshots
+    images_path = os.path.join(os.getcwd(), "app/static/images/pitcher_photos")
+    webpath = "/static/images/pitcher_photos"
+    headshots = [f for f in os.listdir(images_path) if os.path.isfile(os.path.join(images_path, f))]
+    print(images_path)
+
+    return render_template(
+        "main/gallery.html",
+        headshots=headshots
+    )
