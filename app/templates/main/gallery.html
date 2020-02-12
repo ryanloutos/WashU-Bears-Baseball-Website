@@ -49,12 +49,11 @@
             <div id="team" class="tab-pane fade in active">
                 <br>
                 <div class="gallery">
-                    <div class="">
-                        <img src="{{url_for('static', filename='images/Dom.jpg')}}" alt="hype pic :)" class="img-thumbnail img-fluid">
+                    {% for pic in team_pics %}
+                    <div>
+                        <img src="/static/images/team_photos/{{pic}}" alt="team_pic" class="img-thumbnail img-fluid">
                     </div>
-                    <div class="">
-                        <img src="{{url_for('static', filename='images/Anthem.jpg')}}" alt="hype pic :)" class="img-thumbnail img-fluid">
-                    </div>
+                    {% endfor %}
                 </div>
             </div>
             <div id="headshots" class="tab-pane fade">

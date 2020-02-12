@@ -275,12 +275,14 @@ def register():
 def gallery():
 
     # Get filenames of all headshots
-    images_path = os.path.join(os.getcwd(), "app/static/images/pitcher_photos")
-    webpath = "/static/images/pitcher_photos"
-    headshots = [f for f in os.listdir(images_path) if os.path.isfile(os.path.join(images_path, f))]
-    print(images_path)
+    headshots_images_path = os.path.join(os.getcwd(), "app/static/images/pitcher_photos")
+    team_images_path = os.path.join(os.getcwd(), "app/static/images/team_photos")
+
+    headshots = [f for f in os.listdir(headshots_images_path) if os.path.isfile(os.path.join(headshots_images_path, f))]
+    team_pics = [f for f in os.listdir(team_images_path) if os.path.isfile(os.path.join(team_images_path, f))]
 
     return render_template(
         "main/gallery.html",
-        headshots=headshots
+        headshots=headshots,
+        team_pics=team_pics
     )
