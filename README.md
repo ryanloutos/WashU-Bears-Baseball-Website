@@ -1,4 +1,4 @@
-Bears-Baseball
+WashU-Bears-Baseball-Website
 Collaborators: Ryan Loutos, Mitchell Black (with some help from Kenny Dorian and Brian Hall)
 
 By Sat 2/15 For Matchups:
