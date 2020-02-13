@@ -54,10 +54,13 @@
                     <th>Fielder</th>
                     <th>Hit Hard?</th>
                     <th>Inning</th>
+                    <th>Notes</th>
+                    {#
                     <th>loc_x</th>
                     <th>loc_y</th>
                     <th>spray_x</th>
                     <th>spray_y</th>
+                    #}
                 </tr>
                 {% for at_bat in outing.at_bats %}
                     {% if (loop.index % 2 == 0) %}
@@ -86,7 +89,15 @@
                             {% else %}
                                 <td>{{ pitch.time_to_plate }}</td>
                             {% endif %}
-                            <td>{{ pitch.pitch_type }}</td>
+                            <td>
+                                {% if pitch.roll_through %}
+                                    5{{ pitch.pitch_type }}
+                                {% elif pitch.short_set %}
+                                    2{{ pitch.pitch_type }}
+                                {% else %}
+                                    {{ pitch.pitch_type }}
+                                {% endif %}
+                            </td>
                             <td>{{ pitch.pitch_result }}</td>
                             {% if pitch.hit_spot %}
                                 <td>X</td>
@@ -103,6 +114,12 @@
                                 <td></td>
                             {% endif %}
                             <td>{{ pitch.inning }}</td>
+                            {% if pitch.notes==None %}
+                                <td></td>
+                            {% else %}
+                                <td>{{ pitch.notes }}</td>
+                            {% endif %}
+                            {#
                             {% if pitch.loc_x==None %}
                                 <td></td>
                             {% else %}
@@ -123,6 +140,7 @@
                             {% else %}
                                 <td>{{ pitch.spray_y }}</td>
                             {% endif %}
+                            #}
                         </tr>
                     {% endfor %}
                 {% endfor %}

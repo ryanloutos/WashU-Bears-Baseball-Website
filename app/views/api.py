@@ -174,6 +174,18 @@ def pitch_tracker():
     if hit_hard == '1':
         hit_hard = True
 
+    roll_through = pitch_data["roll_through"]
+    if roll_through == '0':
+        roll_through = False
+    if roll_through == '1':
+        roll_through = True
+
+    short_set = pitch_data["short_set"]
+    if short_set == '0':
+        short_set = False
+    if short_set == '1':
+        short_set = True
+
     time_to_plate = pitch_data["time_to_plate"]
     if time_to_plate == "":
         time_to_plate = None
@@ -205,6 +217,8 @@ def pitch_tracker():
         lead_runner=pitch_data["lead_runner"],
         time_to_plate=time_to_plate,
         pitch_type=pitch_data["pitch_type"],
+        roll_through=roll_through,
+        short_set=short_set,
         pitch_result=pitch_data["pitch_result"],
         hit_spot=hit_spot,
         count=count,
@@ -216,7 +230,8 @@ def pitch_tracker():
         loc_x=loc_x,
         loc_y=loc_y,
         spray_x=spray_x,
-        spray_y=spray_y
+        spray_y=spray_y, 
+        notes=pitch_data["notes"]
     )
 
     # send pitch to database

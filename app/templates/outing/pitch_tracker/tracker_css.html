@@ -118,15 +118,20 @@
     }
 
     #hit-spot table {
-        width: 80%;
-        margin-left: 10%;
+        width: 60%;
+        margin-left: 20%;
     }
 
     .hit-spot-answer {
-        text-align: center;
-        font-size: 26px;
-        width: 40%;
         display: inline-block;
+        text-align: center;
+        font-size: 20px;
+        width: 50%;
+    }
+
+    .alternate-delivery {
+        height: 30px; 
+        font-size: 20px; 
     }
 
     #velocity {
@@ -140,11 +145,16 @@
         text-align: center;
         font-size: 21px;
         margin-left: 2%;
-        width: 98%;
+        margin-right: 2%;
+        width: 96%;
     }
 
     .txt-velo-ttp {
         font-size: 26px;
+    }
+
+    .top-right-text {
+        font-size: 22px;
     }
 
     #time-to-plate {
@@ -158,7 +168,17 @@
         text-align: center;
         font-size: 21px;
         margin-left: 2%;
-        width: 98%;
+        margin-right: 2%;
+        width: 96%;
+    }
+
+    #notes-input {
+        text-align: center;
+        font-size: 21px;
+        margin-left: 2%;
+        margin-right: 2%;
+        width: 96%;
+        margin-bottom: 4px;
     }
 
     #pitch-result {
@@ -296,11 +316,15 @@
         border: 1px solid black;
         margin-left: 10px;
         visibility: hidden;
-        margin-top: -50px;
+        margin-top: -125px;
     }
 
     #add-pitch:hover {
         box-shadow: inset 0 0 5px rgba(0,0,0,.4);
+    }
+
+    #add-pitch:active {
+        box-shadow: inset 0 0 10px rgba(0,0,0,.4);
     }
 
     #pitch-table {
@@ -324,32 +348,60 @@
         color: #f9feff;
     }
 
+    .pitch-type:hover, .pitch-result:hover {
+        box-shadow: inset 0 0 5px rgba(0,0,0,.4);
+    }
+
     .pitch-type:active, .pitch-result:active {
+        box-shadow: inset 0 0 10px rgba(0,0,0,.4);
+    }
+
+    .hit-spot-answer:hover, .lead-runner:hover {
         box-shadow: inset 0 0 5px rgba(0,0,0,.4);
     }
 
     .hit-spot-answer:active, .lead-runner:active {
+        box-shadow: inset 0 0 10px rgba(0,0,0,.4);
+    }
+
+    .strikeout-answer:hover, .out-answer:hover {
         box-shadow: inset 0 0 5px rgba(0,0,0,.4);
     }
 
     .strikeout-answer:active, .out-answer:active {
+        box-shadow: inset 0 0 10px rgba(0,0,0,.4);
+    }
+
+    .bb-answer:hover, .ab-results:hover {
         box-shadow: inset 0 0 5px rgba(0,0,0,.4);
     }
 
     .bb-answer:active, .ab-results:active {
+        box-shadow: inset 0 0 10px rgba(0,0,0,.4);
+    }
+
+    .traj-answer:hover, .end-of-ab:hover {
         box-shadow: inset 0 0 5px rgba(0,0,0,.4);
     }
 
     .traj-answer:active, .end-of-ab:active {
+        box-shadow: inset 0 0 10px rgba(0,0,0,.4);
+    }
+
+    .fielder:hover, .batters:hover {
         box-shadow: inset 0 0 5px rgba(0,0,0,.4);
     }
 
     .fielder:active, .batters:active {
+        box-shadow: inset 0 0 10px rgba(0,0,0,.4);
+    }
+
+    .hit-hard:hover, .alternate-delivery:hover {
         box-shadow: inset 0 0 5px rgba(0,0,0,.4);
     }
 
-    .hit-hard:active {
-        box-shadow: inset 0 0 5px rgba(0,0,0,.4);
+    .hit-hard:active, .alternate-delivery:active {
+        box-shadow: inset 0 0 10px rgba(0,0,0,.4);
     }
 
 

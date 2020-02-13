@@ -45,6 +45,9 @@
     var fielder = "";
     var hit_hard = 0;
     var endAtBat = "No";
+    var roll_through = 0;
+    var short_set = 0;
+    var notes = "";
 
     // the color scheme used for when a button is clicked
     var background_red = "#bd2e1f";
@@ -78,12 +81,14 @@
     var exitButtons = $(".exit-buttons");
     var fielderButtons = $(".fielder");
     var hitHardButtons = $(".hit-hard");
+    var alternateDeliveryButtons = $(".alternate-delivery");
 
     // setting up inputs for other types of inputs
     var inningInput = $("#inning");
     var velocityInput = $("#velocity-input");
     var timeToPlateInput = $("#time-to-plate-input");
     var fielderSelect = $("#select-fielder");
+    var notesInput = $("#notes-input");
 
     // setting up variables for certain "div" elements
     var endAtBatDiv = $("#end-of-ab");
@@ -170,6 +175,34 @@
         unclick(hitSpotButtons);
         click(button);
         hit_spot = button.attr("value");
+    });
+
+    /********************- ALTERNATE DELIVERY -********************/
+    alternateDeliveryButtons.click(function(){
+        button = $(this);
+        unclick(alternateDeliveryButtons);
+
+        if (button.attr("value") == "rt") {
+            short_set = 0;
+            if (roll_through == 1) {
+                roll_through = 0;
+            }
+            else {
+                roll_through = 1;
+                click(button);
+            }
+        } 
+        
+        if (button.attr("value") == "ss") {
+            roll_through = 0;
+            if (short_set == 1) {
+                short_set = 0;
+            }
+            else {
+                short_set = 1;
+                click(button);
+            }
+        } 
     });
 
     /********************- PITCH RESULT -********************/
@@ -421,14 +454,15 @@
         inning = inningInput.val();
         velocity = velocityInput.val();
         time_to_plate = timeToPlateInput.val();
+        notes = notesInput.val()
 
         // set pitch data in a dictionary
         pitchData = {
             'batter_id': batter_id, 'velocity': velocity, 'lead_runner': lead_runner,
-            'time_to_plate': time_to_plate, 'pitch_type': pitch_type, 'pitch_result': pitch_result, 
-            'loc_x': loc_x, 'loc_y': loc_y, 'hit_spot': hit_spot, 'ab_result': ab_result, 
-            'traj': traj, 'fielder': fielder, 'spray_x': spray_x*1.3, 'spray_y': spray_y*1.3,
-            'hit_hard': hit_hard, 'inning': inning
+            'time_to_plate': time_to_plate, 'pitch_type': pitch_type, 'pitch_result': pitch_result,
+            'roll_through': roll_through, "short_set": short_set, 'loc_x': loc_x, 'loc_y': loc_y, 
+            'hit_spot': hit_spot, 'ab_result': ab_result, 'traj': traj, 'fielder': fielder, 
+            'spray_x': spray_x*1.3, 'spray_y': spray_y*1.3, 'hit_hard': hit_hard, 'inning': inning, 'notes': notes
         };
 
         // append dictionary to pitches array
@@ -449,6 +483,7 @@
         velocityInput.val("");
         fielderSelect.val("");
         timeToPlateInput.val("");
+        notesInput.val("");
 
         // clear some of the variables that track pitch info
         velocity = "";
@@ -465,6 +500,9 @@
         spray_x = "";
         spray_y = "";
         endAtBat = "No";
+        roll_through = 0;
+        short_set = 0;
+        notes = "";
 
         // reset buttons or values that may have been clicked
         unclick(pitchTypeButtons);
@@ -478,6 +516,7 @@
         unclick(outButtons);
         unclick(hitHardButtons);
         unclick(fielderButtons);
+        unclick(alternateDeliveryButtons);
 
         // hide certain buttons and divs
         makeInvisible(addPitchButton);
@@ -700,12 +739,20 @@
                 <th>Fielder</th>
                 <th>Hit Hard?</th>
                 <th>Inning</th>
+                <th>Notes</th>
             </tr>`
         );
             
         var atBat = true;
         var gray = "#ececec";
         for (var i=0; i<pitches.length; i++) {
+            var del = "";
+            if (pitches[i]["roll_through"] == 1) {
+                del = "5";
+            }
+            if (pitches[i]["short_set"] == 1) {
+                del = "2";         
+            } 
             if (atBat) {
                 pitch_table = pitch_table.append(
                     `<tr>
@@ -714,7 +761,7 @@
                         <td>${pitches[i]['velocity']}</td>
                         <td>${pitches[i]['lead_runner']}</td>
                         <td>${pitches[i]['time_to_plate']}</td>
-                        <td>${pitches[i]['pitch_type']}</td>
+                        <td>${del}${pitches[i]['pitch_type']}</td>
                         <td>${pitches[i]['pitch_result']}</td>
                         <td>${pitches[i]['hit_spot']}</td>
                         <td>${pitches[i]['ab_result']}</td>
@@ -722,6 +769,7 @@
                         <td>${pitches[i]['fielder']}</td>
                         <td>${pitches[i]['hit_hard']}</td>
                         <td>${pitches[i]['inning']}</td>
+                        <td>${pitches[i]['notes']}</td>
                     </tr>`
                 );
             }
@@ -733,7 +781,7 @@
                         <td>${pitches[i]['velocity']}</td>
                         <td>${pitches[i]['lead_runner']}</td>
                         <td>${pitches[i]['time_to_plate']}</td>
-                        <td>${pitches[i]['pitch_type']}</td>
+                        <td>${del}${pitches[i]['pitch_type']}</td>
                         <td>${pitches[i]['pitch_result']}</td>
                         <td>${pitches[i]['hit_spot']}</td>
                         <td>${pitches[i]['ab_result']}</td>
@@ -741,6 +789,7 @@
                         <td>${pitches[i]['fielder']}</td>
                         <td>${pitches[i]['hit_hard']}</td>
                         <td>${pitches[i]['inning']}</td>
+                        <td>${pitches[i]['notes']}</td>
                     </tr>`
                 );
             }
@@ -837,6 +886,8 @@
                 "lead_runner": {% if p.lead_runner in [None, ""] %}""{% else %}{{ p.lead_runner }}{% endif %},
                 "time_to_plate": {% if p.time_to_plate in [None, ""] %}""{% else %}{{ p.time_to_plate }}{% endif %},
                 "pitch_type": {% if p.pitch_type in [None, ""] %}""{% else %}{{ p.pitch_type }}{% endif %},
+                "roll_through": {% if p.roll_through == True %}1{% else %}0{% endif %},
+                "short_set": {% if p.short_set == True %}1{% else %}0{% endif %},
                 "pitch_result": "{% if p.pitch_result in [None, ""] %}""{% else %}{{ p.pitch_result }}{% endif %}",
                 "loc_x": {% if p.loc_x in [None, ""] %}""{% else %}{{ p.loc_x }}{% endif %},
                 "loc_y": {% if p.loc_y in [None, ""] %}""{% else %}{{ p.loc_y }}{% endif %},
@@ -847,7 +898,8 @@
                 "spray_x": {% if p.spray_x in [None, ""] %}""{% else %}{{ p.spray_x }}{% endif %},
                 "spray_y": {% if p.spray_y in [None, ""] %}""{% else %}{{ p.spray_y }}{% endif %},
                 "hit_hard": {% if p.hit_hard == True %}1{% else %}0{% endif %},
-                "inning": {% if p.inning in [None, ""] %}""{% else %}{{ p.inning }}{% endif %}
+                "inning": {% if p.inning in [None, ""] %}""{% else %}{{ p.inning }}{% endif %},
+                "notes": "{% if p.notes in [None, ""] %}{% else %}{{ p.notes }}{% endif %}"
             }
             pitches.push(pitch);
         {% endfor %}
