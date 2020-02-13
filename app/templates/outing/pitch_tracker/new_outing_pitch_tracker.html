@@ -207,6 +207,29 @@
                         </div>
                     </td>
                 </tr>
+                <tr>
+                    <td class="box">
+                        <table style="width: 90%; margin-left: 5%">
+                            <tr>
+                                <td value="rt" class="box alternate-delivery">
+                                    Roll Through
+                                </td>
+                            </tr>
+                            <tr>
+                                <td value="ss" class="box alternate-delivery">
+                                    Short Set
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td class="box">
+                        <div id="notes">
+                            <div class="area"><span class="txt-velo-ttp">Notes</span>
+                                <input id="notes-input" type="text" step='.01'>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
                 <tr rowspan=2>
                     <td colspan=2 class="box" id="ab-result" style="visibility: hidden;">
                         <div>
@@ -294,9 +317,9 @@
             </div>
         </div>
         <div id="add-pitch">
-            Add pitch
+            Add Pitch
         </div>
-        <br><br><br>
+        <br><br><br><br><br><br>
         <div>
             <table class="table" id="pitch-table">
                 <caption id="pitch-table-caption">Pitch by Pitch Table</caption>
@@ -312,7 +335,9 @@
                     <th>AB Result</th>
                     <th>Traj</th>
                     <th>Fielder</th>
+                    <th>Hit Hard?</th>
                     <th>Inning</th>
+                    <th>Notes</th>
                 </tr>
             </table>
         </div>

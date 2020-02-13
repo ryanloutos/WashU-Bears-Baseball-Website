@@ -525,6 +525,8 @@ def edit_outing_pitches(outing_id):
                           lead_runner=subform.lead_runner.data,
                           time_to_plate=subform.time_to_plate.data,
                           pitch_type=subform.pitch_type.data,
+                          roll_through=subform.roll_through.data,
+                          short_set=subform.short_set.data,
                           pitch_result=subform.pitch_result.data,
                           hit_spot=subform.hit_spot.data,
                           count=count,
@@ -536,7 +538,8 @@ def edit_outing_pitches(outing_id):
                           loc_x=subform.loc_x.data,
                           loc_y=subform.loc_y.data,
                           spray_x=subform.spray_x.data,
-                          spray_y=subform.spray_y.data)
+                          spray_y=subform.spray_y.data,
+                          notes=subform.notes.data)
 
             # update count based on current count and pitch result
             balls, strikes, count = updateCount(balls,
@@ -1035,6 +1038,8 @@ def new_outing_pitch_tracker(id):
                 "lead_runner": p.lead_runner,
                 "time_to_plate": p.time_to_plate,
                 "pitch_type": p.pitch_type,
+                "roll_through": p.roll_through,
+                "short_set": p.short_set,
                 "pitch_result": p.pitch_result,
                 "loc_x": p.loc_x,
                 "loc_y": p.loc_y,
@@ -1045,7 +1050,8 @@ def new_outing_pitch_tracker(id):
                 "spray_x": p.spray_x,
                 "spray_y": p.spray_y,
                 "hit_hard": p.hit_hard,
-                "inning": p.inning
+                "inning": p.inning,
+                "notes": p.notes
             }
             pitches.append(pitch)
 

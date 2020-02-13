@@ -161,6 +161,8 @@ class PitchForm(FlaskForm):
             ('1', '1'), ('2', '2'), ('3', '3'),
             ('4', '4'), ('5', '5'), ('7', '7')],
         validators=[Optional()])
+    roll_through = BooleanField('Roll Through', validators=[Optional()])
+    short_set = BooleanField('Short Set', validators=[Optional()])
     pitch_result = SelectField(
         'Pitch Result',
         choices=[
@@ -208,6 +210,7 @@ class PitchForm(FlaskForm):
         'spray_y',
         places=2,
         validators=[Optional()])
+    notes = StringField("Notes", validators=[Optional()])
     submit = SubmitField('Finish', validators=[Optional()])
 
     # disables CSRF tokens for subforms, but keeps it for the big

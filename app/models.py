@@ -99,13 +99,14 @@ class Outing(db.Model):
 class Pitch(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     atbat_id = db.Column(db.Integer, db.ForeignKey('at_bat.id'), index=True)
-    # which outing this pitch comes from
     pitch_num = db.Column(db.Integer, index=True)
     batter_id = db.Column(db.Integer, db.ForeignKey('batter.id'), index=True)
     velocity = db.Column(db.Integer, index=True)
     lead_runner = db.Column(db.String(8), index=True)
     time_to_plate = db.Column(db.Float, index=True)
     pitch_type = db.Column(db.String(8), index=True)
+    roll_through = db.Column(db.Boolean, index=True)
+    short_set = db.Column(db.Boolean, index=True)
     pitch_result = db.Column(db.String(8), index=True)
     loc_x = db.Column(db.Float)
     loc_y = db.Column(db.Float)
@@ -118,6 +119,7 @@ class Pitch(db.Model):
     spray_y = db.Column(db.Float)
     hit_hard = db.Column(db.Boolean, index=True)
     inning = db.Column(db.Integer, index=True)
+    notes = db.Column(db.String(128))
 
     def __repr__(self):
         return f'<outing: {self.outing_id}, pitch: {self.pitch_num}>'
