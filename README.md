@@ -5,7 +5,6 @@ By Sat 2/15 For Matchups:
 - Add "notes" option to pitch table 
 - Add "roll_through" and "short_set" option to pitch table
 - Integrate the two things above into pitch tracker
-- Separate pitcher table to include 
 
 By Sat 2/22 For Hendrix:
 - Add all of Hendrix batters and pitchers to Opponent/Pitcher/Batter tables
