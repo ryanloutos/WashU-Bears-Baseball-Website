@@ -20,6 +20,8 @@
                 <th>Lead RNR</th>
                 <th>Time to Plate</th>
                 <th>Pitch Type</th>
+                <th>Roll Through</th>
+                <th>Short Set</th>
                 <th>Pitch Result</th>
                 <th>Hit Spot?</th>
                 <th>AB Result</th>
@@ -31,6 +33,7 @@
                 <th>loc_y</th>
                 <th>spray_x</th>
                 <th>spray_y</th>
+                <th>Notes</th>
                 <th>Delete Row</th>
             </tr>
             {% for at_bat in outing.at_bats %}
@@ -75,6 +78,20 @@
                                 <option value="5" {% if pitch.pitch_type==5 %} selected='selected' {% endif %}>5</option>
                                 <option value="7" {% if pitch.pitch_type==7 %} selected='selected' {% endif %}>7</option>
                             </select>
+                        </td>
+                        <td>
+                            {% if pitch.roll_through %}
+                                <input id="pitch-{{ pitch.pitch_num-1 }}-roll_through" name="pitch-{{ pitch.pitch_num-1 }}-roll_through" type="checkbox" checked>
+                            {% else %}
+                                <input id="pitch-{{ pitch.pitch_num-1 }}-roll_through" name="pitch-{{ pitch.pitch_num-1 }}-roll_through" type="checkbox">
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if pitch.short_set %}
+                                <input id="pitch-{{ pitch.pitch_num-1 }}-short_set" name="pitch-{{ pitch.pitch_num-1 }}-short_set" type="checkbox" checked>
+                            {% else %}
+                                <input id="pitch-{{ pitch.pitch_num-1 }}-short_set" name="pitch-{{ pitch.pitch_num-1 }}-short_set" type="checkbox">
+                            {% endif %}
                         </td>
                         <td>
                             <select id="pitch-{{pitch.pitch_num-1}}-pitch_result" name="pitch-{{pitch.pitch_num-1}}-pitch_result" required>
@@ -174,6 +191,13 @@
                                 <input id="pitch-{{ pitch.pitch_num-1 }}-spray_y" name="pitch-{{ pitch.pitch_num-1 }}-spray_y" size="4" type="text" value="">
                             {% else %}
                                 <input id="pitch-{{ pitch.pitch_num-1 }}-spray_y" name="pitch-{{ pitch.pitch_num-1 }}-spray_y" size="4" type="text" value="{{ pitch.spray_y }}">
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if pitch.notes == None %}
+                                <input id="pitch-{{ pitch.pitch_num-1 }}-notes" name="pitch-{{ pitch.pitch_num-1 }}-notes" size="4" type="text" value="">
+                            {% else %}
+                                <input id="pitch-{{ pitch.pitch_num-1 }}-notes" name="pitch-{{ pitch.pitch_num-1 }}-notes" size="4" type="text" value="{{ pitch.notes }}">
                             {% endif %}
                         </td>
                         <td><a class="delete" data-index="{{ pitch.pitch_num-1 }}">Delete</a></td>

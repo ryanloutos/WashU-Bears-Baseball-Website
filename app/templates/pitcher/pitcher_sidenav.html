@@ -4,7 +4,7 @@
     <a href="{{ url_for('pitcher.pitcher_stats_basic', id=pitcher.id) }}">Basic Stats</a>
     <a href="{{ url_for('pitcher.pitcher_stats_advanced', id=pitcher.id) }}">Advanced Stats</a>
     <a href="{{ url_for('pitcher.pitcher_videos', id=pitcher.id) }}">Videos</a>
-    <a href="{{ url_for('staff.staff_roster') }}">Staff Roster</a>
+    <a href="{{ url_for('staff.staff_home') }}">Staff Home</a>
     {% if current_user.admin %}
         <a href="{{ url_for('pitcher.edit_pitcher', id=pitcher.id) }}">Edit Pitcher</a>
     {% endif %}

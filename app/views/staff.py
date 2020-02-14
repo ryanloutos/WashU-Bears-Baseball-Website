@@ -5,49 +5,38 @@ from app import db
 
 from app.models import User, Outing, Pitch, Season, Pitcher
 from app.stats import staffBasicStats
-from app.stats import staffPitcherAvgVelo, staffPitchStrikePercentage
+from app.stats import staffAdvancedStats
 from app.stats import teamImportantStatsSeason
 
 # setup blueprint
 staff = Blueprint('staff', __name__)
 
-# ***************-STAFF HOMEPAGE-*************** # DONE
-@staff.route('/staff', methods=['GET', 'POST'])
+# ***************-STAFF HOMEPAGE-*************** # 
+@staff.route("/staff", methods=["GET", "POST"])
 @login_required
 def staff_home():
     '''
-    STAFF:
-    Pages to look at staff as a whole
-
-    PARAM:
-        -None
-
-    RETURN:
-        -staff.html
+    Homepage: shows the roster and staff goals
     '''
+    pitchers = Pitcher.query.filter(Pitcher.retired != 1).order_by(Pitcher.name).all()
+    return render_template(
+        "staff/home/staff_home.html",
+        title="Bears Pitching",
+        pitchers=pitchers
+    )
 
-    return render_template('staff/staff_home.html',
-                           title='WashU Pitching Staff')
 
-# ***************-STAFF ROSTER-*************** # DONE
-@staff.route('/staff/roster', methods=['GET', 'POST'])
+# ***************-STAFF ARMCARE-*************** # 
+@staff.route("/staff/armcare", methods=["GET", "POST"])
 @login_required
-def staff_roster():
+def staff_armcare():
     '''
-    STAFF ROSTER:
-    Current pitchers on the team
-
-    PARAM:
-        -None
-
-    RETURN:
-        -staff_roster.html which displays a table of
-            the current staff
+    Armcare: shows the current arm care program for the team
     '''
-    pitchers = Pitcher.query.filter(Pitcher.retired != 1).all()
-    return render_template('staff/staff_roster.html',
-                           title='Staff',
-                           pitchers=pitchers)
+    return render_template(
+        "staff/staff_armcare.html",
+        title="Arm Care",
+    )
 
 
 # ***************-STAFF BASIC STATS-*********** #
@@ -65,7 +54,7 @@ def staff_basic_stats():
         currently on roster
     """
     pitchers = Pitcher.query.filter(Pitcher.retired != 1).all()
-    seasons = Season.query.all()
+    seasons = Season.query.order_by(Season.year).all()
 
     staff_stat_summary, players_stat_summary = staffBasicStats(pitchers)
 
@@ -82,15 +71,13 @@ def staff_basic_stats():
 def staff_advanced_stats():
     pitchers = Pitcher.query.filter(Pitcher.retired != 1).all()
 
-    team_avg_velo, player_avg_velo = staffPitcherAvgVelo(pitchers)
-    team_strike_percentages, player_strike_percentages = staffPitchStrikePercentage(pitchers)
+    players, total_velo_averages, total_pct_averages = staffAdvancedStats(pitchers)
 
     return render_template(
         'staff/staff_advanced_stats.html',
-        team_avg_velo=team_avg_velo,
-        player_avg_velo=player_avg_velo,
-        team_strike_percentages=team_strike_percentages,
-        player_strike_percentages=player_strike_percentages
+        players = players,
+        total_velo_averages = total_velo_averages,
+        total_pct_averages = total_pct_averages
     )
 
 
@@ -110,7 +97,7 @@ def staff_retired():
             the retired staff
     '''
 
-    retired_pitchers = Pitcher.query.filter(Pitcher.retired == 1).all()
+    retired_pitchers = Pitcher.query.filter(Pitcher.retired == 1).order_by(Pitcher.grad_year).all()
 
     return render_template('staff/staff_retired.html',
                            title='Retired Pitchers',

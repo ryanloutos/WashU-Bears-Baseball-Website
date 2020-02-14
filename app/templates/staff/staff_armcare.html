@@ -2,92 +2,17 @@
 
 {% block styles %}
     {{ super() }}
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidenav.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/staff_sidenav.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/loader.css') }}">
-    <style>
-        #team-season-stats {
-            width: 300px;
-        }
-    </style>
-    <script>
-        window.addEventListener("DOMContentLoaded", function(){
-            fetch("{{ url_for('api.staff_home_importantstats') }}",
-            {
-                method: "POST"
-            }).then(res => res.json())
-            .then(function(response){
-                if(response.status == "failure"){
-                    console.log("Request status: failure");
-                    console.log("Error message: " + response.error);
-                    return;
-                }
-
-                document.querySelector("#strike-percentage-holder").innerHTML = response.data.strike_percentage + "%";
-                if(response.data.strike_percentage >= 65){
-                    document.querySelector("#strike-percentage-holder").style.backgroundColor = "rgb(0,100,0)";
-                    document.querySelector("#strike-percentage-holder").style.color = "white";
-                } else {
-                    document.querySelector("#strike-percentage-holder").style.backgroundColor = "rgb(200,0,0)";
-                    document.querySelector("#strike-percentage-holder").style.color = "white";
-                }
-
-                document.querySelector("#fps-percentage-holder").innerHTML = response.data.fps_percentage + "%";
-                if(response.data.fps_percentage >= 60){
-                    document.querySelector("#fps-percentage-holder").style.backgroundColor = "rgb(0,100,0)";
-                    document.querySelector("#fps-percentage-holder").style.color = "white";
-                } else {
-                    document.querySelector("#fps-percentage-holder").style.backgroundColor = "rgb(200,0,0)";
-                    document.querySelector("#fps-percentage-holder").style.color = "white";
-                }
-
-                document.querySelector("#k-to-bb-holder").innerHTML = response.data.k_to_bb;
-                if(response.data.k_to_bb >= 2){
-                    document.querySelector("#k-to-bb-holder").style.backgroundColor = "rgb(0,100,0)";
-                    document.querySelector("#k-to-bb-holder").style.color = "white";
-                } else {
-                    document.querySelector("#k-to-bb-holder").style.backgroundColor = "rgb(200,0,0)";
-                    document.querySelector("#k-to-bb-holder").style.color = "white";
-                }
-
-            });
-        });
-    </script>
+    <script src="{{ url_for('static', filename='js/sidenav.js') }}"></script>
 {% endblock %}
 
 {% block app_content %}
     {% include "staff/staff_sidenav.html" %}
-    <div class="main">
-        <h1>Pitching Staff 19-20</h1>
-        <h2><- View Information About Our Staff to the Left</h2>
-        <h4>Current Season: {{ current_season }}</h4> 
-        <p>
-            <table class="table" id="team-season-stats">
-                <tr>
-                    <th>Statistic</th>
-                    <th>Goal</th>
-                    <th>Current Value</th>
-                </tr>
-                <tr>
-                    <td>Strike%</td>
-                    <td>65%</td>
-                    <td id="strike-percentage-holder"><div class="loader"></div></td>
-                </tr>
-                <tr>
-                    <td>FPS%</td>
-                    <td>60%</td>
-                    <td id="fps-percentage-holder"><div class="loader"></div></td>
-                </tr>
-                <tr>
-                    <td>K/BB</td>
-                    <td>2</td>
-                    <td id="k-to-bb-holder"><div class="loader"></div></td>
-                </tr>
-            </table>
-        </p>
-        <br>
-        <br>
+    <div class="main" style="text-align: center;">
+        {% include "staff/staff_title.html" %}
         <div>
-            <h1>Baseball In-Season Arm Care</h1>
+            <h1>In-Season Arm Care</h1>
             <p>Pitchers should complete the Arm Care program 2 times per week, with a recovery day after heaviest throwing day.</p>
             <p><a href="{{ url_for('api.download_arm_care') }}">Download PDF</a></p>
             <table class="table">
