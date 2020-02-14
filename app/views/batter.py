@@ -49,9 +49,24 @@ def batter_home(id):
         flash("URL does not exist")
         return redirect(url_for('main.index'))
 
+    games = batter.get_games()
+
+    game_stats = []
+    for game in games:
+
+        if game is not None and game.get_season().current_season:
+            at_bats, pitches_seen = batter_summary_game_stats(game, batter)
+            game_stats.append({
+                "game": game,
+                "stats": {
+                    "ab": at_bats,
+                    "pitches": pitches_seen
+                }
+            })
     return render_template('opponent/batter/batter.html',
                            title=batter.name,
-                           batter=batter)
+                           batter=batter,
+                           game_stats=game_stats)
 
 
 @batter.route("/batter/<batter_id>/at_bats", methods=['GET', 'POST'])
@@ -443,6 +458,7 @@ def batter_games(batter_id):
     games = batter.get_games()
 
     game_stats = []
+    seasons = []
     for game in games:
         # line here for some weird error with appending games ending in None
         if game is not None:
@@ -454,12 +470,15 @@ def batter_games(batter_id):
                     "pitches": pitches_seen
                 }
             })
+            if game.get_season() not in seasons:
+                seasons.append(game.get_season())
 
     return render_template(
         "opponent/batter/batter_games.html",
         batter=batter,
         games=games,
-        game_stats=game_stats
+        game_stats=game_stats,
+        seasons=seasons
     )
 
 

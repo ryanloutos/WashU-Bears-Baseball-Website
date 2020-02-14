@@ -62,8 +62,10 @@
 {% block app_content %}
     {% include "opponent/batter/batter_sidenav.html" %}
     <div class="main">
-        <h1>{{ batter.name() }} - Videos</h1>
-        <br>
+        {% include "opponent/batter/batter_title.html" %}
+        <div class="row text-center">
+            <h1>Videos</h1>
+        </div>
         <div style="font-size: 20px;">
             Season:
             <select id="season-selector">
