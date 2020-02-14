@@ -82,8 +82,7 @@ def opponent_scouting_stats(opponent_id):
         flash("URL does not exist")
         return redurect(url_for('main.index'))
 
-    pitch_usage_count, swing_whiff_rate = stats_opponent_scouting_stats(opponent)
-    batters_stat_line, batters_hard_hit = stats_opponent_batters_stat_lines(opponent)
+    batters_stat_line, batters_hard_hit, pitch_usage_count, swing_whiff_rate = stats_opponent_batters_stat_lines(opponent)
 
     return render_template(
         '/opponent/opponent_ScoutingStats.html',
