@@ -1941,7 +1941,14 @@ def stats_opponent_batters_stat_lines(opponent):
                 "3b": 0,
                 "hr": 0,
                 "bb": 0,
-                "k": 0
+                "k": 0,
+                "current_h": 0,
+                "current_1b": 0,
+                "current_2b": 0,
+                "current_3b": 0,
+                "current_hr": 0,
+                "current_bb": 0,
+                "current_k": 0
             }
             temp_hard_hit = {
                 "name": batter.name(),
@@ -1976,6 +1983,25 @@ def stats_opponent_batters_stat_lines(opponent):
                             temp_stat_line["bb"] += 1
                         elif pitch.ab_result in ["k", "kl", "K", "KL"]:
                             temp_stat_line["k"] += 1
+
+                        # current season hit stats
+                        if at_bat.get_season().current_season:
+                            if pitch.ab_result in ["1b", "1B"]:
+                                temp_stat_line["current_h"] += 1
+                                temp_stat_line["current_1b"] += 1
+                            elif pitch.ab_result in ["2b", "2B"]:
+                                temp_stat_line["current_h"] += 1
+                                temp_stat_line["current_2b"] += 1
+                            elif pitch.ab_result in ["3b", "3B"]:
+                                temp_stat_line["current_h"] += 1
+                                temp_stat_line["current_3b"] += 1
+                            elif pitch.ab_result in ["HR", "hr"]:
+                                temp_stat_line["current_h"] += 1
+                                temp_stat_line["current_hr"] += 1
+                            elif pitch.ab_result in ["bb", "BB", "hbp", "HBP"]:
+                                temp_stat_line["current_bb"] += 1
+                            elif pitch.ab_result in ["k", "kl", "K", "KL"]:
+                                temp_stat_line["current_k"] += 1
 
                         # Hard hit stats
                         if pitch.ab_result in ["IP->Out", "1B", "2B", "3B", "HR", "Error", "FC"]:
