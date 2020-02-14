@@ -2,22 +2,46 @@
 
 {% block styles %}
     {{ super() }}
+    <script src="{{ url_for('static', filename='js/sortable_table.js') }}"></script>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidenav.css') }}">
-    <style>
-        .logos {
-            width: 100px;
-            height: auto;
-        }
-    </style>
+    <script>
+        //sort tables so that batters are alphabetical
+        document.addEventListener("DOMContentLoaded", function(){
+            //sort roster table by last name
+            sortTable(1,0);
+        });
+    </script>
 {% endblock %}
 
 {% block app_content %}
     {% include "opponent/opponent_sidenav.html" %}
     <div class="main">
-        <h1>
-            <img class="logos" alt="Team-Logo" src="{{ url_for('static', filename=file_loc) }}">
-            {{ opponent }} 
-        </h1>
-        <h2><- Use the navigation on the left to go to different pages for this opponent</h2>
+        {% include "opponent/opponent_title.html" %}
+        <div class="row">
+            <div class="col-xs-12 col-md-6" style="text-align: center;">
+                <h2>Roster</h2>
+                <table class="table sortable_table">
+                    <tr class="table-headers">
+                        <th>Firstname</th>
+                        <th>Lastname</th>
+                        <th>Grad Year</th>
+                        <th>Bats</th>
+                    </tr>
+                    {% for batter in opponent.batters %}
+                        {% if batter.retired not in [None, "", "1", 1] %}
+                            <tr>
+                                <td>{{ batter.firstname }}</td>
+                                <td>{{ batter.lastname }}</td>
+                                <td>{{ batter.grad_year }}</td>
+                                <td>{{ batter.bats }}</td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                </table>
+            </div>
+            <div class="col-xs-12 col-md-6">
+
+            </div>
+        </div>
     </div>
 {% endblock %}
