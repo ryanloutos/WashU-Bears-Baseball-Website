@@ -22,25 +22,45 @@
                 <h2>Roster</h2>
                 <table class="table sortable_table">
                     <tr class="table-headers">
-                        <th>Firstname</th>
-                        <th>Lastname</th>
-                        <th>Grad Year</th>
+                        <th class="text-left">Firstname</th>
+                        <th class="text-left">Lastname</th>
+                        <th class="text-left">Grad Year</th>
                         <th>Bats</th>
                     </tr>
                     {% for batter in opponent.batters %}
                         {% if batter.retired not in [None, "", "1", 1] %}
                             <tr>
-                                <td>{{ batter.firstname }}</td>
-                                <td>{{ batter.lastname }}</td>
-                                <td>{{ batter.grad_year }}</td>
+                                <td class="text-left"><a href="{{ url_for('batter.batter_home', id=batter.id) }}">{{ batter.firstname }}</a></td>
+                                <td class="text-left">{{ batter.lastname }}</td>
+                                <td class="text-left">{{ batter.grad_year }}</td>
                                 <td>{{ batter.bats }}</td>
                             </tr>
                         {% endif %}
                     {% endfor %}
                 </table>
             </div>
-            <div class="col-xs-12 col-md-6">
-
+            <div class="col-xs-12 col-md-6" style="text-align: center;">
+                <h2>Current Season's Games</h2>
+                <table class="table sortable_table">
+                    <thead>
+                        <tr class="table-headers">
+                            <th class="text-left">Date</th>
+                            <th class="text-left">Opponent</th>
+                            <th class="text-left"># Pitchers</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for game in opponent.games %}
+                            {% if game.season_id == current_season.id %}
+                            <tr>
+                                <td class="text-left"><a href="{{ url_for('game.game_outings', id=game.id) }}">{{ game.date }}</a></td>
+                                <td class="text-left">{{ game.get_opponent() }}</td>
+                                <td class="text-left">{{ game.get_num_outings() }}</td>
+                            </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>

@@ -266,6 +266,24 @@ def edit_opponent(id):
                            form=form)
 
 
+@opponent.route("/opponent/<id>/inactive_roster")
+@login_required
+def opponent_inactive_hitters(id):
+
+    # get opponent object
+    opponent = Opponent.query.filter_by(id=id).first()
+
+    # either bug or admin trying to edit opponent that doesn't exist
+    if not opponent:
+        flash('URL does not exist')
+        return redirect(url_for('main.index'))    # get opponent object
+
+    return render_template(
+        "opponent/opponent_inactive_roster.html",
+        opponent=opponent
+    )
+
+
 # ***************-HELPFUL FUNCTIONS-*************** #
 def getAvailablePitchers():
     '''
