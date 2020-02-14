@@ -66,10 +66,17 @@ def opponent_games_results(id):
         flash("URL does not exist")
         return redurect(url_for('main.index'))
 
+    seasons = []
+    for game in opponent.games:
+        season = game.get_season()
+        if season not in seasons:
+            seasons.append(season)
+
     return render_template(
         '/opponent/opponent_GamesResults.html',
         title=opponent,
-        opponent=opponent
+        opponent=opponent,
+        seasons=seasons
     )
 
 
