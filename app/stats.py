@@ -1923,3 +1923,80 @@ def stats_opponent_scouting_stats(opponent):
                 vals["swings"] = percentage(truncate(vals["swings"] / vals["thrown"]))
 
     return (pitches_per_count, swing_whiff_rate_new)
+
+
+def stats_opponent_batters_stat_lines(opponent):
+
+    batter_stat_line = []
+    batter_hard_hit_line = []
+    for batter in opponent.batters:
+        if batter.retired in [0, "0"]:
+
+            temp_stat_line = {
+                "name": batter.name(),
+                "class": batter.grad_year,
+                "h": 0,
+                "1b": 0,
+                "2b": 0,
+                "3b": 0,
+                "hr": 0,
+                "bb": 0,
+                "k": 0
+            }
+            temp_hard_hit = {
+                "name": batter.name(),
+                "num_hard": 0,
+                "num_total": 0,
+                "percent": 0,
+                "current_num_hard": 0,
+                "current_num_total": 0,
+                "current_percent": 0
+            }
+
+            for at_bat in batter.at_bats:
+                for pitch in at_bat.pitches:
+
+                    # if there was an ab_result
+                    if pitch.ab_result not in [None, ""]:
+
+                        # hit stats
+                        if pitch.ab_result in ["1b", "1B"]:
+                            temp_stat_line["h"] += 1
+                            temp_stat_line["1b"] += 1
+                        elif pitch.ab_result in ["2b", "2B"]:
+                            temp_stat_line["h"] += 1
+                            temp_stat_line["2b"] += 1
+                        elif pitch.ab_result in ["3b", "3B"]:
+                            temp_stat_line["h"] += 1
+                            temp_stat_line["3b"] += 1
+                        elif pitch.ab_result in ["HR", "hr"]:
+                            temp_stat_line["h"] += 1
+                            temp_stat_line["hr"] += 1
+                        elif pitch.ab_result in ["bb", "BB", "hbp", "HBP"]:
+                            temp_stat_line["bb"] += 1
+                        elif pitch.ab_result in ["k", "kl", "K", "KL"]:
+                            temp_stat_line["k"] += 1
+
+                        # Hard hit stats
+                        if pitch.ab_result in ["IP->Out", "1B", "2B", "3B", "HR", "Error", "FC"]:
+                            temp_hard_hit["num_total"] += 1
+                            if pitch.hit_hard == 1:
+                                temp_hard_hit["num_hard"] += 1
+
+                            # current season hard hit stats
+                            if at_bat.get_season().current_season:
+                                temp_hard_hit["current_num_total"] += 1
+                                if pitch.hit_hard == 1:
+                                    temp_hard_hit["current_num_hard"] += 1
+
+            # hard hit calcs
+            if temp_hard_hit["num_total"] > 0:
+                temp_hard_hit["percent"] = percentage(truncate(temp_hard_hit["num_hard"] / temp_hard_hit["num_total"]))
+            if temp_hard_hit["current_num_total"] > 0:
+                temp_hard_hit["current_percent"] = percentage(truncate(temp_hard_hit["current_num_hard"] / temp_hard_hit["current_num_total"]))
+
+            # append stat line to storage array
+            batter_stat_line.append(temp_stat_line)
+            batter_hard_hit_line.append(temp_hard_hit)
+
+    return (batter_stat_line, batter_hard_hit_line)
