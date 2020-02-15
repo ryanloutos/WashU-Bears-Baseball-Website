@@ -2,22 +2,66 @@
 
 {% block styles %}
     {{ super() }}
+    <script src="{{ url_for('static', filename='js/sortable_table.js') }}"></script>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidenav.css') }}">
-    <style>
-        .logos {
-            width: 100px;
-            height: auto;
-        }
-    </style>
+    <script>
+        //sort tables so that batters are alphabetical
+        document.addEventListener("DOMContentLoaded", function(){
+            //sort roster table by last name
+            sortTable(1,0);
+        });
+    </script>
 {% endblock %}
 
 {% block app_content %}
     {% include "opponent/opponent_sidenav.html" %}
     <div class="main">
-        <h1>
-            <img class="logos" alt="Team-Logo" src="{{ url_for('static', filename=file_loc) }}">
-            {{ opponent }} 
-        </h1>
-        <h2><- Use the navigation on the left to go to different pages for this opponent</h2>
+        {% include "opponent/opponent_title.html" %}
+        <div class="row">
+            <div class="col-xs-12 col-md-6" style="text-align: center;">
+                <h2>Active Roster</h2>
+                <table class="table sortable_table">
+                    <tr class="table-headers">
+                        <th class="text-left">Firstname</th>
+                        <th class="text-left">Lastname</th>
+                        <th class="text-left">Grad Year</th>
+                        <th>Bats</th>
+                    </tr>
+                    {% for batter in opponent.batters %}
+                        {% if batter.retired not in [None, "", "1", 1] %}
+                            <tr>
+                                <td class="text-left"><a href="{{ url_for('batter.batter_home', id=batter.id) }}">{{ batter.firstname }}</a></td>
+                                <td class="text-left">{{ batter.lastname }}</td>
+                                <td class="text-left">{{ batter.grad_year }}</td>
+                                <td>{{ batter.bats }}</td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                </table>
+            </div>
+            <div class="col-xs-12 col-md-6" style="text-align: center;">
+                <h2>Current Season's Games</h2>
+                <table class="table sortable_table">
+                    <thead>
+                        <tr class="table-headers">
+                            <th class="text-left">Date</th>
+                            <th class="text-left">Opponent</th>
+                            <th class="text-left"># Pitchers</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for game in opponent.games %}
+                            {% if game.season_id == current_season.id %}
+                            <tr>
+                                <td class="text-left"><a href="{{ url_for('game.game_outings', id=game.id) }}">{{ game.date }}</a></td>
+                                <td class="text-left">{{ game.get_opponent() }}</td>
+                                <td class="text-left">{{ game.get_num_outings() }}</td>
+                            </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 {% endblock %}

@@ -19,7 +19,7 @@ from app.stats import staffPitchStrikePercentage
 from app.stats import outingPitchStatistics, outingTimeToPlate, veloOverTime
 from app.stats import teamImportantStatsSeason
 from app.stats import batterSwingWhiffRatebyPitchbyCount, batter_summary_game_stats
-from app.stats import batterSwingWhiffRatebyPitchbyCount2
+from app.stats import batterSwingWhiffRatebyPitchbyCount2, batter_ball_in_play_stats
 
 import re
 
@@ -49,9 +49,24 @@ def batter_home(id):
         flash("URL does not exist")
         return redirect(url_for('main.index'))
 
+    games = batter.get_games()
+
+    game_stats = []
+    for game in games:
+
+        if game is not None and game.get_season().current_season:
+            at_bats, pitches_seen = batter_summary_game_stats(game, batter)
+            game_stats.append({
+                "game": game,
+                "stats": {
+                    "ab": at_bats,
+                    "pitches": pitches_seen
+                }
+            })
     return render_template('opponent/batter/batter.html',
                            title=batter.name,
-                           batter=batter)
+                           batter=batter,
+                           game_stats=game_stats)
 
 
 @batter.route("/batter/<batter_id>/at_bats", methods=['GET', 'POST'])
@@ -416,15 +431,16 @@ def batter_stats(batter_id):
         return redirect(url_for('main.index'))
     seasons = batter.get_seasons()
 
-    swing_rate_by_count, whiff_rate_by_count = batterSwingWhiffRatebyPitchbyCount(batter)
+    # Batter stat calculations
     pitch_usage_count, swing_whiff_rate = batterSwingWhiffRatebyPitchbyCount2(batter)
+    ball_in_play, hard_hit = batter_ball_in_play_stats(batter)
 
     return render_template(
         "opponent/batter/batter_stats.html",
-        swing_rate_by_count=swing_rate_by_count,
-        whiff_rate_by_count=whiff_rate_by_count,
         pitch_usage_count=pitch_usage_count,
         swing_whiff_rate=swing_whiff_rate,
+        ball_in_play=ball_in_play,
+        hard_hit=hard_hit,
         title=batter,
         batter=batter,
         seasons=seasons
@@ -443,6 +459,7 @@ def batter_games(batter_id):
     games = batter.get_games()
 
     game_stats = []
+    seasons = []
     for game in games:
         # line here for some weird error with appending games ending in None
         if game is not None:
@@ -454,12 +471,15 @@ def batter_games(batter_id):
                     "pitches": pitches_seen
                 }
             })
+            if game.get_season() not in seasons:
+                seasons.append(game.get_season())
 
     return render_template(
         "opponent/batter/batter_games.html",
         batter=batter,
         games=games,
-        game_stats=game_stats
+        game_stats=game_stats,
+        seasons=seasons
     )
 
 
