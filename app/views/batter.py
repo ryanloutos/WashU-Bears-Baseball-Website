@@ -181,8 +181,6 @@ def batter_spray_chart(batter_id):
     for i in range(len(density_vals)):
         density_vals[i] = density_vals[i] / d_total
 
-    print(density_vals)
-
     return render_template(
         'opponent/batter/batter_spray_chart.html',
         title=batter,
