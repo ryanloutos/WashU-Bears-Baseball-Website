@@ -17,7 +17,7 @@ from app.stats import pitchUsageByCountLineCharts, pitchStrikePercentageSeason
 from app.stats import pitchUsageSeason, seasonStatLine, staffBasicStats
 from app.stats import staffPitchStrikePercentage
 from app.stats import outingPitchStatistics, outingTimeToPlate, veloOverTime
-from app.stats import teamImportantStatsSeason, stats_opponent_scouting_stats
+from app.stats import teamImportantStatsSeason, stats_opponent_scouting_stats, stats_opponent_batters_stat_lines
 
 # Handle CSV uploads
 import csv
@@ -47,10 +47,6 @@ def opponent_home(id):
     # get the Opponent object assicated with the id
     opponent = Opponent.query.filter_by(id=id).first()
 
-    file_loc = os.path.join("images",
-                            "team_logos",
-                            f"{opponent.id}.png")
-
     # bug or user trying to view opponent that DNE
     if not opponent:
         flash("URL does not exist")
@@ -58,8 +54,7 @@ def opponent_home(id):
 
     return render_template('opponent/opponent_home.html',
                            title=opponent,
-                           opponent=opponent,
-                           file_loc=file_loc)
+                           opponent=opponent)
 
 
 @opponent.route("/opponent/<id>/GamesResults", methods=["GET", "POST"])
@@ -71,10 +66,17 @@ def opponent_games_results(id):
         flash("URL does not exist")
         return redurect(url_for('main.index'))
 
+    seasons = []
+    for game in opponent.games:
+        season = game.get_season()
+        if season not in seasons:
+            seasons.append(season)
+
     return render_template(
         '/opponent/opponent_GamesResults.html',
         title=opponent,
-        opponent=opponent
+        opponent=opponent,
+        seasons=seasons
     )
 
 
@@ -87,14 +89,16 @@ def opponent_scouting_stats(opponent_id):
         flash("URL does not exist")
         return redurect(url_for('main.index'))
 
-    pitch_usage_count, swing_whiff_rate = stats_opponent_scouting_stats(opponent)
+    batters_stat_line, batters_hard_hit, pitch_usage_count, swing_whiff_rate = stats_opponent_batters_stat_lines(opponent)
 
     return render_template(
         '/opponent/opponent_ScoutingStats.html',
         title=opponent,
         opponent=opponent,
-        pitch_usage_count=pitch_usage_count, 
-        swing_whiff_rate=swing_whiff_rate
+        pitch_usage_count=pitch_usage_count,
+        swing_whiff_rate=swing_whiff_rate,
+        batters_stat_line=batters_stat_line,
+        batters_hard_hit=batters_hard_hit
     )
 
 
@@ -264,6 +268,24 @@ def edit_opponent(id):
                            title='Edit Opponent',
                            opponent=opponent,
                            form=form)
+
+
+@opponent.route("/opponent/<id>/inactive_roster")
+@login_required
+def opponent_inactive_hitters(id):
+
+    # get opponent object
+    opponent = Opponent.query.filter_by(id=id).first()
+
+    # either bug or admin trying to edit opponent that doesn't exist
+    if not opponent:
+        flash('URL does not exist')
+        return redirect(url_for('main.index'))    # get opponent object
+
+    return render_template(
+        "opponent/opponent_inactive_roster.html",
+        opponent=opponent
+    )
 
 
 # ***************-HELPFUL FUNCTIONS-*************** #

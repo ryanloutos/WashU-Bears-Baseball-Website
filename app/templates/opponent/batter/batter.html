@@ -8,12 +8,56 @@
 {% block app_content %}
     {% include "opponent/batter/batter_sidenav.html" %}
     <div class="main">
-        <h1>
-            {{ batter.name() }}
-        </h1> 
-        <h5>Nickname: {{ batter.short_name }}</h5>
-        <h5>Bats: {{ batter.bats }}</h5>
-        <h5>Graduation Year: {{ batter.grad_year }}</h5>
-        <h2><- Use the navigation on the left to go to different pages for this opponent</h2>
+        {% include "opponent/batter/batter_title.html" %}
+        <div class="row">
+            <div class="col-xs-12 col-md-6 text-center">
+                <h3>Player Info</h3>
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <td class="text-left">Name</td>
+                            <td class="text-left">{{ batter.name() }}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-left">Number</td>
+                            <td class="text-left"></td>
+                        </tr>
+                        <tr>
+                            <td class="text-left">Nickname</td>
+                            <td class="text-left">{{ batter.short_name }}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-left">bats</td>
+                            <td class="text-left">{{ batter.bats }}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-left">Grad Year</td>
+                            <td class="text-left">{{ batter.grad_year }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-xs-12 col-md-6 text-center">
+                <h3>Current Season's Games</h3>
+                <table class="table">
+                    <thead>
+                        <tr class="table-headers">
+                            <th>Date</th>
+                            <th>Opponent</th>
+                            <th>AB's</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for game in game_stats %}
+                            <tr>
+                                <td><a href="{{ url_for('batter.batter_game_view', batter_id=batter.id, game_id=game['game'].id) }}">{{ game["game"].date }}</a></td>
+                                <td>{{ game["game"].get_opponent() }}</td>
+                                <td>{{ game["stats"]["ab"] }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 {% endblock %}

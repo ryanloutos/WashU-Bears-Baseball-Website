@@ -142,19 +142,147 @@
     {% block app_content %}
     {% include "opponent/opponent_sidenav.html" %}
     <div class="main">
-        <h1>{{ opponent }} - Scouting/Stats</h1>
-        <div >
-            <h3>Carer Pitch Usage vs {{ opponent }} hitters</h3>
-            <div id="pitch_usage_count_chart"></div>
+        {% include "opponent/opponent_title.html" %}
+        <div class="row" style="text-align: center;">
+            <h1>Scouting/Stats</h1>
         </div>
-        <div>
-            <h3>Career Swing Rates of {{ opponent }} hitters</h3>
-            <div id="swing_rate_chart"></div>
+        <div class="row">
+            <ul class="nav nav-tabs">
+                <li class="active"><a data-toggle="tab" href="#whiff-swing">Whiff/Swing Rates</a></li>
+                <li><a data-toggle="tab" href="#usage-rates">Pitch Usage</a></li>
+                <li><a data-toggle="tab" href="#career-ball-in-play">Career Ball in Play</a></li>
+                <li><a data-toggle="tab" href="#current-ball-in-play">Current Season Ball in Play</a></li>
+            </ul>
         </div>
-        <div>
-            <h3>Career Whiff Rates of {{ opponent }} hitters</h3>
-            <div id="whiff_rate_chart"></div>
+        <div class="row tab-content">
+            <div id="whiff-swing" class="tab-pane fade in active">
+                <div class="col-xs-12">
+                    <h3>Career Swing Rates of {{ opponent }} hitters</h3>
+                    <div id="swing_rate_chart"></div>
+                </div>
+                <div class="col-xs-12">
+                    <h3>Career Whiff Rates of {{ opponent }} hitters</h3>
+                    <div id="whiff_rate_chart"></div>
+                </div>
+            </div>
+            <div id="usage-rates" class="tab-pane fade">
+                <div class="col-xs-12">
+                    <h3>Carer Pitch Usage vs {{ opponent }} hitters</h3>
+                    <div id="pitch_usage_count_chart"></div>
+                </div>
+            </div>
+            <div id="career-ball-in-play" class="tab-pane fade">
+                <div class="col-xs-12 col-lg-6" style="text-align: center;">
+                    <h3>Career Stat Line</h3>
+                    <table class="table">
+                        <thead>
+                            <tr class="table-headers">
+                                <th class="text-left">Name</th>
+                                <th>Class</th>
+                                <th>H</th>
+                                <th>1B</th>
+                                <th>2B</th>
+                                <th>3B</th>
+                                <th>HR</th>
+                                <th>BB/HBP</th>
+                                <th>K/KL</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for batter in batters_stat_line %}
+                                <tr>
+                                    <td class="text-left">{{ batter["name"] }}</td>
+                                    <td>{{ batter["class"] }}</td>
+                                    <td>{{ batter["h"] }}</td>
+                                    <td>{{ batter["1b"] }}</td>
+                                    <td>{{ batter["2b"] }}</td>
+                                    <td>{{ batter["3b"] }}</td>
+                                    <td>{{ batter["hr"] }}</td>
+                                    <td>{{ batter["bb"] }}</td>
+                                    <td>{{ batter["k"] }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-xs-12 col-lg-6" style="text-align: center;">
+                    <h3>Career Hard Hit</h3>
+                    <table class="table">
+                        <thead>
+                            <tr class="table-headers">
+                                <th class="text-left">Name</th>
+                                <th class="text-left"># Hard Hit</th>
+                                <th class="text-left">Hard Hit %</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for batter in batters_hard_hit %}
+                                <tr>
+                                    <td class="text-left">{{ batter["name"] }}</td>
+                                    <td class="text-left">{{ batter["num_hard"] }}</td>
+                                    <td class="text-left">{{ batter["percent"] }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="current-ball-in-play" class="tab-pane fade">
+                <div class="col-xs-12 col-lg-6" style="text-align: center;">
+                    <h3>Current Season Stat Line</h3>
+                    <table class="table">
+                        <thead>
+                            <tr class="table-headers">
+                                <th class="text-left">Name</th>
+                                <th>Class</th>
+                                <th>H</th>
+                                <th>1B</th>
+                                <th>2B</th>
+                                <th>3B</th>
+                                <th>HR</th>
+                                <th>BB/HBP</th>
+                                <th>K/KL</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for batter in batters_stat_line %}
+                                <tr>
+                                    <td class="text-left">{{ batter["name"] }}</td>
+                                    <td>{{ batter["class"] }}</td>
+                                    <td>{{ batter["current_h"] }}</td>
+                                    <td>{{ batter["current_1b"] }}</td>
+                                    <td>{{ batter["current_2b"] }}</td>
+                                    <td>{{ batter["current_3b"] }}</td>
+                                    <td>{{ batter["current_hr"] }}</td>
+                                    <td>{{ batter["current_bb"] }}</td>
+                                    <td>{{ batter["current_k"] }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-xs-12 col-lg-6" style="text-align: center;">
+                    <h3>Current Season Hard Hit</h3>
+                    <table class="table">
+                        <thead>
+                            <tr class="table-headers">
+                                <th class="text-left">Name</th>
+                                <th class="text-left"># Hard Hit</th>
+                                <th class="text-left">Hard Hit %</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for batter in batters_hard_hit %}
+                                <tr>
+                                    <td class="text-left">{{ batter["name"] }}</td>
+                                    <td class="text-left">{{ batter["current_num_hard"] }}</td>
+                                    <td class="text-left">{{ batter["current_percent"] }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
-        
     </div>
     {% endblock %}

@@ -54,11 +54,14 @@
 {% block app_content %}
     {% include "opponent/batter/batter_sidenav.html" %}
     <div class="main">
-        <h1>
-            {{batter.name()}} - Spray Charts
-        </h1> 
+        {% include "opponent/batter/batter_title.html" %}
+        <div class="row text-center">
+            <h1>
+                Spray Charts
+            </h1> 
+        </div>
         <div class="row">
-            <div class="col-xs-12 col-md-6" id="spray-location">
+            <div class="col-xs-12 col-lg-6" id="spray-location">
                 <h4>Spray Locations</h4>
                 <div>
                     <div id="field-legend"></div>
@@ -67,7 +70,7 @@
                 </div>
                 
             </div>
-            <div class="col-xs-12 col-md-6" id="fielder-location">
+            <div class="col-xs-12 col-lg-6" id="fielder-location">
                 <h4>Spray Density</h4>
                 <div id="field-density"></div>
             </div>

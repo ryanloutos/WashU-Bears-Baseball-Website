@@ -190,8 +190,11 @@ class Batter(db.Model):
             game = at_bat.get_game()
             if game not in games:
                 games.append(game)
-
         return games
+
+    def get_opponent(self):
+        opponent = Opponent.query.filter_by(id=self.opponent_id).first()
+        return opponent
 
 
 class AtBat(db.Model):

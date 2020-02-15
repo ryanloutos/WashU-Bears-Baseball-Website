@@ -1,0 +1,15 @@
+<style>
+    .page-title {
+        border-bottom: 5px solid #bd231f;
+        font-size: 45px;
+        font-weight: 600;
+        text-align: center;
+    }
+    .logos {
+        width: 100px;
+        height: auto;
+    }
+</style>
+<div class="row">
+    <h1 class="page-title"><img class="logos" alt="Team-Logo" src="/static/images/team_logos/{{batter.opponent_id}}.png">{{batter.get_opponent()}} - {{batter.name()}}</h1>
+</div>

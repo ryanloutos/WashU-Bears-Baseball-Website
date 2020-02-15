@@ -32,9 +32,12 @@
 {% block app_content %}
     {% include "opponent/batter/batter_sidenav.html" %}
     <div class="main">
-        <h1>
-            {{ batter.name() }} - At Bats
-        </h1> 
+        {% include "opponent/batter/batter_title.html" %}
+        <div class="row text-center">
+            <h1>
+                At Bats
+            </h1> 
+        </div>
         <table class="table">
             <thead>
                 <tr class="table-headers">
