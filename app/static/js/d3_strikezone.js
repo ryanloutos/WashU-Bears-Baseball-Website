@@ -96,7 +96,7 @@ class strikezone {
             .attr("text-anchor", "middle")
             .attr("fill", "black");
 
-        if(pitch_type != null){
+        if(pitch_num != null){
             text.text(pitch_num);
         }
     }
