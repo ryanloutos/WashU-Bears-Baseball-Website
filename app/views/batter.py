@@ -19,7 +19,7 @@ from app.stats import staffPitchStrikePercentage
 from app.stats import outingPitchStatistics, outingTimeToPlate, veloOverTime
 from app.stats import teamImportantStatsSeason
 from app.stats import batterSwingWhiffRatebyPitchbyCount, batter_summary_game_stats
-from app.stats import batterSwingWhiffRatebyPitchbyCount2
+from app.stats import batterSwingWhiffRatebyPitchbyCount2, batter_ball_in_play_stats
 
 import re
 
@@ -431,15 +431,16 @@ def batter_stats(batter_id):
         return redirect(url_for('main.index'))
     seasons = batter.get_seasons()
 
-    swing_rate_by_count, whiff_rate_by_count = batterSwingWhiffRatebyPitchbyCount(batter)
+    # Batter stat calculations
     pitch_usage_count, swing_whiff_rate = batterSwingWhiffRatebyPitchbyCount2(batter)
+    ball_in_play, hard_hit = batter_ball_in_play_stats(batter)
 
     return render_template(
         "opponent/batter/batter_stats.html",
-        swing_rate_by_count=swing_rate_by_count,
-        whiff_rate_by_count=whiff_rate_by_count,
         pitch_usage_count=pitch_usage_count,
         swing_whiff_rate=swing_whiff_rate,
+        ball_in_play=ball_in_play,
+        hard_hit=hard_hit,
         title=batter,
         batter=batter,
         seasons=seasons

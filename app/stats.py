@@ -2098,3 +2098,103 @@ def stats_opponent_batters_stat_lines(opponent):
                 vals["swings"] = percentage(truncate(vals["swings"] / vals["thrown"]))
 
     return (batter_stat_line, batter_hard_hit_line, pitches_per_count, swing_whiff_rate_new)
+
+
+def batter_ball_in_play_stats(batter):
+    ball_in_play = {"h": 0,"1b": 0,"2b": 0,"3b": 0,"hr": 0,"bb": 0,"k": 0}
+    hard_hit = {"num_hard": 0,"num_total": 0,"percent": 0,}
+
+    ball_in_play_games = {
+        "career": {},
+        "current": {}
+    }
+    hard_hit_games = {
+        "career": {},
+        "current": {}
+    }
+    # Each game for batter has blank stat line to start
+    for game in batter.get_games():
+        if game not in [None, ""]:
+            ball_in_play_games["career"][game] = {"h": 0,"1b": 0,"2b": 0,"3b": 0,"hr": 0,"bb": 0,"k": 0}
+            hard_hit_games["career"][game] = {"num_hard": 0,"num_total": 0,"percent": 0,}
+            if game.get_season().current_season:
+                ball_in_play_games["current"][game] = {"h": 0,"1b": 0,"2b": 0,"3b": 0,"hr": 0,"bb": 0,"k": 0}
+                hard_hit_games["current"][game] = {"num_hard": 0,"num_total": 0,"percent": 0,}
+
+    # iterate through batter ab's for values
+    for at_bat in batter.at_bats:
+        game = at_bat.get_game()
+        if game not in [None, ""]:
+            for pitch in at_bat.pitches:
+
+                # Ball in play stats
+                if pitch.ab_result not in [None, ""]:
+                    game = at_bat.get_game()
+
+                    # career ball in play stats
+                    if pitch.ab_result in ["1b", "1B"]:
+                        ball_in_play_games["career"][game]["h"] += 1
+                        ball_in_play_games["career"][game]["1b"] += 1
+                    elif pitch.ab_result in ["2b", "2B"]:
+                        ball_in_play_games["career"][game]["h"] += 1
+                        ball_in_play_games["career"][game]["2b"] += 1
+                    elif pitch.ab_result in ["3b", "3B"]:
+                        ball_in_play_games["career"][game]["h"] += 1
+                        ball_in_play_games["career"][game]["3b"] += 1
+                    elif pitch.ab_result in ["HR", "hr"]:
+                        ball_in_play_games["career"][game]["h"] += 1
+                        ball_in_play_games["career"][game]["hr"] += 1
+                    elif pitch.ab_result in ["bb", "BB", "hbp", "HBP"]:
+                        ball_in_play_games["career"][game]["bb"] += 1
+                    elif pitch.ab_result in ["k", "kl", "K", "KL"]:
+                        ball_in_play_games["career"][game]["k"] += 1
+
+                    # current season ball in play stats
+                    if at_bat.get_season().current_season:
+                        if pitch.ab_result in ["1b", "1B"]:
+                            ball_in_play_games["current"][game]["h"] += 1
+                            ball_in_play_games["current"][game]["1b"] += 1
+                        elif pitch.ab_result in ["2b", "2B"]:
+                            ball_in_play_games["current"][game]["h"] += 1
+                            ball_in_play_games["current"][game]["2b"] += 1
+                        elif pitch.ab_result in ["3b", "3B"]:
+                            ball_in_play_games["current"][game]["h"] += 1
+                            ball_in_play_games["current"][game]["3b"] += 1
+                        elif pitch.ab_result in ["HR", "hr"]:
+                            ball_in_play_games["current"][game]["h"] += 1
+                            ball_in_play_games["current"][game]["hr"] += 1
+                        elif pitch.ab_result in ["bb", "BB", "hbp", "HBP"]:
+                            ball_in_play_games["current"][game]["bb"] += 1
+                        elif pitch.ab_result in ["k", "kl", "K", "KL"]:
+                            ball_in_play_games["current"][game]["k"] += 1
+
+                # Hard hit stats
+                if pitch.ab_result in ["IP->Out", "1B", "2B", "3B", "HR", "Error", "FC"]:
+                    
+                    # career hard hit stats
+                    hard_hit_games["career"][game]["num_total"] += 1
+                    if pitch.hit_hard:
+                        hard_hit_games["career"][game]["num_hard"] += 1
+                    
+                    # current season hard hit stats
+                    if at_bat.get_season().current_season:
+                        hard_hit_games["current"][game]["num_total"] += 1
+                        if pitch.hit_hard:
+                            hard_hit_games["current"][game]["num_hard"] += 1
+
+    # calculations for hard hit
+    for game in batter.get_games():
+        if game not in [None, ""] and hard_hit_games["career"][game]["num_total"] > 0:
+            
+            # career hard hit
+            hard_hit_games["career"][game]["percent"] = percentage(
+                truncate(
+                    hard_hit_games["career"][game]["num_hard"] / hard_hit_games["career"][game]["num_total"]))
+            
+            # current season hard hit
+            if game.get_season().current_season:
+                hard_hit_games["current"][game]["percent"] = percentage(
+                    truncate(
+                        hard_hit_games["current"][game]["num_hard"] / hard_hit_games["current"][game]["num_total"]))
+    
+    return (ball_in_play_games, hard_hit_games)
