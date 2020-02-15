@@ -149,7 +149,7 @@ class Opponent(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), index=True)
     outings = db.relationship('Outing', backref='opponent', lazy='dynamic')
-    batters = db.relationship('Batter', backref='opponent', lazy='dynamic')
+    batters = db.relationship('Batter', backref='opponent', lazy='dynamic', order_by="Batter.lastname")
     games = db.relationship('Game', backref='opponent', lazy='dynamic')
 
     def __repr__(self):
