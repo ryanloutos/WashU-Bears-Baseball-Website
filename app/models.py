@@ -90,6 +90,12 @@ class Outing(db.Model):
         month = self.date.month
         day = self.date.day
         return f"{month}/{year}"
+    
+    def getFullDate(self):
+        year = self.date.year
+        month = self.date.month
+        day = self.date.day
+        return f"{month}/{day}/{year}"
 
     def get_game(self):
         game = Game.query.filter_by(id=self.game_id).first()

@@ -67,58 +67,56 @@ class field {
 
         //path to create field outline
         let field_outline_path =
-            "M " + this.xScalef(0) + " " + this.yScalef(-85) + " " + 
-            "L " + this.xScalef(55) + " " + this.yScalef(-65) + " " + 
-            "L " + this.xScalef(190) + " " + this.yScalef(105) + " " + 
-            "L " + this.xScalef(240) + " " + this.yScalef(155) + " " + 
-            "L " + this.xScalef(138) + " " + this.yScalef(250) + " " +
-            "L " + this.xScalef(46) + " " + this.yScalef(300) + " " +
-            "L " + this.xScalef(-46) + " " + this.yScalef(300) + " " +
-            "L " + this.xScalef(-138) + " " + this.yScalef(250) + " " +
-            "L " + this.xScalef(-240) + " " + this.yScalef(155) + " " +
-            "L " + this.xScalef(-190) + " " + this.yScalef(105) + " " +
-            "L " + this.xScalef(-55) + " " + this.yScalef(-65) + " " +
-            "L " + this.xScalef(0) + " " + this.yScalef(-85) + " " + 
+            "M " + this.xScalef(0) + " " +    this.yScalef(-45) + " " + //backstop center
+            "L " + this.xScalef(50) + " " +   this.yScalef(-25) + " " + //backstop bottom right corner
+            "L " + this.xScalef(242) + " " +  this.yScalef(222) + " " + //field rf corner @ 330
+            "L " + this.xScalef(145) + " " +   this.yScalef(334) + " " + // field rf straight away
+            "L " + this.xScalef(68) + " " +   this.yScalef(375) + " " + 
+            "L " + this.xScalef(0) + " " +   this.yScalef(395) + " " + // dead center @ 395
+            "L " + this.xScalef(-68) + " " +  this.yScalef(375) + " " + 
+            "L " + this.xScalef(-145) + " " +  this.yScalef(334) + " " + // field lf straight away
+            "L " + this.xScalef(-242) + " " + this.yScalef(222) + " " + //field lf corner @ 330
+            "L " + this.xScalef(-50) + " " +  this.yScalef(-25) + " " + // backstop bottom left corner
+            "L " + this.xScalef(0) + " " +    this.yScalef(-45) + " " + //backstop center
             "Z";
 
         let field_inner_outline_path =
-            "M " + this.xScalef(0) + " " + this.yScalef(-80) + " " + 
-            "L " + this.xScalef(50) + " " + this.yScalef(-60) + " " + 
-            "L " + this.xScalef(180) + " " + this.yScalef(100) + " " + 
-            "L " + this.xScalef(232) + " " + this.yScalef(153) + " " + 
-            "L " + this.xScalef(133) + " " + this.yScalef(245) + " " +
-            "L " + this.xScalef(41) + " " + this.yScalef(295) + " " +
-            "L " + this.xScalef(-41) + " " + this.yScalef(295) + " " +
-            "L " + this.xScalef(-133) + " " + this.yScalef(245) + " " +
-            "L " + this.xScalef(-232) + " " + this.yScalef(153) + " " +
-            "L " + this.xScalef(-180) + " " + this.yScalef(100) + " " +
-            "L " + this.xScalef(-50) + " " + this.yScalef(-60) + " " +
-            "L " + this.xScalef(0) + " " + this.yScalef(-80) + " " + 
+            "M " + this.xScalef(0) + " " + this.yScalef(-40) + " " + //backstop center
+            "L " + this.xScalef(50) + " " + this.yScalef(-20) + " " + 
+            "L " + this.xScalef(237) + " " + this.yScalef(222) + " " + // RF corner @ 330
+            "L " + this.xScalef(145) + " " + this.yScalef(329) + " " + // stright away stretch
+            "L " + this.xScalef(68) + " " + this.yScalef(370) + " " +
+            "L " + this.xScalef(0) + " " + this.yScalef(390) + " " + // Dead center @ 395
+            "L " + this.xScalef(-68) + " " + this.yScalef(370) + " " +
+            "L " + this.xScalef(-145) + " " + this.yScalef(329) + " " + //straignt away stretch
+            "L " + this.xScalef(-237) + " " + this.yScalef(222) + " " + // LF corner @ 330
+            "L " + this.xScalef(-50) + " " + this.yScalef(-20) + " " +
+            "L " + this.xScalef(0) + " " + this.yScalef(-40) + " " + //backstop center
             "Z";
 
         let infield_dirt = 
-            "M " + this.xScalef(60) + " " + this.yScalef(-5) + " " + //move to first base
-            "L " + this.xScalef(0) + " " + this.yScalef(55) + " " +
-            "L " + this.xScalef(-60) + " " + this.yScalef(-5) + " " +
-            "L " + this.xScalef(0) + " " + this.yScalef( -65) + " " + 
-            "L " + this.xScalef(75) + " " + this.yScalef(10) + " " +
-            "C " + this.xScalef(65) + " " + this.yScalef(90) + " " + this.xScalef(-65) + " " + this.yScalef(90) + " " + this.xScalef(-75) + " " + this.yScalef(10) + " " +
-            "L " + this.xScalef(0) + " " + this.yScalef(-65) + " " + 
+            "M " + this.xScalef(85) + " " + this.yScalef(80) + " " + //move to first base
+            "L " + this.xScalef(0) + " " + this.yScalef(170) + " " +
+            "L " + this.xScalef(-85) + " " + this.yScalef(80) + " " +
+            "L " + this.xScalef(0) + " " + this.yScalef( -5) + " " + 
+            "L " + this.xScalef(85) + " " + this.yScalef(80) + " " +
+            "C " + this.xScalef(85) + " " + this.yScalef(200) + " " + this.xScalef(-85) + " " + this.yScalef(200) + " " + this.xScalef(-85) + " " + this.yScalef(80) + " " +
+            "L " + this.xScalef(0) + " " + this.yScalef(-5) + " " + 
             "Z";
         
         let infield_grass = 
-            "M " + this.xScalef(0) + " " + this.yScalef(-55) + " " + 
-            "L " + this.xScalef(50) + " " + this.yScalef(-5) + " " +
-            "L " + this.xScalef(0) + " " + this.yScalef(45) + " " +
-            "L " + this.xScalef(-50) + " " + this.yScalef(-5) + " " +
+            "M " + this.xScalef(0) + " " + this.yScalef(5) + " " + 
+            "L " + this.xScalef(60) + " " + this.yScalef(60) + " " +
+            "L " + this.xScalef(0) + " " + this.yScalef(120) + " " +
+            "L " + this.xScalef(-60) + " " + this.yScalef(60) + " " +
             "Z";
 
 
         let foul_lines = 
-            "M " + this.xScalef(-230) + " " + this.yScalef(170) + " " + 
-            "L " + this.xScalef(0) + " " + this.yScalef(-60) + " " + 
-            "L " + this.xScalef(230) + " " + this.yScalef(170) + " " + 
-            "L " + this.xScalef(0) + " " + this.yScalef(-60) + " " + 
+            "M " + this.xScalef(-239) + " " + this.yScalef(239) + " " + 
+            "L " + this.xScalef(0) + " " + this.yScalef(0) + " " + 
+            "L " + this.xScalef(239) + " " + this.yScalef(239) + " " + 
+            "L " + this.xScalef(0) + " " + this.yScalef(0) + " " + 
             "Z";
 
         

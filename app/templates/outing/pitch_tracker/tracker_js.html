@@ -15,6 +15,21 @@
     setPitchCountInning();
     $("#total-pitches").text(`${pitch_num} (${pitchCountInning[inning]})`);
 
+    // set up by inning table
+    var inning_data = {};
+    {% for i in range(1,10) %}
+        inning_data[{{i}}] = {
+            "pitches": {{inning_data_table[i]["pitches"]}},
+            "velo": {{inning_data_table[i]["velo"]}},
+            "strike_pct": {{inning_data_table[i]["strike_pct"]}}
+        }
+    {% endfor %}
+    inning_data["Totals"] = {
+        "pitches": {{inning_data_table["Totals"]["pitches"]}},
+        "velo": {{inning_data_table["Totals"]["velo"]}},
+        "strike_pct": {{inning_data_table["Totals"]["strike_pct"]}}
+    }
+
     // set the atBat id if present
     var atBat = "";
     {% if at_bat != "" %}
@@ -909,6 +924,10 @@
         {% for key, value in pitch_count_inning.items() %}
             pitchCountInning[{{key}}] = {{value}};
         {% endfor %}
+    }
+
+    function setUpInningTable() {
+        
     }
 
 </script>
