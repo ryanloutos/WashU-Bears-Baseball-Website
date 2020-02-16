@@ -26,6 +26,7 @@ import os
 # for file naming duplication problem
 import random
 import re
+import math
 
 outing = Blueprint("outing", __name__)
 
@@ -1019,6 +1020,15 @@ def new_outing_pitch_tracker(id):
     current_batter = ""
     lead_runner = ""
 
+    # for inning data on chart
+    inning_totals = {}
+    inning_data_table = {}
+    for i in range(1,10):
+        inning_totals[i] = {"pitches": 0, "pitches_with_velo": 0, "velo_total": 0, "num_strikes": 0}
+        inning_data_table[i] = {"pitches": 0, "velo": 0, "strike_pct": 0}
+    inning_totals["Totals"] = {"pitches": 0, "pitches_with_velo": 0, "velo_total": 0, "num_strikes": 0}
+    inning_data_table["Totals"] = {"pitches": 0, "velo": 0, "strike_pct": 0}
+
     # looks through all pitches and set variables accordingly
     for at_bat in outing.at_bats:
 
@@ -1055,6 +1065,19 @@ def new_outing_pitch_tracker(id):
             }
             pitches.append(pitch)
 
+            # update data for inning data table
+            inning_totals[p.inning]["pitches"] += 1
+            inning_totals["Totals"]["pitches"] += 1
+            if p.pitch_type in [1,"1",7,"7"]:
+                if p.velocity not in ["", None]:
+                    inning_totals[p.inning]["pitches_with_velo"] += 1
+                    inning_totals["Totals"]["pitches_with_velo"] += 1
+                    inning_totals[p.inning]["velo_total"] += p.velocity
+                    inning_totals["Totals"]["velo_total"] += p.velocity
+            if p.pitch_result is not "B":
+                inning_totals[p.inning]["num_strikes"] += 1
+                inning_totals["Totals"]["num_strikes"] += 1
+
             # update count based on pitch result
             count = p.count.split("-")
             balls = int(count[0])
@@ -1079,6 +1102,13 @@ def new_outing_pitch_tracker(id):
                 current_batter = ""
                 lead_runner = ""
 
+    # calculate averages and strike percentage
+    for key in inning_totals:
+        inning_data_table[key]["pitches"] = inning_totals[key]["pitches"]
+        if inning_totals[key]["pitches_with_velo"] != 0:
+            inning_data_table[key]["velo"] = truncate(inning_totals[key]["velo_total"]/inning_totals[key]["pitches_with_velo"])
+        if inning_totals[key]["pitches"] != 0:
+            inning_data_table[key]["strike_pct"] = percentage(inning_totals[key]["num_strikes"]/inning_totals[key]["pitches"])
 
     # clean up pitch data info for javascript
     for key, val in enumerate(pitches):
@@ -1106,12 +1136,38 @@ def new_outing_pitch_tracker(id):
         at_bat=current_at_bat,
         batter=current_batter,
         inning=inning,
-        lead_runner=lead_runner
+        lead_runner=lead_runner,
+        inning_data_table=inning_data_table
     )
 
 
-
 # ***************-HELPFUL FUNCTIONS-*************** #
+def truncate(n, decimals=1):
+    """Truncates the passed value to decimal places.
+
+    Arguments:
+        n {number} -- Number to be truncated
+
+    Keyword Arguments:
+        decimals {int} -- Number of decimal places to truncate to(default: {2})
+
+    Returns:
+        [int] -- truncated verison of passed value
+    """
+    multiplier = 10 ** decimals
+    return int(n * multiplier) / multiplier
+
+def percentage(n, decimals=0):
+    '''
+    Gets the percentage rounded to a specific decimal place
+    PARAM:
+        - n - is a the decimal number 0<=n<=1
+        - decimals - is the place you want to round to
+    '''
+    multiplier = 10 ** decimals
+    percentage = 100 * n
+    return int(math.floor(percentage*multiplier + 0.5) / multiplier)
+
 def getAvailablePitchers():
     '''
     Gets all of the string names you are allowed to create outings for
