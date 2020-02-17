@@ -18,7 +18,7 @@ def staff_home():
     '''
     Homepage: shows the roster and staff goals
     '''
-    pitchers = Pitcher.query.filter(Pitcher.retired != 1).order_by(Pitcher.name).all()
+    pitchers = Pitcher.query.filter(Pitcher.retired != 1).filter(Pitcher.opponent_id == 1).order_by(Pitcher.name).all()
     return render_template(
         "staff/home/staff_home.html",
         title="Bears Pitching",
@@ -53,7 +53,7 @@ def staff_basic_stats():
         staff_basic_stats.html -- list of basic stats for all players
         currently on roster
     """
-    pitchers = Pitcher.query.filter(Pitcher.retired != 1).all()
+    pitchers = Pitcher.query.filter(Pitcher.retired != 1).filter(Pitcher.opponent_id == 1).order_by(Pitcher.name).all()    
     seasons = Season.query.order_by(Season.year).all()
 
     staff_stat_summary, players_stat_summary = staffBasicStats(pitchers)
@@ -69,7 +69,7 @@ def staff_basic_stats():
 @staff.route('/staff/advanced_stats', methods=['GET', 'POST'])
 @login_required
 def staff_advanced_stats():
-    pitchers = Pitcher.query.filter(Pitcher.retired != 1).all()
+    pitchers = Pitcher.query.filter(Pitcher.retired != 1).filter(Pitcher.opponent_id == 1).order_by(Pitcher.name).all()    
 
     players, total_velo_averages, total_pct_averages = staffAdvancedStats(pitchers)
 
@@ -97,7 +97,7 @@ def staff_retired():
             the retired staff
     '''
 
-    retired_pitchers = Pitcher.query.filter(Pitcher.retired == 1).order_by(Pitcher.grad_year).all()
+    retired_pitchers = Pitcher.query.filter(Pitcher.retired == 1).filter(Pitcher.opponent_id == 1).order_by(Pitcher.grad_year).all()
 
     return render_template('staff/staff_retired.html',
                            title='Retired Pitchers',

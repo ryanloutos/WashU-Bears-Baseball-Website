@@ -22,3 +22,5 @@ Other Goals/Ideas For Improvement
   - Add hit location randomization for field spray charts from fielder location (1-9 on gb, ld, fb)
 
 Cool README.md style stuff [here](https://help.github.com/en/github/writing-on-github/basic-writing-and-formatting-syntax)
+
+https://devconnected.com/how-to-clean-up-git-branches/

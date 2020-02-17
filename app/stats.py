@@ -1971,6 +1971,7 @@ def stats_opponent_batters_stat_lines(opponent):
             temp_stat_line = {
                 "name": batter.name(),
                 "class": batter.grad_year,
+                "ab": 0,
                 "h": 0,
                 "1b": 0,
                 "2b": 0,
@@ -1978,6 +1979,7 @@ def stats_opponent_batters_stat_lines(opponent):
                 "hr": 0,
                 "bb": 0,
                 "k": 0,
+                "current_ab": 0,
                 "current_h": 0,
                 "current_1b": 0,
                 "current_2b": 0,
@@ -1997,6 +1999,9 @@ def stats_opponent_batters_stat_lines(opponent):
             }
 
             for at_bat in batter.at_bats:
+                temp_stat_line["ab"] += 1
+                if at_bat.get_season().current_season:
+                    temp_stat_line["current_ab"] += 1
                 for pitch in at_bat.pitches:
 
                     # if there was an ab_result, do calc for stat line and hard_hit

@@ -151,6 +151,7 @@ def batter_spray_chart(batter_id):
     density_vals = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     d_total = 0
     outcomes = []
+    locs = []
     for ab in batter.at_bats:
         for p in ab.pitches:
             # if there was an ab_outcome
@@ -172,11 +173,13 @@ def batter_spray_chart(batter_id):
             if p.ab_result not in ["", None]:
                 outcomes.append(p)
 
+            # for pitch locations against
+            if p.loc_x not in [None, ""] and p.loc_y not in [None, ""]:
+                locs.append({"x_loc": p.loc_x, "y_loc": p.loc_y, "type": p.pitch_type})
+
     # Change density vals to percentages
     for i in range(len(density_vals)):
         density_vals[i] = density_vals[i] / d_total
-
-    print(density_vals)
 
     return render_template(
         'opponent/batter/batter_spray_chart.html',
@@ -184,7 +187,8 @@ def batter_spray_chart(batter_id):
         batter=batter,
         sprays=sprays,
         d_vals=density_vals,
-        outcomes=outcomes
+        outcomes=outcomes,
+        locs=locs
     )
 
 

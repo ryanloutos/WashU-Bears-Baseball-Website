@@ -8,7 +8,7 @@
         //sort tables so that batters are alphabetical
         document.addEventListener("DOMContentLoaded", function(){
             //sort roster table by last name
-            sortTable(1,0);
+            // sortTable(1,0);
         });
     </script>
 {% endblock %}
@@ -22,16 +22,14 @@
                 <h2>Active Roster</h2>
                 <table class="table sortable_table">
                     <tr class="table-headers">
-                        <th class="text-left">Firstname</th>
-                        <th class="text-left">Lastname</th>
+                        <th class="text-left">Name</th>
                         <th class="text-left">Grad Year</th>
                         <th>Bats</th>
                     </tr>
                     {% for batter in opponent.batters %}
                         {% if batter.retired not in [None, "", "1", 1] %}
                             <tr>
-                                <td class="text-left"><a href="{{ url_for('batter.batter_home', id=batter.id) }}">{{ batter.firstname }}</a></td>
-                                <td class="text-left">{{ batter.lastname }}</td>
+                                <td class="text-left"><a href="{{ url_for('batter.batter_home', id=batter.id) }}">{{ batter.name() }}</a></td>
                                 <td class="text-left">{{ batter.grad_year }}</td>
                                 <td>{{ batter.bats }}</td>
                             </tr>
