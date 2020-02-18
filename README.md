@@ -6,6 +6,8 @@ By Sat 2/22 For Hendrix:
 - Make sure pitch tracking is ready to track opponents
 - Edit any necessary pages for basic opponents analysis while still keeping our own
 - Adjust opponent pages to include pitching information too
+- Adjust batter stats page AB's to have AB's and PA's
+- mod opponent page to include opponent pitchers and hitters
 
 Other Goals/Ideas For Improvement
 - (Ryan) Finish adjusting staff pages and finalize them for now
