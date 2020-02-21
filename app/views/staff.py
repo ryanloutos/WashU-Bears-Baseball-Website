@@ -70,7 +70,7 @@ def staff_armcare():
 def staff_advanced_stats():
     pitchers = Pitcher.query.filter(Pitcher.retired != 1).filter(Pitcher.opponent_id == 1).order_by(Pitcher.name).all()    
 
-    players, total_velo_averages, total_pct_averages, total_fps_pct, total_whiffs_pct, total_swing_and_miss_pct = staffAdvancedStats(pitchers)
+    players, total_velo_averages, total_pct_averages, total_fps_pct, total_whiffs_pct, total_swing_and_miss_pct, total_ab_results_pct, total_csw_pct = staffAdvancedStats(pitchers)
 
     return render_template(
         'staff/staff_advanced_stats.html',
@@ -79,7 +79,9 @@ def staff_advanced_stats():
         total_pct_averages = total_pct_averages,
         total_fps_pct = total_fps_pct,
         total_whiffs_pct = total_whiffs_pct,
-        total_swing_and_miss_pct = total_swing_and_miss_pct
+        total_swing_and_miss_pct = total_swing_and_miss_pct,
+        total_ab_results_pct=total_ab_results_pct,
+        total_csw_pct=total_csw_pct
     )
 
 

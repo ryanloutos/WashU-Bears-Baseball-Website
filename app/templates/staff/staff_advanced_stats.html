@@ -27,13 +27,14 @@
             <ul class="nav nav-tabs">
                 <li class="active tabs"><a data-toggle="tab" href="#fastball-velocity">Fastball Velocity</a></li>
                 <li class="tabs"><a data-toggle="tab" href="#strike-percentages">Strike Percentages</a></li>
-                <li class="tabs"><a data-toggle="tab" href="#swing-and-miss">Swing & Miss</a></li>
+                <li class="tabs"><a data-toggle="tab" href="#swing-and-miss">"Stuff" Stats</a></li>
+                <li class="tabs"><a data-toggle="tab" href="#ab-results">AB Results</a></li>
             </ul>
         </div>
         <div class="tab-content row">
             <div class="tab-pane fade in active" id="fastball-velocity" style="width: 80%; margin-left: 10%;">
                 <h4>Fastball Velocity</h4>
-                <table class="table sortable_table">
+                <table class="table table-striped sortable_table">
                     <tr class="table-headers">
                         <th style="width: 40%" onclick="sortTable(0, 0, 2)">Name</th>
                         <th style="width: 20%" onclick="sortTable(1, 0, 2)">FB</th>
@@ -58,7 +59,7 @@
             </div>
             <div class="tab-pane fade" id="strike-percentages" style="width: 80%; margin-left: 10%;">
                 <h4>Strike Percentages</h4>
-                <table class="table sortable_table">
+                <table class="table table-striped sortable_table">
                     <tr class="table-headers">
                         <th style="width: 20%" onclick="sortTable(0, 1, 2)">Name</th>
                         <th style="width: 20%" onclick="sortTable(1, 1, 2)">FPS</th>
@@ -84,12 +85,13 @@
                     </tr>
                 </table>
             </div>
-            <div class="tab-pane fade" id="swing-and-miss" style="width: 80%; margin-left: 10%;">
+            <div class="tab-pane fade" id="swing-and-miss" style="width: 100%;">
                 <table class="table table-striped sortable_table">
-                    <h4>Swing & Miss Statistics</h4>
+                    <h4>"How good is your stuff?"</h4>
                     <h5 style="text-align: left;"><br>
                         WHIF - how often hitters swing and miss WHEN they actually swing [calculation] - (#SS)/(#SS + #F + #IP)<br> <br>
-                        S&M - how often hitters swing and miss on all pitches [calculation] - (#SS)/(all pitches)
+                        S&M - how often hitters swing and miss on all pitches [calculation] - (#SS)/(all pitches) <br> <br>
+                        CSW - how often a pitch is a called strike or swing and miss [calculation] - (#SS + #CS)/(all pitches)
                     </h5>
                     <tr class="table-headers">
                         <th style="border-right: 1px solid gray">Name</th>
@@ -98,7 +100,10 @@
                         <th style="border-right: 1px solid gray">WHIF - Total</th>
                         <th>S&M - FB</th>
                         <th>S&M - Offspeed</th>
-                        <th>S&M - Total</th>
+                        <th style="border-right: 1px solid gray">S&M - Total</th>
+                        <th>CSW - FB</th>
+                        <th>CSW - Offspeed</th>
+                        <th>CSW - Total</th>
                     </tr>
                     {% for pitcher in players %}
                     <tr>
@@ -108,7 +113,10 @@
                         <td style="border-right: 1px solid gray">{{ pitcher["whiff"]["total"] }}%</td>
                         <td>{{ pitcher["swing_miss"]["fastball"] }}%</td>
                         <td>{{ pitcher["swing_miss"]["offspeed"] }}%</td>
-                        <td>{{ pitcher["swing_miss"]["total"] }}%</td>
+                        <td style="border-right: 1px solid gray">{{ pitcher["swing_miss"]["total"] }}%</td>
+                        <td>{{ pitcher["csw"]["fastball"] }}%</td>
+                        <td>{{ pitcher["csw"]["offspeed"] }}%</td>
+                        <td>{{ pitcher["csw"]["total"] }}%</td>
                     </tr>
                     {% endfor %}
                     <tr>
@@ -118,7 +126,58 @@
                         <td style="border-right: 1px solid gray"><b>{{ total_whiffs_pct["total"] }}%</b></td>
                         <td><b>{{ total_swing_and_miss_pct["fastball"] }}%</b></td>
                         <td><b>{{ total_swing_and_miss_pct["offspeed"] }}%</b></td>
-                        <td><b>{{ total_swing_and_miss_pct["total"] }}%</b></td>
+                        <td style="border-right: 1px solid gray"><b>{{ total_swing_and_miss_pct["total"] }}%</b></td>
+                        <td><b>{{ total_csw_pct["fastball"] }}%</b></td>
+                        <td><b>{{ total_csw_pct["offspeed"] }}%</b></td>
+                        <td><b>{{ total_csw_pct["total"] }}%</b></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="tab-pane fade" id="ab-results" style="width: 80%; margin-left: 10%;">
+                <table class="table table-striped sortable_table">
+                    <h4>AB Result Statistics</h4>
+                    <h5 style="text-align: left;"><br>
+                        In Play: % of at bats that end with a ball put in play somewhere <br>
+                        Strikeout: % of at bats that end with a strikeout <br>
+                        BB/HBP: % of at bats that end with a walk or hbp <br>
+                        <hr>
+                        IP - Hard: % hard hit balls WHEN the batter puts the ball in play [#hard_hit/#balls_in_play] <br>
+                        IP - Weak: % weak hit balls WHEN the batter puts the ball in play [#weak_hit/#balls_in_play]
+                        <hr>
+                        Total - Hard: % of the time an at bat ends with a hard hit ball [#hard_hit/#at_bats] <br>
+                        Total - Weak: % of the time an at bat ends with a weakly hit ball [#weak_hit/#at_bats]
+                    </h5>
+                    <tr class="table-headers">
+                        <th style="border-right: 1px solid gray">Name</th>
+                        <th>In Play</th>
+                        <th>Strikeout</th>
+                        <th style="border-right: 1px solid gray">BB/HBP</th>
+                        <th>IP - Hard</th>
+                        <th style="border-right: 1px solid gray">IP - Weak</th>
+                        <th>Total - Hard</th>
+                        <th>Total - Weak</th>
+                    </tr>
+                    {% for pitcher in players %}
+                    <tr>
+                        <td style="border-right: 1px solid gray">{{ pitcher["details"]["name"] }}</td>
+                        <td>{{ pitcher["ab_results"]["ip"] }}%</td>
+                        <td>{{ pitcher["ab_results"]["strikeouts"] }}%</td>
+                        <td style="border-right: 1px solid gray">{{ pitcher["ab_results"]["bb/hbp"] }}%</td>
+                        <td>{{ pitcher["ab_results"]["hard_ip"] }}%</td>
+                        <td style="border-right: 1px solid gray">{{ pitcher["ab_results"]["weak_ip"] }}%</td>
+                        <td>{{ pitcher["ab_results"]["hard_total"] }}%</td>
+                        <td>{{ pitcher["ab_results"]["weak_total"] }}%</td>
+                    </tr>
+                    {% endfor %}
+                    <tr>
+                        <td style="border-right: 1px solid gray"><b>Staff Averages</b></td>
+                        <td><b>{{ total_ab_results_pct["ip"] }}%</b></td>
+                        <td><b>{{ total_ab_results_pct["strikeouts"] }}%</b></td>
+                        <td style="border-right: 1px solid gray"><b>{{ total_ab_results_pct["bb/hbp"] }}%</b></td>
+                        <td><b>{{ total_ab_results_pct["hard_ip"] }}%</b></td>
+                        <td style="border-right: 1px solid gray"><b>{{ total_ab_results_pct["weak_ip"] }}%</b></td>
+                        <td><b>{{ total_ab_results_pct["hard_total"] }}%</b></td>
+                        <td><b>{{ total_ab_results_pct["weak_total"] }}%</b></td>
                     </tr>
                 </table>
             </div>
