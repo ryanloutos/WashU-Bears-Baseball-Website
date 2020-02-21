@@ -40,29 +40,28 @@ def staff_armcare():
 
 
 # ***************-STAFF BASIC STATS-*********** #
-# could still use sortable functions for class/throws/...
-@staff.route('/staff/basic_stats', methods=['GET', 'POST'])
-@login_required
-def staff_basic_stats():
-    """Basic stats of all players on current roster.
+# @staff.route('/staff/basic_stats', methods=['GET', 'POST'])
+# @login_required
+# def staff_basic_stats():
+#     """Basic stats of all players on current roster.
 
-    Arguments:
-        -None
+#     Arguments:
+#         -None
 
-    Returns:
-        staff_basic_stats.html -- list of basic stats for all players
-        currently on roster
-    """
-    pitchers = Pitcher.query.filter(Pitcher.retired != 1).filter(Pitcher.opponent_id == 1).order_by(Pitcher.name).all()    
-    seasons = Season.query.order_by(Season.year).all()
+#     Returns:
+#         staff_basic_stats.html -- list of basic stats for all players
+#         currently on roster
+#     """
+#     pitchers = Pitcher.query.filter(Pitcher.retired != 1).filter(Pitcher.opponent_id == 1).order_by(Pitcher.name).all()    
+#     seasons = Season.query.order_by(Season.year).all()
 
-    staff_stat_summary, players_stat_summary = staffBasicStats(pitchers)
+#     staff_stat_summary, players_stat_summary = staffBasicStats(pitchers)
 
-    return render_template(
-        'staff/staff_basic_stats.html',
-        staff_stat_summary=staff_stat_summary,
-        players_stat_summary=players_stat_summary,
-        seasons=seasons)
+#     return render_template(
+#         'staff/staff_basic_stats.html',
+#         staff_stat_summary=staff_stat_summary,
+#         players_stat_summary=players_stat_summary,
+#         seasons=seasons)
 
 
 # # ***************-STAFF ADVANCED STATS-*********** #
@@ -71,13 +70,16 @@ def staff_basic_stats():
 def staff_advanced_stats():
     pitchers = Pitcher.query.filter(Pitcher.retired != 1).filter(Pitcher.opponent_id == 1).order_by(Pitcher.name).all()    
 
-    players, total_velo_averages, total_pct_averages = staffAdvancedStats(pitchers)
+    players, total_velo_averages, total_pct_averages, total_fps_pct, total_whiffs_pct, total_swing_and_miss_pct = staffAdvancedStats(pitchers)
 
     return render_template(
         'staff/staff_advanced_stats.html',
         players = players,
         total_velo_averages = total_velo_averages,
-        total_pct_averages = total_pct_averages
+        total_pct_averages = total_pct_averages,
+        total_fps_pct = total_fps_pct,
+        total_whiffs_pct = total_whiffs_pct,
+        total_swing_and_miss_pct = total_swing_and_miss_pct
     )
 
 
