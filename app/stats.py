@@ -1110,6 +1110,21 @@ def staffAdvancedStats(pitchers):
     total_pct_num_strikes = {"fastball": 0, "offspeed": 0, "total": 0}
     total_pct_averages = {"fastball": 0, "offspeed": 0, "total": 0}
 
+    # to hold the info for fps
+    total_fps_at_bats = 0
+    total_fps_strikes = 0
+    total_fps_pct = 0
+
+    # to hold the info for the whif stats
+    total_whiffs_swing_and_misses = {"fastball": 0, "offspeed": 0, "total": 0}
+    total_whiffs_pitches_swung_at = {"fastball": 0, "offspeed": 0, "total": 0}
+    total_whiffs_pct = {"fastball": 0, "offspeed": 0, "total": 0}
+
+    # to hold the info for swing and miss statistics
+    total_swing_and_miss_num = {"fastball": 0, "offspeed": 0, "total": 0}
+    total_swing_and_miss_pitches = {"fastball": 0, "offspeed": 0, "total": 0}
+    total_swing_and_miss_pct = {"fastball": 0, "offspeed": 0, "total": 0}
+
     for pitcher in pitchers:
 
         # to hold the info for the avg velo stats specific to pitcher
@@ -1122,10 +1137,30 @@ def staffAdvancedStats(pitchers):
         pct_num_strikes = {"fastball": 0, "offspeed": 0, "total": 0}
         pct_averages = {"fastball": 0, "offspeed": 0, "total": 0}
 
+        # to hold the info for first pitch strikes specific to pitcher
+        fps_at_bats = 0
+        fps_strikes = 0
+        fps_pct = 0
+
+        # to hold the info for whiff statistics
+        whiffs_swing_and_misses = {"fastball": 0, "offspeed": 0, "total": 0}
+        whiffs_pitches_swung_at = {"fastball": 0, "offspeed": 0, "total": 0}
+        whiffs_pct = {"fastball": 0, "offspeed": 0, "total": 0}
+        
+        # to hold the info for swing and miss statistics
+        swing_and_miss_num = {"fastball": 0, "offspeed": 0, "total": 0}
+        swing_and_miss_pitches = {"fastball": 0, "offspeed": 0, "total": 0}
+        swing_and_miss_pct = {"fastball": 0, "offspeed": 0, "total": 0}
+
         # look through all of pitcher outings
         for outing in pitcher.outings:
             if outing.season.current_season:
                 for at_bat in outing.at_bats:
+
+                    fps_at_bats += 1
+                    total_fps_at_bats += 1
+                    new_at_bat = True
+
                     for pitch in at_bat.pitches:
                         pitch_type = PitchType(pitch.pitch_type).name
 
@@ -1167,7 +1202,59 @@ def staffAdvancedStats(pitchers):
                                 total_pct_num_strikes["fastball"] += 1
                             else:
                                 pct_num_strikes["offspeed"] += 1
-                                total_pct_num_strikes["offspeed"] += 1
+                                total_pct_num_strikes["offspeed"] += 1   
+
+                            if new_at_bat:
+                                fps_strikes += 1
+                                total_fps_strikes += 1
+
+                        # WHIFFS
+                        if pitch.pitch_result in ["SS", "F", "IP"]:
+                            whiffs_pitches_swung_at["total"] += 1
+                            total_whiffs_pitches_swung_at["total"] += 1
+                            if pitch.pitch_result == "SS":
+                                whiffs_swing_and_misses["total"] += 1
+                                total_whiffs_swing_and_misses["total"] += 1
+                                if pitch_type in ["FB", "SM"]:
+                                    whiffs_pitches_swung_at["fastball"] += 1
+                                    whiffs_swing_and_misses["fastball"] += 1
+                                    total_whiffs_pitches_swung_at["fastball"] += 1
+                                    total_whiffs_swing_and_misses["fastball"] += 1
+                                else:
+                                    whiffs_pitches_swung_at["offspeed"] += 1
+                                    whiffs_swing_and_misses["offspeed"] += 1
+                                    total_whiffs_pitches_swung_at["offspeed"] += 1
+                                    total_whiffs_swing_and_misses["offspeed"] += 1
+                            else:
+                                if pitch_type in ["FB", "SM"]:
+                                    whiffs_pitches_swung_at["fastball"] += 1
+                                    total_whiffs_pitches_swung_at["fastball"] += 1
+                                else:
+                                    whiffs_pitches_swung_at["offspeed"] += 1
+                                    total_whiffs_pitches_swung_at["offspeed"] += 1
+
+                        # SWING AND MISS
+                        swing_and_miss_pitches["total"] += 1
+                        total_swing_and_miss_pitches["total"] += 1
+                        if pitch_type in ["FB", "SM"]:
+                            swing_and_miss_pitches["fastball"] += 1
+                            total_swing_and_miss_pitches["fastball"] += 1
+                            if pitch.pitch_result == "SS":
+                                swing_and_miss_num["fastball"] += 1
+                                swing_and_miss_num["total"] += 1
+                                total_swing_and_miss_num["fastball"] += 1
+                                total_swing_and_miss_num["total"] += 1
+                        else:
+                            swing_and_miss_pitches["offspeed"] += 1
+                            total_swing_and_miss_pitches["offspeed"] += 1
+                            if pitch.pitch_result == "SS":
+                                swing_and_miss_num["offspeed"] += 1
+                                swing_and_miss_num["total"] += 1
+                                total_swing_and_miss_num["offspeed"] += 1
+                                total_swing_and_miss_num["total"] += 1
+
+                        new_at_bat = False         
+                    
 
 
         # VELOS - totals for pitcher
@@ -1181,6 +1268,23 @@ def staffAdvancedStats(pitchers):
             if pct_num_pitches[key] != 0:
                 pct_averages[key] = (
                     int(percentage(pct_num_strikes[key]/pct_num_pitches[key])))
+        
+        # FPS - totals for pitcher
+        if fps_at_bats != 0:
+            fps_pct = int(percentage(fps_strikes/fps_at_bats))
+        
+        # WHIF - totals for pitcher
+        for key, val in whiffs_pitches_swung_at.items():
+            if whiffs_pitches_swung_at[key] != 0:
+                whiffs_pct[key] = int(percentage(
+                    whiffs_swing_and_misses[key]/whiffs_pitches_swung_at[key]))
+        
+        # SWING & MISS - totals for pitcher
+        for key, val in swing_and_miss_pitches.items():
+            if swing_and_miss_pitches[key] != 0:
+                swing_and_miss_pct[key] = int(percentage(
+                    swing_and_miss_num[key]/swing_and_miss_pitches[key]))
+        
 
         # fill in players array with info from above
         players.append(
@@ -1190,7 +1294,10 @@ def staffAdvancedStats(pitchers):
                     "class": pitcher.grad_year,
                     "throws": pitcher.throws},
                 "velos": velo_averages,
-                "strike_percentages": pct_averages
+                "strike_percentages": pct_averages,
+                "fps": fps_pct,
+                "whiff": whiffs_pct,
+                "swing_miss": swing_and_miss_pct
             }
         )
 
@@ -1205,8 +1312,24 @@ def staffAdvancedStats(pitchers):
         if total_pct_num_pitches[key] != 0:
             total_pct_averages[key] = (
                 int(percentage(total_pct_num_strikes[key]/total_pct_num_pitches[key])))
+    
+    # FPS - totals for staff
+    if total_fps_at_bats != 0:
+        total_fps_pct = int(percentage(total_fps_strikes/total_fps_at_bats))
+    
+    # WHIF - totals for staff
+    for key, val in total_whiffs_pitches_swung_at.items():
+        if total_whiffs_pitches_swung_at[key] != 0:
+            total_whiffs_pct[key] = int(percentage(
+                total_whiffs_swing_and_misses[key]/total_whiffs_pitches_swung_at[key]))
+        
+    # SWING & MISS - totals for staff
+    for key, val in total_swing_and_miss_pitches.items():
+        if total_swing_and_miss_pitches[key] != 0:
+            total_swing_and_miss_pct[key] = int(percentage(
+                total_swing_and_miss_num[key]/total_swing_and_miss_pitches[key]))
 
-    return (players, total_velo_averages, total_pct_averages)
+    return (players, total_velo_averages, total_pct_averages, total_fps_pct, total_whiffs_pct, total_swing_and_miss_pct)
 
 
 def staffPitchStrikePercentage(pitchers):
