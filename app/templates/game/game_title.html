@@ -1,0 +1,17 @@
+<style>
+    #page-title {
+        border-bottom: 5px solid #bd231f;
+        font-size: 45px;
+        font-weight: 600;
+        text-align: center;
+    }
+    .logos {
+        height: 80px;
+        width: auto;
+        margin-bottom: 5px;
+    }
+</style>
+<h1 id="page-title">
+    {{ game }}
+    <img class="logos" alt="Team-Logo" src="{{ url_for('static', filename=file_loc) }}">
+</h1>

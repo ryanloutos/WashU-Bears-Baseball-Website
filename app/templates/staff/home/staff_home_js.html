@@ -37,6 +37,13 @@
                 document.querySelector("#k-to-bb-holder").style.color = "rgb(200,0,0)";
             }
 
+            document.querySelector("#offspeed-strike-holder").innerHTML = response.data.offspeed_strike_pct + "%";
+            if(response.data.k_to_bb >= 55){
+                document.querySelector("#offspeed-strike-holder").style.color = "rgb(0,100,0)";
+            } else {
+                document.querySelector("#offspeed-strike-holder").style.color = "rgb(200,0,0)";
+            }
+
             document.querySelector("#pickoffs-holder").innerHTML = pickoffs;
             if(pickoffs >= 15){
                 document.querySelector("#pickoffs-holder").style.color = "rgb(0,100,0)";

@@ -2,22 +2,14 @@
 
 {% block styles %}
     {{ super() }}
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidenav.css') }}">
-    <style>
-        .logos {
-            width: 100px;
-            height: auto;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/staff_sidenav.css') }}">
+    <script src="{{ url_for('static', filename='js/sidenav.js') }}"></script>
 {% endblock %}
 
 {% block app_content %}
     {% include "game/game_sidenav.html" %}
     <div class="main" style="text-align: center;">
-        <h1>
-            {{ game }} 
-            <img class="logos" alt="Team-Logo" src="{{ url_for('static', filename=file_loc) }}">
-        </h1>
+        {% include "game/game_title.html" %}
         <table class="table">
             <tr class="table-headers"> 
                 <th>Pitcher</th>
@@ -33,20 +25,20 @@
                 <th>2S Avg</th>
             </tr>
             {% for o in basic_stats_by_outing %}
-            <tr>
-                <td><a href="{{ url_for('outing.outing_home', id=o['outing_id']) }}">{{ o["Pitcher"] }}</a></td>
-                <td>{{ o["BF"] }}</td>
-                <td>{{ o["Pitches"] }}</td>
-                <td>{{ o["Hits"] }}</td>
-                <td>{{ o["K"] }}</td>
-                <td>{{ o["BB"] }}</td>
-                <td>{{ o["HBP"] }}</td>
-                <td>{{ o["SP"] }}%</td>
-                <td>{{ o["FPS"] }}%</td>
-                <td>{{ o["FB Avg"] }}</td>
-                <td>{{ o["2S Avg"] }}</td>
-            </tr>
-        {% endfor %}
+                <tr>
+                    <td><a href="{{ url_for('outing.outing_home', id=o['outing_id']) }}">{{ o["Pitcher"] }}</a></td>
+                    <td>{{ o["BF"] }}</td>
+                    <td>{{ o["Pitches"] }}</td>
+                    <td>{{ o["Hits"] }}</td>
+                    <td>{{ o["K"] }}</td>
+                    <td>{{ o["BB"] }}</td>
+                    <td>{{ o["HBP"] }}</td>
+                    <td>{{ o["SP"] }}%</td>
+                    <td>{{ o["FPS"] }}%</td>
+                    <td>{{ o["FB Avg"] }}</td>
+                    <td>{{ o["2S Avg"] }}</td>
+                </tr>
+            {% endfor %}
             <tr>
                 <td>Totals</td>
                 <td>{{ basic_stats_game["BF"] }}</td>
