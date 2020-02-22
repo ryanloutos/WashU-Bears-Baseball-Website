@@ -3,21 +3,9 @@ from flask import render_template, flash, redirect, url_for, request
 from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.urls import url_parse
 from app import db
-from app.forms import LoginForm, RegistrationForm, OutingForm, PitchForm
-from app.forms import NewOutingFromCSV, SeasonForm, OpponentForm, BatterForm
-from app.forms import OutingPitchForm, NewOutingFromCSVPitches, EditUserForm
-from app.forms import ChangePasswordForm, EditBatterForm, EditOpponentForm
-from app.forms import NewBatterForm, NewGameForm
+from app.forms import NewGameForm
 from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat, Game
-from app.stats import calcPitchPercentages, pitchUsageByCount, calcAverageVelo
-from app.stats import calcPitchStrikePercentage, calcPitchWhiffRate
-from app.stats import createPitchPercentagePieChart, velocityOverTimeLineChart
-from app.stats import pitchStrikePercentageBarChart, avgPitchVeloPitcher
-from app.stats import pitchUsageByCountLineCharts, pitchStrikePercentageSeason
-from app.stats import pitchUsageSeason, seasonStatLine, staffBasicStats
-from app.stats import staffPitchStrikePercentage
-from app.stats import outingPitchStatistics, outingTimeToPlate, veloOverTime
-from app.stats import teamImportantStatsSeason, gameBasicStatsByOuting, game_opponent_stats_calc
+from app.stats import game_pitching_stats, game_hitting_stats
 
 # Handle CSV uploads
 import csv
@@ -28,58 +16,59 @@ import random
 
 game = Blueprint("game", __name__)
 
-# ***************-GAME HOMEPAGE-*************** #
-@game.route('/game/<id>', methods=['GET', 'POST'])
+
+# ***************-WASHU PITCHING-*************** #
+@game.route('/game/<id>/pitching', methods=['GET', 'POST'])
 @login_required
-def game_outings(id):
-
-    # get the game object assicated with the id
-    game = Game.query.filter_by(id=id).first()
-
-    if not game:
-        flash("URL does not exist")
-        return redirect(url_for('main.index'))
-
-    basic_stats_by_outing, basic_stats_game = gameBasicStatsByOuting(game)
-
-    file_loc = os.path.join("images",
-                            "team_logos",
-                            f"{game.opponent.id}.png")
-
-    # bug or user trying to view opponent that DNE
-    if not game:
-        flash("URL does not exist")
-        return redirect(url_for('main.index'))
-
-    return render_template('game/game_outings.html',
-                           title=game,
-                           game=game,
-                           basic_stats_by_outing=basic_stats_by_outing,
-                           basic_stats_game=basic_stats_game,
-                           file_loc=file_loc)
-
-
-@game.route("/game/<id>/opponent_stats", methods=['GET', 'POST'])
-@login_required
-def game_opponent_stats(id):
+def game_pitching(id):
 
     game = Game.query.filter_by(id=id).first()
-
-    # if game id is not correct, let them know and send them home
     if not game:
         flash("URL does not exist")
         return redirect(url_for('main.index'))
 
-    game_stats = game_opponent_stats_calc(game)
+    if not game:
+        flash("URL does not exist")
+        return redirect(url_for('main.index'))
 
-    # setup opponent logo file
+    basic_stats_by_outing, basic_stats_game = game_pitching_stats(game, 1)
+
     file_loc = os.path.join(
         "images",
         "team_logos",
         f"{game.opponent.id}.png")
 
     return render_template(
-        'game/game_opponent_stats.html',
+        'game/game_pitching.html',
+        title=game,
+        game=game,
+        file_loc=file_loc,
+        basic_stats_by_outing=basic_stats_by_outing,
+        basic_stats_game=basic_stats_game
+    )
+
+
+# ***************-WASHU HITTING-*************** #
+@game.route("/game/<id>/hitting", methods=['GET', 'POST'])
+@login_required
+def game_hitting(id):
+
+    game = Game.query.filter_by(id=id).first()
+
+    if not game:
+        flash("URL does not exist")
+        return redirect(url_for('main.index'))
+
+    game_stats = game_hitting_stats(game, 1)
+
+    file_loc = os.path.join(
+        "images",
+        "team_logos",
+        f"{game.opponent.id}.png"
+    )
+
+    return render_template(
+        'game/game_hitting.html',
         title=game,
         game=game,
         file_loc=file_loc,
@@ -87,6 +76,61 @@ def game_opponent_stats(id):
     )
 
 
+# ***************-OPPONENT PITCHING-*************** #
+@game.route("/game/<id>/opponent/pitching", methods=["GET", "POST"])
+@login_required
+def game_opponent_pitching(id):
+
+    game = Game.query.filter_by(id=id).first()
+    if not game:
+        flash("URL does not exist")
+        return redirect(url_for('main.index'))
+
+    basic_stats_by_outing, basic_stats_game = game_pitching_stats(game, game.opponent_id)
+
+    file_loc = os.path.join(
+        "images",
+        "team_logos",
+        f"{game.opponent.id}.png"
+    )
+
+    return render_template(
+        'game/game_opponent_pitching.html',
+        title=game,
+        game=game,
+        file_loc=file_loc,
+        basic_stats_by_outing=basic_stats_by_outing,
+        basic_stats_game=basic_stats_game
+    )
+
+
+# ***************-OPPONENT HITTING-*************** #
+@game.route("/game/<id>/opponent/hitting", methods=["GET", "POST"])
+@login_required
+def game_opponent_hitting(id):
+
+    game = Game.query.filter_by(id=id).first()
+    if not game:
+        flash("URL does not exist")
+        return redirect(url_for('main.index'))
+
+    game_stats = game_hitting_stats(game, game.opponent_id)
+
+    file_loc = os.path.join(
+        "images",
+        "team_logos",
+        f"{game.opponent.id}.png")
+
+    return render_template(
+        'game/game_opponent_hitting.html',
+        title=game,
+        game=game,
+        file_loc=file_loc,
+        game_opponent_stats=game_stats
+    )
+
+
+# ***************-NEW GAME-*************** #
 @game.route("/game/new_game", methods=["GET", "POST"])
 @login_required
 def game_new_game():
