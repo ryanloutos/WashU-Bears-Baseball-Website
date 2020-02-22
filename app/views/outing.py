@@ -479,10 +479,6 @@ def edit_outing_pitches(outing_id):
             balls = 1
             strikes = 1
             count = f'{balls}-{strikes}'
-        elif opponent.id == 1:
-            balls = 1
-            strikes = 1
-            count = f'{balls}-{strikes}'
         else:
             balls = 0
             strikes = 0
