@@ -254,8 +254,8 @@ def pitch_tracker():
 
     # reset count and at bat variable if at bat over
     if (pitch.ab_result != ""):
-        balls = 1
-        strikes = 1
+        balls = 0
+        strikes = 0
         at_bat = ""
 
     # send back data

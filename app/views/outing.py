@@ -1008,8 +1008,8 @@ def new_outing_pitch_tracker(id):
 
     # for count and pitch count totals
     num_pitches = 0
-    balls = 1
-    strikes = 1
+    balls = 0
+    strikes = 0
 
     inning = 1
 
@@ -1096,8 +1096,8 @@ def new_outing_pitch_tracker(id):
 
             # if the at bat was over, alter variables
             if p.ab_result != "":
-                balls = 1
-                strikes = 1
+                balls = 0
+                strikes = 0
                 current_at_bat = ""
                 current_batter = ""
                 lead_runner = ""
