@@ -1118,7 +1118,7 @@ def new_outing_pitch_tracker(id):
             pitches[key] = val
 
     # set the batters associated with the opponent
-    batters = Batter.query.filter_by(opponent_id=outing.opponent_id).filter_by(retired = 0).order_by(Batter.lastname).all()
+    batters = Batter.query.filter_by(opponent_id=outing.opponent_id).filter_by(retired = 0).order_by(Batter.number).all()
 
     return render_template(
         "outing/pitch_tracker/new_outing_pitch_tracker.html",

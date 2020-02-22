@@ -84,7 +84,7 @@
                 <table id="batters">
                     <tr>
                         {% for batter in batters %}
-                            <td class="batters" value={{ batter.id }}>{{ batter.name() }}</td>
+                            <td class="batters" value={{ batter.id }}>{{ batter.number ~ " - " ~ batter.lastname}}</td>
                         {% endfor %}
                     </tr>
                 </table>

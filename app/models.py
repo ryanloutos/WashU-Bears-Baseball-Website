@@ -167,6 +167,8 @@ class Batter(db.Model):
     firstname = db.Column(db.String(64))
     lastname = db.Column(db.String(64))
     short_name = db.Column(db.String(8), index=True)
+    number = db.Column(db.Integer, index=True)
+    initials = db.Column(db.String(8), index=True)
     bats = db.Column(db.String(8), index=True)
     grad_year = db.Column(db.String(8), index=True)
     opponent_id = db.Column(
