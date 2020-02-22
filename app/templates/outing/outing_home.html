@@ -4,11 +4,9 @@
     {{ super() }}
     <script src="{{ url_for('static', filename='js/sortable_table.js') }}"></script>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidenav.css') }}">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <script src="{{ url_for('static', filename='js/chart.js') }}"></script>
     <!-- D3 Plugins -->
-    <script src="https://d3js.org/d3.v5.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/js-cookie@beta/dist/js.cookie.min.js"></script>
+    <script src="{{ url_for('static', filename='packages/d3/d3.js') }}"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             var ctx = document.getElementById('velo-over-time').getContext('2d');

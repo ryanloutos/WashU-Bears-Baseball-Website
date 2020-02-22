@@ -10,8 +10,9 @@
 
 {% block styles %}
     {{ super() }}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/fonts.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/base.css') }}">
-    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+    <script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
 {% endblock %}
 
 {% block navbar %}
