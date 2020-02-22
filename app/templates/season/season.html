@@ -65,7 +65,7 @@
                         <img class="logos" alt="Team-Logo" src="{{ url_for('static', filename=path) }}">
                     </td>
                     <td>{{ game.opponent }}</td>
-                    <td><a href="{{ url_for('game.game_outings', id=game.id) }}">View Me</a></td>
+                    <td><a href="{{ url_for('game.game_pitching', id=game.id) }}">View Me</a></td>
                 </tr>
                 {% endfor %}
             </table>

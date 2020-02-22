@@ -75,14 +75,15 @@ def staff_home_importantstats():
 
     pitchers = Pitcher.query.all()
 
-    strike_percentage, fps_percentage, k_to_bb = teamImportantStatsSeason(pitchers)
+    strike_percentage, fps_percentage, k_to_bb, offspeed_strike_pct = teamImportantStatsSeason(pitchers)
 
     return_data = {
         "status": "success",
         "data": {
             "strike_percentage": strike_percentage,
             "fps_percentage": fps_percentage,
-            "k_to_bb": k_to_bb
+            "k_to_bb": k_to_bb, 
+            "offspeed_strike_pct": offspeed_strike_pct
         }
     }
     return jsonify(return_data)
