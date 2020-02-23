@@ -1252,8 +1252,8 @@ def validate_CSV(file_loc):
 def updateCount(balls, strikes, pitch_result, ab_result, season):
     if ab_result is not '':
         if (season.semester == 'Spring' and season.year == "2020"):
-            balls = 1
-            strikes = 1
+            balls = 0
+            strikes = 0
         elif season.semester == 'Fall':
             balls = 1
             strikes = 1
