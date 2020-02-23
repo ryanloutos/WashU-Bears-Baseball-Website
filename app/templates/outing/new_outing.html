@@ -7,6 +7,7 @@
         let season_selector = document.getElementById("season_selector");
         let game_selector = document.getElementById("game_selector");
 
+        //changes the available games based on the selected season
         season_selector.onchange = function(){
             season = season_selector.value;
             console.log(season);
@@ -31,6 +32,36 @@
                 }
             });
         }
+
+        //setup player selector limit
+        let team_selector = document.getElementById("team-selector");
+        let pitcher_selector = document.getElementById("pitcher-selector");
+
+        team_selector.onchange = function(){
+            let team_id = team_selector.value;
+            console.log(team_id);
+
+            fetch(
+                "/api/team/" + team_id + "/get_pitchers"
+            ).then(res => res.json())
+            .then(function(response){
+                //check if response was good
+                if(response.status != "success"){
+                    console.log("Request ended in failure");
+                    console.log("Error: " + response.error);
+                }
+
+                //put pitchers into selector
+                let options = "";
+                for(let pitcher of response.data){
+                    // create html element string
+                    options += "<option value='" + pitcher.id +"'>" + pitcher.name + "</option>";
+                }
+
+                pitcher_selector.innerHTML = options;
+
+            });
+        }
     });
     
     </script>
@@ -41,9 +72,19 @@
         <h1>New Outing</h1>
         <form method="post" novalidate>
             {{ form.hidden_tag() }}
+            <div>
+                <label>Team</label>
+                <br>
+                <select name="team-selector" id="team-selector">
+                    <option value="0" selected> </option>
+                    {% for team in teams %}
+                        <option value="{{team.id}}">{{team.name}}</option>
+                    {% endfor %}
+                </select>
+            </div>
             <p>
                 {{ form.pitcher.label }}<br>
-                {{ form.pitcher }}<br>
+                {{ form.pitcher(id='pitcher-selector') }}<br>
                 {% for error in form.pitcher.errors %}
                 <span style="color: red;">[{{ error }}]</span>
                 {% endfor %}

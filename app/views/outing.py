@@ -284,6 +284,9 @@ def new_outing():
     '''
     form = OutingForm()
 
+    # get list of all opponents so can limit # of pitchers visible
+    teams = Opponent.query.all()
+
     # set the choices for all available pitchers
     form.pitcher.choices = getAvailablePitchers()
 
@@ -301,11 +304,13 @@ def new_outing():
             game_id = form.game.data.id
 
         # creates a new outing object based on form data and user
-        outing = Outing(date=form.date.data,
-                        opponent_id=form.opponent.data.id,
-                        season_id=form.season.data.id,
-                        pitcher_id=form.pitcher.data,
-                        game_id=game_id)
+        outing = Outing(
+            date=form.date.data,
+            opponent_id=form.opponent.data.id,
+            season_id=form.season.data.id,
+            pitcher_id=form.pitcher.data,
+            game_id=game_id
+        )
 
         # add the new outing to the database before pitches so pitches have a
         # outing_id associated with them
@@ -318,7 +323,8 @@ def new_outing():
 
     return render_template('outing/new_outing.html',
                            title='New Outing',
-                           form=form)
+                           form=form,
+                           teams=teams)
 
 # ***************-NEW OUTING PITCHES-*************** #
 @outing.route('/new_outing_pitches/<outing_id>', methods=['GET', 'POST'])
@@ -1153,6 +1159,7 @@ def truncate(n, decimals=1):
     multiplier = 10 ** decimals
     return int(n * multiplier) / multiplier
 
+
 def percentage(n, decimals=0):
     '''
     Gets the percentage rounded to a specific decimal place
@@ -1163,6 +1170,7 @@ def percentage(n, decimals=0):
     multiplier = 10 ** decimals
     percentage = 100 * n
     return int(math.floor(percentage*multiplier + 0.5) / multiplier)
+
 
 def getAvailablePitchers():
     '''
