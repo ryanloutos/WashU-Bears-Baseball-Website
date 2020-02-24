@@ -243,7 +243,7 @@ class OutingForm(FlaskForm):
         get_pk=lambda s: s.id,
         get_label=lambda s: s)
     game = QuerySelectField(
-        query_factory=lambda: Game.query, # Have to load all games initially because can only submit with something that was in original form
+        query_factory=lambda: Game.query,  # Have to load all games initially because can only submit with something that was in original form
         get_pk=lambda s: s.id,
         get_label=lambda s: s,
         allow_blank=True
@@ -272,7 +272,7 @@ class NewOutingFromCSV(FlaskForm):
         get_pk=lambda s: s.id,
         get_label=lambda s: s)
     game = QuerySelectField(
-        query_factory=lambda: Game.query, # Have to load all games initially because can only submit with something that was in original form
+        query_factory=lambda: Game.query,  # Have to load all games initially because can only submit with something that was in original form
         get_pk=lambda s: s.id,
         get_label=lambda s: s,
         allow_blank=True
@@ -343,18 +343,19 @@ class PitcherNewVideoForm(FlaskForm):
         allow_blank=True
     )
     outing = QuerySelectField(
-        query_factory=lambda: Outing.query, 
+        query_factory=lambda: Outing.query,
         get_pk=lambda o: o.id,
         get_label=lambda o: o,
         allow_blank=True
     )
     pitcher = QuerySelectField(
-        query_factory=lambda: Pitcher.query, 
+        query_factory=lambda: Pitcher.query,
         get_pk=lambda p: p.id,
         get_label=lambda p: p,
     )
     link = StringField("Link", validators=[Optional()])
     submit = SubmitField("Post Video")
+
 
 class BatterNewVideoForm(FlaskForm):
     title = StringField("Title", validators=[Optional()])
@@ -368,4 +369,3 @@ class BatterNewVideoForm(FlaskForm):
     batter = SelectField("Batter", validators=[Optional()])
     link = StringField("Link", validators=[Optional()])
     submit = SubmitField("Post Video")
-

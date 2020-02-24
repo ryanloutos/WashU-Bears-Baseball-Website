@@ -56,8 +56,8 @@ def new_video_pitcher():
         db.session.commit()
 
         flash("Video Posted!")
-        return redirect(url_for("main.index")) 
-    
+        return redirect(url_for("main.index"))
+
     return render_template(
         "video/new_video_pitcher.html",
         title="Post Video",
@@ -75,7 +75,7 @@ def new_video_batter():
 
     batters = []
     for b in Batter.query.filter_by(opponent_id=1).filter_by(retired=0).all():
-        batters.append((str(b.id),f"{b.firstname} {b.lastname}"))
+        batters.append((str(b.id), f"{b.firstname} {b.lastname}"))
     form.batter.choices = batters
 
     if form.validate_on_submit():
@@ -92,12 +92,11 @@ def new_video_batter():
         db.session.commit()
 
         flash("Video Posted!")
-        return redirect(url_for("main.index")) 
-    
+        return redirect(url_for("main.index"))
+
     return render_template(
         "video/new_video_batter.html",
         title="Post Video",
         form=form,
         current_season=current_season
     )
-    

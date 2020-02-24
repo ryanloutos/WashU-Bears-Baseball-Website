@@ -125,6 +125,7 @@ def staff_basic_stats():
         "status": "success"
     })
 
+
 @api.route("/api/pitch_tracker", methods=["POST"])
 @login_required
 def pitch_tracker():
@@ -230,7 +231,7 @@ def pitch_tracker():
         loc_x=loc_x,
         loc_y=loc_y,
         spray_x=spray_x,
-        spray_y=spray_y, 
+        spray_y=spray_y,
         notes=pitch_data["notes"]
     )
 
@@ -267,8 +268,6 @@ def pitch_tracker():
     return jsonify(return_data)
 
 
-
-
 def updateCount(balls, strikes, pitch_result, ab_result, season):
     if ab_result is not '':
         if (season.semester == 'Fall'):
@@ -285,6 +284,7 @@ def updateCount(balls, strikes, pitch_result, ab_result, season):
                 strikes += 1
     count = f'{balls}-{strikes}'
     return (balls, strikes, count)
+
 
 @api.route("/api/staff/arm_care")
 @login_required
@@ -323,6 +323,7 @@ def games_in_season(season_id):
         "games": games_ret
     })
 
+
 @api.route("/api/outings/season/<season_id>/pitcher/<pitcher_id>")
 @login_required
 def outings_in_season(season_id, pitcher_id):
@@ -338,7 +339,7 @@ def outings_in_season(season_id, pitcher_id):
             "status": "failure",
             "error": "Pitcher id provided is invalid"
         })
-    
+
     outings = Outing.query.filter_by(season_id=season.id).filter_by(pitcher_id=pitcher.id).order_by(Outing.date).all()
 
     outings_ret = []
@@ -347,11 +348,12 @@ def outings_in_season(season_id, pitcher_id):
             "id": outing.id,
             "label": outing.__repr__()
         })
-    
+
     return jsonify({
         "status": "success",
         "outings": outings_ret
     })
+
 
 @api.route("/api/videos/season/<season_id>/pitcher/<pitcher_id>")
 @login_required
@@ -368,7 +370,7 @@ def videos_in_season_pitcher(season_id, pitcher_id):
             "status": "failure",
             "error": "Pitcher id provided is invalid"
         })
-    
+
     videos = Video.query.filter_by(season_id=season.id).filter_by(pitcher_id=pitcher.id).order_by(Video.date).all()
 
     video_ids = []
@@ -381,14 +383,15 @@ def videos_in_season_pitcher(season_id, pitcher_id):
             video_ids.append("")
         else:
             video_ids.append(match.group("id"))
-        
+
         video_names.append(v.__repr__())
-    
+
     return jsonify({
         "status": "success",
         "video_names": video_names,
         "video_ids": video_ids
     })
+
 
 @api.route("/api/videos/season/<season_id>/batter/<batter_id>")
 @login_required
@@ -405,7 +408,7 @@ def videos_in_season_batter(season_id, batter_id):
             "status": "failure",
             "error": "Batter id provided is invalid"
         })
-    
+
     videos = Video.query.filter_by(season_id=season.id).filter_by(batter_id=batter.id).order_by(Video.date).all()
 
     video_ids = []
@@ -418,9 +421,9 @@ def videos_in_season_batter(season_id, batter_id):
             video_ids.append("")
         else:
             video_ids.append(match.group("id"))
-        
+
         video_names.append(v.__repr__())
-    
+
     return jsonify({
         "status": "success",
         "video_names": video_names,

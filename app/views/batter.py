@@ -544,6 +544,7 @@ def batter_game_view(batter_id, game_id):
         hits=hits
     )
 
+
 @batter.route('/batter/<id>/videos', methods=["GET", "POST"])
 @login_required
 def batter_videos(id):

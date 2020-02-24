@@ -59,7 +59,7 @@ def outing_home(id):
     if not outing:
         flash("URL does not exits")
         return redirect(url_for('main.index'))
-    
+
     # Get statistical data
     pitch_stats = outingPitchStatistics(outing)
     time_to_plate = outingTimeToPlate(outing)
@@ -86,8 +86,6 @@ def outing_home(id):
             # line chart
             horizontal_axis.append(i)
             i += 1
-
-
 
     velos = veloOverTime(outing)
 
@@ -774,7 +772,7 @@ def new_outing_csv():
 
 
 # ***************-NEW OUTING CSV PITCHES-*************** #
-@outing.route('/new_outing_csv_pitches/<file_name>/<outing_id>',methods=['GET', 'POST'])
+@outing.route('/new_outing_csv_pitches/<file_name>/<outing_id>', methods=['GET', 'POST'])
 @login_required
 def new_outing_csv_pitches(file_name, outing_id):
     '''
@@ -924,7 +922,7 @@ def new_outing_csv_pitches(file_name, outing_id):
                            batters=batters)
 
 
-@outing.route('/outing_report/<id>',methods=['GET', 'POST'])
+@outing.route('/outing_report/<id>', methods=['GET', 'POST'])
 @login_required
 def outing_report(id):
     # get the outing object associated by the id in the url
@@ -942,7 +940,7 @@ def outing_report(id):
     if not outing:
         flash("URL does not exits")
         return redirect(url_for('main.index'))
-    
+
     # Get statistical data
     pitch_stats = outingPitchStatistics(outing)
     time_to_plate = outingTimeToPlate(outing)
@@ -988,10 +986,10 @@ def outing_report(id):
     )
 
 
-@outing.route('/new_outing_pitch_tracker/<id>',methods=['GET', 'POST'])
+@outing.route('/new_outing_pitch_tracker/<id>', methods=['GET', 'POST'])
 @login_required
 def new_outing_pitch_tracker(id):
-    
+
     outing = Outing.query.filter_by(id=id).first_or_404()
 
     # to hold all the pitches from outing to be displayed in table
@@ -1079,20 +1077,19 @@ def new_outing_pitch_tracker(id):
                 current_batter = ""
                 lead_runner = ""
 
-
     # clean up pitch data info for javascript
     for key, val in enumerate(pitches):
         if val in ["", None]:
             pitches[key] = ""
-        elif val == True:
+        elif val is True:
             pitches[key] = 1
-        elif val == False:
+        elif val is False:
             pitches[key] = 0
         else:
             pitches[key] = val
 
     # set the batters associated with the opponent
-    batters = Batter.query.filter_by(opponent_id=outing.opponent_id).filter_by(retired = 0).order_by(Batter.lastname).all()
+    batters = Batter.query.filter_by(opponent_id=outing.opponent_id).filter_by(retired=0).order_by(Batter.lastname).all()
 
     return render_template(
         "outing/pitch_tracker/new_outing_pitch_tracker.html",
@@ -1108,7 +1105,6 @@ def new_outing_pitch_tracker(id):
         inning=inning,
         lead_runner=lead_runner
     )
-
 
 
 # ***************-HELPFUL FUNCTIONS-*************** #

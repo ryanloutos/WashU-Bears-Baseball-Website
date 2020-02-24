@@ -253,7 +253,7 @@ def edit_opponent(id):
                                 "images",
                                 "team_logos",
                                 f"{file_name}.png")
-        
+
         form.file.data.save(file_loc)
 
         # get the updated Opponent name and commit to database

@@ -172,7 +172,7 @@ class Batter(db.Model):
 
     def __repr__(self):
         return self.short_name
-    
+
     def name(self):
         return f"{self.firstname} {self.lastname}"
 
@@ -255,6 +255,7 @@ class Video(db.Model):
 
     def __repr__(self):
         return f"{self.date.month}/{self.date.day} - {self.title}"
+
 
 @login.user_loader
 def load_user(id):

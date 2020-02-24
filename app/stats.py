@@ -458,6 +458,7 @@ def truncate(n, decimals=2):
     multiplier = 10 ** decimals
     return int(n * multiplier) / multiplier
 
+
 def percentage(n, decimals=0):
     '''
     Gets the percentage rounded to a specific decimal place
@@ -469,13 +470,14 @@ def percentage(n, decimals=0):
     percentage = 100 * n
     return int(math.floor(percentage*multiplier + 0.5) / multiplier)
 
+
 def getSeasons(pitcher):
     '''
     gets all of the seasons the pitcher has thrown in
 
     PARAM:
         - pitcher {object}
-    
+
     RETURN:
         - seasons {array} which holds the season objects
     '''
@@ -485,6 +487,7 @@ def getSeasons(pitcher):
         if outing.season not in seasons:
             seasons.append(outing.season)
     return seasons
+
 
 # PITCHER ADVANCED STATISTICS -------------------------------------------------
 def avgPitchVeloPitcher(pitcher):
@@ -509,8 +512,8 @@ def avgPitchVeloPitcher(pitcher):
         "CH": 0, "CT": 0, "SM": 0}
     totals_pitch_velo_avg = {
         "FB": 0, "CB": 0, "SL": 0,
-        "CH": 0, "CT": 0, "SM": 0}    
-    
+        "CH": 0, "CT": 0, "SM": 0}
+
     # set up the dictionary to updated based on which season
     seasons = getSeasons(pitcher)
     season_totals = dict()
@@ -526,7 +529,7 @@ def avgPitchVeloPitcher(pitcher):
                     "CH": 0, "CT": 0, "SM": 0}
             }
         })
-    
+
     # parse through all the outings for the pitcher
     for outing in pitcher.outings:
 
@@ -552,7 +555,7 @@ def avgPitchVeloPitcher(pitcher):
                     pitches[PitchType(pitch.pitch_type).name] += 1
                     pitches_total_velo[
                         PitchType(pitch.pitch_type).name] += pitch.velocity
-                    
+
                     # update dictionary values for season
                     season_totals[season_name]["pitch_num"][
                         PitchType(pitch.pitch_type).name] += 1
@@ -586,7 +589,7 @@ def avgPitchVeloPitcher(pitcher):
         if totals_pitch_num[key] != 0:
             totals_pitch_velo_avg[key] = truncate(
                 totals_pitch_velo_sum[key]/totals_pitch_num[key], 1)
-    
+
     # calculate averages for season totals
     season_averages = dict()
     for season in seasons:
@@ -634,7 +637,7 @@ def pitchStrikePercentageSeason(pitcher):
         "FB": 0, "CB": 0, "SL": 0,
         "CH": 0, "CT": 0, "SM": 0,
         "total": 0}
-    
+
     # set up the dictionary to updated based on which season
     seasons = getSeasons(pitcher)
     season_totals = dict()
@@ -751,15 +754,15 @@ def pitchStrikePercentageSeason(pitcher):
 
 def pitchUsageSeason(pitcher):
     """Calculates pitch usage totals and percentages for a pitcher by outing
-    
+
     Arguments:
         pitcher {User object} -- pitcher to be analyzed
-    
+
     Returns:
         [tuple] -- first value is a dictionary that contains season totals and
         percentages. the second is a dictionary that contains outing specific
         meta-data, percentages, and totals
-    """    
+    """
     # return array array for outing specific
     outings = []
     # storage for career totals
@@ -780,7 +783,6 @@ def pitchUsageSeason(pitcher):
                 "total": 0
             }
         })
-
 
     for outing in pitcher.outings:
         # storage for individual outings
@@ -806,7 +808,6 @@ def pitchUsageSeason(pitcher):
                 season_totals[season_name]["pitch_num"][
                     PitchType(pitch.pitch_type).name] += 1
                 season_totals[season_name]["total"] += 1
-
 
         # calculate values for individual outings
         if num_pitches != 0:
@@ -850,7 +851,7 @@ def pitchUsageSeason(pitcher):
             if num[key] != 0:
                 totals[name][key] = int(truncate(100*num[key]/total, 0))
         season_percentages.update(totals)
-    
+
     # storage array for season totals
     season_percentages_usages = {
         "percentages": season_percentages,
@@ -892,17 +893,17 @@ def veloOverCareer(outings):
             avg_velo_fastball = "null"
         else:
             avg_velo_fastball = truncate(total_velo_fastball/num_pitches_fastball, 1)
-        
+
         # check for divide by 0
         if num_pitches_2seam == 0:
             avg_velo_2seam = "null"
         else:
             avg_velo_2seam = truncate(total_velo_2seam/num_pitches_2seam, 1)
-        
+
         # append averages to return array
         velo_over_career["FB"].append(avg_velo_fastball)
         velo_over_career["SM"].append(avg_velo_2seam)
-        
+
     return velo_over_career
 
 
@@ -1095,7 +1096,7 @@ def staffAdvancedStats(pitchers):
         pitchers {array} -- array of user objects to be analyzed
 
     Returns:
-        
+
     """
     # to hold info for each player
     players = []
@@ -1154,7 +1155,7 @@ def staffAdvancedStats(pitchers):
                         if pitch_type in ["FB", "SM"]:
                             pct_num_pitches["fastball"] += 1
                             total_pct_num_pitches["fastball"] += 1
-                        else: 
+                        else:
                             pct_num_pitches["offspeed"] += 1
                             total_pct_num_pitches["offspeed"] += 1
 
@@ -1168,7 +1169,6 @@ def staffAdvancedStats(pitchers):
                             else:
                                 pct_num_strikes["offspeed"] += 1
                                 total_pct_num_strikes["offspeed"] += 1
-
 
         # VELOS - totals for pitcher
         for key, val in velo_num_pitches.items():
@@ -1237,7 +1237,7 @@ def staffPitchStrikePercentage(pitchers):
                         if pitch_type in ["FB", "SM"]:
                             pitches["fastball"] += 1
                             pitches_totals["fastball"] += 1
-                        else: 
+                        else:
                             pitches["offspeed"] += 1
                             pitches_totals["offspeed"] += 1
 
@@ -1287,13 +1287,13 @@ def outingPitchStatistics(outing):
 
     PARAM:
         - outing (object) - takes in an outing object to look through its pitches
-    
+
     RETURN:
         - array where each index is a pitch which holds different statistics
 
     '''
     pitch_stats = []
-    pitches = [1,7,2,3,4,5]
+    pitches = [1, 7, 2, 3, 4, 5]
 
     for pitch in pitches:
         total_pitches = 0
@@ -1317,11 +1317,11 @@ def outingPitchStatistics(outing):
                             velo_min = p.velocity
                     if p.pitch_result is not "B":
                         num_strikes += 1
-        
+
         if num_thrown is 0:
             num_thrown = "X"
             strike_percentage = "X"
-        else: 
+        else:
             strike_percentage = percentage(num_strikes/num_thrown, 0)
 
         if num_with_velo is not 0:
@@ -1335,7 +1335,7 @@ def outingPitchStatistics(outing):
         if velo_min is 150:
             velo_min = "X"
 
-        if num_thrown not in [0,"X"]:
+        if num_thrown not in [0, "X"]:
             percentage_thrown = percentage(num_thrown/total_pitches, 0)
         else:
             percentage_thrown = "X"
@@ -1361,12 +1361,12 @@ def outingTimeToPlate(outing):
 
     PARAM:
         - outing (object) which has the time to plate info
-    
+
     RETURN:
         - array holding each lead runner and the info associated
             with each situation
     '''
-    lead_runners = [1,2,3]
+    lead_runners = [1, 2, 3]
     time_to_plate = []
     for runner in lead_runners:
         total_time = 0
@@ -1408,7 +1408,7 @@ def veloOverTime(outing):
     return velos
 
 
-def teamImportantStatsSeason(pitchers): 
+def teamImportantStatsSeason(pitchers):
     # weighted strike percentage
     strikes = 0
     total_pitches = 0
@@ -1416,7 +1416,7 @@ def teamImportantStatsSeason(pitchers):
     # weighted FPS
     first_pitch_strikes = 0
     first_pitches = 0
-    fps_percentage = 0 
+    fps_percentage = 0
     # K/BB Ratio
     strikeouts = 0
     walks = 0
@@ -1431,7 +1431,7 @@ def teamImportantStatsSeason(pitchers):
                     for index, p in enumerate(ab.pitches):
                         total_pitches += 1
                         if p.pitch_result is not "B":
-                            strikes += 1 
+                            strikes += 1
                         if index is 0:
                             first_pitches += 1
                             if p.pitch_result is not "B":
@@ -1445,16 +1445,16 @@ def teamImportantStatsSeason(pitchers):
         strike_percentage = "X"
     else:
         strike_percentage = percentage(strikes/total_pitches, 0)
-    
+
     if first_pitch_strikes is 0:
         fps_percentage = "X"
     else:
         fps_percentage = percentage(first_pitch_strikes/first_pitches)
-    
+
     if walks is 0:
         if strikeouts is 0:
             k_to_bb = 0
-        else: 
+        else:
             k_to_bb = "inf"
     else:
         k_to_bb = truncate(strikeouts/walks, 1)
@@ -1689,12 +1689,12 @@ def gameBasicStatsByOuting(game):
                         fps += 1
                         game_fps += 1
                     first_pitch = False
-                
+
                 # update total number of strikes
                 if pitch.pitch_result is not "B":
                     strikes += 1
                     game_strikes += 1
-                
+
                 # check the ab results and update accordingly
                 if pitch.ab_result in ["1B", "2B", "3B", "HR"]:
                     outing_stats["Hits"] += 1
@@ -1706,7 +1706,7 @@ def gameBasicStatsByOuting(game):
                     outing_stats["BB"] += 1
                     game_stats["BB"] += 1
                 if pitch.ab_result == "HBP":
-                    outing_stats["HBP"] += 1  
+                    outing_stats["HBP"] += 1
                     game_stats["HBP"] += 1
 
                 # update pitch velo variables to calc averages
@@ -1850,7 +1850,7 @@ def batter_summary_game_stats(game, batter):
 
 
 def stats_opponent_scouting_stats(opponent):
-    """DEPRECIATED. THIS FUNCTION WAS COMBINED INTO stats_opponent_batters_stat_lines SO THAT LOAD 
+    """DEPRECIATED. THIS FUNCTION WAS COMBINED INTO stats_opponent_batters_stat_lines SO THAT LOAD
     TIMES WOULD BE REDUCED BY PROCESSING PITCHES FEWER TIMES.
 
     Designed to be the holder which calculates all stats to be displayed on the oppoent
@@ -1929,7 +1929,7 @@ def stats_opponent_scouting_stats(opponent):
 
 
 def stats_opponent_batters_stat_lines(opponent):
-    """Designed to handle stat calculations for opponent scouting/stats page. This function calculates a team's 
+    """Designed to handle stat calculations for opponent scouting/stats page. This function calculates a team's
     active member's collective swing and whiff rates, our career pitch usage vs their active hitters, their active member's
     career and current season stat_line vs out staff, their active member's current and career hard hit ball percentage
 
@@ -2056,8 +2056,6 @@ def stats_opponent_batters_stat_lines(opponent):
                                 if pitch.hit_hard == 1:
                                     temp_hard_hit["current_num_hard"] += 1
 
-                                        # USAGE AND USAGE PERCENTAGE
-
                     # USAGE AND USAGE PERCENTAGE
                     # add a pitch to a counts pitch type and total pitches and pitches in a count
                     pitches_per_count[PitchType(pitch.pitch_type).name][pitch.count]["usages"] += 1
@@ -2106,8 +2104,8 @@ def stats_opponent_batters_stat_lines(opponent):
 
 
 def batter_ball_in_play_stats(batter):
-    ball_in_play = {"h": 0,"1b": 0,"2b": 0,"3b": 0,"hr": 0,"bb": 0,"k": 0}
-    hard_hit = {"num_hard": 0,"num_total": 0,"percent": 0,}
+    ball_in_play = {"h": 0, "1b": 0, "2b": 0, "3b": 0, "hr": 0, "bb": 0, "k": 0}
+    hard_hit = {"num_hard": 0, "num_total": 0, "percent": 0}
 
     ball_in_play_games = {
         "career": {},
@@ -2120,11 +2118,11 @@ def batter_ball_in_play_stats(batter):
     # Each game for batter has blank stat line to start
     for game in batter.get_games():
         if game not in [None, ""]:
-            ball_in_play_games["career"][game] = {"h": 0,"1b": 0,"2b": 0,"3b": 0,"hr": 0,"bb": 0,"k": 0}
-            hard_hit_games["career"][game] = {"num_hard": 0,"num_total": 0,"percent": 0,}
+            ball_in_play_games["career"][game] = {"h": 0, "1b": 0, "2b": 0, "3b": 0, "hr": 0, "bb": 0, "k": 0}
+            hard_hit_games["career"][game] = {"num_hard": 0, "num_total": 0, "percent": 0}
             if game.get_season().current_season:
-                ball_in_play_games["current"][game] = {"h": 0,"1b": 0,"2b": 0,"3b": 0,"hr": 0,"bb": 0,"k": 0}
-                hard_hit_games["current"][game] = {"num_hard": 0,"num_total": 0,"percent": 0,}
+                ball_in_play_games["current"][game] = {"h": 0, "1b": 0, "2b": 0, "3b": 0, "hr": 0, "bb": 0, "k": 0}
+                hard_hit_games["current"][game] = {"num_hard": 0, "num_total": 0, "percent": 0}
 
     # iterate through batter ab's for values
     for at_bat in batter.at_bats:
@@ -2175,12 +2173,12 @@ def batter_ball_in_play_stats(batter):
 
                 # Hard hit stats
                 if pitch.ab_result in ["IP->Out", "1B", "2B", "3B", "HR", "Error", "FC"]:
-                    
+
                     # career hard hit stats
                     hard_hit_games["career"][game]["num_total"] += 1
                     if pitch.hit_hard:
                         hard_hit_games["career"][game]["num_hard"] += 1
-                    
+
                     # current season hard hit stats
                     if at_bat.get_season().current_season:
                         hard_hit_games["current"][game]["num_total"] += 1
@@ -2190,16 +2188,16 @@ def batter_ball_in_play_stats(batter):
     # calculations for hard hit
     for game in batter.get_games():
         if game not in [None, ""] and hard_hit_games["career"][game]["num_total"] > 0:
-            
+
             # career hard hit
             hard_hit_games["career"][game]["percent"] = percentage(
                 truncate(
                     hard_hit_games["career"][game]["num_hard"] / hard_hit_games["career"][game]["num_total"]))
-            
+
             # current season hard hit
             if game.get_season().current_season:
                 hard_hit_games["current"][game]["percent"] = percentage(
                     truncate(
                         hard_hit_games["current"][game]["num_hard"] / hard_hit_games["current"][game]["num_total"]))
-    
+
     return (ball_in_play_games, hard_hit_games)

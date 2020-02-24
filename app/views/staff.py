@@ -11,7 +11,7 @@ from app.stats import teamImportantStatsSeason
 # setup blueprint
 staff = Blueprint('staff', __name__)
 
-# ***************-STAFF HOMEPAGE-*************** # 
+# ***************-STAFF HOMEPAGE-*************** #
 @staff.route("/staff", methods=["GET", "POST"])
 @login_required
 def staff_home():
@@ -26,7 +26,7 @@ def staff_home():
     )
 
 
-# ***************-STAFF ARMCARE-*************** # 
+# ***************-STAFF ARMCARE-*************** #
 @staff.route("/staff/armcare", methods=["GET", "POST"])
 @login_required
 def staff_armcare():
@@ -75,9 +75,9 @@ def staff_advanced_stats():
 
     return render_template(
         'staff/staff_advanced_stats.html',
-        players = players,
-        total_velo_averages = total_velo_averages,
-        total_pct_averages = total_pct_averages
+        players=players,
+        total_velo_averages=total_velo_averages,
+        total_pct_averages=total_pct_averages
     )
 
 
