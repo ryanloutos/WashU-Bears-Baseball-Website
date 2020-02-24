@@ -104,6 +104,10 @@ class Outing(db.Model):
         game = Game.query.filter_by(id=self.game_id).first()
         return game
 
+    def get_pitcher(self):
+        pitcher = Pitcher.query.filter_by(id=self.pitcher_id).first()
+        return pitcher
+
 
 class Pitch(db.Model):
     id = db.Column(db.Integer, primary_key=True)

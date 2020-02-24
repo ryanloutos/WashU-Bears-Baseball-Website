@@ -67,12 +67,29 @@ def game_hitting(id):
         f"{game.opponent.id}.png"
     )
 
+    # Get all pitches in the game vs our hitters
+    opponent_outings = Outing.query.filter_by(game_id=game.id, opponent_id=game.opponent_id).all()
+    pitches = []
+    for outing in opponent_outings:
+        pitcher = outing.get_pitcher()
+        for ab in outing.at_bats:
+            batter = ab.get_batter()
+            for p in ab.pitches:
+                pitches.append({
+                    "pitch_type": p.pitch_type,
+                    "x": p.loc_x,
+                    "y": p.loc_y,
+                    "pitcher_hand": pitcher.throws,
+                    "batter_hand": batter.bats
+                })
+
     return render_template(
         'game/game_hitting.html',
         title=game,
         game=game,
         file_loc=file_loc,
-        game_opponent_stats=game_stats
+        game_opponent_stats=game_stats,
+        pitches=pitches
     )
 
 
