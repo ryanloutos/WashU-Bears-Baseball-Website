@@ -160,6 +160,8 @@ def batter_spray_chart(batter_id):
                 sprays.append({
                     "x": p.spray_x,
                     "y": p.spray_y,
+                    "zone_x": p.loc_x,
+                    "zone_y": p.loc_y,
                     "traj": p.traj,
                     "hard_hit": p.hit_hard
                 })
@@ -175,7 +177,10 @@ def batter_spray_chart(batter_id):
 
             # for pitch locations against
             if p.loc_x not in [None, ""] and p.loc_y not in [None, ""]:
-                locs.append({"x_loc": p.loc_x, "y_loc": p.loc_y, "type": p.pitch_type})
+                locs.append({
+                    "x_loc": p.loc_x,
+                    "y_loc": p.loc_y,
+                    "type": p.pitch_type})
 
     # Change density vals to percentages
     for i in range(len(density_vals)):

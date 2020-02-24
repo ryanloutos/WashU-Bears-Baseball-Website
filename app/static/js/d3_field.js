@@ -172,10 +172,16 @@ class field {
         //add hard hit star if needed
         if(hard_hit != false){
             this.field_svg.append("path")
+                .attr("class", "field-star")
                 .attr("d", star)
                 .attr("transform", "translate("+this.xScalef(x)+","+this.yScalef(y)+")")
                 .attr("fill", "black");
         }
+    }
+
+    removeCircles(){
+        this.field_svg.selectAll('.field-circle').remove();
+        this.field_svg.selectAll('.field-star').remove();
     }
 }
 
