@@ -514,12 +514,14 @@ def batter_game_view(batter_id, game_id):
 
             # for pitches for locations chart
             for p in at_bat.pitches:
+                pitcher = p.get_pitcher()
                 pitches.append({
                     "pitch_num": pitch_index,
                     "pitch_type": p.pitch_type,
                     "x": p.loc_x,
                     "y": p.loc_y,
-                    "hard_hit": p.hit_hard
+                    "hard_hit": p.hit_hard,
+                    "pitcher_hand": pitcher.throws
                 })
                 pitch_index += 1
 
@@ -540,6 +542,7 @@ def batter_game_view(batter_id, game_id):
         pitches=pitches,
         hits=hits
     )
+
 
 @batter.route('/batter/<id>/videos', methods=["GET", "POST"])
 @login_required

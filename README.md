@@ -23,6 +23,7 @@ Other Goals/Ideas For Improvement
   - Add support for pitch location in new outing csv?
   - Add pitch location randomization for basic pitch locations in upload outing and edit pitches
   - Add hit location randomization for field spray charts from fielder location (1-9 on gb, ld, fb)
+- Seasonal and team based spray charts for hitters
 
 Cool README.md style stuff [here](https://help.github.com/en/github/writing-on-github/basic-writing-and-formatting-syntax)
 
