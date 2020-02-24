@@ -132,26 +132,30 @@ def outing_pbp(id):
 
     opponent = Opponent.query.filter_by(id=outing.opponent_id).first()
 
+    # THESE WERE PHASED OUT/MOVED TO DIFFERENT PAGES
     # Get statistical data
-    usages, usage_percentages = calcPitchPercentages(outing)
-    pitch_avg_velo = calcAverageVelo(outing)
-    pitch_strike_percentage = calcPitchStrikePercentage(outing)
-    pitch_whiff = calcPitchWhiffRate(outing)
+    # usages, usage_percentages = calcPitchPercentages(outing)
+    # pitch_avg_velo = calcAverageVelo(outing)
+    # pitch_strike_percentage = calcPitchStrikePercentage(outing)
+    # pitch_whiff = calcPitchWhiffRate(outing)
 
+    # THESE WERE PHASED OUT/MOVED TO DIFFERENT PAGES
     # Get statistical graphics
-    usage_percentages_pie_chart = createPitchPercentagePieChart(usage_percentages)
-    velocity_over_time_line_chart = velocityOverTimeLineChart(outing)
-    strike_percentage_bar_chart = pitchStrikePercentageBarChart(pitch_strike_percentage)
+    # usage_percentages_pie_chart = createPitchPercentagePieChart(usage_percentages)
+    # velocity_over_time_line_chart = velocityOverTimeLineChart(outing)
+    # strike_percentage_bar_chart = pitchStrikePercentageBarChart(pitch_strike_percentage)
 
     # for pitch location graph
     pitches = []
     for ab in outing.at_bats:
         for p in ab.pitches:
+            batter = Batter.query.filter_by(id=p.batter_id).first()
             pitches.append({
                 "pitch_num": p.pitch_num,
                 "pitch_type": p.pitch_type,
                 "x": p.loc_x,
-                "y": p.loc_y
+                "y": p.loc_y,
+                "batter_hand": batter.bats
             })
 
     # render template with all the statistical data calculated from the outing
@@ -160,14 +164,6 @@ def outing_pbp(id):
         title=outing,
         outing=outing,
         opponent=opponent,
-        usages=usages,
-        usage_percentages=usage_percentages,
-        usage_percentages_pie_chart=usage_percentages_pie_chart,
-        pitch_avg_velo=pitch_avg_velo,
-        pitch_strike_percentage=pitch_strike_percentage,
-        pitch_whiff=pitch_whiff,
-        velocity_over_time_line_chart=velocity_over_time_line_chart,
-        strike_percentage_bar_chart=strike_percentage_bar_chart,
         pitches=pitches
     )
 
