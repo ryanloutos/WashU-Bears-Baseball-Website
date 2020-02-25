@@ -18,7 +18,39 @@
         .filter {
             text-align: left;
         }
-
+        .loader {
+            border: 20px solid #f3f3f3;
+            /* Light grey */
+            border-top: 20px solid rgb(200, 0, 0);
+            /* Blue */
+            border-radius: 50%;
+            width: 5px;
+            height: 5px;
+            animation: spin 2s linear infinite;
+            margin-left: 50%;
+            margin-top: 20px;
+        }
+        
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+        
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        
+        /* Safari */
+        @-webkit-keyframes spin {
+            0% {
+                -webkit-transform: rotate(0deg);
+            }
+        
+            100% {
+                -webkit-transform: rotate(360deg);
+            }
+        }
     </style>
     <script>
         $(document).ready(function() {
@@ -54,6 +86,7 @@
             });
 
             calcStatsButton.click(function() {
+                $("#filter-loader-holder").html("<div class='loader'></div>");
                 var firstGame = gameSelectorOne.val();
                 var secondGame = gameSelectorTwo.val();
                 
@@ -71,6 +104,7 @@
                     .then(res => res.json())
                     .then(function(response) {
                         if(response.status == "failure") {
+                            $("#filter-loader-holder").html("");
                             console.log("Request ended in failure");
                             console.log("Error: " + response.error);
                         }
@@ -220,6 +254,7 @@
                                     <td><b>${staff['ab_results_pct']['weak_total']}%</b></td>
                                 </tr>`
                             );
+                            $("#filter-loader-holder").html("");
                         }
                     });
                 }
@@ -237,7 +272,7 @@
         <p><h1>Advanced Stats For {{current_season}}</h1></p>
         <div class="filter">
             <label style="font-size: 20px">Filter Stats:</label> <br>
-            <div style="font-size: 15px;">
+            <div style="font-size: 15px; display: inline-block">
                 Between &nbsp;
                 <select id="game-selector-one">
                     <option value=""></option>
@@ -261,6 +296,8 @@
                 &nbsp;
                 <button id="calc-stats">Calculate Stats</button>
             </div>
+            <br>
+            <div id="filter-loader-holder"></div>
         </div>
         <br>
         <div class="row">
