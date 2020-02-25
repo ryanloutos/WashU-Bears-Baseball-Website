@@ -37,6 +37,8 @@ function implement_zone_tracker(){
 
     var zone_legend = new strikezone_legend("zone-legend-div");
     var zone = new strikezone("zone-div");
+    var rhp_zone = new strikezone("rhp-zone-div");
+    var lhp_zone = new strikezone("lhp-zone-div");
     // get pitches data from server
     var pitches = {{ pitches|tojson }};
     
@@ -44,6 +46,13 @@ function implement_zone_tracker(){
     pitches.forEach(function(pitch){
         if(pitch.x != null && pitch.y != null){
             zone.drawCircle(pitch.x, pitch.y, pitch_type=pitch.pitch_type, pitch.pitch_num);
+
+            if(pitch.pitcher_hand == "R"){
+                rhp_zone.drawCircle(pitch.x, pitch.y, pitch_type=pitch.pitch_type, pitch.pitch_num);
+            }
+            else if(pitch.pitcher_hand == "L"){
+                lhp_zone.drawCircle(pitch.x, pitch.y, pitch_type=pitch.pitch_type, pitch.pitch_num);
+            }
         }
     });
 }
@@ -130,8 +139,25 @@ function implement_zone_tracker(){
                     <p>The color of the circle represents the type of pitch that was thrown. The
                         number inside the circle represents the pitch index of the pitch.</p>
                     <div id="zone-legend-div"></div>
+                    <div class="row">
+                        <ul class="nav nav-tabs">
+                            <li class="active tabs"><a data-toggle="tab" href="#all-pitches">All Pitches</a></li>
+                            <li class="tabs"><a data-toggle="tab" href="#rhp-pitches">Pitches vs RHP</a></li>
+                            <li class="tabs"><a data-toggle="tab" href="#lhp-pitches">Pitches vs LHP</a></li>
+                        </ul>
+                    </div>
+                    <div class="row tab-content">
+                        <div class="tab-pane fade in active" id="all-pitches">
+                            <div id="zone-div"></div>
+                        </div>
+                        <div class="tab-pane fade" id="rhp-pitches">
+                            <div id="rhp-zone-div"></div>
+                        </div>
+                        <div class="tab-pane fade" id="lhp-pitches">
+                            <div id="lhp-zone-div"></div>
+                        </div>
+                    </div>
                     <br>
-                    <div id="zone-div"></div>
                 </div>
                 <div class="col-xs-12 col-md-6" id="spray-location" style="text-align: center;">
                     <h4 style="text-align: center;">Spray Locations</h4>
