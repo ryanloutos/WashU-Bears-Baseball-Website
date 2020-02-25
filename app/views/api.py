@@ -1,13 +1,100 @@
 from flask import Blueprint, jsonify, request, send_file, url_for, send_from_directory
 from flask_login import login_required
 from app import db
-from app.stats import batterSwingWhiffRatebyPitchbyCount, teamImportantStatsSeason, staffBasicStats
+from app.stats import batterSwingWhiffRatebyPitchbyCount, staffSeasonGoals, staffBasicStats, staffSeasonStats
 from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat, Pitcher, Game, Video
 from datetime import datetime
 import os
 import re
 
 api = Blueprint("api", __name__)
+
+
+# ***************-STAFF SEASON GOALS-*************** #
+@api.route("/api/staff/season_goals", methods=["POST"])
+@login_required
+def staff_season_goals():
+
+    pitchers = Pitcher.query.all()
+
+    include_matchups = False
+
+    strike_percentage, fps_percentage, k_to_bb, offspeed_strike_pct = staffSeasonGoals(pitchers, include_matchups)
+
+    return_data = {
+        "status": "success",
+        "data": {
+            "strike_percentage": strike_percentage,
+            "fps_percentage": fps_percentage,
+            "k_to_bb": k_to_bb, 
+            "offspeed_strike_pct": offspeed_strike_pct
+        }
+    }
+    return jsonify(return_data)
+
+# ***************-STAFF SEASON STATS FILTER-*************** #
+@api.route("/api/staff/stats/include_matchups", methods=["POST"])
+@login_required
+def staff_include_matchups():
+
+    req_data = request.get_json()
+
+    if req_data is None:
+        return jsonify({
+            "status": "failure",
+            "error": "Request not processable as JSON."
+        })
+    
+    include_matchups = req_data
+    season = Season.query.filter_by(current_season=1).first()
+    if include_matchups in [True, "true", 1]:
+        games = Game.query.filter_by(season_id=season.id).order_by(Game.date).all()
+    else:
+        games = Game.query.filter_by(season_id=season.id).filter(Game.opponent_id != 1).order_by(Game.date).all()
+    
+    games_arr = []
+    for game in games:
+        games_arr.append({
+            "date": game.id,
+            "label": str(game)
+        })
+    
+    return jsonify({
+        "status": "success",
+        "data": games_arr
+    })
+
+
+@api.route("/api/staff/stats/dates", methods=["POST"])
+@login_required
+def staff_date_filter():
+
+    req_data = request.get_json()
+
+    if req_data is None:
+        return jsonify({
+            "status": "failure",
+            "error": "Request not processable as JSON."
+        })
+    
+    first_game = Game.query.filter_by(id=req_data["firstGameId"]).first()
+    second_game = Game.query.filter_by(id=req_data["secondGameId"]).first()
+    if req_data["includeMatchups"] in [True, "true", 1, "1"]:
+        include_matchups = True
+    else:
+        include_matchups = False
+
+    pitchers = Pitcher.query.filter_by(retired=0).filter_by(opponent_id=1).order_by(Pitcher.name).all()
+
+    players, staff = staffSeasonStats(pitchers, first_game.date, second_game.date, include_matchups)
+
+    return jsonify({
+        "status": "success",
+        "players": players,
+        "staff": staff
+    })
+# ************************************************ #
+
 
 
 @api.route("/api/batter/stats/WhiffRateByCount", methods=["POST"])
@@ -60,33 +147,6 @@ def batter_stats_whiffrate():
             "status": "failure",
             "error": "Required parameters not given in request."
         })
-
-
-@api.route("/api/staff/stats/importantstats", methods=["POST"])
-@login_required
-def staff_home_importantstats():
-    # req_data = request.get_json()
-
-    # if req_data is None:
-    #     return jsonify({
-    #         "status": "failure",
-    #         "error": "Request not processable as JSON."
-    #     })
-
-    pitchers = Pitcher.query.all()
-
-    strike_percentage, fps_percentage, k_to_bb, offspeed_strike_pct = teamImportantStatsSeason(pitchers)
-
-    return_data = {
-        "status": "success",
-        "data": {
-            "strike_percentage": strike_percentage,
-            "fps_percentage": fps_percentage,
-            "k_to_bb": k_to_bb, 
-            "offspeed_strike_pct": offspeed_strike_pct
-        }
-    }
-    return jsonify(return_data)
 
 
 @api.route("/api/staff/stats/basicstats", methods=["POST"])

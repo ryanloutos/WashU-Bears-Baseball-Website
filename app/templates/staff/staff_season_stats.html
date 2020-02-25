@@ -1,0 +1,426 @@
+{% extends "base.html" %}
+
+{% block styles %}
+    {{ super() }}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/staff_sidenav.css') }}">
+    <script src="{{ url_for('static', filename='js/sidenav.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/sortable_table.js') }}"></script>
+    <style type="text/css">
+        .tabs a {
+            color: #bd2e1f;
+        }
+        .active a {
+            color: black;
+        }
+        .table-striped > tbody > tr:nth-child(1) > th {
+            background-color: #bd231f;
+        }
+        .filter {
+            text-align: left;
+        }
+
+    </style>
+    <script>
+        $(document).ready(function() {
+            var includeMatchupsCheckbox = $("#include-matchups");
+            var gameSelectorOne = $("#game-selector-one");
+            var gameSelectorTwo = $("#game-selector-two");
+            var calcStatsButton = $("#calc-stats");
+            var includeMatchups = false;
+
+            includeMatchupsCheckbox.click(function() {
+                includeMatchups = includeMatchupsCheckbox.prop("checked");
+                
+                fetch("/api/staff/stats/include_matchups", {
+                    method: "POST",
+                    body: JSON.stringify(includeMatchups),
+                    headers: {"content-type": "application/json"}
+                })
+                .then(res => res.json())
+                .then(function(response) {
+                    if(response.status == "failure") {
+                        console.log("Request ended in failure");
+                        console.log("Error: " + response.error);
+                    }
+                    else {
+                        let options = "<option value=''> </option>";
+                        for (var game of response.data) {
+                            options += "<option value='" + game.date + "'>" + game.label + "</option>";
+                        }
+                        gameSelectorOne.html(options);
+                        gameSelectorTwo.html(options);
+                    }
+                });
+            });
+
+            calcStatsButton.click(function() {
+                var firstGame = gameSelectorOne.val();
+                var secondGame = gameSelectorTwo.val();
+                
+                if (firstGame != "" && secondGame != "") {
+                    data = {
+                        "firstGameId": firstGame,
+                        "secondGameId": secondGame,
+                        "includeMatchups": includeMatchups
+                    }
+                    fetch("/api/staff/stats/dates", {
+                        method: "POST",
+                        body: JSON.stringify(data),
+                        headers: {"content-type": "application/json"}
+                    })
+                    .then(res => res.json())
+                    .then(function(response) {
+                        if(response.status == "failure") {
+                            console.log("Request ended in failure");
+                            console.log("Error: " + response.error);
+                        }
+                        else {
+                            var players = response.players;
+                            var staff = response.staff;
+
+                            var veloTable = $("#velo-table > tbody");
+                            var pctTable = $("#pct-table > tbody");
+                            var stuffTable = $("#stuff-table > tbody");
+                            var abResultsTable = $("#ab-results-table > tbody");
+                            veloTable.empty();
+                            pctTable.empty();
+                            stuffTable.empty();
+                            abResultsTable.empty();
+
+                            veloTable = veloTable.append (
+                                `<tr class="table-headers">
+                                    <th>Name</th>
+                                    <th>FB</th>
+                                    <th>2SM</th>
+                                    <th>Total</th>
+                                </tr>`
+                            );
+                            pctTable = pctTable.append (
+                                `<tr class="table-headers">
+                                    <th>Name</th>
+                                    <th>FPS</th>
+                                    <th>Fastball</th>
+                                    <th>Offspeed</th>
+                                    <th>Total</th>
+                                </tr>`
+                            );
+                            stuffTable.append (
+                                `<tr id="stuff-table" class="table-headers">
+                                    <th style="border-right: 1px solid gray">Name</th>
+                                    <th>WHIF - FB</th>
+                                    <th>WHIF - Offspeed</th>
+                                    <th style="border-right: 1px solid gray">WHIF - Total</th>
+                                    <th>S&M - FB</th>
+                                    <th>S&M - Offspeed</th>
+                                    <th style="border-right: 1px solid gray">S&M - Total</th>
+                                    <th>CSW - FB</th>
+                                    <th>CSW - Offspeed</th>
+                                    <th>CSW - Total</th>
+                                </tr>`
+                            );
+                            abResultsTable.append (
+                                `<tr class="table-headers">
+                                    <th style="border-right: 1px solid gray">Name</th>
+                                    <th>In Play</th>
+                                    <th>Strikeout</th>
+                                    <th style="border-right: 1px solid gray">BB/HBP</th>
+                                    <th>IP - Hard</th>
+                                    <th style="border-right: 1px solid gray">IP - Weak</th>
+                                    <th>Total - Hard</th>
+                                    <th>Total - Weak</th>
+                                </tr>`
+                            );
+
+                            for (let i=0; i<players.length; i++) {
+                                veloTable = veloTable.append (
+                                    `<tr class="data-row">
+                                        <td>${players[i]['details']['name']}</td>
+                                        <td>${players[i]['velos']['FB']}</td>
+                                        <td>${players[i]['velos']['SM']}</td>
+                                        <td>${players[i]['velos']['total']}</td>
+                                    </tr>`
+                                );
+                                pctTable = pctTable.append (
+                                    `<tr class="data-row">
+                                        <td>${players[i]['details']['name']}</td>
+                                        <td>${players[i]['fps']}%</td>
+                                        <td>${players[i]['strike_percentages']['fastball']}%</td>
+                                        <td>${players[i]['strike_percentages']['offspeed']}%</td>
+                                        <td>${players[i]['strike_percentages']['total']}%</td>
+                                    </tr>`
+                                );
+                                stuffTable = stuffTable.append (
+                                    `<tr>
+                                        <td style="border-right: 1px solid gray">${players[i]['details']['name']}</td>
+                                        <td>${players[i]['whiff']['fastball']}%</td>
+                                        <td>${players[i]['whiff']['offspeed']}%</td>
+                                        <td style="border-right: 1px solid gray">${players[i]['whiff']['total']}%</td>
+                                        <td>${players[i]['swing_miss']['fastball']}%</td>
+                                        <td>${players[i]['swing_miss']['offspeed']}%</td>
+                                        <td style="border-right: 1px solid gray">${players[i]['swing_miss']['total']}%</td>
+                                        <td>${players[i]['csw']['fastball']}%</td>
+                                        <td>${players[i]['csw']['offspeed']}%</td>
+                                        <td>${players[i]['csw']['total']}%</td>
+                                    </tr>`
+                                );
+                                abResultsTable = abResultsTable.append (
+                                    `<tr>
+                                        <td style="border-right: 1px solid gray">${players[i]['details']['name']}</td>
+                                        <td>${players[i]['ab_results']['ip']}%</td>
+                                        <td>${players[i]['ab_results']['strikeouts']}%</td>
+                                        <td style="border-right: 1px solid gray">${players[i]['ab_results']['bb/hbp']}%</td>
+                                        <td>${players[i]['ab_results']['hard_ip']}%</td>
+                                        <td style="border-right: 1px solid gray">${players[i]['ab_results']['weak_ip']}%</td>
+                                        <td>${players[i]['ab_results']['hard_total']}%</td>
+                                        <td>${players[i]['ab_results']['weak_total']}%</td>
+                                    </tr>`
+                                );
+                            }
+
+                            veloTable.append (
+                                `<tr class="data-row">
+                                    <td><b>Staff Averages</b></td>
+                                    <td><b>${staff['velo_averages']['FB']}</b></td>
+                                    <td><b>${staff['velo_averages']['SM']}</b></td>
+                                    <td><b>${staff['velo_averages']['total']}</b></td>
+                                </tr>`
+                            );
+                            pctTable.append (
+                                `<tr class="data-row">
+                                    <td><b>Staff Averages</b></td>
+                                    <td><b>${staff['fps_pct']}%</b></td>
+                                    <td><b>${staff['strike_pct']['fastball']}%</b></td>
+                                    <td><b>${staff['strike_pct']['offspeed']}%</b></td>
+                                    <td><b>${staff['strike_pct']['total']}%</b></td>
+                                </tr>`
+                            );
+                            stuffTable = stuffTable.append (
+                                `<tr>
+                                    <td style="border-right: 1px solid gray"><b>Staff Averages</b></td>
+                                    <td><b>${staff['whiff_pct']['fastball']}%</b></td>
+                                    <td><b>${staff['whiff_pct']['offspeed']}%</b></td>
+                                    <td style="border-right: 1px solid gray"><b>${staff['whiff_pct']['total']}%</b></td>
+                                    <td><b>${staff['swing_and_miss_pct']['fastball']}%</b></td>
+                                    <td><b>${staff['swing_and_miss_pct']['offspeed']}%</b></td>
+                                    <td style="border-right: 1px solid gray"><b>${staff['swing_and_miss_pct']['total']}%</b></td>
+                                    <td><b>${staff['csw_pct']['fastball']}%</b></td>
+                                    <td><b>${staff['csw_pct']['offspeed']}%</b></td>
+                                    <td><b>${staff['csw_pct']['total']}%</b></td>
+                                </tr>`
+                            );
+                            abResultsTable = abResultsTable.append (
+                                `<tr>
+                                    <td style="border-right: 1px solid gray"><b>Staff Averages</b></td>
+                                    <td><b>${staff['ab_results_pct']['ip']}%</b></td>
+                                    <td><b>${staff['ab_results_pct']['strikeouts']}%</b></td>
+                                    <td style="border-right: 1px solid gray"><b>${staff['ab_results_pct']['bb/hbp']}%</b></td>
+                                    <td><b>${staff['ab_results_pct']['hard_ip']}%</b></td>
+                                    <td style="border-right: 1px solid gray"><b>${staff['ab_results_pct']['weak_ip']}%</b></td>
+                                    <td><b>${staff['ab_results_pct']['hard_total']}%</b></td>
+                                    <td><b>${staff['ab_results_pct']['weak_total']}%</b></td>
+                                </tr>`
+                            );
+                        }
+                    });
+                }
+
+            });
+
+        });
+    </script>
+{% endblock %}
+
+{% block app_content %}
+    {% include "staff/staff_sidenav.html" %}
+    <div class="main" style="text-align: center;">
+        {% include "staff/staff_title.html" %}
+        <p><h1>Advanced Stats For {{current_season}}</h1></p>
+        <div class="filter">
+            <label style="font-size: 20px">Filter Stats:</label> <br>
+            <div style="font-size: 15px;">
+                Between &nbsp;
+                <select id="game-selector-one">
+                    <option value=""></option>
+                    {% for game in current_season.games %}
+                        {% if game.opponent_id != 1 %}
+                            <option value="{{ game.id }}">{{ game }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+                &nbsp; and &nbsp;
+                <select id="game-selector-two">
+                    <option value=""></option>
+                    {% for game in current_season.games %}
+                        {% if game.opponent_id != 1 %}
+                            <option value="{{ game.id }}">{{ game }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select> 
+                &nbsp;
+                <input id="include-matchups" type="checkbox"> Include Matchups
+                &nbsp;
+                <button id="calc-stats">Calculate Stats</button>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <ul class="nav nav-tabs">
+                <li class="active tabs"><a data-toggle="tab" href="#fastball-velocity">Fastball Velocity</a></li>
+                <li class="tabs"><a data-toggle="tab" href="#strike-percentages">Strike Percentages</a></li>
+                <li class="tabs"><a data-toggle="tab" href="#swing-and-miss">"Stuff" Stats</a></li>
+                <li class="tabs"><a data-toggle="tab" href="#ab-results">AB Results</a></li>
+            </ul>
+        </div>
+        <div class="tab-content row">
+            <div class="tab-pane fade in active" id="fastball-velocity" style="width: 60%; margin-left: 20%;">
+                <h4>Fastball Velocity</h4>
+                <table id="velo-table" class="table table-striped sortable_table">
+                    <tr class="table-headers">
+                        <th>Name</th>
+                        <th>FB</th>
+                        <th>2SM</th>
+                        <th>Total</th>
+                    </tr>
+                    {% for pitcher in players %}
+                        <tr class="data-row">
+                            <td>{{ pitcher["details"]["name"] }}</td>
+                            <td>{{ pitcher["velos"]["FB"] }}</td>
+                            <td>{{ pitcher["velos"]["SM"] }}</td>
+                            <td>{{ pitcher["velos"]["total"] }}</td>
+                        </tr>
+                    {% endfor %}
+                    <tr>
+                        <td><b>Staff Averages</b></td>
+                        <td><b>{{ staff["velo_averages"]["FB"] }}</b></td>
+                        <td><b>{{ staff["velo_averages"]["SM"] }}</b></td>
+                        <td><b>{{ staff["velo_averages"]["total"] }}</b></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="tab-pane fade" id="strike-percentages" style="width: 80%; margin-left: 10%;">
+                <h4>Strike Percentages</h4>
+                <table id="pct-table" class="table table-striped sortable_table">
+                    <tr class="table-headers">
+                        <th>Name</th>
+                        <th>FPS</th>
+                        <th>Fastball</th>
+                        <th>Offspeed</th>
+                        <th>Total</th>
+                    </tr>
+                    {% for pitcher in players %}
+                    <tr>
+                        <td>{{ pitcher["details"]["name"] }}</td>
+                        <td>{{ pitcher["fps"] }}%</td>
+                        <td>{{ pitcher["strike_percentages"]["fastball"] }}%</td>
+                        <td>{{ pitcher["strike_percentages"]["offspeed"] }}%</td>
+                        <td>{{ pitcher["strike_percentages"]["total"] }}%</td>
+                    </tr>
+                    {% endfor %}
+                    <tr>
+                        <td><b>Staff Averages</b></td>
+                        <td><b>{{ staff["fps_pct"] }}%</b></td>
+                        <td><b>{{ staff["strike_pct"]["fastball"] }}%</b></td>
+                        <td><b>{{ staff["strike_pct"]["offspeed"] }}%</b></td>
+                        <td><b>{{ staff["strike_pct"]["total"] }}%</b></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="tab-pane fade" id="swing-and-miss" style="width: 100%;">
+                <h4>"How good is your stuff?"</h4>
+                <h5 style="text-align: left;"><br>
+                    WHIF - how often hitters swing and miss WHEN they actually swing [calculation] - (#SS)/(#SS + #F + #IP)<br> <br>
+                    S&M - how often hitters swing and miss on all pitches [calculation] - (#SS)/(all pitches) <br> <br>
+                    CSW - how often a pitch is a called strike or swing and miss [calculation] - (#SS + #CS)/(all pitches)
+                </h5>
+                <table id="stuff-table" class="table table-striped sortable_table">
+                    <tr class="table-headers">
+                        <th style="border-right: 1px solid gray">Name</th>
+                        <th>WHIF - FB</th>
+                        <th>WHIF - Offspeed</th>
+                        <th style="border-right: 1px solid gray">WHIF - Total</th>
+                        <th>S&M - FB</th>
+                        <th>S&M - Offspeed</th>
+                        <th style="border-right: 1px solid gray">S&M - Total</th>
+                        <th>CSW - FB</th>
+                        <th>CSW - Offspeed</th>
+                        <th>CSW - Total</th>
+                    </tr>
+                    {% for pitcher in players %}
+                    <tr>
+                        <td style="border-right: 1px solid gray">{{ pitcher["details"]["name"] }}</td>
+                        <td>{{ pitcher["whiff"]["fastball"] }}%</td>
+                        <td>{{ pitcher["whiff"]["offspeed"] }}%</td>
+                        <td style="border-right: 1px solid gray">{{ pitcher["whiff"]["total"] }}%</td>
+                        <td>{{ pitcher["swing_miss"]["fastball"] }}%</td>
+                        <td>{{ pitcher["swing_miss"]["offspeed"] }}%</td>
+                        <td style="border-right: 1px solid gray">{{ pitcher["swing_miss"]["total"] }}%</td>
+                        <td>{{ pitcher["csw"]["fastball"] }}%</td>
+                        <td>{{ pitcher["csw"]["offspeed"] }}%</td>
+                        <td>{{ pitcher["csw"]["total"] }}%</td>
+                    </tr>
+                    {% endfor %}
+                    <tr>
+                        <td style="border-right: 1px solid gray"><b>Staff Averages</b></td>
+                        <td><b>{{ staff["whiff_pct"]["fastball"] }}%</b></td>
+                        <td><b>{{ staff["whiff_pct"]["offspeed"] }}%</b></td>
+                        <td style="border-right: 1px solid gray"><b>{{ staff["whiff_pct"]["total"] }}%</b></td>
+                        <td><b>{{ staff["swing_and_miss_pct"]["fastball"] }}%</b></td>
+                        <td><b>{{ staff["swing_and_miss_pct"]["offspeed"] }}%</b></td>
+                        <td style="border-right: 1px solid gray"><b>{{ staff["swing_and_miss_pct"]["total"] }}%</b></td>
+                        <td><b>{{ staff["csw_pct"]["fastball"] }}%</b></td>
+                        <td><b>{{ staff["csw_pct"]["offspeed"] }}%</b></td>
+                        <td><b>{{ staff["csw_pct"]["total"] }}%</b></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="tab-pane fade" id="ab-results" style="width: 80%; margin-left: 10%;">
+                <h4>AB Result Statistics</h4>
+                <h5 style="text-align: left;"><br>
+                    In Play: % of at bats that end with a ball put in play somewhere <br>
+                    Strikeout: % of at bats that end with a strikeout <br>
+                    BB/HBP: % of at bats that end with a walk or hbp <br>
+                    <hr>
+                    IP - Hard: % hard hit balls WHEN the batter puts the ball in play [#hard_hit/#balls_in_play] <br>
+                    IP - Weak: % weak hit balls WHEN the batter puts the ball in play [#weak_hit/#balls_in_play]
+                    <hr>
+                    Total - Hard: % of the time an at bat ends with a hard hit ball [#hard_hit/#at_bats] <br>
+                    Total - Weak: % of the time an at bat ends with a weakly hit ball [#weak_hit/#at_bats]
+                </h5>
+                <table id="ab-results-table" class="table table-striped sortable_table">
+                    <tr class="table-headers">
+                        <th style="border-right: 1px solid gray">Name</th>
+                        <th>In Play</th>
+                        <th>Strikeout</th>
+                        <th style="border-right: 1px solid gray">BB/HBP</th>
+                        <th>IP - Hard</th>
+                        <th style="border-right: 1px solid gray">IP - Weak</th>
+                        <th>Total - Hard</th>
+                        <th>Total - Weak</th>
+                    </tr>
+                    {% for pitcher in players %}
+                        <tr>
+                            <td style="border-right: 1px solid gray">{{ pitcher["details"]["name"] }}</td>
+                            <td>{{ pitcher["ab_results"]["ip"] }}%</td>
+                            <td>{{ pitcher["ab_results"]["strikeouts"] }}%</td>
+                            <td style="border-right: 1px solid gray">{{ pitcher["ab_results"]["bb/hbp"] }}%</td>
+                            <td>{{ pitcher["ab_results"]["hard_ip"] }}%</td>
+                            <td style="border-right: 1px solid gray">{{ pitcher["ab_results"]["weak_ip"] }}%</td>
+                            <td>{{ pitcher["ab_results"]["hard_total"] }}%</td>
+                            <td>{{ pitcher["ab_results"]["weak_total"] }}%</td>
+                        </tr>
+                    {% endfor %}
+                    <tr>
+                        <td style="border-right: 1px solid gray"><b>Staff Averages</b></td>
+                        <td><b>{{ staff["ab_results_pct"]["ip"] }}%</b></td>
+                        <td><b>{{ staff["ab_results_pct"]["strikeouts"] }}%</b></td>
+                        <td style="border-right: 1px solid gray"><b>{{ staff["ab_results_pct"]["bb/hbp"] }}%</b></td>
+                        <td><b>{{ staff["ab_results_pct"]["hard_ip"] }}%</b></td>
+                        <td style="border-right: 1px solid gray"><b>{{ staff["ab_results_pct"]["weak_ip"] }}%</b></td>
+                        <td><b>{{ staff["ab_results_pct"]["hard_total"] }}%</b></td>
+                        <td><b>{{ staff["ab_results_pct"]["weak_total"] }}%</b></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

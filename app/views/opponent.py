@@ -17,7 +17,7 @@ from app.stats import pitchUsageByCountLineCharts, pitchStrikePercentageSeason
 from app.stats import pitchUsageSeason, seasonStatLine, staffBasicStats
 from app.stats import staffPitchStrikePercentage
 from app.stats import outingPitchStatistics, outingTimeToPlate, veloOverTime
-from app.stats import teamImportantStatsSeason, stats_opponent_scouting_stats, stats_opponent_batters_stat_lines
+from app.stats import stats_opponent_scouting_stats, stats_opponent_batters_stat_lines
 
 # Handle CSV uploads
 import csv

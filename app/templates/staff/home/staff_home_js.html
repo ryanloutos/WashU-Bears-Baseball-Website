@@ -1,11 +1,11 @@
 <script>
-    let pickoffs = 0;
+    let pickoffs = 3;
     let errors = 0;
-    let num_pitchers_with_pick = 0;
+    let num_pitchers_with_pick = 3;
     let blown_leads_after_7 = 0;
     document.addEventListener("DOMContentLoaded", function(){
 
-        fetch("{{ url_for('api.staff_home_importantstats') }}",
+        fetch("{{ url_for('api.staff_season_goals') }}",
         {
             method: "POST"
         }).then(res => res.json())

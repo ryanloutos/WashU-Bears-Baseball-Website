@@ -149,6 +149,7 @@ class Season(db.Model):
     current_season = db.Column(db.Boolean, index=True)
     outings = db.relationship('Outing', backref='season', lazy='dynamic')
     videos = db.relationship('Video', backref='season', lazy='dynamic')
+    games = db.relationship('Game', backref='season', lazy='dynamic')
 
     def __repr__(self):
         return f'{self.semester} {self.year}'

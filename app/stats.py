@@ -7,6 +7,7 @@ import math
 from app.models import Season, Outing, Game, Batter
 
 
+# ***************-USEFUL FUNCTIONS-*************** # 
 class PitchType(Enum):
     '''
     Enum that is helpful in translating pitch types easier.
@@ -17,6 +18,493 @@ class PitchType(Enum):
     CH = 4
     CT = 5
     SM = 7
+
+def truncate(n, decimals=2):
+    """Truncates the passed value to decimal places.
+
+    Arguments:
+        n {number} -- Number to be truncated
+
+    Keyword Arguments:
+        decimals {int} -- Number of decimal places to truncate to(default: {2})
+
+    Returns:
+        [int] -- truncated verison of passed value
+    """
+    multiplier = 10 ** decimals
+    return int(n * multiplier) / multiplier
+
+def percentage(n, decimals=0):
+    '''
+    Gets the percentage rounded to a specific decimal place
+    PARAM:
+        - n - is a the decimal number 0<=n<=1
+        - decimals - is the place you want to round to
+    '''
+    multiplier = 10 ** decimals
+    percentage = 100 * n
+    return int(math.floor(percentage*multiplier + 0.5) / multiplier)
+
+def getSeasons(pitcher):
+    '''
+    gets all of the seasons the pitcher has thrown in
+
+    PARAM:
+        - pitcher {object}
+    
+    RETURN:
+        - seasons {array} which holds the season objects
+    '''
+    outings = Outing.query.filter_by(pitcher_id=pitcher.id).all()
+    seasons = []
+    for outing in outings:
+        if outing.season not in seasons:
+            seasons.append(outing.season)
+    return seasons
+
+
+# ***************-STAFF PAGES-*************** # 
+def staffSeasonGoals(pitchers, includeMatchups=True): 
+    # weighted strike percentage
+    strikes = 0
+    total_pitches = 0
+    strike_percentage = 0
+    # weighted FPS
+    first_pitch_strikes = 0
+    first_pitches = 0
+    fps_percentage = 0 
+    # K/BB Ratio
+    strikeouts = 0
+    walks = 0
+    k_to_bb = 0
+    # Offspeed Strike Percentage
+    offspeed_pitches = 0
+    offspeed_strikes = 0
+
+    for p in pitchers:
+        for o in p.outings:
+            if not includeMatchups:
+                current_inning = 1
+                season = Season.query.filter_by(id=o.season_id).first()
+                if season.current_season:
+                    if o.opponent_id is not 1:
+                        for ab in o.at_bats:
+                            for index, p in enumerate(ab.pitches):
+                                total_pitches += 1
+                                if p.pitch_result is not "B":
+                                    strikes += 1 
+                                if index is 0:
+                                    first_pitches += 1
+                                    if p.pitch_result is not "B":
+                                        first_pitch_strikes += 1
+                                if p.ab_result in ["K", "KL"]:
+                                    strikeouts += 1
+                                if p.ab_result == "BB":
+                                    walks += 1
+                                if p.pitch_type not in [1,7,"FB","SM"]:
+                                    offspeed_pitches += 1
+                                    if p.pitch_result != "B":
+                                        offspeed_strikes += 1
+            else:
+                current_inning = 1
+                season = Season.query.filter_by(id=o.season_id).first()
+                if season.current_season:
+                    for ab in o.at_bats:
+                        for index, p in enumerate(ab.pitches):
+                            total_pitches += 1
+                            if p.pitch_result is not "B":
+                                strikes += 1 
+                            if index is 0:
+                                first_pitches += 1
+                                if p.pitch_result is not "B":
+                                    first_pitch_strikes += 1
+                            if p.ab_result in ["K", "KL"]:
+                                strikeouts += 1
+                            if p.ab_result == "BB":
+                                walks += 1
+                            if p.pitch_type not in [1,7,"FB","SM"]:
+                                offspeed_pitches += 1
+                                if p.pitch_result != "B":
+                                    offspeed_strikes += 1
+
+
+    if total_pitches is 0:
+        strike_percentage = "X"
+    else:
+        strike_percentage = percentage(strikes/total_pitches, 0)
+    
+    if first_pitch_strikes is 0:
+        fps_percentage = "X"
+    else:
+        fps_percentage = percentage(first_pitch_strikes/first_pitches)
+    
+    if walks is 0:
+        if strikeouts is 0:
+            k_to_bb = 0
+        else: 
+            k_to_bb = "inf"
+    else:
+        k_to_bb = truncate(strikeouts/walks, 1)
+    
+    if offspeed_pitches != 0:
+        offspeed_strike_pct = percentage(offspeed_strikes/offspeed_pitches)
+
+    return strike_percentage, fps_percentage, k_to_bb, offspeed_strike_pct
+
+def staffSeasonStats(pitchers, afterDate, beforeDate, includeMatchups=True):
+    # to hold info for each player
+    players = []
+
+    # to hold the info for the avg velo stats
+    total_velo_num_pitches = {"FB": 0, "SM": 0, "total": 0}
+    total_velo_summed_velos = {"FB": 0, "SM": 0, "total": 0}
+    total_velo_averages = {"FB": 0, "SM": 0, "total": 0}
+
+    # to hold the info for the strike percentage stats
+    total_pct_num_pitches = {"fastball": 0, "offspeed": 0, "total": 0}
+    total_pct_num_strikes = {"fastball": 0, "offspeed": 0, "total": 0}
+    total_pct_averages = {"fastball": 0, "offspeed": 0, "total": 0}
+
+    # to hold the info for fps
+    total_fps_at_bats = 0
+    total_fps_strikes = 0
+    total_fps_pct = 0
+
+    # to hold the info for the whif stats
+    total_whiffs_swing_and_misses = {"fastball": 0, "offspeed": 0, "total": 0}
+    total_whiffs_pitches_swung_at = {"fastball": 0, "offspeed": 0, "total": 0}
+    total_whiffs_pct = {"fastball": 0, "offspeed": 0, "total": 0}
+
+    # to hold the info for swing and miss statistics
+    total_swing_and_miss_num = {"fastball": 0, "offspeed": 0, "total": 0}
+    total_swing_and_miss_pitches = {"fastball": 0, "offspeed": 0, "total": 0}
+    total_swing_and_miss_pct = {"fastball": 0, "offspeed": 0, "total": 0}
+
+    # to hold the info for csw stats
+    total_csw_num = {"fastball": 0, "offspeed": 0, "total": 0}
+    total_csw_pitches = {"fastball": 0, "offspeed": 0, "total": 0}
+    total_csw_pct = {"fastball": 0, "offspeed": 0, "total": 0}
+
+    # to hold info for ball in play statistics
+    total_ab_results_balls_in_play = 0
+    total_ab_results_strikeouts = 0
+    total_ab_results_free_base = 0
+    total_ab_results_total_at_bats = 0
+    total_ab_results_hit_hard = 0
+    total_ab_results_hit_weak = 0
+    total_ab_results_pct = {"ip": 0, "strikouts": 0, "bb/hbp": 0}
+
+    for pitcher in pitchers:
+
+        # to hold the info for the avg velo stats specific to pitcher
+        velo_num_pitches = {"FB": 0, "SM": 0, "total": 0}
+        velo_summed_velos = {"FB": 0, "SM": 0, "total": 0}
+        velo_averages = {"FB": 0, "SM": 0, "total": 0}
+
+        # to hold the info for the strike percentage stats specific to pitcher
+        pct_num_pitches = {"fastball": 0, "offspeed": 0, "total": 0}
+        pct_num_strikes = {"fastball": 0, "offspeed": 0, "total": 0}
+        pct_averages = {"fastball": 0, "offspeed": 0, "total": 0}
+
+        # to hold the info for first pitch strikes specific to pitcher
+        fps_at_bats = 0
+        fps_strikes = 0
+        fps_pct = 0
+
+        # to hold the info for whiff statistics specific to pitcher
+        whiffs_swing_and_misses = {"fastball": 0, "offspeed": 0, "total": 0}
+        whiffs_pitches_swung_at = {"fastball": 0, "offspeed": 0, "total": 0}
+        whiffs_pct = {"fastball": 0, "offspeed": 0, "total": 0}
+        
+        # to hold the info for swing and miss statistics specific to pitcher
+        swing_and_miss_num = {"fastball": 0, "offspeed": 0, "total": 0}
+        swing_and_miss_pitches = {"fastball": 0, "offspeed": 0, "total": 0}
+        swing_and_miss_pct = {"fastball": 0, "offspeed": 0, "total": 0}
+
+        # to hold the info for CSW specific to pitcher
+        csw_num = {"fastball": 0, "offspeed": 0, "total": 0}
+        csw_pitches = {"fastball": 0, "offspeed": 0, "total": 0}
+        csw_pct = {"fastball": 0, "offspeed": 0, "total": 0}
+
+        # to hold info for ball in play statistics specific to pitcher
+        ab_results_balls_in_play = 0
+        ab_results_strikeouts = 0
+        ab_results_free_base = 0
+        ab_results_total_at_bats = 0
+        ab_results_hit_hard = 0
+        ab_results_hit_weak = 0
+        ab_results_pct = {
+            "ip": 0, "strikeouts": 0, "bb/hbp": 0, "hard_ip": 0, 
+            "weak_ip": 0, "hard_total": 0, "weak_total": 0
+        }
+
+        # look through all of pitcher outings
+        for outing in pitcher.outings:
+            if not includeMatchups:
+                if outing.opponent_id is 1:
+                    continue
+            if outing.date < afterDate or outing.date > beforeDate:
+                continue
+            if outing.season.current_season:
+                for at_bat in outing.at_bats:
+
+                    # FPS info
+                    fps_at_bats += 1
+                    total_fps_at_bats += 1
+                    new_at_bat = True
+
+                    for pitch in at_bat.pitches:
+                        pitch_type = PitchType(pitch.pitch_type).name
+
+                        # VELOS
+                        if pitch.velocity not in [None, ""]:
+
+                            if pitch_type in ["FB", "SM"]:
+
+                                # for pitcher specific
+                                velo_num_pitches[pitch_type] += 1
+                                velo_num_pitches["total"] += 1
+                                velo_summed_velos[pitch_type] += pitch.velocity
+                                velo_summed_velos["total"] += pitch.velocity
+
+                                # for team total stats
+                                total_velo_num_pitches[pitch_type] += 1
+                                total_velo_num_pitches["total"] += 1
+                                total_velo_summed_velos[pitch_type] += pitch.velocity
+                                total_velo_summed_velos["total"] += pitch.velocity
+
+                        # STRIKE PERCENTAGES
+                        pct_num_pitches["total"] += 1
+                        total_pct_num_pitches["total"] += 1
+
+                        # total num pitches
+                        if pitch_type in ["FB", "SM"]:
+                            pct_num_pitches["fastball"] += 1
+                            total_pct_num_pitches["fastball"] += 1
+                        else: 
+                            pct_num_pitches["offspeed"] += 1
+                            total_pct_num_pitches["offspeed"] += 1
+
+                        # strikes
+                        if pitch.pitch_result in ["CS", "SS", "F", "IP"]:
+                            pct_num_strikes["total"] += 1
+                            total_pct_num_strikes["total"] += 1
+                            if pitch_type in ["FB", "SM"]:
+                                pct_num_strikes["fastball"] += 1
+                                total_pct_num_strikes["fastball"] += 1
+                            else:
+                                pct_num_strikes["offspeed"] += 1
+                                total_pct_num_strikes["offspeed"] += 1   
+
+                            if new_at_bat:
+                                fps_strikes += 1
+                                total_fps_strikes += 1
+
+                        # WHIFFS
+                        if pitch.pitch_result in ["SS", "F", "IP"]:
+                            whiffs_pitches_swung_at["total"] += 1
+                            total_whiffs_pitches_swung_at["total"] += 1
+                            if pitch.pitch_result == "SS":
+                                whiffs_swing_and_misses["total"] += 1
+                                total_whiffs_swing_and_misses["total"] += 1
+                                if pitch_type in ["FB", "SM"]:
+                                    whiffs_pitches_swung_at["fastball"] += 1
+                                    whiffs_swing_and_misses["fastball"] += 1
+                                    total_whiffs_pitches_swung_at["fastball"] += 1
+                                    total_whiffs_swing_and_misses["fastball"] += 1
+                                else:
+                                    whiffs_pitches_swung_at["offspeed"] += 1
+                                    whiffs_swing_and_misses["offspeed"] += 1
+                                    total_whiffs_pitches_swung_at["offspeed"] += 1
+                                    total_whiffs_swing_and_misses["offspeed"] += 1
+                            else:
+                                if pitch_type in ["FB", "SM"]:
+                                    whiffs_pitches_swung_at["fastball"] += 1
+                                    total_whiffs_pitches_swung_at["fastball"] += 1
+                                else:
+                                    whiffs_pitches_swung_at["offspeed"] += 1
+                                    total_whiffs_pitches_swung_at["offspeed"] += 1
+
+                        # SWING AND MISS
+                        swing_and_miss_pitches["total"] += 1
+                        total_swing_and_miss_pitches["total"] += 1
+                        if pitch_type in ["FB", "SM"]:
+                            swing_and_miss_pitches["fastball"] += 1
+                            total_swing_and_miss_pitches["fastball"] += 1
+                            if pitch.pitch_result == "SS":
+                                swing_and_miss_num["fastball"] += 1
+                                swing_and_miss_num["total"] += 1
+                                total_swing_and_miss_num["fastball"] += 1
+                                total_swing_and_miss_num["total"] += 1
+                        else:
+                            swing_and_miss_pitches["offspeed"] += 1
+                            total_swing_and_miss_pitches["offspeed"] += 1
+                            if pitch.pitch_result == "SS":
+                                swing_and_miss_num["offspeed"] += 1
+                                swing_and_miss_num["total"] += 1
+                                total_swing_and_miss_num["offspeed"] += 1
+                                total_swing_and_miss_num["total"] += 1
+                        
+                        # CSW
+                        csw_pitches["total"] += 1
+                        total_csw_pitches["total"] += 1
+                        if pitch_type in ["FB", "SM"]:
+                            csw_pitches["fastball"] += 1
+                            total_csw_pitches["fastball"] += 1
+                            if pitch.pitch_result in ["SS", "CS"]:
+                                csw_num["fastball"] += 1
+                                csw_num["total"] += 1
+                                total_csw_num["fastball"] += 1
+                                total_csw_num["total"] += 1
+                        else:
+                            csw_pitches["offspeed"] += 1
+                            total_csw_pitches["offspeed"] += 1
+                            if pitch.pitch_result in ["SS", "CS"]:
+                                csw_num["offspeed"] += 1
+                                csw_num["total"] += 1
+                                total_csw_num["offspeed"] += 1
+                                total_csw_num["total"] += 1
+                        
+                        # AB Results
+                        if pitch.ab_result not in [None, ""]:
+                            ab_results_total_at_bats += 1
+                            total_ab_results_total_at_bats += 1
+                            if pitch.pitch_result == "IP":
+                                ab_results_balls_in_play += 1
+                                total_ab_results_balls_in_play += 1
+                                if pitch.hit_hard:
+                                    ab_results_hit_hard += 1
+                                    total_ab_results_hit_hard += 1
+                                else:
+                                    ab_results_hit_weak += 1
+                                    total_ab_results_hit_weak += 1
+                            if pitch.ab_result in ["BB", "HBP"]:
+                                ab_results_free_base += 1
+                                total_ab_results_free_base += 1
+                            if pitch.ab_result in ["K", "KL", "D3->Out", "D3->Safe"]:
+                                ab_results_strikeouts += 1
+                                total_ab_results_strikeouts += 1
+
+                        new_at_bat = False         
+                    
+        # VELOS - totals for pitcher
+        for key, val in velo_num_pitches.items():
+            if velo_num_pitches[key] != 0:
+                velo_averages[key] = truncate(
+                    velo_summed_velos[key]/velo_num_pitches[key], 1)
+
+        # STRIKE PERCENTAGE - totals for pitcher
+        for key, val in pct_num_pitches.items():
+            if pct_num_pitches[key] != 0:
+                pct_averages[key] = (
+                    int(percentage(pct_num_strikes[key]/pct_num_pitches[key])))
+        
+        # FPS - totals for pitcher
+        if fps_at_bats != 0:
+            fps_pct = int(percentage(fps_strikes/fps_at_bats))
+        
+        # WHIF - totals for pitcher
+        for key, val in whiffs_pitches_swung_at.items():
+            if whiffs_pitches_swung_at[key] != 0:
+                whiffs_pct[key] = int(percentage(
+                    whiffs_swing_and_misses[key]/whiffs_pitches_swung_at[key]))
+        
+        # SWING & MISS - totals for pitcher
+        for key, val in swing_and_miss_pitches.items():
+            if swing_and_miss_pitches[key] != 0:
+                swing_and_miss_pct[key] = int(percentage(
+                    swing_and_miss_num[key]/swing_and_miss_pitches[key]))
+        
+        # CSW - totals for pitcher
+        for key, val in csw_pct.items():
+            if csw_pitches[key] != 0:
+                csw_pct[key] = int(percentage(
+                    csw_num[key]/csw_pitches[key]))
+        
+        # AB RESULTS - totals for pitcher
+        if ab_results_total_at_bats != 0:
+            ab_results_pct["ip"] = int(percentage(ab_results_balls_in_play/ab_results_total_at_bats))
+            ab_results_pct["strikeouts"] = int(percentage(ab_results_strikeouts/ab_results_total_at_bats))
+            ab_results_pct["bb/hbp"] = int(percentage(ab_results_free_base/ab_results_total_at_bats))
+            ab_results_pct["hard_total"] = int(percentage(ab_results_hit_hard/ab_results_total_at_bats))
+            ab_results_pct["weak_total"] = int(percentage(ab_results_hit_weak/ab_results_total_at_bats))
+        if ab_results_balls_in_play != 0:
+            ab_results_pct["hard_ip"] = int(percentage(ab_results_hit_hard/ab_results_balls_in_play))
+            ab_results_pct["weak_ip"] = int(percentage(ab_results_hit_weak/ab_results_balls_in_play))
+        
+        # fill in players array with info from above
+        players.append(
+            {
+                "details": {
+                    "name": f"{pitcher.name}",
+                    "class": pitcher.grad_year,
+                    "throws": pitcher.throws},
+                "velos": velo_averages,
+                "strike_percentages": pct_averages,
+                "fps": fps_pct,
+                "whiff": whiffs_pct,
+                "swing_miss": swing_and_miss_pct,
+                "csw": csw_pct,
+                "ab_results": ab_results_pct
+            }
+        )
+
+    # VELOS - totals for staff
+    for key, val in total_velo_num_pitches.items():
+        if total_velo_num_pitches[key] != 0:
+            total_velo_averages[key] = truncate(
+                total_velo_summed_velos[key]/total_velo_num_pitches[key], 1)
+
+    # STRIKE PERCENTAGE - totals for staff
+    for key, val in total_pct_num_pitches.items():
+        if total_pct_num_pitches[key] != 0:
+            total_pct_averages[key] = (
+                int(percentage(total_pct_num_strikes[key]/total_pct_num_pitches[key])))
+    
+    # FPS - totals for staff
+    if total_fps_at_bats != 0:
+        total_fps_pct = int(percentage(total_fps_strikes/total_fps_at_bats))
+    
+    # WHIF - totals for staff
+    for key, val in total_whiffs_pitches_swung_at.items():
+        if total_whiffs_pitches_swung_at[key] != 0:
+            total_whiffs_pct[key] = int(percentage(
+                total_whiffs_swing_and_misses[key]/total_whiffs_pitches_swung_at[key]))
+        
+    # SWING & MISS - totals for staff
+    for key, val in total_swing_and_miss_pitches.items():
+        if total_swing_and_miss_pitches[key] != 0:
+            total_swing_and_miss_pct[key] = int(percentage(
+                total_swing_and_miss_num[key]/total_swing_and_miss_pitches[key]))
+    
+    # CSW - totals for staff
+    for key, val in total_csw_pct.items():
+            if total_csw_pitches[key] != 0:
+                total_csw_pct[key] = int(percentage(
+                    total_csw_num[key]/total_csw_pitches[key]))
+    
+    # AB RESULTS - totals for pitcher
+    if total_ab_results_total_at_bats != 0:
+        total_ab_results_pct["ip"] = int(percentage(total_ab_results_balls_in_play/total_ab_results_total_at_bats))
+        total_ab_results_pct["strikeouts"] = int(percentage(total_ab_results_strikeouts/total_ab_results_total_at_bats))
+        total_ab_results_pct["bb/hbp"] = int(percentage(total_ab_results_free_base/total_ab_results_total_at_bats))
+        total_ab_results_pct["hard_total"] = int(percentage(total_ab_results_hit_hard/total_ab_results_total_at_bats))
+        total_ab_results_pct["weak_total"] = int(percentage(total_ab_results_hit_weak/total_ab_results_total_at_bats))
+    if total_ab_results_balls_in_play != 0:
+        total_ab_results_pct["hard_ip"] = int(percentage(total_ab_results_hit_hard/total_ab_results_balls_in_play))
+        total_ab_results_pct["weak_ip"] = int(percentage(total_ab_results_hit_weak/total_ab_results_balls_in_play))
+
+    staff = {}
+    staff["velo_averages"] = total_velo_averages
+    staff["strike_pct"] = total_pct_averages
+    staff["fps_pct"] = total_fps_pct
+    staff["whiff_pct"] = total_whiffs_pct
+    staff["swing_and_miss_pct"] = total_swing_and_miss_pct
+    staff["ab_results_pct"] = total_ab_results_pct
+    staff["csw_pct"] = total_csw_pct
+
+    return players, staff
+
 
 
 def calcPitchWhiffRate(outing):
@@ -442,49 +930,7 @@ def pitchUsageByCountLineCharts(data):
     return line_chart
 
 
-# UTILITY STAT FUNCTIONS-------------------------------------------------------
-def truncate(n, decimals=2):
-    """Truncates the passed value to decimal places.
 
-    Arguments:
-        n {number} -- Number to be truncated
-
-    Keyword Arguments:
-        decimals {int} -- Number of decimal places to truncate to(default: {2})
-
-    Returns:
-        [int] -- truncated verison of passed value
-    """
-    multiplier = 10 ** decimals
-    return int(n * multiplier) / multiplier
-
-def percentage(n, decimals=0):
-    '''
-    Gets the percentage rounded to a specific decimal place
-    PARAM:
-        - n - is a the decimal number 0<=n<=1
-        - decimals - is the place you want to round to
-    '''
-    multiplier = 10 ** decimals
-    percentage = 100 * n
-    return int(math.floor(percentage*multiplier + 0.5) / multiplier)
-
-def getSeasons(pitcher):
-    '''
-    gets all of the seasons the pitcher has thrown in
-
-    PARAM:
-        - pitcher {object}
-    
-    RETURN:
-        - seasons {array} which holds the season objects
-    '''
-    outings = Outing.query.filter_by(pitcher_id=pitcher.id).all()
-    seasons = []
-    for outing in outings:
-        if outing.season not in seasons:
-            seasons.append(outing.season)
-    return seasons
 
 # PITCHER ADVANCED STATISTICS -------------------------------------------------
 def avgPitchVeloPitcher(pitcher):
@@ -1087,361 +1533,6 @@ def staffBasicStats(pitchers, seasons=[]):
     return (stat_line_total, players)
 
 
-# STAFF ADVANCED STATISTICS ---------------------------------------------------
-def staffAdvancedStats(pitchers):
-    """Generate the stats for the Advanced Stats page for the staff
-
-    Arguments:
-        pitchers {array} -- array of user objects to be analyzed
-
-    Returns:
-        
-    """
-    # to hold info for each player
-    players = []
-
-    # to hold the info for the avg velo stats
-    total_velo_num_pitches = {"FB": 0, "SM": 0, "total": 0}
-    total_velo_summed_velos = {"FB": 0, "SM": 0, "total": 0}
-    total_velo_averages = {"FB": 0, "SM": 0, "total": 0}
-
-    # to hold the info for the strike percentage stats
-    total_pct_num_pitches = {"fastball": 0, "offspeed": 0, "total": 0}
-    total_pct_num_strikes = {"fastball": 0, "offspeed": 0, "total": 0}
-    total_pct_averages = {"fastball": 0, "offspeed": 0, "total": 0}
-
-    # to hold the info for fps
-    total_fps_at_bats = 0
-    total_fps_strikes = 0
-    total_fps_pct = 0
-
-    # to hold the info for the whif stats
-    total_whiffs_swing_and_misses = {"fastball": 0, "offspeed": 0, "total": 0}
-    total_whiffs_pitches_swung_at = {"fastball": 0, "offspeed": 0, "total": 0}
-    total_whiffs_pct = {"fastball": 0, "offspeed": 0, "total": 0}
-
-    # to hold the info for swing and miss statistics
-    total_swing_and_miss_num = {"fastball": 0, "offspeed": 0, "total": 0}
-    total_swing_and_miss_pitches = {"fastball": 0, "offspeed": 0, "total": 0}
-    total_swing_and_miss_pct = {"fastball": 0, "offspeed": 0, "total": 0}
-
-    # to hold the info for csw stats
-    total_csw_num = {"fastball": 0, "offspeed": 0, "total": 0}
-    total_csw_pitches = {"fastball": 0, "offspeed": 0, "total": 0}
-    total_csw_pct = {"fastball": 0, "offspeed": 0, "total": 0}
-
-    # to hold info for ball in play statistics
-    total_ab_results_balls_in_play = 0
-    total_ab_results_strikeouts = 0
-    total_ab_results_free_base = 0
-    total_ab_results_total_at_bats = 0
-    total_ab_results_hit_hard = 0
-    total_ab_results_hit_weak = 0
-    total_ab_results_pct = {"ip": 0, "strikouts": 0, "bb/hbp": 0}
-
-    for pitcher in pitchers:
-
-        # to hold the info for the avg velo stats specific to pitcher
-        velo_num_pitches = {"FB": 0, "SM": 0, "total": 0}
-        velo_summed_velos = {"FB": 0, "SM": 0, "total": 0}
-        velo_averages = {"FB": 0, "SM": 0, "total": 0}
-
-        # to hold the info for the strike percentage stats specific to pitcher
-        pct_num_pitches = {"fastball": 0, "offspeed": 0, "total": 0}
-        pct_num_strikes = {"fastball": 0, "offspeed": 0, "total": 0}
-        pct_averages = {"fastball": 0, "offspeed": 0, "total": 0}
-
-        # to hold the info for first pitch strikes specific to pitcher
-        fps_at_bats = 0
-        fps_strikes = 0
-        fps_pct = 0
-
-        # to hold the info for whiff statistics specific to pitcher
-        whiffs_swing_and_misses = {"fastball": 0, "offspeed": 0, "total": 0}
-        whiffs_pitches_swung_at = {"fastball": 0, "offspeed": 0, "total": 0}
-        whiffs_pct = {"fastball": 0, "offspeed": 0, "total": 0}
-        
-        # to hold the info for swing and miss statistics specific to pitcher
-        swing_and_miss_num = {"fastball": 0, "offspeed": 0, "total": 0}
-        swing_and_miss_pitches = {"fastball": 0, "offspeed": 0, "total": 0}
-        swing_and_miss_pct = {"fastball": 0, "offspeed": 0, "total": 0}
-
-        # to hold the info for CSW specific to pitcher
-        csw_num = {"fastball": 0, "offspeed": 0, "total": 0}
-        csw_pitches = {"fastball": 0, "offspeed": 0, "total": 0}
-        csw_pct = {"fastball": 0, "offspeed": 0, "total": 0}
-
-        # to hold info for ball in play statistics specific to pitcher
-        ab_results_balls_in_play = 0
-        ab_results_strikeouts = 0
-        ab_results_free_base = 0
-        ab_results_total_at_bats = 0
-        ab_results_hit_hard = 0
-        ab_results_hit_weak = 0
-        ab_results_pct = {
-            "ip": 0, "strikouts": 0, "bb/hbp": 0, "hard_ip": 0, 
-            "weak_ip": 0, "hard_total": 0, "weak_total": 0
-        }
-
-        # look through all of pitcher outings
-        for outing in pitcher.outings:
-            if outing.season.current_season:
-                for at_bat in outing.at_bats:
-
-                    # FPS info
-                    fps_at_bats += 1
-                    total_fps_at_bats += 1
-                    new_at_bat = True
-
-                    for pitch in at_bat.pitches:
-                        pitch_type = PitchType(pitch.pitch_type).name
-
-                        # VELOS
-                        if pitch.velocity not in [None, ""]:
-
-                            if pitch_type in ["FB", "SM"]:
-
-                                # for pitcher specific
-                                velo_num_pitches[pitch_type] += 1
-                                velo_num_pitches["total"] += 1
-                                velo_summed_velos[pitch_type] += pitch.velocity
-                                velo_summed_velos["total"] += pitch.velocity
-
-                                # for team total stats
-                                total_velo_num_pitches[pitch_type] += 1
-                                total_velo_num_pitches["total"] += 1
-                                total_velo_summed_velos[pitch_type] += pitch.velocity
-                                total_velo_summed_velos["total"] += pitch.velocity
-
-                        # STRIKE PERCENTAGES
-                        pct_num_pitches["total"] += 1
-                        total_pct_num_pitches["total"] += 1
-
-                        # total num pitches
-                        if pitch_type in ["FB", "SM"]:
-                            pct_num_pitches["fastball"] += 1
-                            total_pct_num_pitches["fastball"] += 1
-                        else: 
-                            pct_num_pitches["offspeed"] += 1
-                            total_pct_num_pitches["offspeed"] += 1
-
-                        # strikes
-                        if pitch.pitch_result in ["CS", "SS", "F", "IP"]:
-                            pct_num_strikes["total"] += 1
-                            total_pct_num_strikes["total"] += 1
-                            if pitch_type in ["FB", "SM"]:
-                                pct_num_strikes["fastball"] += 1
-                                total_pct_num_strikes["fastball"] += 1
-                            else:
-                                pct_num_strikes["offspeed"] += 1
-                                total_pct_num_strikes["offspeed"] += 1   
-
-                            if new_at_bat:
-                                fps_strikes += 1
-                                total_fps_strikes += 1
-
-                        # WHIFFS
-                        if pitch.pitch_result in ["SS", "F", "IP"]:
-                            whiffs_pitches_swung_at["total"] += 1
-                            total_whiffs_pitches_swung_at["total"] += 1
-                            if pitch.pitch_result == "SS":
-                                whiffs_swing_and_misses["total"] += 1
-                                total_whiffs_swing_and_misses["total"] += 1
-                                if pitch_type in ["FB", "SM"]:
-                                    whiffs_pitches_swung_at["fastball"] += 1
-                                    whiffs_swing_and_misses["fastball"] += 1
-                                    total_whiffs_pitches_swung_at["fastball"] += 1
-                                    total_whiffs_swing_and_misses["fastball"] += 1
-                                else:
-                                    whiffs_pitches_swung_at["offspeed"] += 1
-                                    whiffs_swing_and_misses["offspeed"] += 1
-                                    total_whiffs_pitches_swung_at["offspeed"] += 1
-                                    total_whiffs_swing_and_misses["offspeed"] += 1
-                            else:
-                                if pitch_type in ["FB", "SM"]:
-                                    whiffs_pitches_swung_at["fastball"] += 1
-                                    total_whiffs_pitches_swung_at["fastball"] += 1
-                                else:
-                                    whiffs_pitches_swung_at["offspeed"] += 1
-                                    total_whiffs_pitches_swung_at["offspeed"] += 1
-
-                        # SWING AND MISS
-                        swing_and_miss_pitches["total"] += 1
-                        total_swing_and_miss_pitches["total"] += 1
-                        if pitch_type in ["FB", "SM"]:
-                            swing_and_miss_pitches["fastball"] += 1
-                            total_swing_and_miss_pitches["fastball"] += 1
-                            if pitch.pitch_result == "SS":
-                                swing_and_miss_num["fastball"] += 1
-                                swing_and_miss_num["total"] += 1
-                                total_swing_and_miss_num["fastball"] += 1
-                                total_swing_and_miss_num["total"] += 1
-                        else:
-                            swing_and_miss_pitches["offspeed"] += 1
-                            total_swing_and_miss_pitches["offspeed"] += 1
-                            if pitch.pitch_result == "SS":
-                                swing_and_miss_num["offspeed"] += 1
-                                swing_and_miss_num["total"] += 1
-                                total_swing_and_miss_num["offspeed"] += 1
-                                total_swing_and_miss_num["total"] += 1
-                        
-                        # CSW
-                        csw_pitches["total"] += 1
-                        total_csw_pitches["total"] += 1
-                        if pitch_type in ["FB", "SM"]:
-                            csw_pitches["fastball"] += 1
-                            total_csw_pitches["fastball"] += 1
-                            if pitch.pitch_result in ["SS", "CS"]:
-                                csw_num["fastball"] += 1
-                                csw_num["total"] += 1
-                                total_csw_num["fastball"] += 1
-                                total_csw_num["total"] += 1
-                        else:
-                            csw_pitches["offspeed"] += 1
-                            total_csw_pitches["offspeed"] += 1
-                            if pitch.pitch_result in ["SS", "CS"]:
-                                csw_num["offspeed"] += 1
-                                csw_num["total"] += 1
-                                total_csw_num["offspeed"] += 1
-                                total_csw_num["total"] += 1
-                        
-                        # AB Results
-                        if pitch.ab_result not in [None, ""]:
-                            ab_results_total_at_bats += 1
-                            total_ab_results_total_at_bats += 1
-                            if pitch.pitch_result == "IP":
-                                ab_results_balls_in_play += 1
-                                total_ab_results_balls_in_play += 1
-                                if pitch.hit_hard:
-                                    ab_results_hit_hard += 1
-                                    total_ab_results_hit_hard += 1
-                                else:
-                                    ab_results_hit_weak += 1
-                                    total_ab_results_hit_weak += 1
-                            if pitch.ab_result in ["BB", "HBP"]:
-                                ab_results_free_base += 1
-                                total_ab_results_free_base += 1
-                            if pitch.ab_result in ["K", "KL", "D3->Out", "D3->Safe"]:
-                                ab_results_strikeouts += 1
-                                total_ab_results_strikeouts += 1
-
-                        new_at_bat = False         
-                    
-        # VELOS - totals for pitcher
-        for key, val in velo_num_pitches.items():
-            if velo_num_pitches[key] != 0:
-                velo_averages[key] = truncate(
-                    velo_summed_velos[key]/velo_num_pitches[key], 1)
-
-        # STRIKE PERCENTAGE - totals for pitcher
-        for key, val in pct_num_pitches.items():
-            if pct_num_pitches[key] != 0:
-                pct_averages[key] = (
-                    int(percentage(pct_num_strikes[key]/pct_num_pitches[key])))
-        
-        # FPS - totals for pitcher
-        if fps_at_bats != 0:
-            fps_pct = int(percentage(fps_strikes/fps_at_bats))
-        
-        # WHIF - totals for pitcher
-        for key, val in whiffs_pitches_swung_at.items():
-            if whiffs_pitches_swung_at[key] != 0:
-                whiffs_pct[key] = int(percentage(
-                    whiffs_swing_and_misses[key]/whiffs_pitches_swung_at[key]))
-        
-        # SWING & MISS - totals for pitcher
-        for key, val in swing_and_miss_pitches.items():
-            if swing_and_miss_pitches[key] != 0:
-                swing_and_miss_pct[key] = int(percentage(
-                    swing_and_miss_num[key]/swing_and_miss_pitches[key]))
-        
-        # CSW - totals for pitcher
-        for key, val in csw_pct.items():
-            if csw_pitches[key] != 0:
-                csw_pct[key] = int(percentage(
-                    csw_num[key]/csw_pitches[key]))
-        
-        # AB RESULTS - totals for pitcher
-        ab_results_pct["ip"] = int(percentage(ab_results_balls_in_play/ab_results_total_at_bats))
-        ab_results_pct["strikeouts"] = int(percentage(ab_results_strikeouts/ab_results_total_at_bats))
-        ab_results_pct["bb/hbp"] = int(percentage(ab_results_free_base/ab_results_total_at_bats))
-        ab_results_pct["hard_ip"] = int(percentage(ab_results_hit_hard/ab_results_balls_in_play))
-        ab_results_pct["weak_ip"] = int(percentage(ab_results_hit_weak/ab_results_balls_in_play))
-        ab_results_pct["hard_total"] = int(percentage(ab_results_hit_hard/ab_results_total_at_bats))
-        ab_results_pct["weak_total"] = int(percentage(ab_results_hit_weak/ab_results_total_at_bats))
-        
-        # fill in players array with info from above
-        players.append(
-            {
-                "details": {
-                    "name": f"{pitcher.name}",
-                    "class": pitcher.grad_year,
-                    "throws": pitcher.throws},
-                "velos": velo_averages,
-                "strike_percentages": pct_averages,
-                "fps": fps_pct,
-                "whiff": whiffs_pct,
-                "swing_miss": swing_and_miss_pct,
-                "csw": csw_pct,
-                "ab_results": ab_results_pct
-            }
-        )
-
-    # VELOS - totals for staff
-    for key, val in total_velo_num_pitches.items():
-        if total_velo_num_pitches[key] != 0:
-            total_velo_averages[key] = truncate(
-                total_velo_summed_velos[key]/total_velo_num_pitches[key], 1)
-
-    # STRIKE PERCENTAGE - totals for staff
-    for key, val in total_pct_num_pitches.items():
-        if total_pct_num_pitches[key] != 0:
-            total_pct_averages[key] = (
-                int(percentage(total_pct_num_strikes[key]/total_pct_num_pitches[key])))
-    
-    # FPS - totals for staff
-    if total_fps_at_bats != 0:
-        total_fps_pct = int(percentage(total_fps_strikes/total_fps_at_bats))
-    
-    # WHIF - totals for staff
-    for key, val in total_whiffs_pitches_swung_at.items():
-        if total_whiffs_pitches_swung_at[key] != 0:
-            total_whiffs_pct[key] = int(percentage(
-                total_whiffs_swing_and_misses[key]/total_whiffs_pitches_swung_at[key]))
-        
-    # SWING & MISS - totals for staff
-    for key, val in total_swing_and_miss_pitches.items():
-        if total_swing_and_miss_pitches[key] != 0:
-            total_swing_and_miss_pct[key] = int(percentage(
-                total_swing_and_miss_num[key]/total_swing_and_miss_pitches[key]))
-    
-    # CSW - totals for staff
-    for key, val in total_csw_pct.items():
-            if total_csw_pitches[key] != 0:
-                total_csw_pct[key] = int(percentage(
-                    total_csw_num[key]/total_csw_pitches[key]))
-    
-    # AB RESULTS - totals for pitcher
-    total_ab_results_pct["ip"] = int(percentage(total_ab_results_balls_in_play/total_ab_results_total_at_bats))
-    total_ab_results_pct["strikeouts"] = int(percentage(total_ab_results_strikeouts/total_ab_results_total_at_bats))
-    total_ab_results_pct["bb/hbp"] = int(percentage(total_ab_results_free_base/total_ab_results_total_at_bats))
-    total_ab_results_pct["hard_ip"] = int(percentage(total_ab_results_hit_hard/total_ab_results_balls_in_play))
-    total_ab_results_pct["weak_ip"] = int(percentage(total_ab_results_hit_weak/total_ab_results_balls_in_play))
-    total_ab_results_pct["hard_total"] = int(percentage(total_ab_results_hit_hard/total_ab_results_total_at_bats))
-    total_ab_results_pct["weak_total"] = int(percentage(total_ab_results_hit_weak/total_ab_results_total_at_bats))
-
-    return (
-        players, 
-        total_velo_averages, 
-        total_pct_averages, 
-        total_fps_pct, 
-        total_whiffs_pct, 
-        total_swing_and_miss_pct, 
-        total_ab_results_pct,
-        total_csw_pct
-    )
-
-
 def staffPitchStrikePercentage(pitchers):
 
     # storage array for staff info
@@ -1639,71 +1730,6 @@ def veloOverTime(outing):
                 else:
                     velos[key].append("null")
     return velos
-
-
-def teamImportantStatsSeason(pitchers): 
-    # weighted strike percentage
-    strikes = 0
-    total_pitches = 0
-    strike_percentage = 0
-    # weighted FPS
-    first_pitch_strikes = 0
-    first_pitches = 0
-    fps_percentage = 0 
-    # K/BB Ratio
-    strikeouts = 0
-    walks = 0
-    k_to_bb = 0
-    # Offspeed Strike Percentage
-    offspeed_pitches = 0
-    offspeed_strikes = 0
-
-    for p in pitchers:
-        for o in p.outings:
-            current_inning = 1
-            season = Season.query.filter_by(id=o.season_id).first()
-            if season.current_season:
-                for ab in o.at_bats:
-                    for index, p in enumerate(ab.pitches):
-                        total_pitches += 1
-                        if p.pitch_result is not "B":
-                            strikes += 1 
-                        if index is 0:
-                            first_pitches += 1
-                            if p.pitch_result is not "B":
-                                first_pitch_strikes += 1
-                        if p.ab_result in ["K", "KL"]:
-                            strikeouts += 1
-                        if p.ab_result == "BB":
-                            walks += 1
-                        if p.pitch_type not in [1,7,"FB","SM"]:
-                            offspeed_pitches += 1
-                            if p.pitch_result != "B":
-                                offspeed_strikes += 1
-
-
-    if total_pitches is 0:
-        strike_percentage = "X"
-    else:
-        strike_percentage = percentage(strikes/total_pitches, 0)
-    
-    if first_pitch_strikes is 0:
-        fps_percentage = "X"
-    else:
-        fps_percentage = percentage(first_pitch_strikes/first_pitches)
-    
-    if walks is 0:
-        if strikeouts is 0:
-            k_to_bb = 0
-        else: 
-            k_to_bb = "inf"
-    else:
-        k_to_bb = truncate(strikeouts/walks, 1)
-    
-    if offspeed_pitches != 0:
-        offspeed_strike_pct = percentage(offspeed_strikes/offspeed_pitches)
-
-    return strike_percentage, fps_percentage, k_to_bb, offspeed_strike_pct
 
 
 def batterSwingWhiffRatebyPitchbyCount(batter, seasons=[]):
