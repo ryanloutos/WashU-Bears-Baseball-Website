@@ -2,10 +2,14 @@ WashU-Bears-Baseball-Website
 Collaborators: Ryan Loutos, Mitchell Black (with some help from Kenny Dorian and Brian Hall)
 
 By Sat 2/22 For Hendrix:
-- Add all of Hendrix batters and pitchers to Opponent/Pitcher/Batter tables
-- Make sure pitch tracking is ready to track opponents
 - Edit any necessary pages for basic opponents analysis while still keeping our own
 - Adjust opponent pages to include pitching information too
+
+In Game Tracking Improvements:
+- Provide ability to enter batter and pitcher notes/tendencies
+- Pitcher Identification by name and number, not just name
+- Back button from outing page to game page, so after editing outing can go directly to game
+- Highlight names red/blue? for lhh/rhh & lhp/rhp
 
 Other Goals/Ideas For Improvement
 - (Ryan) Finish adjusting staff pages and finalize them for now

@@ -339,7 +339,9 @@ def new_batter():
         batter = Batter(
             firstname=form.firstname.data,
             lastname=form.lastname.data,
-            short_name=form.nickname.data,
+            initials=form.initials.data,
+            short_name=form.shortname.data,
+            number=form.number.data,
             bats=form.bats.data,
             grad_year=form.grad_year.data,
             opponent_id=form.opponent.data,

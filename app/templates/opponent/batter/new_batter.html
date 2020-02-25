@@ -27,9 +27,23 @@
                 {% endfor %}
             </p>
             <p>
-                {{ form.nickname.label }}<br>
-                {{ form.nickname(size=32) }}
-                {% for error in form.nickname.errors %}
+                {{ form.initials.label }}<br>
+                {{ form.initials(size=32) }}
+                {% for error in form.initials.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.shortname.label }}<br>
+                {{ form.shortname(size=32) }}
+                {% for error in form.shortname.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.number.label }}<br>
+                {{ form.number(size=32, type='number') }}
+                {% for error in form.number.errors %}
                     <span style="color: red;">[{{ error }}]</span>
                 {% endfor %}
             </p>

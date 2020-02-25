@@ -28,6 +28,9 @@ class User(UserMixin, db.Model):
 class Pitcher(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), index=True)
+    # firstname = db.Column(db.String(64))
+    # lastname = db.Column(db.String(64))
+    # number = db.Column(db.Integer, index=True)
     throws = db.Column(db.String(64), index=True)
     grad_year = db.Column(db.String(8), index=True)
     opponent_id = db.Column(db.Integer, db.ForeignKey('opponent.id'), index=True)
@@ -180,7 +183,7 @@ class Batter(db.Model):
 
     def __repr__(self):
         return self.short_name
-    
+
     def name(self):
         return f"{self.firstname} {self.lastname}"
 
@@ -263,6 +266,7 @@ class Video(db.Model):
 
     def __repr__(self):
         return f"{self.date.month}/{self.date.day} - {self.title}"
+
 
 @login.user_loader
 def load_user(id):

@@ -47,7 +47,9 @@ class NewBatterForm(FlaskForm):
     opponent = SelectField('Opponent', validators=[Optional()])
     firstname = StringField('First Name', validators=[Optional()])
     lastname = StringField('Last Name', validators=[Optional()])
-    nickname = StringField('Initials/Number', validators=[Optional()])
+    initials = StringField('Initials', validators=[Optional()])
+    shortname = StringField('Short Name', validators=[Optional()])
+    number = StringField('Number', validators=[Optional()])
     bats = SelectField(
         'Bats',
         choices=[('R', 'R'), ('L', 'L'), ('S', 'S')],
@@ -356,6 +358,7 @@ class PitcherNewVideoForm(FlaskForm):
     link = StringField("Link", validators=[Optional()])
     submit = SubmitField("Post Video")
 
+
 class BatterNewVideoForm(FlaskForm):
     title = StringField("Title", validators=[Optional()])
     date = DateField("Date", validators=[DataRequired()], format="%Y-%m-%d")
@@ -368,4 +371,3 @@ class BatterNewVideoForm(FlaskForm):
     batter = SelectField("Batter", validators=[Optional()])
     link = StringField("Link", validators=[Optional()])
     submit = SubmitField("Post Video")
-
