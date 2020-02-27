@@ -3,7 +3,53 @@
 {% block styles %}
     {{ super() }}
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/staff_sidenav.css') }}">
+    <script src="{{ url_for('static', filename='packages/d3/d3.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/d3_strikezone.js') }}"></script>
     <script src="{{ url_for('static', filename='js/sidenav.js') }}"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function(){
+            setupPitchesHandsAgainst();
+            setupPitchesSplitsAgainst();
+        });
+
+        function setupPitchesHandsAgainst(){
+            var legend = new strikezone_legend("zone-legend-1");
+            var rhp_zone = new strikezone("rhp-zone");
+            var lhp_zone = new strikezone("lhp-zone");
+
+            let pitches = {{pitches|tojson}};
+
+            pitches.forEach(function(pitch) {
+                if (pitch.x != null || pitch.y != null) {
+                    //for lefty and righty batter splits
+                    if(pitch.pitcher_hand == "L"){
+                        lhp_zone.drawCircle(pitch.x, pitch.y, pitch_type = pitch.pitch_type, pitch.pitch_num);
+                    } else if(pitch.pitcher_hand == "R"){
+                        rhp_zone.drawCircle(pitch.x, pitch.y, pitch_type = pitch.pitch_type, pitch.pitch_num);
+                    }
+                }
+            });
+        }
+
+        function setupPitchesSplitsAgainst(){
+            var legend = new strikezone_legend("zone-legend-2");
+            var rhh_zone = new strikezone("rhh-zone");
+            var lhh_zone = new strikezone("lhh-zone");
+
+            let pitches = {{pitches|tojson}};
+
+            pitches.forEach(function(pitch) {
+                if (pitch.x != null || pitch.y != null) {
+                    //for lefty and righty batter splits
+                    if(pitch.batter_hand == "L"){
+                        lhh_zone.drawCircle(pitch.x, pitch.y, pitch_type = pitch.pitch_type, pitch.pitch_num);
+                    } else if(pitch.batter_hand == "R"){
+                        rhh_zone.drawCircle(pitch.x, pitch.y, pitch_type = pitch.pitch_type, pitch.pitch_num);
+                    }
+                }
+            });
+        }
+    </script>
     <style>
         .logos {
             width: 100px;
@@ -18,8 +64,8 @@
         {% include "game/game_title.html" %}
         <table class="table">
             <tr class="table-headers">
-                <th>Batter</th>
-                <th>AB's</th>
+                <th class="text-left">Batter</th>
+                <th>PA's</th>
                 <th>Pitches Seen</th>
                 <th>Hits</th>
                 <th>Ks</th>
@@ -29,7 +75,7 @@
             </tr>
             {% for batter, stats in game_opponent_stats.items() %}
                 <tr>
-                    <td><a href="{{ url_for('batter.batter_game_view', batter_id=batter.id, game_id=game.id) }}">{{ batter.name() }}</a></td>
+                    <td class="text-left"><a href="{{ url_for('batter.batter_game_view', batter_id=batter.id, game_id=game.id) }}">{{ batter.name() }}</a></td>
                     <td>{{ stats["AB"] }}</td>
                     <td>{{ stats["pitches"] }}</td>
                     <td>{{ stats["hits"] }}</td>
@@ -40,5 +86,40 @@
                 </tr>
             {% endfor %}
         </table>
+        <div class="row">
+            <h1 class="text-center">General Scouting Splits</h1>
+            <div>
+                <ul class="nav nav-tabs">
+                    <li class="active tabs"><a data-toggle="tab" href="#pitches-hands-against">RHP/LHP Pitches</a></li>
+                    <li class="tabs"><a data-toggle="tab" href="#pitches-against-splits">Pitches vs LHH/RHH</a></li>
+                </ul>
+            </div>
+            <div class="row tab-content">
+                <div id="pitches-hands-against" class="tab-pane fade in active">
+                    <h2 class="text-center">RHP and LHP Pitches vs WashU Hitters</h2>
+                    <div id="zone-legend-1"></div>
+                    <div class="col-xs-12 col-md-6">
+                        <h4 class="text-center">Pitches vs RHP</h4>
+                        <div id="lhp-zone"></div>
+                    </div>
+                    <div class="col-xs-12 col-md-6">
+                        <h4 class="text-center">Pitches vs LHP</h4>
+                        <div id="rhp-zone"></div>
+                    </div>
+                </div>
+                <div id="pitches-against-splits" class="tab-pane fade">
+                    <h2 class="text-center">Pitches vs WashU RHH and LHH</h2>
+                    <div id="zone-legend-2"></div>
+                    <div class="col-xs-12 col-md-6">
+                        <h4 class="text-center">Pitches vs RHH</h4>
+                        <div id="rhh-zone"></div>
+                    </div>
+                    <div class="col-xs-12 col-md-6">
+                        <h4 class="text-center">Pitches vs LHH</h4>
+                        <div id="lhh-zone"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %}
