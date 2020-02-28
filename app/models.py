@@ -28,9 +28,10 @@ class User(UserMixin, db.Model):
 class Pitcher(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), index=True)
-    # firstname = db.Column(db.String(64))
-    # lastname = db.Column(db.String(64))
-    # number = db.Column(db.Integer, index=True)
+    firstname = db.Column(db.String(64), index=True)
+    lastname = db.Column(db.String(64), index=True)
+    number = db.Column(db.Integer, index=True)
+    notes = db.Column(db.String(1024), index=True)
     throws = db.Column(db.String(64), index=True)
     grad_year = db.Column(db.String(8), index=True)
     opponent_id = db.Column(db.Integer, db.ForeignKey('opponent.id'), index=True)
@@ -177,6 +178,7 @@ class Batter(db.Model):
     short_name = db.Column(db.String(8), index=True)
     number = db.Column(db.Integer, index=True)
     initials = db.Column(db.String(8), index=True)
+    notes = db.Column(db.String(1024), index=True)
     bats = db.Column(db.String(8), index=True)
     grad_year = db.Column(db.String(8), index=True)
     opponent_id = db.Column(
@@ -267,6 +269,7 @@ class Video(db.Model):
     batter_id = db.Column(db.Integer, db.ForeignKey('batter.id'), index=True)
     season_id = db.Column(db.Integer, db.ForeignKey('season.id'), index=True)
     outing_id = db.Column(db.Integer, db.ForeignKey('outing.id'), index=True)
+    atbat_id = db.Column(db.Integer, db.ForeignKey('at_bat.id'), index=True)
     link = db.Column(db.String(128))
 
     def __repr__(self):
