@@ -324,7 +324,7 @@ class EditPitcherForm(FlaskForm):
     grad_year = StringField('Grad Year', validators=[Optional()])
     opponent = SelectField('Opponent', validators=[Optional()])
     retired = BooleanField('Retired?')
-    file = FileField('Team Logo', validators=[FileRequired()])
+    file = FileField('Pitcher Photo', validators=[FileRequired()])
     submit = SubmitField('Save Changes')
 
 
