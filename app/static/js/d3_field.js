@@ -157,7 +157,7 @@ class field {
      * @param {String} traj traj of circle(FB, LD, GB)
      * @param {boolean} hard_hit bool for hard hit star
      */
-    drawCircle(x, y, traj="", hard_hit=false){
+    drawCircle(x, y, traj="", hard_hit=false, pitch_tracker=false){
         this.field_svg.append('circle')
             .attr('class', 'field-circle')
             .attr('cx', this.xScalef(x))
@@ -168,11 +168,13 @@ class field {
             .style("stroke-width", 1);
         
         //add hard hit star if needed
-        if(hard_hit != false){
-            this.field_svg.append("path")
-                .attr("d", star)
-                .attr("transform", "translate("+this.xScalef(x)+","+this.yScalef(y)+")")
-                .attr("fill", "black");
+        if (!pitch_tracker) {
+            if(hard_hit != false){
+                this.field_svg.append("path")
+                    .attr("d", star)
+                    .attr("transform", "translate("+this.xScalef(x)+","+this.yScalef(y)+")")
+                    .attr("fill", "black");
+            }
         }
     }
 }

@@ -6,6 +6,8 @@
     {% include "outing/pitch_tracker/tracker_css.html" %}
     <script src="{{ url_for('static', filename='packages/d3/d3.js') }}"></script>
     <script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/d3_field.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/d3_strikezone.js') }}"></script>
 {% endblock %}
 
 {% block content %}
@@ -91,10 +93,7 @@
             </div>
             <br>
             <div>
-                <div id="pitch-location">
-                    <svg id='strikezone' class=plot height='457' width='457'></svg>
-                </div>
-                
+                <div id="pitch-location"></div>
                 <table id="pitch-info">
                     <tr>
                         <td value=1 class="pitch-type box">
@@ -297,46 +296,48 @@
                     </tr>
                 </table>
                 <div id=fieldDiv style="visibility: hidden;">
-                    <svg id='field' height='457' width='457'></svg>
-                    <table id="in-play-info-table" style="margin-top: -6px; margin-left: 5px;">
-                        <tr class='bipType'>
-                            <td>
-                                <table>
-                                    <caption style="font-size: 18px; text-align: center; color: black; margin-bottom: -5px; margin-top: -5px">Trajectory</caption>
-                                    <tr>
-                                        <td class="traj-answer box" value=GB>GB</td>
-                                        <td class="traj-answer box" value=FB>FB</td>
-                                        <td class="traj-answer box" value=LD>LD</td>
-                                    </tr>
-                                </table>
-                            </td>
-                            <td style="padding-left: 15px;">
-                                <table>
-                                    <caption style="font-size: 18px; text-align: center; color: black; margin-bottom: -5px; margin-top: -5px">Fielder</caption>
-                                    <tr>
-                                        <td class="fielder box" value="1">1</td>
-                                        <td class="fielder box" value="2">2</td>
-                                        <td class="fielder box" value="3">3</td>
-                                        <td class="fielder box" value="4">4</td>
-                                        <td class="fielder box" value="5">5</td>
-                                        <td class="fielder box" value="6">6</td>
-                                        <td class="fielder box" value="7">7</td>
-                                        <td class="fielder box" value="8">8</td>
-                                        <td class="fielder box" value="9">9</td>
-                                    </tr>
-                                </table>
-                            </td>
-                            <td style="padding-left: 15px;">
-                                <table style="width: 100%">
-                                    <caption style="font-size: 18px; text-align: center; color: black; margin-bottom: -5px; margin-top: -5px">Hit Hard?</caption>
-                                    <tr>
-                                        <td value=1 class="hit-hard box">Yes</td>
-                                        <td value=0 class="hit-hard box default-selections">No</td>
-                                    </tr>
-                                </table>
-                            </td>
-                        </tr>
-                    </table>
+                    <div id="field-container"></div>
+                    <div>
+                        <table id="in-play-info-table" style="margin-top: -6px; margin-left: 5px;">
+                            <tr class='bipType'>
+                                <td>
+                                    <table>
+                                        <caption style="font-size: 18px; text-align: center; color: black; margin-bottom: -5px; margin-top: -5px">Trajectory</caption>
+                                        <tr>
+                                            <td class="traj-answer box" value=GB>GB</td>
+                                            <td class="traj-answer box" value=FB>FB</td>
+                                            <td class="traj-answer box" value=LD>LD</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td style="padding-left: 15px;">
+                                    <table>
+                                        <caption style="font-size: 18px; text-align: center; color: black; margin-bottom: -5px; margin-top: -5px">Fielder</caption>
+                                        <tr>
+                                            <td class="fielder box" value="1">1</td>
+                                            <td class="fielder box" value="2">2</td>
+                                            <td class="fielder box" value="3">3</td>
+                                            <td class="fielder box" value="4">4</td>
+                                            <td class="fielder box" value="5">5</td>
+                                            <td class="fielder box" value="6">6</td>
+                                            <td class="fielder box" value="7">7</td>
+                                            <td class="fielder box" value="8">8</td>
+                                            <td class="fielder box" value="9">9</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td style="padding-left: 15px;">
+                                    <table style="width: 100%">
+                                        <caption style="font-size: 18px; text-align: center; color: black; margin-bottom: -5px; margin-top: -5px">Hit Hard?</caption>
+                                        <tr>
+                                            <td value=1 class="hit-hard box">Yes</td>
+                                            <td value=0 class="hit-hard box default-selections">No</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
                     
                 </div>
             </div>
