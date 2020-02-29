@@ -39,7 +39,7 @@ class Pitcher(db.Model):
     outings = db.relationship('Outing', backref='pitcher', lazy='dynamic')
 
     def __repr__(self):
-        return self.name
+        return self.firstname + " " + self.lastname
 
 
 class Game(db.Model):
@@ -165,6 +165,7 @@ class Opponent(db.Model):
     name = db.Column(db.String(64), index=True)
     outings = db.relationship('Outing', backref='opponent', lazy='dynamic')
     batters = db.relationship('Batter', backref='opponent', lazy='dynamic', order_by="Batter.lastname")
+    pitchers = db.relationship('Pitcher', backref='opponent', lazy='dynamic', order_by="Pitcher.lastname")
     games = db.relationship('Game', backref='opponent', lazy='dynamic')
 
     def __repr__(self):

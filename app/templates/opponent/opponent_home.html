@@ -19,7 +19,7 @@
         {% include "opponent/opponent_title.html" %}
         <div class="row">
             <div class="col-xs-12 col-md-6" style="text-align: center;">
-                <h2>Active Roster</h2>
+                <h2>Active Hitters</h2>
                 <table class="table sortable_table">
                     <tr class="table-headers">
                         <th class="text-left">Name</th>
@@ -38,24 +38,22 @@
                 </table>
             </div>
             <div class="col-xs-12 col-md-6" style="text-align: center;">
-                <h2>Current Season's Games</h2>
+                <h2>Active Pitchers</h2>
                 <table class="table sortable_table">
                     <thead>
                         <tr class="table-headers">
-                            <th class="text-left">Date</th>
-                            <th class="text-left">Opponent</th>
-                            <th class="text-left"># Pitchers</th>
+                            <th class="text-left">Name</th>
+                            <th class="text-left">Class</th>
+                            <th class="text-left"># Throws</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for game in opponent.games %}
-                            {% if game.season_id == current_season.id %}
+                        {% for pitcher in opponent.pitchers %}
                             <tr>
-                                <td class="text-left"><a href="{{ url_for('game.game_pitching', id=game.id) }}">{{ game.date }}</a></td>
-                                <td class="text-left">{{ game.get_opponent() }}</td>
-                                <td class="text-left">{{ game.get_num_outings() }}</td>
+                                <td class="text-left"><a href="{{ url_for('pitcher.pitcher_home', id=pitcher.id) }}">{{ pitcher.name }}</a></td>
+                                <td class="text-left">{{ pitcher.grad_year }}</td>
+                                <td class="text-left">{{ pitcher.throws }}</td>
                             </tr>
-                            {% endif %}
                         {% endfor %}
                     </tbody>
                 </table>
