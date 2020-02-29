@@ -1059,7 +1059,7 @@ def new_outing_pitch_tracker(id):
                 "hit_hard": p.hit_hard,
                 "inning": p.inning,
                 "notes": p.notes
-            }
+            }   
             pitches.append(pitch)
 
             # update data for inning data table

@@ -1,52 +1,19 @@
 <script>
-    // put all the pitches in array if continuing tracking
+    // the color scheme used for when a button is clicked
+    var background_red = "#bd2e1f";
+    var text_white = "#f9feff";
+
+    // outing information to keep track of on UI
     var pitches = [];
-    setPitches();
-
-    // update pitch nums
-    var pitch_num = {{ num_pitches }};
-    // pitches by inning
+    var pitch_num = 0;
     var pitchCountInning = {};
-    {% if inning == "" %}
-        var inning = 1;
-    {% else %}
-        var inning = {{ inning }};
-    {% endif %}
-    setPitchCountInning();
-    $("#total-pitches").text(`${pitch_num} (${pitchCountInning[inning]})`);
-
-    // set up by inning table
     var inning_data = {};
-    {% for i in range(1,10) %}
-        inning_data[{{i}}] = {
-            "pitches": {{inning_data_table[i]["pitches"]}},
-            "velo": {{inning_data_table[i]["velo"]}},
-            "strike_pct": {{inning_data_table[i]["strike_pct"]}}
-        }
-    {% endfor %}
-    inning_data["Totals"] = {
-        "pitches": {{inning_data_table["Totals"]["pitches"]}},
-        "velo": {{inning_data_table["Totals"]["velo"]}},
-        "strike_pct": {{inning_data_table["Totals"]["strike_pct"]}}
-    }
-
-    // set the atBat id if present
-    var atBat = "";
-    {% if at_bat != "" %}
-        var atBat = {{ at_bat }};
-    {% endif %}
-
-    // set the outing id to be sent to db with each pitch
-    var outing_id = {{ outing.id }};
-
-    // to keep track of the count
-    var strikes = {{ strikes }};
-    var balls = {{ balls }};
-    var count = `${balls}-${strikes}`;
-    $("#count").text(count);
-
-    // fill pitch table with all the pitches associated with outing
-    updatePitchTable();
+    var at_bat = "";
+    var batter_id = 0;
+    var outing_id = 0;
+    var strikes = "";
+    var balls = "";
+    var count = "";
 
     // variables to hold pitch information that updates on changes
     var velocity = "";
@@ -63,44 +30,28 @@
     var roll_through = 0;
     var short_set = 0;
     var notes = "";
-
-    // the color scheme used for when a button is clicked
-    var background_red = "#bd2e1f";
-    var text_white = "#f9feff";
-
-    // interactive elements to keep track of pitch location and spray info
-    var width = 457;
-    var height = 457;
-    var fieldSvg = new field("field-container", width, height);
-    var fieldDiv = $("#fieldDiv");
-    var fieldD3 = d3.select("#field-sprays");
-    var zoneSvg = new strikezone("pitch-location", width, height);
-    var zoneD3 = d3.select("#strikezone");
-    var xScale = d3.scaleLinear().range([width, 0]).domain([2,-2]);
-    var yScale = d3.scaleLinear().range([height, 0]).domain([0,4]);
-    var xScaleField = d3.scaleLinear().range([width, 0]).domain([250, -250]);
-    var yScaleField = d3.scaleLinear().range([height, 0]).domain([-100, 400]);
-
-    var loc_x = "";
-    var loc_y = "";
+    var loc_x = ""; // strikezone x location
+    var loc_y = ""; // strikezone y location
     var spray_x = "";
     var spray_y = "";
 
-    fieldD3.on("click", function() {
-        fieldD3.selectAll("circle").remove();
-        var location = d3.mouse(this);
-        spray_x = Math.round(xScaleField.invert(location[0])*100,3)/100;
-        spray_y = Math.round(yScaleField.invert(location[1])*100,3)/100;
-        fieldSvg.drawCircle(spray_x, spray_y, traj, hit_hard, true);
-    });
+    // dimensions of strikezone and spray chart
+    var width_D3_elements = 457;
+    var height_D3_elements = 457;
 
-    zoneD3.on("click", function() {
-        zoneD3.selectAll("circle").remove();
-        var location = d3.mouse(this);
-        loc_x = Math.round(xScale.invert(location[0])*100,3)/100;
-        loc_y = Math.round(yScale.invert(location[1])*100,3)/100;
-        zoneSvg.drawCircle(loc_x, loc_y);
-    });
+    // setting up interactive D3 elements
+    var fieldSvg = new field("field-container", width_D3_elements, height_D3_elements);
+    var zoneSvg = new strikezone("pitch-location", width_D3_elements, height_D3_elements);
+
+    // allows for locations to be selected on zone and spray
+    var fieldD3 = d3.select("#field-sprays");
+    var zoneD3 = d3.select("#strikezone");
+
+    // sets up the non-default scales for the D3 elements
+    var xScaleZone = d3.scaleLinear().range([width_D3_elements, 0]).domain([2,-2]);
+    var yScaleZone = d3.scaleLinear().range([height_D3_elements, 0]).domain([0,4]);
+    var xScaleField = d3.scaleLinear().range([width_D3_elements, 0]).domain([250, -250]);
+    var yScaleField = d3.scaleLinear().range([height_D3_elements, 0]).domain([-100, 400]);
 
     // setting up variables for clickable buttons
     var batterButtons = $(".batters");
@@ -140,38 +91,10 @@
     var abResultStrikeThreeDiv = $("#strike-three-ab-results");
     var abResultInPlayDiv = $("#ip-ab-results");
     var abResultOtherDiv = $("#ab-results-other");
-    var ballFlightInfoTable= $("in-play-info-table");
+    var ballFlightInfoTable= $("#in-play-info-table");
+    var fieldDiv = $("#fieldDiv");
 
-    // set up batter
-    {% if batter == "" %}
-        click(batterButtons.first());
-        var batter_id = batterButtons.first().attr("value");
-    {% else %}
-        var batter_id = {{ batter }};
-    {% endif %}
-
-    // set up lead_runner
-    {% if lead_runner == "" %}
-        lead_runner = "";
-    {% else %}
-        lead_runner = {{ lead_runner }};
-    {% endif %}
-
-    batterButtons.each(function(){
-        button = $(this);
-        if (button.attr("value") == batter_id) {
-            click(button);
-        }
-    });
-
-    leadRunnerButtons.each(function(){
-        button = $(this);
-        if (button.attr("value") == lead_runner) {
-            click(button);
-        }
-    });
-
-    inningInput.val(inning);
+    setUpInfoFromDatabase();
 
     /********************- INNING -********************/
     inningInput.change(function() {
@@ -194,6 +117,19 @@
         unclick(leadRunnerButtons);
         click(button);
         lead_runner = button.attr("value");
+    });
+
+    /********************- PITCH LOCATION -********************/
+    zoneD3.on("click", function() {
+        zoneD3.selectAll("circle").remove();
+        var location = d3.mouse(this);
+
+        // scales the location so it matches the non-default dimensions
+        loc_x = Math.round(xScaleZone.invert(location[0])*100,3)/100;
+        loc_y = Math.round(yScaleZone.invert(location[1])*100,3)/100;
+
+        zoneSvg.drawCircle(loc_x, loc_y);
+        checkLogic();
     });
 
     /********************- PITCH TYPE -********************/
@@ -246,6 +182,7 @@
         button = $(this);
         pitch = button.attr("value");
         unclick(pitchResultButtons);
+        makeInvisible(addPitchButton);
         abResultsReset();
 
         if (pitch == "IP") {
@@ -484,6 +421,19 @@
         checkLogic();
     });
 
+    /********************- SPRAY LOCATION -********************/
+    fieldD3.on("click", function() {
+        fieldD3.selectAll("circle").remove();
+        var location = d3.mouse(this);
+
+        // scales the spray locations to be in feet
+        spray_x = Math.round(xScaleField.invert(location[0])*100,3)/100;
+        spray_y = Math.round(yScaleField.invert(location[1])*100,3)/100;
+
+        fieldSvg.drawCircle(spray_x, spray_y, traj, hit_hard, true);
+        checkLogic();
+    });
+
     /********************- ADD PITCH -********************/
     addPitchButton.click(function(){
         // get values that weren't set above
@@ -498,7 +448,7 @@
             'time_to_plate': time_to_plate, 'pitch_type': pitch_type, 'pitch_result': pitch_result,
             'roll_through': roll_through, "short_set": short_set, 'loc_x': loc_x, 'loc_y': loc_y,
             'hit_spot': hit_spot, 'ab_result': ab_result, 'traj': traj, 'fielder': fielder,
-            'spray_x': spray_x*1.3, 'spray_y': spray_y*1.3, 'hit_hard': hit_hard, 'inning': inning, 'notes': notes
+            'spray_x': spray_x, 'spray_y': spray_y, 'hit_hard': hit_hard, 'inning': inning, 'notes': notes
         };
 
         // append dictionary to pitches array
@@ -557,8 +507,6 @@
         // hide certain buttons and divs
         makeInvisible(addPitchButton);
         makeInvisible(fieldDiv);
-        //makeInvisible(field);
-        makeInvisible(ballFlightInfoTable);
         makeInvisible(abResultBox);
         hide(outDiv);
         hide(strikeoutLookDiv);
@@ -582,7 +530,7 @@
             "pitch": pitchInfo,
             "count": count,
             "pitch_num": pitch_num,
-            "at_bat": atBat
+            "at_bat": at_bat
         };
 
         fetch("{{ url_for('api.pitch_tracker') }}", {
@@ -598,7 +546,7 @@
                 console.log("Error message: " + response.error);
                 return;
             }
-            atBat = response["atBat"];
+            at_bat = response["atBat"];
             balls = response["balls"];
             strikes = response["strikes"];
             count = `${balls}-${strikes}`;
@@ -619,7 +567,7 @@
         endAtBat = "No";
 
         // take away circle from field
-        //fieldD3.selectAll('circle').remove();
+        fieldD3.selectAll('circle').remove();
 
         // reset the fielder selection
         fielderSelect.val("");
@@ -635,8 +583,6 @@
 
         // hide the field, traj/fielder table, and ab result options
         makeInvisible(fieldDiv);
-        //makeInvisible(field);
-        makeInvisible(ballFlightInfoTable);
         makeInvisible(abResultBox);
 
         // hide other ab result stuff
@@ -655,6 +601,7 @@
         // click No for end at ab
         click($("#end-ab-no"));
         click(hitHardButtons.last());
+
     }
 
     function updatePitchTable() {
@@ -743,29 +690,6 @@
 
     }
 
-    function updateCount() {
-        // update strikes or balls variables
-        if (pitch_result == "B") {
-            balls += 1;
-        }
-        else {
-            if (pitch_result == "F" && strikes == 2) {
-                strikes = 2;
-            }
-            else {
-                strikes += 1;
-            }
-        }
-
-        // reset count if at bat over
-        if (ab_result != "") {
-            balls = 1;
-            strikes = 1;
-        }
-
-        count = `${balls}-${strikes}`;
-    }
-
     function updatePitchCount() {
         $("#total-pitches").text(`${pitch_num} (${pitchCountInning[inning]})`);
     }
@@ -782,7 +706,7 @@
             else if (strikes == 2 && ab_result == "" && (pitch_result == "SS" || pitch_result == "CS")){
                 makeInvisible(addPitchButton);
             }
-            else if (pitch_result == "IP" && ab_result == "") {
+            else if (pitch_result == "IP" && (ab_result == "" || spray_x == "")) {
                 makeInvisible(addPitchButton);
             }
             else if (endAtBat == "Yes" && ab_result == "") {
@@ -854,8 +778,85 @@
         {% endfor %}
     }
 
-    function setUpInningTable() {
+    function setUpInfoFromDatabase() {
 
+        // sets up pitch counts and pitch table at bottom of display
+        setPitches();
+        setPitchCountInning();
+        updatePitchTable();
+
+        // get data from database
+        pitch_num = {{ num_pitches }};
+        outing_id = {{ outing.id }};
+
+        // set up the current inning
+        {% if inning == "" %}
+            var inning = 1;
+        {% else %}
+            var inning = {{ inning }};
+        {% endif %}
+
+        // update the pitch count display 
+        $("#total-pitches").text(`${pitch_num} (${pitchCountInning[inning]})`);
+
+        // set up the inning data
+        {% for i in range(1,10) %}
+            inning_data[{{i}}] = {
+                "pitches": {{inning_data_table[i]["pitches"]}},
+                "velo": {{inning_data_table[i]["velo"]}},
+                "strike_pct": {{inning_data_table[i]["strike_pct"]}}
+            }
+        {% endfor %}
+        inning_data["Totals"] = {
+            "pitches": {{inning_data_table["Totals"]["pitches"]}},
+            "velo": {{inning_data_table["Totals"]["velo"]}},
+            "strike_pct": {{inning_data_table["Totals"]["strike_pct"]}}
+        }
+
+        // if in the middle of an at bat, set the at_bat variable
+        {% if at_bat != "" %}
+            at_bat = {{ at_bat }};
+        {% endif %}
+
+        // to keep track of the count
+        strikes = {{ strikes }};
+        balls = {{ balls }};
+        count = `${balls}-${strikes}`;
+        $("#count").text(count);
+
+        // set up batter
+        {% if batter == "" %}
+            click(batterButtons.first());
+            batter_id = batterButtons.first().attr("value");
+        {% else %}
+            batter_id = {{ batter }};
+        {% endif %}
+
+        // set up lead_runner
+        {% if lead_runner == "" %}
+            lead_runner = "";
+        {% else %}
+            lead_runner = {{ lead_runner }};
+        {% endif %}
+
+        // unclick batter buttons unless in middle of at bat
+        batterButtons.each(function(){
+            button = $(this);
+            if (button.attr("value") == batter_id) {
+                click(button);
+            }
+        });
+
+        // unclick lead runner buttons unless continuing at bat
+        leadRunnerButtons.each(function(){
+            button = $(this);
+            if (button.attr("value") == lead_runner) {
+                click(button);
+            }
+        });
+
+        // making sure inning is up to date
+        inningInput.val(inning);
     }
 
 </script>
