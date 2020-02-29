@@ -25,6 +25,7 @@
                         <th class="text-left">Name</th>
                         <th class="text-left">Grad Year</th>
                         <th>Bats</th>
+                        <th>PA's</th>
                     </tr>
                     {% for batter in opponent.batters %}
                         {% if batter.retired not in [None, "", "1", 1] %}
@@ -32,6 +33,7 @@
                                 <td class="text-left"><a href="{{ url_for('batter.batter_home', id=batter.id) }}">{{ batter.name() }}</a></td>
                                 <td class="text-left">{{ batter.grad_year }}</td>
                                 <td>{{ batter.bats }}</td>
+                                <td>{{ batter.num_abs() }}</td>
                             </tr>
                         {% endif %}
                     {% endfor %}
@@ -45,6 +47,7 @@
                             <th class="text-left">Name</th>
                             <th class="text-left">Class</th>
                             <th class="text-left"># Throws</th>
+                            <th class="text-left"># Outings</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -53,6 +56,7 @@
                                 <td class="text-left"><a href="{{ url_for('pitcher.pitcher_home', id=pitcher.id) }}">{{ pitcher.name }}</a></td>
                                 <td class="text-left">{{ pitcher.grad_year }}</td>
                                 <td class="text-left">{{ pitcher.throws }}</td>
+                                <td class="text-left">{{ pitcher.num_outings() }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>

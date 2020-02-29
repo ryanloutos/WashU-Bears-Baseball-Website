@@ -41,6 +41,12 @@ class Pitcher(db.Model):
     def __repr__(self):
         return self.firstname + " " + self.lastname
 
+    def num_outings(self):
+        count = 0
+        for o in self.outings:
+            count += 1
+        return count
+
 
 class Game(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -214,6 +220,13 @@ class Batter(db.Model):
     def get_opponent(self):
         opponent = Opponent.query.filter_by(id=self.opponent_id).first()
         return opponent
+
+    def num_abs(self):
+        # return number of plate appearances
+        count = 0
+        for ab in self.at_bats:
+            count += 1
+        return count
 
 
 class AtBat(db.Model):
