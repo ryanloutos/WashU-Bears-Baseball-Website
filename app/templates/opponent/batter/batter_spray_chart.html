@@ -71,7 +71,11 @@
                     }
                 });
             } else {  // complex draw
-                
+                //split pitches into buckets
+
+                //get ranges for lefty and righty batters
+                var lefty_ranges = spray.getLeftyZoneDivision();
+                var righty_ranges = spray.getRightyZoneDivision();
             }
         }
     }
