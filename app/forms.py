@@ -299,6 +299,9 @@ class NewOutingFromCSVPitches(FlaskForm):
 
 class PitcherForm(FlaskForm):
     name = StringField('Name', validators=[Optional()])
+    firstname = StringField("First Name", validators=[Optional()])
+    lastname = StringField("Last Name", validators=[Optional()])
+    number = StringField('Number', validators=[Optional()])
     throws = SelectField(
         'throws',
         choices=[('R', 'R'), ('L', 'L')],
@@ -311,6 +314,9 @@ class PitcherForm(FlaskForm):
 
 class EditPitcherForm(FlaskForm):
     name = StringField('Name', validators=[Optional()])
+    firstname = StringField("First Name", validators=[Optional()])
+    lastname = StringField("Last Name", validators=[Optional()])
+    number = StringField('Number', validators=[Optional()])
     throws = SelectField(
         'throws',
         choices=[('R', 'R'), ('L', 'L')],

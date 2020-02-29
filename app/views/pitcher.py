@@ -91,7 +91,7 @@ def new_pitcher():
     if not current_user.admin:
         flash("Admin feature only")
         return redirect(url_for('index'))
-    
+
     form = PitcherForm()
 
     # set the opponent choices for the form
@@ -104,11 +104,14 @@ def new_pitcher():
     if form.validate_on_submit():
 
         pitcher = Pitcher(
-            name = form.name.data,
-            throws = form.throws.data,
-            grad_year = form.grad_year.data,
-            opponent_id = form.opponent.data,
-            retired = form.retired.data
+            name=form.name.data,
+            firstname=form.firstname.data,
+            lastname=form.lastname.data,
+            number=form.number.data,
+            throws=form.throws.data,
+            grad_year=form.grad_year.data,
+            opponent_id=form.opponent.data,
+            retired=form.retired.data
         )
 
         db.session.add(pitcher)
@@ -116,10 +119,10 @@ def new_pitcher():
 
         flash("New Pitcher Created!")
         return redirect(url_for('main.index'))
-    
+
     return render_template(
         'pitcher/new_pitcher.html',
-        form = form)
+        form=form)
 
 # ***************-EDIT PITCHER-*************** #
 @pitcher.route('/edit_pitcher/<id>', methods=['GET','POST'])
