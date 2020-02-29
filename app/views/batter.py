@@ -286,6 +286,7 @@ def edit_batter(id):
         # update info with data from form
         batter.firstname = form.firstname.data
         batter.lastname = form.lastname.data
+        batter.number = form.number.data
         batter.short_name = form.nickname.data
         batter.bats = form.bats.data
         batter.grad_year = form.grad_year.data

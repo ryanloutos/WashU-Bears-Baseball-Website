@@ -63,7 +63,8 @@ class EditBatterForm(FlaskForm):
     opponent = SelectField('Opponent', validators=[Optional()])
     firstname = StringField('First Name', validators=[Optional()])
     lastname = StringField('Last Name', validators=[Optional()])
-    nickname = StringField('Initials/Number', validators=[Optional()])
+    number = StringField("Number", validators=[Optional()])
+    nickname = StringField('Initials', validators=[Optional()])
     bats = SelectField(
         'Bats',
         choices=[('R', 'R'), ('L', 'L'), ('S', 'S')],

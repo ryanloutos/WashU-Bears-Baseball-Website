@@ -20,6 +20,13 @@
                 {% endfor %}
             </p>
             <p>
+                {{ form.number.label }}<br>
+                {{ form.number(size=32, type='number', value=batter.number) }}
+                {% for error in form.number.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
                 {{ form.nickname.label }}<br>
                 {{ form.nickname(size=32, value=batter.short_name) }}
                 {% for error in form.nickname.errors %}
