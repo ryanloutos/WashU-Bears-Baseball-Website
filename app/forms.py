@@ -63,7 +63,8 @@ class EditBatterForm(FlaskForm):
     opponent = SelectField('Opponent', validators=[Optional()])
     firstname = StringField('First Name', validators=[Optional()])
     lastname = StringField('Last Name', validators=[Optional()])
-    nickname = StringField('Initials/Number', validators=[Optional()])
+    number = StringField("Number", validators=[Optional()])
+    nickname = StringField('Initials', validators=[Optional()])
     bats = SelectField(
         'Bats',
         choices=[('R', 'R'), ('L', 'L'), ('S', 'S')],
@@ -299,6 +300,9 @@ class NewOutingFromCSVPitches(FlaskForm):
 
 class PitcherForm(FlaskForm):
     name = StringField('Name', validators=[Optional()])
+    firstname = StringField("First Name", validators=[Optional()])
+    lastname = StringField("Last Name", validators=[Optional()])
+    number = StringField('Number', validators=[Optional()])
     throws = SelectField(
         'throws',
         choices=[('R', 'R'), ('L', 'L')],
@@ -311,6 +315,9 @@ class PitcherForm(FlaskForm):
 
 class EditPitcherForm(FlaskForm):
     name = StringField('Name', validators=[Optional()])
+    firstname = StringField("First Name", validators=[Optional()])
+    lastname = StringField("Last Name", validators=[Optional()])
+    number = StringField('Number', validators=[Optional()])
     throws = SelectField(
         'throws',
         choices=[('R', 'R'), ('L', 'L')],
@@ -318,7 +325,7 @@ class EditPitcherForm(FlaskForm):
     grad_year = StringField('Grad Year', validators=[Optional()])
     opponent = SelectField('Opponent', validators=[Optional()])
     retired = BooleanField('Retired?')
-    file = FileField('Team Logo', validators=[FileRequired()])
+    file = FileField('Pitcher Photo', validators=[FileRequired()])
     submit = SubmitField('Save Changes')
 
 

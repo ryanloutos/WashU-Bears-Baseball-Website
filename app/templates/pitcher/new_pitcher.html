@@ -6,9 +6,37 @@
         <form method="post" novalidate>
             {{ form.hidden_tag() }} {# Preventing CSRF attacks #}
             <p>
+                {{ form.opponent.label }}<br>
+                {{ form.opponent() }}
+                {% for error in form.opponent.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
                 {{ form.name.label }}<br>
                 {{ form.name() }}
                 {% for error in form.name.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.firstname.label }}<br>
+                {{ form.firstname(size=32) }}
+                {% for error in form.firstname.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.lastname.label }}<br>
+                {{ form.lastname(size=32) }}
+                {% for error in form.lastname.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.number.label }}<br>
+                {{ form.number(size=32, type='number') }}
+                {% for error in form.number.errors %}
                     <span style="color: red;">[{{ error }}]</span>
                 {% endfor %}
             </p>
@@ -26,13 +54,7 @@
                     <span style="color: red;">[{{ error }}]</span>
                 {% endfor %}
             </p>
-            <p>
-                {{ form.opponent.label }}<br>
-                {{ form.opponent() }}
-                {% for error in form.opponent.errors %}
-                    <span style="color: red;">[{{ error }}]</span>
-                {% endfor %}
-            </p>
+
             <p>
                 {{ form.retired.label }}<br>
                 {{ form.retired() }}

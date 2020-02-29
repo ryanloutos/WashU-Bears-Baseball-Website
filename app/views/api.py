@@ -96,7 +96,6 @@ def staff_date_filter():
 # ************************************************ #
 
 
-
 @api.route("/api/batter/stats/WhiffRateByCount", methods=["POST"])
 @login_required
 def batter_stats_whiffrate():
@@ -292,7 +291,7 @@ def pitch_tracker():
         loc_x=loc_x,
         loc_y=loc_y,
         spray_x=spray_x,
-        spray_y=spray_y, 
+        spray_y=spray_y,
         notes=pitch_data["notes"]
     )
 

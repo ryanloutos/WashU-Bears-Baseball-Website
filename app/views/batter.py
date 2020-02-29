@@ -286,6 +286,7 @@ def edit_batter(id):
         # update info with data from form
         batter.firstname = form.firstname.data
         batter.lastname = form.lastname.data
+        batter.number = form.number.data
         batter.short_name = form.nickname.data
         batter.bats = form.bats.data
         batter.grad_year = form.grad_year.data
@@ -295,7 +296,7 @@ def edit_batter(id):
         db.session.commit()
 
         flash('Batter has been adjusted')
-        return redirect(url_for('opponent.opponent_roster', id=batter.opponent_id))
+        return redirect(url_for('opponent.opponent_home', id=batter.opponent_id))
 
     return render_template('opponent/batter/edit_batter.html',
                            title='Edit Batter',

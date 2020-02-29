@@ -13,6 +13,27 @@
                 {% endfor %}
             </p>
             <p>
+                {{ form.firstname.label }}<br>
+                {{ form.firstname(value = pitcher.firstname) }}
+                {% for error in form.firstname.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.lastname.label }}<br>
+                {{ form.lastname(value = pitcher.lastname) }}
+                {% for error in form.lastname.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.number.label }}<br>
+                {{ form.number(value = pitcher.number) }}
+                {% for error in form.number.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
                 {{ form.throws.label }}<br>
                 <select id="throws" name="throws">
                     <option value="R" {% if pitcher.throws == 'R' %} selected='selected' {% endif %}>R</option>
