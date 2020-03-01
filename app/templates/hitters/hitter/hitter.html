@@ -6,9 +6,9 @@
 {% endblock %}
 
 {% block app_content %}
-    {% include "opponent/batter/batter_sidenav.html" %}
+    {% include "hitters/hitter/hitter_sidenav.html" %}
     <div class="main">
-        {% include "opponent/batter/batter_title.html" %}
+        {% include "hitters/hitter/hitter_title.html" %}
         <div class="row">
             <div class="col-xs-12 col-md-6 text-center">
                 <h3>Player Info</h3>
@@ -50,7 +50,7 @@
                     <tbody>
                         {% for game in game_stats %}
                             <tr>
-                                <td><a href="{{ url_for('batter.batter_game_view', batter_id=batter.id, game_id=game['game'].id) }}">{{ game["game"].date }}</a></td>
+                                <td><a href="{{ url_for('hitter.hitter_game_view', batter_id=batter.id, game_id=game['game'].id) }}">{{ game["game"].date }}</a></td>
                                 <td>{{ game["game"].get_opponent() }}</td>
                                 <td>{{ game["stats"]["ab"] }}</td>
                             </tr>
