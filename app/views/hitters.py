@@ -429,3 +429,29 @@ def hitter_spray_chart(batter_id):
         outcomes=outcomes,
         locs=locs
     )
+
+
+@hitter.route("/hitter/<batter_id>/stats")
+@login_required
+def hitter_stats(batter_id):
+
+    batter = Batter.query.filter_by(id=batter_id).first()
+    if not batter:
+        flash("URL does not exist")
+        return redirect(url_for('main.index'))
+    seasons = batter.get_seasons()
+
+    # Batter stat calculations
+    pitch_usage_count, swing_whiff_rate = batterSwingWhiffRatebyPitchbyCount2(batter)
+    ball_in_play, hard_hit = batter_ball_in_play_stats(batter)
+
+    return render_template(
+        "hitters/hitter/hitter_stats.html",
+        pitch_usage_count=pitch_usage_count,
+        swing_whiff_rate=swing_whiff_rate,
+        ball_in_play=ball_in_play,
+        hard_hit=hard_hit,
+        title=batter,
+        batter=batter,
+        seasons=seasons
+        )
