@@ -8,7 +8,7 @@ from app.forms import NewOutingFromCSV, SeasonForm, OpponentForm, BatterForm
 from app.forms import OutingPitchForm, NewOutingFromCSVPitches, EditUserForm
 from app.forms import ChangePasswordForm, EditBatterForm, EditOpponentForm
 from app.forms import NewBatterForm
-from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat, Game
+from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat, Game, Video
 from app.stats import calcPitchPercentages, pitchUsageByCount, calcAverageVelo
 from app.stats import calcPitchStrikePercentage, calcPitchWhiffRate
 from app.stats import createPitchPercentagePieChart, velocityOverTimeLineChart
@@ -29,6 +29,7 @@ from app.stats import outingPitchStatistics, outingTimeToPlate, veloOverTime
 from app.stats import batterSwingWhiffRatebyPitchbyCount, batter_summary_game_stats
 from app.stats import batterSwingWhiffRatebyPitchbyCount2, batter_ball_in_play_stats
 
+import re
 
 hitters = Blueprint("hitters", __name__)
 hitter = Blueprint("hitter", __name__)
@@ -455,3 +456,55 @@ def hitter_stats(batter_id):
         batter=batter,
         seasons=seasons
         )
+
+
+@hitter.route('/hitter/<id>/edit', methods=['GET', 'POST'])
+@login_required
+def hitter_edit(id):
+
+    # make sure user is admin
+    if not current_user.admin:
+        flash("You are not an admin")
+        return redirect(url_for('main.index'))
+
+    # get the correct form
+    form = EditBatterForm()
+
+    # get the batter object
+    batter = Batter.query.filter_by(id=id).first()
+
+    # bug or trying to edit batter that doesn't exist
+    if not batter:
+        flash('URL does not exist')
+        return redirect(url_for('main.index'))
+
+    # set the opponent choices correctly
+    opponent_choices = []
+    opponents = Opponent.query.all()
+    for o in opponents:
+        opponent_choices.append((str(o.id), o.name))
+    form.opponent.choices = opponent_choices
+
+    # submit is clicked
+    if form.validate_on_submit():
+
+        # update info with data from form
+        batter.firstname = form.firstname.data
+        batter.lastname = form.lastname.data
+        batter.number = form.number.data
+        batter.short_name = form.nickname.data
+        batter.bats = form.bats.data
+        batter.grad_year = form.grad_year.data
+        batter.retired = form.retired.data
+
+        # commit the changes
+        db.session.commit()
+
+        flash('Batter has been adjusted')
+        return redirect(url_for('hitters.hitters_home', id=batter.opponent_id))
+
+    return render_template(
+        'hitters/hitter/hitter_edit.html',
+        title='Edit Hitter',
+        batter=batter,
+        form=form)

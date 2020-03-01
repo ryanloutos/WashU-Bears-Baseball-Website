@@ -9,6 +9,6 @@
     <!-- <a href="{{ url_for('batter.batter_sequencing', batter_id=batter.id) }}">Sequencing</a> -->
     <a href="{{ url_for('hitter.hitter_stats', batter_id=batter.id) }}">Stats</a>
     {% if current_user.admin %}
-        <a href="{{ url_for('batter.edit_batter', id=batter.id) }}">Edit Batter</a>
+        <a href="{{ url_for('hitter.hitter_edit', id=batter.id) }}">Edit Batter</a>
     {% endif %}
 </div>
