@@ -30,6 +30,7 @@ from .views.other import other
 from .views.api import api
 from .views.game import game
 from .views.video import video
+from .views.hitters import hitters
 
 # Register Blueprints
 app.register_blueprint(main)
@@ -43,3 +44,4 @@ app.register_blueprint(other)
 app.register_blueprint(api)
 app.register_blueprint(game)
 app.register_blueprint(video)
+app.register_blueprint(hitters)
