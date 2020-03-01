@@ -18,9 +18,9 @@
 {% endblock %}
 
 {% block app_content %}
-{% include "opponent/batter/batter_sidenav.html" %}
+{% include "hitters/hitter/hitter_sidenav.html" %}
 <div class="main">
-    {% include "opponent/batter/batter_title.html" %}
+    {% include "hitters/hitter/hitter_title.html" %}
     <div class="row text-center">
         <h1>
             Games
@@ -52,7 +52,7 @@
                     <td>{{ game["game"].get_opponent() }}</td>
                     <td>{{ game["stats"]["ab"] }}</td>
                     <td>{{ game["stats"]["pitches"] }}</td>
-                    <td><a href="{{ url_for('batter.batter_game_view', batter_id=batter.id, game_id=game['game'].id) }}">view</a></td>
+                    <td><a href="{{ url_for('hitter.hitter_game_view', batter_id=batter.id, game_id=game['game'].id) }}">view</a></td>
                 </tr>
             {% endfor %}
         </table>

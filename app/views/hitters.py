@@ -271,3 +271,161 @@ def hitter_at_bats(batter_id):
         '/hitters/hitter/hitter_at_bats.html',
         batter=batter
     )
+
+
+@hitter.route("/hitter/<batter_id>/at_bat/<ab_num>", methods=['GET', 'POST'])
+@login_required
+def hitter_at_bat(batter_id, ab_num):
+
+    batter = Batter.query.filter_by(id=batter_id).first()
+    if not batter:
+        flash("URL does not exist")
+        return redirect(url_for('main.index'))
+
+    at_bat = AtBat.query.filter_by(id=ab_num).first()
+    if not at_bat:
+        flash("URL does not exist")
+        return redirect(url_for('main.index'))
+
+    pitches = []
+    for p in at_bat.pitches:
+        pitches.append({
+            "pitch_num": p.pitch_num,
+            "pitch_type": p.pitch_type,
+            "x": p.loc_x,
+            "y": p.loc_y
+        })
+
+    pitcher = at_bat.get_pitcher()
+
+    return render_template(
+        '/hitters/hitter/hitter_at_bat.html',
+        at_bat=at_bat,
+        pitcher=pitcher,
+        batter=batter,
+        title=batter.name,
+        pitches=pitches
+    )
+
+
+@hitter.route("/hitter/<batter_id>/games", methods=["GET", "POST"])
+@login_required
+def hitter_games(batter_id):
+
+    batter = Batter.query.filter_by(id=batter_id).first()
+    if not batter:
+        flash("URL does not exist")
+        return redirect(url_for('main.index'))
+
+    games = batter.get_games()
+
+    game_stats = []
+    seasons = []
+    for game in games:
+        # line here for some weird error with appending games ending in None
+        if game is not None:
+            at_bats, pitches_seen = batter_summary_game_stats(game, batter)
+            game_stats.append({
+                "game": game,
+                "stats": {
+                    "ab": at_bats,
+                    "pitches": pitches_seen
+                }
+            })
+            if game.get_season() not in seasons:
+                seasons.append(game.get_season())
+
+    return render_template(
+        "hitters/hitter/hitter_games.html",
+        batter=batter,
+        games=games,
+        game_stats=game_stats,
+        seasons=seasons
+    )
+
+
+@hitter.route('/hitter/<id>/videos', methods=["GET", "POST"])
+@login_required
+def hitter_videos(id):
+
+    batter = Batter.query.filter_by(id=id).first()
+    videos = Video.query.filter_by(batter_id=id).all()
+    video_ids = []
+    seasons = []
+    for v in videos:
+
+        if v.season not in seasons:
+            seasons.append(v.season)
+
+        # https://gist.github.com/silentsokolov/f5981f314bc006c82a41
+        # gets the id from a youtube linke
+        regex = re.compile(r'(https?://)?(www\.)?(youtube|youtu|youtube-nocookie)\.(com|be)/(watch\?v=|embed/|v/|.+\?v=)?(?P<id>[A-Za-z0-9\-=_]{11})')
+        match = regex.match(v.link)
+        if not match:
+            video_ids.append("")
+        else:
+            video_ids.append(match.group("id"))
+
+    return render_template(
+        'hitters/hitter/hitter_videos.html',
+        title=batter,
+        batter=batter,
+        seasons=seasons,
+        video_objects=videos,
+        videos=video_ids
+    )
+
+
+@hitter.route("/hitter/<batter_id>/spray_chart", methods=['GET', 'POST'])
+@login_required
+def hitter_spray_chart(batter_id):
+
+    batter = Batter.query.filter_by(id=batter_id).first()
+    if not batter:
+        flash("URL does not exist")
+        return redirect(url_for('main.index'))
+
+    # Var setup
+    sprays = []  # setup for dots on spraychart
+    density_vals = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    d_total = 0
+    outcomes = []
+    locs = []
+    for ab in batter.at_bats:
+        for p in ab.pitches:
+            # if there was an ab_outcome
+            if p.ab_result in ["1B", "2B", "3B", "HR", "IP->Out", "Error", "FC"]:
+                # for d3 field object dots
+                sprays.append({
+                    "x": p.spray_x,
+                    "y": p.spray_y,
+                    "traj": p.traj,
+                    "hard_hit": p.hit_hard
+                })
+
+                # For density chart
+                if p.fielder not in ["", None]:
+                    density_vals[int(p.fielder)] += 1
+                    d_total += 1
+
+            # for table containing all the outcomes from spray chart
+            if p.ab_result not in ["", None]:
+                outcomes.append(p)
+
+            # for pitch locations against
+            if p.loc_x not in [None, ""] and p.loc_y not in [None, ""]:
+                locs.append({"x_loc": p.loc_x, "y_loc": p.loc_y, "type": p.pitch_type})
+
+    # Change density vals to percentages
+    for i in range(len(density_vals)):
+        density_vals[i] = density_vals[i] / d_total
+
+    return render_template(
+        'hitters/hitter/hitter_spray_chart.html',
+        title=batter,
+        batter=batter,
+        sprays=sprays,
+        d_vals=density_vals,
+        outcomes=outcomes,
+        locs=locs
+    )

@@ -30,9 +30,9 @@
 {% endblock %}
 
 {% block app_content %}
-    {% include "opponent/batter/batter_sidenav.html" %}
+    {% include "hitters/hitter/hitter_sidenav.html" %}
     <div class="main">
-        {% include "opponent/batter/batter_title.html" %}
+        {% include "hitters/hitter/hitter_title.html" %}
         <div class="row text-center">
             <h1>
                 At Bats
@@ -58,7 +58,7 @@
                                     <div class="col-xs-3"><a href="#pitches-{{loop.index}}" class="btn btn-red" data-toggle="collapse">{{ at_bat.get_date() }}</a></div>
                                     <div class="col-xs-3">{{ at_bat.get_pitcher() }}</div>
                                     <div class="col-xs-3">{{ at_bat.get_num_pitches() }}</div>
-                                    <div class="col-xs-3"><a href="{{ url_for('batter.batter_at_bat', batter_id=batter.id, ab_num=at_bat.id) }}">View</a></div>
+                                    <div class="col-xs-3"><a href="{{ url_for('hitter.hitter_at_bat', batter_id=batter.id, ab_num=at_bat.id) }}">View</a></div>
                                 </div>
                                 <div id="pitches-{{loop.index}}" class="collapse">
                                     <table class="table table-condensed">
