@@ -10,11 +10,7 @@
 
         setup_pitch_usage();
         // get data from server to template
-        let swing_whiff_rate = {
-            {
-                swing_whiff_rate | tojson
-            }
-        };
+        let swing_whiff_rate = {{swing_whiff_rate|tojson}};
 
 
 
@@ -98,11 +94,7 @@
 
     function setup_pitch_usage() {
         //get data from server
-        let pitch_usage_count = {
-            {
-                pitch_usage_count | tojson
-            }
-        };
+        let pitch_usage_count = {{pitch_usage_count|tojson}};
 
         // put pitch_usage_count data in a form that the chart can handle
         let pitch_usage_count_data = [];
@@ -141,8 +133,7 @@
             }
         };
 
-        var pitch_usage_count_chart = new ApexCharts(document.querySelector("#pitch_usage_count_chart"),
-            pitch_usage_options);
+        var pitch_usage_count_chart = new ApexCharts(document.querySelector("#pitch_usage_count_chart"),pitch_usage_options);
         pitch_usage_count_chart.render();
     }
 </script>

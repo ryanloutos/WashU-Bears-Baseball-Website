@@ -81,7 +81,7 @@ def hitters_stats():
     batters_stat_line, batters_hard_hit, pitch_usage_count, swing_whiff_rate = stats_opponent_batters_stat_lines(opponent)
 
     return render_template(
-        '/hiters/hitters_stats.html',
+        '/hitters/hitters_stats.html',
         title=opponent,
         opponent=opponent,
         pitch_usage_count=pitch_usage_count,
