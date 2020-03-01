@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block styles %}
+{{ super() }}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidenav.css') }}">
+<script src="{{ url_for('static', filename='packages/d3/d3.js') }}"></script>
+<script src="{{ url_for('static', filename='js/d3_strikezone.js') }}"></script>
+<script src="{{ url_for('static', filename='js/d3_field.js') }}"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        setup_strikezone();
+        setup_field();
+    });
+
+    function setup_field(){
+        let spray_legend = new field_legend("field-legend");
+        let spray = new field("field");
+    }
+
+    function setup_strikezone(){
+        let zone_legend = new strikezone_legend("strikezone-legend");
+        let zone = new strikezone("strikezone");
+        // get pitches data from server
+        var pitches = {{ pitches|tojson }};
+
+        pitches.forEach(function (pitch) {
+            if (pitch.x != null || pitch.y != null) {
+                zone.drawCircle(pitch.x, pitch.y, pitch_type=pitch.pitch_type, pitch.pitch_num);
+            }
+        }); 
+    }
+</script>
+{% endblock %}
+
+{% block app_content %}
+    {% include "opponent/batter/batter_sidenav.html" %}
+    <div class="main">
+        <h1>
+            {{ batter.name() }} vs. {{ pitcher }}
+        </h1> 
+        <h2>Pitches</h2>
+        <table class="table">
+            <tr class="table-headers">
+                <th>Pitch</th>
+                <th>Velo</th>
+                <th>Lead RNR</th>
+                <th>Time to Plate</th>
+                <th>Pitch Type</th>
+                <th>Pitch Result</th>
+                <th>Hit Spot?</th>
+                <th>Count</th>
+                <th>AB Result</th>
+                <th>GB/FB/LD</th>
+                <th>Fielder</th>
+                <th>Hit Hard?</th>
+                <th>Inning</th>
+            </tr>
+            {% for pitch in at_bat.pitches %}
+                <tr>
+                    <td>{{ pitch.pitch_num }}</td>
+                    {% if pitch.velocity==None %}
+                        <td></td>
+                    {% else %}
+                        <td>{{ pitch.velocity }}</td>
+                    {% endif %}
+                    <td>{{ pitch.lead_runner }}</td>
+                    {% if pitch.time_to_plate==None %}
+                        <td></td>
+                    {% else %}
+                        <td>{{ pitch.time_to_plate }}</td>
+                    {% endif %}
+                    <td>{{ pitch.pitch_type }}</td>
+                    <td>{{ pitch.pitch_result }}</td>
+                    {% if pitch.hit_spot %}
+                        <td>X</td>
+                    {% else %}
+                        <td></td>
+                    {% endif %}
+                    <td>{{ pitch.count }}</td>
+                    <td>{{ pitch.ab_result }}</td>
+                    <td>{{ pitch.traj }}</td>
+                    <td>{{ pitch.fielder }}</td>
+                    {% if pitch.hit_hard %}
+                        <td>X</td>
+                    {% else %}
+                        <td></td>
+                    {% endif %}
+                    <td>{{ pitch.inning }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+        <br>
+        <div id="pitch-location" class="row">
+            <div class="col-xs-12 col-md-6">
+                <h4>Pitch Locations</h4>
+                <p>The color of the circle represents the type of pitch that was thrown. The
+                number inside the circle represents the pitch number of the pitch.</p>
+                <div id="strikezone-legend"></div>
+                <br>
+                <div id="strikezone"></div>
+            </div>
+            <div class="col-xs-12 col-md-6">
+                <h4>Spray Location</h4>
+                <div id="field-legend"></div>
+                <br>
+                <div id="field"></div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
