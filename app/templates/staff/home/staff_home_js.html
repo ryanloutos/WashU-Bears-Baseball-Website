@@ -1,7 +1,7 @@
 <script>
-    let pickoffs = 3;
-    let errors = 0;
-    let num_pitchers_with_pick = 3;
+    let pickoffs = 5;
+    let errors = 1;
+    let num_pitchers_with_pick = 4;
     let blown_leads_after_7 = 0;
     document.addEventListener("DOMContentLoaded", function(){
 
@@ -31,7 +31,7 @@
             }
 
             document.querySelector("#k-to-bb-holder").innerHTML = response.data.k_to_bb;
-            if(response.data.k_to_bb >= 2){
+            if(response.data.k_to_bb <= 2){
                 document.querySelector("#k-to-bb-holder").style.color = "rgb(0,100,0)";
             } else {
                 document.querySelector("#k-to-bb-holder").style.color = "rgb(200,0,0)";
