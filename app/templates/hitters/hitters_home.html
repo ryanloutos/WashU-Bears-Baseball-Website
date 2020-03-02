@@ -3,12 +3,14 @@
 {% block styles %}
 {{ super() }}
 <script src="{{ url_for('static', filename='js/sortable_table.js') }}"></script>
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/loader.css') }}">
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidenav.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/staff_home.css') }}">
 {% include "hitters/hitters_goals.html" %}
 <script>
     //sort tables so that batters are alphabetical
     document.addEventListener("DOMContentLoaded", function () {
-        setup_goals_info();
+        get_server_info();
     });
 </script>
 {% endblock %}
@@ -42,7 +44,7 @@
         </div>
         <div class="col-xs-12 col-md-6" style="text-align: center;">
             <h2>Season Goals</h2>
-            <table class="table sortable_table">
+            <table id="team-season-stats" class="table sortable_table">
                 <thead>
                     <tr class="table-headers">
                         <th class="text-left">Statistic</th>
@@ -54,42 +56,42 @@
                     <tr>
                         <td class="text-left">Runs Per Game</td>
                         <td id="rpg_goal"></td>
-                        <td id="rpg_current">None</td>
+                        <td id="rpg_current"><div class="loader"></td>
                     </tr>
                     <tr>
                         <td class="text-left">Slugging %</td>
                         <td id="slugging_goal"></td>
-                        <td id="slugging_current">None</td>
+                        <td id="slugging_current"><div class="loader"></td>
                     </tr>
                     <tr>
                         <td class="text-left">OBP</td>
                         <td id="obp_goal"></td>
-                        <td id="obp_current">None</td>
+                        <td id="obp_current"><div class="loader"></td>
                     </tr>
                     <tr>
                         <td class="text-left">Team Doubles</td>
                         <td id="doubles_goal"></td>
-                        <td id="doubles_current">None</td>
+                        <td id="doubles_current"><div class="loader"></td>
                     </tr>
                     <tr>
                         <td class="text-left">BB</td>
                         <td></td>
-                        <td id="bb_current"></td>
+                        <td id="bb_current"><div class="loader"></td>
                     </tr>
                     <tr>
                         <td class="text-left">HBP</td>
                         <td></td>
-                        <td id="hbp_current"></td>
+                        <td id="hbp_current"><div class="loader"></td>
                     </tr>
                     <tr>
                         <td class="text-left">K's</td>
                         <td></td>
-                        <td id="ks_current"></td>
+                        <td id="ks_current"><div class="loader"></td>
                     </tr>
                     <tr>
                         <td class="text-left">(BB+HBP)/K</td>
                         <td id="bb_hbp_k_goal"></td>
-                        <td id="bb_hbp_k_current"></td>
+                        <td id="bb_hbp_k_current"><div class="loader"></td>
                     </tr>
                 </tbody>
             </table>

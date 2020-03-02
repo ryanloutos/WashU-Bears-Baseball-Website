@@ -535,5 +535,33 @@ def team_get_pitchers(team_id):
 @api.route("/api/hitters/goals")
 @login_required
 def hitters_goals():
+    team = Opponent.query.filter_by(id=1).first()
 
-    return jsonify({})
+    doubles = 0
+    bb = 0
+    hbp = 0
+    ks = 0
+
+    for hitter in team.batters:
+        for ab in hitter.at_bats:
+            if ab.get_season().current_season and ab.get_pitcher().opponent_id is not 1:
+                for pitch in ab.pitches:
+                    if pitch.ab_result not in [None, ""]:
+                        if pitch.ab_result in ["2B"]:
+                            doubles += 1
+                        elif pitch.ab_result in ["HBP"]:
+                            hbp += 1
+                        elif pitch.ab_result in ["BB"]:
+                            bb += 1
+                        elif pitch.ab_result in ["K", "KL", "D3->Out", "D3->Safe"]:
+                            ks += 1
+
+    return jsonify({
+        "status": "success",
+        "data": {
+            "doubles": doubles,
+            "bb": bb,
+            "hbp": hbp,
+            "ks": ks
+        }
+    })
