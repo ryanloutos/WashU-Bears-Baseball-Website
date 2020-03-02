@@ -68,7 +68,7 @@ def game_hitting(id):
     )
 
     # Get all pitches in the game vs our hitters
-    opponent_outings = Outing.query.filter_by(game_id=game.id, opponent_id=game.opponent_id).all()
+    opponent_outings = Outing.query.filter_by(game_id=game.id, opponent_id=1).all()
     pitches = []
     for outing in opponent_outings:
         pitcher = outing.get_pitcher()
