@@ -31,7 +31,7 @@
                 {% if batter.retired not in [None, "", "1", 1] %}
                 <tr>
                     <td class="text-left"><a
-                            href="{{ url_for('batter.batter_home', id=batter.id) }}">{{ batter.name() }}</a></td>
+                            href="{{ url_for('hitter.hitter_home', id=batter.id) }}">{{ batter.name() }}</a></td>
                     <td class="text-left">{{ batter.grad_year }}</td>
                     <td>{{ batter.bats }}</td>
                     <td>{{ batter.num_abs() }}</td>
