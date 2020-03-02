@@ -4,11 +4,11 @@
 {{ super() }}
 <script src="{{ url_for('static', filename='js/sortable_table.js') }}"></script>
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidenav.css') }}">
+{% include "hitters/hitters_goals.html" %}
 <script>
     //sort tables so that batters are alphabetical
     document.addEventListener("DOMContentLoaded", function () {
-        //sort roster table by last name
-        // sortTable(1,0);
+        setup_goals_info();
     });
 </script>
 {% endblock %}
@@ -52,9 +52,44 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>None</td>
-                        <td>None</td>
-                        <td>None</td>
+                        <td class="text-left">Runs Per Game</td>
+                        <td id="rpg_goal"></td>
+                        <td id="rpg_current">None</td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">Slugging %</td>
+                        <td id="slugging_goal"></td>
+                        <td id="slugging_current">None</td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">OBP</td>
+                        <td id="obp_goal"></td>
+                        <td id="obp_current">None</td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">Team Doubles</td>
+                        <td id="doubles_goal"></td>
+                        <td id="doubles_current">None</td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">BB</td>
+                        <td></td>
+                        <td id="bb_current"></td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">HBP</td>
+                        <td></td>
+                        <td id="hbp_current"></td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">K's</td>
+                        <td></td>
+                        <td id="ks_current"></td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">(BB+HBP)/K</td>
+                        <td id="bb_hbp_k_goal"></td>
+                        <td id="bb_hbp_k_current"></td>
                     </tr>
                 </tbody>
             </table>

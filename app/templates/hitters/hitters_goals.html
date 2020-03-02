@@ -1,0 +1,71 @@
+<script>
+
+var runs_per_game_goal = 8;
+var runs_per_game = 0;
+
+var slugging_pct_goal = 450;
+var sluggint_pct = 0;
+
+var OBP_goal = 415;
+var OBP = 0;
+
+var doubles_goal = 100;
+var doubles = 0;
+
+var team_bb = 0;
+var team_hbp = 0;
+var team_k = 0;
+var team_hbp_bb_k_goal = 1;
+var team_hbp_bb_k = 0;
+
+function setup_goals_info(){
+
+    //setup runs per game
+    document.querySelector("#rpg_goal").innerHTML = runs_per_game_goal;
+    document.querySelector("#rpg_current").innerHTML = runs_per_game;
+    if(runs_per_game >= runs_per_game_goal){
+        document.querySelector("#rpg_current").style.color = "rgb(0,100,0)";
+    } else {
+        document.querySelector("#rpg_current").style.color = "rgb(200,0,0)";
+    }
+
+    //setup slugging %
+    document.querySelector("#slugging_goal").innerHTML = slugging_pct_goal;
+    document.querySelector("#slugging_current").innerHTML = sluggint_pct;
+    if(slugging_pct_goal <= sluggint_pct){
+        document.querySelector("#slugging_current").style.color = "rgb(0,100,0)";
+    } else {
+        document.querySelector("#slugging_current").style.color = "rgb(200,0,0)";
+    }
+
+    //setup obp
+    document.querySelector("#obp_goal").innerHTML = OBP_goal;
+    document.querySelector("#obp_current").innerHTML = OBP;
+    if(OBP_goal <= OBP){
+        document.querySelector("#obp_current").style.color = "rgb(0,100,0)";
+    } else {
+        document.querySelector("#obp_current").style.color = "rgb(200,0,0)";
+    }
+
+    //setup doubles
+    document.querySelector("#doubles_goal").innerHTML = doubles_goal;
+    document.querySelector("#doubles_current").innerHTML = doubles;
+    if(doubles_goal <= doubles){
+        document.querySelector("#doubles_current").style.color = "rgb(0,100,0)";
+    } else {
+        document.querySelector("#doubles_current").style.color = "rgb(200,0,0)";
+    }
+
+    //setup hbp+bb.k
+    document.querySelector("#bb_current").innerHTML = team_bb;
+    document.querySelector("#hbp_current").innerHTML = team_hbp;
+    document.querySelector("#ks_current").innerHTML = team_k;
+    document.querySelector("#bb_hbp_k_goal").innerHTML = team_hbp_bb_k_goal;
+    document.querySelector("#bb_hbp_k_current").innerHTML = team_hbp_bb_k;
+    if(team_hbp_bb_k_goal <= team_hbp_bb_k){
+        document.querySelector("#bb_hbp_k_current").style.color = "rgb(0,100,0)";
+    } else {
+        document.querySelector("#bb_hbp_k_current").style.color = "rgb(200,0,0)";
+    }
+}
+</script>

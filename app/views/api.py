@@ -530,3 +530,10 @@ def team_get_pitchers(team_id):
         "status": "success",
         "data": pitchers_arr
     })
+
+
+@api.route("/api/hitters/goals")
+@login_required
+def hitters_goals():
+
+    return jsonify({})
