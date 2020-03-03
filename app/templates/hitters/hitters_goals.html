@@ -1,13 +1,13 @@
 <script>
 
 var runs_per_game_goal = 8;
-var runs_per_game = 0;
+var runs_per_game = 10.5;  // manual
 
 var slugging_pct_goal = 450;
-var sluggint_pct = 0;
+var sluggint_pct = 461;  // manual
 
 var OBP_goal = 415;
-var OBP = 0;
+var OBP = 456;  // manual
 
 var doubles_goal = 100;
 var doubles = 0;
@@ -30,6 +30,7 @@ function get_server_info(){
         team_bb = response.data.bb;
         team_hbp = response.data.hbp;
         team_k = response.data.ks;
+        // OBP = response.data.obp;
         team_hbp_bb_k = (team_bb + team_hbp) / team_k;
 
         setup_goals_current();
