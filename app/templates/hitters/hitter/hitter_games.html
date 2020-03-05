@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block styles %}
+{{ super() }}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidenav.css') }}">
+<script src="{{ url_for('static', filename='js/sortable_table.js') }}"></script>
+<script src="{{ url_for('static', filename='js/season_selector.js') }}"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+        //sort by date twice so most recent at top
+        sortTable(0,0);
+        sortTable(0,0);
+
+        //setup season selection
+        season_selector('games-season-selector', 'games-table', 1);
+    });
+</script>
+{% endblock %}
+
+{% block app_content %}
+{% include "hitters/hitter/hitter_sidenav.html" %}
+<div class="main">
+    {% include "hitters/hitter/hitter_title.html" %}
+    <div class="row text-center">
+        <h1>
+            Games
+        </h1>
+    </div>
+    <div class="row">
+        <h5>Select a Season:</h5>
+        <select name="Games Season Selector" id="games-season-selector" onchange="season_selector('games-season-selector', 'games-table', 1)">
+            <option value="All Seasons">All Seasons</option>
+            {% for season in seasons %}
+                <option value="{{ season }}" {% if current_season == season %} selected {% endif %}>{{ season }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div>
+        <table id="games-table" class="table sortable_table">
+            <tr class="table-headers">
+                <th>Date</th>
+                <th>Season</th>
+                <th>Opponent</th>
+                <th>At Bats</th>
+                <th>Pitches Seen</th>
+                <th>View</th>
+            </tr>
+            {% for game in game_stats %}
+                <tr class="data-row">
+                    <td>{{ game["game"].date }}</td>
+                    <td>{{ game["game"].get_season() }}</td>
+                    <td>{{ game["game"].get_opponent() }}</td>
+                    <td>{{ game["stats"]["ab"] }}</td>
+                    <td>{{ game["stats"]["pitches"] }}</td>
+                    <td><a href="{{ url_for('hitter.hitter_game_view', batter_id=batter.id, game_id=game['game'].id) }}">view</a></td>
+                </tr>
+            {% endfor %}
+        </table>
+
+    </div>
+</div>
+{% endblock %}

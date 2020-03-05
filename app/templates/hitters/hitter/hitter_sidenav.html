@@ -1,0 +1,14 @@
+<div class="sidenav">
+    <a href="{{ url_for('hitters.hitters_home') }}">Team Roster</a>
+    <a href="{{ url_for('hitter.hitter_home', id=batter.id) }}">Hitter Home</a>
+    <a href="{{ url_for('hitter.hitter_at_bats', batter_id=batter.id) }}">At Bats</a>
+    <a href="{{ url_for('hitter.hitter_games', batter_id=batter.id) }}">Games</a>
+    <a href="{{ url_for('hitter.hitter_videos', id=batter.id) }}">Videos</a>
+    <a href="{{ url_for('hitter.hitter_spray_chart', batter_id=batter.id) }}">Sprays</a>
+
+    <!-- <a href="{{ url_for('batter.batter_sequencing', batter_id=batter.id) }}">Sequencing</a> -->
+    <a href="{{ url_for('hitter.hitter_stats', batter_id=batter.id) }}">Stats</a>
+    {% if current_user.admin %}
+        <a href="{{ url_for('hitter.hitter_edit', id=batter.id) }}">Edit Batter</a>
+    {% endif %}
+</div>
