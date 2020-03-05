@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block styles %}
+{{ super() }}
+<script src="{{ url_for('static', filename='js/sortable_table.js') }}"></script>
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/loader.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidenav.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/staff_home.css') }}">
+{% include "hitters/hitters_goals.html" %}
+<script>
+    //sort tables so that batters are alphabetical
+    document.addEventListener("DOMContentLoaded", function () {
+        get_server_info();
+    });
+</script>
+{% endblock %}
+
+{% block app_content %}
+{% include "hitters/hitters_sidenav.html" %}
+<div class="main">
+    {% include "hitters/hitters_title.html" %}
+    <div class="row">
+        <div class="col-xs-12 col-md-6" style="text-align: center;">
+            <h2>Active Hitters</h2>
+            <table class="table sortable_table">
+                <tr class="table-headers">
+                    <th class="text-left">Name</th>
+                    <th class="text-left">Grad Year</th>
+                    <th>Bats</th>
+                    <th>PA's</th>
+                </tr>
+                {% for batter in opponent.batters %}
+                {% if batter.retired not in [None, "", "1", 1] %}
+                <tr>
+                    <td class="text-left"><a
+                            href="{{ url_for('hitter.hitter_home', id=batter.id) }}">{{ batter.name() }}</a></td>
+                    <td class="text-left">{{ batter.grad_year }}</td>
+                    <td>{{ batter.bats }}</td>
+                    <td>{{ batter.num_abs() }}</td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </table>
+        </div>
+        <div class="col-xs-12 col-md-6" style="text-align: center;">
+            <h2>Season Goals</h2>
+            <table id="team-season-stats" class="table sortable_table">
+                <thead>
+                    <tr class="table-headers">
+                        <th class="text-left">Statistic</th>
+                        <th class="text-left">Goal</th>
+                        <th class="text-left">Current</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="text-left">Runs Per Game</td>
+                        <td id="rpg_goal"></td>
+                        <td id="rpg_current"><div class="loader"></td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">Slugging %</td>
+                        <td id="slugging_goal"></td>
+                        <td id="slugging_current"><div class="loader"></td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">OBP</td>
+                        <td id="obp_goal"></td>
+                        <td id="obp_current"><div class="loader"></td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">Team Doubles</td>
+                        <td id="doubles_goal"></td>
+                        <td id="doubles_current"><div class="loader"></td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">BB</td>
+                        <td></td>
+                        <td id="bb_current"><div class="loader"></td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">HBP</td>
+                        <td></td>
+                        <td id="hbp_current"><div class="loader"></td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">K's</td>
+                        <td></td>
+                        <td id="ks_current"><div class="loader"></td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">(BB+HBP)/K</td>
+                        <td id="bb_hbp_k_goal"></td>
+                        <td id="bb_hbp_k_current"><div class="loader"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

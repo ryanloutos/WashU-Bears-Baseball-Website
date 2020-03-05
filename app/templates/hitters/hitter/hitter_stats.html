@@ -1,0 +1,421 @@
+{% extends "base.html" %}
+
+{% block styles %}
+{{ super() }}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidenav.css') }}">
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script>
+    window.addEventListener("DOMContentLoaded", function(){
+
+        setup_pitch_usage();
+        setup_swing_whiff_rate();
+    });
+
+    function setup_pitch_usage(){
+        //get data from server
+        let pitch_usage_count = {{ pitch_usage_count|tojson }};
+
+        // put pitch_usage_count data in a form that the chart can handle
+        let pitch_usage_count_data = [];
+        for(let pitch_type in pitch_usage_count){
+            if(pitch_type != "thrown"){
+                let dat_temp = [];
+                for(let count in pitch_usage_count[pitch_type]){
+                    dat_temp.push({
+                        x: count,
+                        y: pitch_usage_count[pitch_type][count]["percent"]
+                    });
+                }
+                pitch_usage_count_data.push({
+                    name: pitch_type,
+                    data: dat_temp
+                });
+            }
+        }
+
+        // setup data and options for pitch_usage_count_chart
+        var pitch_usage_options = {
+            series: pitch_usage_count_data,
+            chart: {
+                height: 350,
+                type: 'heatmap',
+            },
+            dataLabels: {
+                enabled: true,
+                style: {
+                    colors: ["#000000"]
+                }
+            },
+            colors: ["#bd2e1f"],
+            title: {
+                text: 'Pitch Usage vs {{ batter.name() }} (% of time)'
+            }
+        };
+
+        var pitch_usage_count_chart = new ApexCharts(document.querySelector("#pitch_usage_count_chart"), pitch_usage_options);
+        pitch_usage_count_chart.render();
+    }
+
+    function setup_swing_whiff_rate(){
+        let swing_whiff_rate = {{ swing_whiff_rate|tojson }};
+
+        // put swing_whiff_rate_data into form that chart can handle
+        let swing_rate_data = [];
+        let whiff_rate_data = [];
+        for(let pitch_type in swing_whiff_rate){
+            if(pitch_type != "thrown"){
+                let swing_dat_temp = [];
+                let whiff_dat_temp = [];
+                for(let count in swing_whiff_rate[pitch_type]){
+                    swing_dat_temp.push({
+                        x: count,
+                        y: swing_whiff_rate[pitch_type][count]["swings"]
+                    });
+                    whiff_dat_temp.push({
+                        x: count,
+                        y: swing_whiff_rate[pitch_type][count]["whiffs"]
+                    });
+                }
+
+                // append to data options arrays
+                swing_rate_data.push({
+                    name: pitch_type,
+                    data: swing_dat_temp
+                });
+                whiff_rate_data.push({
+                    name: pitch_type,
+                    data: whiff_dat_temp
+                });
+            }
+        }
+
+        var swing_rate_options = {
+            series: swing_rate_data,
+            chart: {
+                height: 350,
+                type: 'heatmap'
+            },
+            dataLabels: {
+                enabled: true,
+                style: {
+                    colors: ["#000000"]
+                }
+            },
+            colors: ["#bd2e1f"],
+            title: {
+                text: 'Swing Rates by Pitch by Count (% of the time)'
+            }
+        };
+
+        var whiff_rate_options = {
+            series: whiff_rate_data,
+            chart: {
+                height: 350,
+                type: 'heatmap'
+            },
+            dataLabels: {
+                enabled: true,
+                style: {
+                    colors: ["#000000"]
+                }
+            },
+            colors: ["#bd2e1f"],
+            title: {
+                text: 'Whiff Rates by Pitch by Count (% of the time)'
+            }
+        };
+
+        var whiff_rate_chart = new ApexCharts(document.querySelector('#whiff_rate_chart'), whiff_rate_options);
+        var swing_rate_chart = new ApexCharts(document.querySelector('#swing_rate_chart'), swing_rate_options);
+
+        whiff_rate_chart.render();
+        swing_rate_chart.render();
+    }
+</script>
+{% endblock %}
+
+{% block app_content %}
+{% include "hitters/hitter/hitter_sidenav.html" %}
+<div class="main">
+    {% include "hitters/hitter/hitter_title.html" %}
+    <div class="row text-center">
+        <h1>Stats</h1>
+    </div>
+    <div class="row">
+        <ul class="nav nav-tabs">
+            <li class="active"><a data-toggle="tab" href="#career-pitch-usage">Career Pitch Usage</a></li>
+            <li><a data-toggle="tab" href="#career-swing-whiff">Career Swing/Whiff</a></li>
+            <li><a data-toggle="tab" href="#career-ball-in-play">Career Ball-in-Play</a></li>
+            <li><a data-toggle="tab" href="#career-hard-hit">Career Hard Hit</a></li>
+            <li><a data-toggle="tab" href="#current-swing-whiff">Current Swing/Whiff</a></li>
+            <li><a data-toggle="tab" href="#current-ball-in-play">Current Ball-in-Play</a></li>
+            <li><a data-toggle="tab" href="#current-hard-hit">Current Hard Hit</a></li>
+        </ul>
+    </div>
+    <div class="tab-content row">
+        <div id="career-pitch-usage" class="tab-pane fade in active">
+            <div class="col-xs-12">
+                <h3>Carer Pitch Usage vs {{ batter.name() }}</h3>
+                <div id="pitch_usage_count_chart"></div>
+            </div>
+        </div>
+        <div id="career-swing-whiff" class="tab-pane fade">
+            <div>
+                <h3>Career Swing Rates of {{ batter.name() }}</h3>
+                <div id="swing_rate_chart"></div>
+            </div>
+            <div>
+                <h3>Career Whiff Rates of {{ batter.name() }}</h3>
+                <div id="whiff_rate_chart"></div>
+            </div>
+        </div>
+        <div id="career-ball-in-play" class="tab-pane fade">
+            <div class="col-xs-12 col-lg-6">
+                <h3 class="text-center">Ball in Play Totals</h3>
+                <table class="table">
+                    <thead>
+                        <tr class="table-headers">
+                            <td class="text-left">Stat</td>
+                            <td class="text-left">value</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="text-left">H</td>
+                            <td class="text-left"></td>
+                        </tr>
+                        <tr>
+                            <td class="text-left">1B</td>
+                            <td class="text-left"></td>
+                        </tr>
+                        <tr>
+                            <td class="text-left">2B</td>
+                            <td class="text-left"></td>
+                        </tr>
+                        <tr>
+                            <td class="text-left">3B</td>
+                            <td class="text-left"></td>
+                        </tr>
+                        <tr>
+                            <td class="text-left">HR</td>
+                            <td class="text-left"></td>
+                        </tr>
+                        <tr>
+                            <td class="text-left">BB/HBP</td>
+                            <td class="text-left"></td>
+                        </tr>
+                        <tr>
+                            <td class="text-left">K/KL</td>
+                            <td class="text-left"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-xs-12 col-lg-6">
+                <h3 class="text-center">Stat Lines</h3>
+                <table class="table">
+                    <thead>
+                        <tr class="table-headers">
+                            <th class="text-left">Date</th>
+                            <th class="text-left">Opponent</th>
+                            <th class="text-left">H</th>
+                            <th class="text-left">1B</th>
+                            <th class="text-left">2B</th>
+                            <th class="text-left">3B</th>
+                            <th class="text-left">HR</th>
+                            <th class="text-left">K/KL</th>
+                            <th class="text-left">BB/HBP</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for game, vals in ball_in_play["career"].items() %}
+                            <tr class="data-row">
+                                <td>{{ game.date }}</td>
+                                <td>{{ game.get_opponent() }}</td>
+                                <td>{{ ball_in_play["career"][game]["h"] }}</td>
+                                <td>{{ ball_in_play["career"][game]["1b"] }}</td>
+                                <td>{{ ball_in_play["career"][game]["2b"] }}</td>
+                                <td>{{ ball_in_play["career"][game]["3b"] }}</td>
+                                <td>{{ ball_in_play["career"][game]["hr"] }}</td>
+                                <td>{{ ball_in_play["career"][game]["bb"] }}</td>
+                                <td>{{ ball_in_play["career"][game]["k"] }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div id="career-hard-hit" class="tab-pane fade">
+            <div class="col-xs-12 col-lg-6">
+                <h3 class="text-center">Career Totals</h3>
+                <table class="table"> 
+                    <thead>
+                        <tr class="table-headers">
+                            <td class="text-left">Stat</td>
+                            <td class="text-left">Value</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="text-left"># Hard Hit</td>
+                            <td class="text-left"></td>
+                        </tr>
+                        <tr>
+                            <td class="text-left">% Hard Hit</td>
+                            <td class="text-left"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-xs-12 col-lg-6">
+                <h3 class="text-center">Hard Hit by Game</h3>
+                <table class="table">
+                    <thead>
+                        <tr class="table-headers">
+                            <td class="text-left">Date</td>
+                            <td class="text-left">Opponent</td>
+                            <td class="text-left"># Hard Hit</td>
+                            <td class="text-left">% Hard Hit</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for game in hard_hit["career"] %}
+                            <tr class="data-row">
+                                <td class="text-left">{{ game.date }}</td>
+                                <td class="text-left">{{ game.get_opponent() }}</td>
+                                <td class="text-left">{{ hard_hit["career"][game]["num_hard"] }}</td>
+                                <td class="text-left">{{ hard_hit["career"][game]["percent"] }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div id="current-swing-whiff" class="tab-pane fade">
+            <h2 class="text-center">Coming Soon</h2>
+        </div>
+        <div id="current-ball-in-play" class="tab-pane fade">
+            <div class="col-xs-12 col-lg-6">
+                <h3 class="text-center">Current Season Ball in Play Totals</h3>
+                <table class="table">
+                    <thead>
+                        <tr class="table-headers">
+                            <td class="text-left">Stat</td>
+                            <td class="text-left">value</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="text-left">H</td>
+                            <td class="text-left"></td>
+                        </tr>
+                        <tr>
+                            <td class="text-left">1B</td>
+                            <td class="text-left"></td>
+                        </tr>
+                        <tr>
+                            <td class="text-left">2B</td>
+                            <td class="text-left"></td>
+                        </tr>
+                        <tr>
+                            <td class="text-left">3B</td>
+                            <td class="text-left"></td>
+                        </tr>
+                        <tr>
+                            <td class="text-left">HR</td>
+                            <td class="text-left"></td>
+                        </tr>
+                        <tr>
+                            <td class="text-left">BB/HBP</td>
+                            <td class="text-left"></td>
+                        </tr>
+                        <tr>
+                            <td class="text-left">K/KL</td>
+                            <td class="text-left"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-xs-12 col-lg-6">
+                <h3 class="text-center">Current Season Stat Lines</h3>
+                <table class="table">
+                    <thead>
+                        <tr class="table-headers">
+                            <th class="text-left">Date</th>
+                            <th class="text-left">Opponent</th>
+                            <th class="text-left">H</th>
+                            <th class="text-left">1B</th>
+                            <th class="text-left">2B</th>
+                            <th class="text-left">3B</th>
+                            <th class="text-left">HR</th>
+                            <th class="text-left">K/KL</th>
+                            <th class="text-left">BB/HBP</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for game, vals in ball_in_play["current"].items() %}
+                        <tr class="data-row">
+                            <td>{{ game.date }}</td>
+                            <td>{{ game.get_opponent() }}</td>
+                            <td>{{ ball_in_play["current"][game]["h"] }}</td>
+                            <td>{{ ball_in_play["current"][game]["1b"] }}</td>
+                            <td>{{ ball_in_play["current"][game]["2b"] }}</td>
+                            <td>{{ ball_in_play["current"][game]["3b"] }}</td>
+                            <td>{{ ball_in_play["current"][game]["hr"] }}</td>
+                            <td>{{ ball_in_play["current"][game]["bb"] }}</td>
+                            <td>{{ ball_in_play["current"][game]["k"] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div id="current-hard-hit" class="tab-pane fade">
+            <div class="col-xs-12 col-lg-6">
+                <h3 class="text-center">Current Season Totals</h3>
+                <table class="table">
+                    <thead>
+                        <tr class="table-headers">
+                            <td class="text-left">Stat</td>
+                            <td class="text-left">Value</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="text-left"># Hard Hit</td>
+                            <td class="text-left"></td>
+                        </tr>
+                        <tr>
+                            <td class="text-left">% Hard Hit</td>
+                            <td class="text-left"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-xs-12 col-lg-6">
+                <h3 class="text-center">Current Season Hard Hit by Game</h3>
+                <table class="table">
+                    <thead>
+                        <tr class="table-headers">
+                            <td class="text-left">Date</td>
+                            <td class="text-left">Opponent</td>
+                            <td class="text-left"># Hard Hit</td>
+                            <td class="text-left">% Hard Hit</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for game in hard_hit["current"] %}
+                            <tr class="data-row">
+                                <td class="text-left">{{ game.date }}</td>
+                                <td class="text-left">{{ game.get_opponent() }}</td>
+                                <td class="text-left">{{ hard_hit["current"][game]["num_hard"] }}</td>
+                                <td class="text-left">{{ hard_hit["current"][game]["percent"] }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

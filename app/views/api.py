@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request, send_file, url_for, send_from_directory
 from flask_login import login_required
 from app import db
-from app.stats import batterSwingWhiffRatebyPitchbyCount, staffSeasonGoals, staffBasicStats, staffSeasonStats
+from app.stats import batterSwingWhiffRatebyPitchbyCount, staffSeasonGoals, staffBasicStats, staffSeasonStats, truncate
 from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat, Pitcher, Game, Video
 from datetime import datetime
 import os
@@ -529,4 +529,47 @@ def team_get_pitchers(team_id):
     return jsonify({
         "status": "success",
         "data": pitchers_arr
+    })
+
+
+@api.route("/api/hitters/goals")
+@login_required
+def hitters_goals():
+    team = Opponent.query.filter_by(id=1).first()
+
+    doubles = 0
+    bb = 0
+    hbp = 0
+    ks = 0
+    hits = 0
+    pa = 0
+    for hitter in team.batters:
+        for ab in hitter.at_bats:
+            if ab.get_season().current_season and ab.get_pitcher().opponent_id is not 1:
+                pa += 1
+                for pitch in ab.pitches:
+                    if pitch.ab_result not in [None, ""]:
+                        if pitch.ab_result in ["2B"]:
+                            doubles += 1
+                        elif pitch.ab_result in ["HBP"]:
+                            hbp += 1
+                        elif pitch.ab_result in ["BB"]:
+                            bb += 1
+                        elif pitch.ab_result in ["K", "KL", "D3->Out", "D3->Safe"]:
+                            ks += 1
+
+                        if pitch.ab_result in ["1B", "2B", "3B", "HR"]:
+                            hits += 1
+
+    obp = truncate(((hits + hbp + bb) / pa) * 1000)
+
+    return jsonify({
+        "status": "success",
+        "data": {
+            "doubles": doubles,
+            "bb": bb,
+            "hbp": hbp,
+            "ks": ks,
+            "obp": obp
+        }
     })
