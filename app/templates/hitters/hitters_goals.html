@@ -31,7 +31,7 @@ function get_server_info(){
         team_hbp = response.data.hbp;
         team_k = response.data.ks;
         // OBP = response.data.obp;
-        team_hbp_bb_k = (team_bb + team_hbp) / team_k;
+        team_hbp_bb_k = ((team_bb + team_hbp) / team_k).toFixed(2);
 
         setup_goals_current();
     })
