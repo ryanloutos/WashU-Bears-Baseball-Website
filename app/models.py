@@ -47,6 +47,12 @@ class Pitcher(db.Model):
             count += 1
         return count
 
+    def page_title(self):
+        if self.number not in [None, ""]:
+            return f"{self.firstname} {self.lastname} #{self.number}"
+        else:
+            return f"{self.firstname} {self.lastname}"
+
 
 class Game(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -56,6 +62,7 @@ class Game(db.Model):
                             index=True)
     season_id = db.Column(db.Integer, db.ForeignKey('season.id'), index=True)
     outings = db.relationship('Outing', backref='game', lazy='dynamic')
+    videos = db.relationship('Video', backref='game', lazy='dynamic')
 
     def __repr__(self):
         return f"{self.date.month}/{self.date.day}/{self.date.year} vs. {self.opponent}"
@@ -282,6 +289,7 @@ class Video(db.Model):
     pitcher_id = db.Column(db.Integer, db.ForeignKey('pitcher.id'), index=True)
     batter_id = db.Column(db.Integer, db.ForeignKey('batter.id'), index=True)
     season_id = db.Column(db.Integer, db.ForeignKey('season.id'), index=True)
+    game_id = db.Column(db.Integer, db.ForeignKey('game.id'), index=True)
     outing_id = db.Column(db.Integer, db.ForeignKey('outing.id'), index=True)
     atbat_id = db.Column(db.Integer, db.ForeignKey('at_bat.id'), index=True)
     link = db.Column(db.String(128))
