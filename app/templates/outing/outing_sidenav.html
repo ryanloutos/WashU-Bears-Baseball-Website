@@ -1,4 +1,5 @@
 <div class="sidenav">
+    <a href="{{ url_for('game.game_pitching', id=outing.game_id) }}">Game Page</a>
     <a href="{{ url_for('pitcher.pitcher_outings', id=outing.pitcher_id) }}">All Outings</a>
     <a href="{{ url_for('outing.outing_home', id=outing.id) }}">Outing Home</a>
     <a href="{{ url_for('outing.outing_pbp', id=outing.id) }}">Pitch by Pitch</a>
