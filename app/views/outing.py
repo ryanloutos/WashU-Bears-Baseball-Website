@@ -986,7 +986,7 @@ def outing_report(id):
     )
 
 
-@outing.route('/new_outing_pitch_tracker/<id>',methods=['GET', 'POST'])
+@outing.route('/new_outing_pitch_tracker/<id>', methods=['GET', 'POST'])
 @login_required
 def new_outing_pitch_tracker(id):
     
@@ -1040,7 +1040,7 @@ def new_outing_pitch_tracker(id):
 
             # add pitch to array
             pitch = {
-                "batter_id": p.batter_id,
+                "batter_id": p.batter.number,
                 "velocity": p.velocity,
                 "lead_runner": p.lead_runner,
                 "time_to_plate": p.time_to_plate,
