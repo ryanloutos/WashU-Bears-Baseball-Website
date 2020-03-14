@@ -203,7 +203,7 @@ class Batter(db.Model):
     at_bats = db.relationship('AtBat', backref='batter', lazy='dynamic')
 
     def __repr__(self):
-        return str(self.number) + " - " + self.initials
+        return str(self.number) + " - " + str(self.initials)
 
     def name(self):
         return f"{self.firstname} {self.lastname}"

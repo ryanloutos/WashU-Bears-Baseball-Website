@@ -1040,7 +1040,7 @@ def new_outing_pitch_tracker(id):
 
             # add pitch to array
             pitch = {
-                "batter_id": p.batter.number,
+                "batter_id": p.batter_id,
                 "velocity": p.velocity,
                 "lead_runner": p.lead_runner,
                 "time_to_plate": p.time_to_plate,
