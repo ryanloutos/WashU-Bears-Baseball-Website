@@ -1,14 +1,14 @@
-<div class="sidenav">
-    <a href="{{ url_for('game.game_pitching', id=outing.game_id) }}">Game Page</a>
-    <a href="{{ url_for('pitcher.pitcher_outings', id=outing.pitcher_id) }}">All Outings</a>
-    <a href="{{ url_for('outing.outing_home', id=outing.id) }}">Outing Home</a>
-    <a href="{{ url_for('outing.outing_pbp', id=outing.id) }}">Pitch by Pitch</a>
-    <a href="{{ url_for('outing.outing_stats_basic', id=outing.id) }}">Basic Stats</a>
-    {# <a href="{{ url_for('outing.outing_stats_advanced', id=outing.id) }}">Advanced Stats</a> #}
-    <a href="{{ url_for('outing.outing_videos', id=outing.id) }}">Video</a>
+<ul class="sidenav">
+    <li><a class="sidenav-item" href="{{ url_for('game.game_pitching', id=outing.game_id) }}">Game Page</a></li>
+    <li><a class="sidenav-item" href="{{ url_for('pitcher.pitcher_outings', id=outing.pitcher_id) }}">All Outings</a></li>
+    <li><a class="sidenav-item" href="{{ url_for('outing.outing_home', id=outing.id) }}">Outing Home</a></li>
+    <li><a class="sidenav-item" href="{{ url_for('outing.outing_pbp', id=outing.id) }}">Pitch by Pitch</a></li>
+    <li><a class="sidenav-item" href="{{ url_for('outing.outing_stats_basic', id=outing.id) }}">Basic Stats</a></li>
+    {# <li><a class="sidenav-item" href="{{ url_for('outing.outing_stats_advanced', id=outing.id) }}">Advanced Stats</a></li> #}
+    <li><a class="sidenav-item" href="{{ url_for('outing.outing_videos', id=outing.id) }}">Video</a></li>
     {% if current_user.admin %}
-        <a href="{{ url_for('outing.edit_outing', outing_id=outing.id) }}">Edit Outing</a>
-        <a href="{{ url_for('outing.edit_outing_pitches', outing_id=outing.id) }}">Edit Pitches</a>
-        <a href="{{ url_for('outing.new_outing_pitch_tracker', id=outing.id) }}">Continue Tracking</a> 
+        <li><a class="sidenav-item" href="{{ url_for('outing.edit_outing', outing_id=outing.id) }}">Edit Outing</a></li>
+        <li><a class="sidenav-item" href="{{ url_for('outing.edit_outing_pitches', outing_id=outing.id) }}">Edit Pitches</a></li>
+        <li><a class="sidenav-item" href="{{ url_for('outing.new_outing_pitch_tracker', id=outing.id) }}">Continue Tracking</a></li> 
     {% endif %}
-</div>
+</ul>

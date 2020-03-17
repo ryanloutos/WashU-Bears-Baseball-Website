@@ -182,7 +182,10 @@ class Opponent(db.Model):
     games = db.relationship('Game', backref='opponent', lazy='dynamic')
 
     def __repr__(self):
-        return self.name
+        if self.name == "Matchups":
+            return "WashU Bears"
+        else:
+            return self.name
 
 
 class Batter(db.Model):

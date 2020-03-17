@@ -2,22 +2,13 @@
 
 {% block styles %}
     {{ super() }}
-    <script src="{{ url_for('static', filename='js/sortable_table.js') }}"></script>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidenav.css') }}">
     <script src="{{ url_for('static', filename='js/chart.js') }}"></script>
-    <style>
-        #recent-outings {
-            width: 300px;
-        }
-        .pitcher-picture {
-            float: right;
-            border: 5px solid #bd2e1f;
-        }
-    </style>
+    <script src="{{ url_for('static', filename='js/sidenav.js') }}"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             var ctx = document.getElementById('velo-over-career').getContext('2d');
-            ctx.canvas.parentNode.style.width = '800px';
+            //ctx.canvas.parentNode.style.width = '1000px';
             var chart = new Chart(ctx, {
                 // The type of chart we want to create
                 type: 'line',
@@ -76,31 +67,39 @@
 {% block app_content %}
     {% include "pitcher/pitcher_sidenav.html" %}
     <div class="main">
-        <img class="pitcher-picture" alt="Picture" src="{{ url_for('static', filename=file_loc) }}">
-        <h1>
-            {{ pitcher }}
-        </h1>
-        <br>
-        <div id="recent-outings">
+        {% include "pitcher/pitcher_title.html" %}
+        <div class="col-xs-12 col-xs-4">
+            {% if pitcher.retired %}
+                STATUS: INACTIVE
+            {% else %}
+                STATUS: ACTIVE
+            {% endif %} <br>
+            Throws: {{ pitcher.throws }} <br>
+            Grad Year: {{ pitcher.grad_year }} <br>
+            Notes: {{ pitcher.notes }}
+        </div>
+        <div class="col-xs-12 col-xs-4" id="recent-outings" style="text-align: center;">
             <h4>Recent Outings</h4>
-            <table class="table" id="recent-outings">
+            <table class="table" id="recent-outings" style="width: 70%; margin-left: 15%">
                 <tr class="table-headers">
-                    <th width=20px></th>
                     <th>Date</th>
                     <th>Opponent</th>
                 </tr>
                 {% for o in recent_outings %}
                     <tr>
-                        <td><a href="{{ url_for('outing.outing_home', id=o.id) }}">View</a></td>
                         <td>{{ o.date.month }}/{{ o.date.day }}/{{ o.date.year }}</td>
-                        <td>{{ o.opponent }}</td>
+                        <td><a style="color:#bd231f" href="{{ url_for('outing.outing_home', id=o.id) }}">{{ o.opponent }}</a></td>
                     </tr>
                 {% endfor %}
             </table>
         </div>
-        <h4>Velo Over Career</h4>
-        <canvas id="velo-over-career">
-        </canvas>
+        <div class="col-xs-12 col-xs-4" style="text-align: right;">
+            <img class="pitcher-picture" alt="Picture" src="{{ url_for('static', filename=file_loc) }}" style="border: 5px solid #bd2e1f;">
+        </div>
+        <div class="col-xs-12 col-md-12">
+            <h4>Velo Over Career</h4>
+            <canvas id="velo-over-career"></canvas>
+        </div>
         <br>
     </div>
 {% endblock %}

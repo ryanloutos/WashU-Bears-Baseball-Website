@@ -3,6 +3,7 @@
 {% block styles %}
 {{ super() }}
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidenav.css') }}">
+<script src="{{ url_for('static', filename='js/sidenav.js') }}"></script>
 <style>
     .video-title {
         font-size: 25px;
@@ -62,6 +63,7 @@
 {% block app_content %}
     {% include "pitcher/pitcher_sidenav.html" %}
     <div class="main">
+        {% include "pitcher/pitcher_title.html" %}
         <h1>{{ pitcher }} - Videos</h1>
         <br>
         <div style="font-size: 20px;">

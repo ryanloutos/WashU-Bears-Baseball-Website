@@ -1,8 +1,15 @@
 {% extends "base.html" %}
 
+{% block styles %}
+    {{ super() }}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidenav.css') }}">
+    <script src="{{ url_for('static', filename='js/sidenav.js') }}"></script>
+{% endblock %}
+
 {% block app_content %}
+    {% include "pitcher/pitcher_sidenav.html" %}
     <div class="main">
-        <h1>New Pitcher</h1>
+        {% include "pitcher/pitcher_title.html" %} 
         <form method="post" enctype="multipart/form-data" novalidate>
             {{ form.hidden_tag() }} {# Preventing CSRF attacks #}
             <p>

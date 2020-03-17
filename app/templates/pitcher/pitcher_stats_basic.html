@@ -5,6 +5,7 @@
     <script src="{{ url_for('static', filename='js/sortable_table.js') }}"></script>
     <script src="{{ url_for('static', filename='js/checkbox_table.js') }}"></script>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidenav.css') }}">
+    <script src="{{ url_for('static', filename='js/sidenav.js') }}"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             checkbox_table('basic-stat-season-table', 'season-checkbox', 2); 
@@ -64,6 +65,7 @@
 {% block app_content %}
     {% include "pitcher/pitcher_sidenav.html" %}
     <div class="main">
+        {% include "pitcher/pitcher_title.html" %}
         <h1>
             {{ pitcher }} - Basic Stats
         </h1>

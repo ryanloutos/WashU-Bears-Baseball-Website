@@ -14,7 +14,7 @@ staff = Blueprint('staff', __name__)
 @staff.route("/staff", methods=["GET", "POST"])
 @login_required
 def staff_home():
-    pitchers = Pitcher.query.filter(Pitcher.retired != 1).filter(Pitcher.opponent_id == 1).order_by(Pitcher.name).all()
+    pitchers = Pitcher.query.filter(Pitcher.retired != 1).filter(Pitcher.opponent_id == 1).order_by(Pitcher.lastname).all()
     return render_template (
         "staff/home/staff_home.html",
         title="Bears Pitching",
