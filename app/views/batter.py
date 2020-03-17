@@ -178,7 +178,8 @@ def batter_spray_chart(batter_id):
 
     # Change density vals to percentages
     for i in range(len(density_vals)):
-        density_vals[i] = density_vals[i] / d_total
+        if d_total != 0:
+            density_vals[i] = density_vals[i] / d_total
 
     return render_template(
         'opponent/batter/batter_spray_chart.html',
