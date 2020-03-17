@@ -1,10 +1,6 @@
 WashU-Bears-Baseball-Website
 Collaborators: Ryan Loutos, Mitchell Black (with some help from Kenny Dorian and Brian Hall)
 
-By Sat 2/22 For Hendrix:
-- Edit any necessary pages for basic opponents analysis while still keeping our own
-- Adjust opponent pages to include pitching information too
-
 In Game Tracking Improvements:
 - Provide ability to enter batter and pitcher notes/tendencies
 - Pitcher Identification by name and number, not just name

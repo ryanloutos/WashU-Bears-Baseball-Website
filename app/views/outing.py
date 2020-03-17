@@ -986,7 +986,7 @@ def outing_report(id):
     )
 
 
-@outing.route('/new_outing_pitch_tracker/<id>',methods=['GET', 'POST'])
+@outing.route('/new_outing_pitch_tracker/<id>', methods=['GET', 'POST'])
 @login_required
 def new_outing_pitch_tracker(id):
     

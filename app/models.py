@@ -39,7 +39,7 @@ class Pitcher(db.Model):
     outings = db.relationship('Outing', backref='pitcher', lazy='dynamic')
 
     def __repr__(self):
-        return self.firstname + " " + self.lastname
+        return str(self.number) + " " + self.firstname + " " + self.lastname
 
     def num_outings(self):
         count = 0
@@ -206,7 +206,7 @@ class Batter(db.Model):
     at_bats = db.relationship('AtBat', backref='batter', lazy='dynamic')
 
     def __repr__(self):
-        return self.short_name
+        return str(self.number) + " - " + str(self.initials)
 
     def name(self):
         return f"{self.firstname} {self.lastname}"
