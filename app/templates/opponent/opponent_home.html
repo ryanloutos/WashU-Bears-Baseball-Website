@@ -3,8 +3,6 @@
 {% block styles %}
     {{ super() }}
     <script src="{{ url_for('static', filename='js/sortable_table.js') }}"></script>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidenav.css') }}">
-    <script src="{{ url_for('static', filename='js/sidenav.js') }}"></script>
     <script>
         //sort tables so that batters are alphabetical
         document.addEventListener("DOMContentLoaded", function(){

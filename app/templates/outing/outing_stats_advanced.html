@@ -3,8 +3,6 @@
 {% block styles %}
     {{ super() }}
     <script src="{{ url_for('static', filename='js/stat_selector.js') }}"></script>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidenav.css') }}">
-    <script src="{{ url_for('static', filename='js/sidenav.js') }}"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             show_stat();
