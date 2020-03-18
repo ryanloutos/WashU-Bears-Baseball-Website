@@ -86,8 +86,31 @@ def staffSeasonGoals(pitchers, includeMatchups=True):
             if not includeMatchups:
                 current_inning = 1
                 season = Season.query.filter_by(id=o.season_id).first()
-                if season.current_season:
-                    if o.opponent_id is not 1:
+                if season is not None:
+                    if season.current_season:
+                        if o.opponent_id is not 1:
+                            for ab in o.at_bats:
+                                for index, p in enumerate(ab.pitches):
+                                    total_pitches += 1
+                                    if p.pitch_result is not "B":
+                                        strikes += 1 
+                                    if index is 0:
+                                        first_pitches += 1
+                                        if p.pitch_result is not "B":
+                                            first_pitch_strikes += 1
+                                    if p.ab_result in ["K", "KL"]:
+                                        strikeouts += 1
+                                    if p.ab_result == "BB":
+                                        walks += 1
+                                    if p.pitch_type not in [1,7,"FB","SM"]:
+                                        offspeed_pitches += 1
+                                        if p.pitch_result != "B":
+                                            offspeed_strikes += 1
+            else:
+                current_inning = 1
+                season = Season.query.filter_by(id=o.season_id).first()
+                if season is not None:
+                    if season.current_season:
                         for ab in o.at_bats:
                             for index, p in enumerate(ab.pitches):
                                 total_pitches += 1
@@ -105,27 +128,6 @@ def staffSeasonGoals(pitchers, includeMatchups=True):
                                     offspeed_pitches += 1
                                     if p.pitch_result != "B":
                                         offspeed_strikes += 1
-            else:
-                current_inning = 1
-                season = Season.query.filter_by(id=o.season_id).first()
-                if season.current_season:
-                    for ab in o.at_bats:
-                        for index, p in enumerate(ab.pitches):
-                            total_pitches += 1
-                            if p.pitch_result is not "B":
-                                strikes += 1 
-                            if index is 0:
-                                first_pitches += 1
-                                if p.pitch_result is not "B":
-                                    first_pitch_strikes += 1
-                            if p.ab_result in ["K", "KL"]:
-                                strikeouts += 1
-                            if p.ab_result == "BB":
-                                walks += 1
-                            if p.pitch_type not in [1,7,"FB","SM"]:
-                                offspeed_pitches += 1
-                                if p.pitch_result != "B":
-                                    offspeed_strikes += 1
 
 
     if total_pitches is 0:

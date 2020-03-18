@@ -163,7 +163,7 @@ class Pitch(db.Model):
 class Season(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     semester = db.Column(db.String(8), index=True)
-    year = db.Column(db.String(8), index=True)
+    year = db.Column(db.Integer, index=True)
     current_season = db.Column(db.Boolean, index=True)
     outings = db.relationship('Outing', backref='season', lazy='dynamic')
     videos = db.relationship('Video', backref='season', lazy='dynamic')

@@ -2,11 +2,6 @@ from flask import render_template, flash, redirect, url_for, request
 from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.urls import url_parse
 from app import app, db
-from app.forms import LoginForm, RegistrationForm, OutingForm, PitchForm
-from app.forms import NewOutingFromCSV, SeasonForm, OpponentForm, BatterForm
-from app.forms import OutingPitchForm, NewOutingFromCSVPitches, EditUserForm
-from app.forms import ChangePasswordForm, EditBatterForm, EditOpponentForm
-from app.forms import NewBatterForm
 from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat
 from app.stats import calcPitchPercentages, pitchUsageByCount, calcAverageVelo
 from app.stats import calcPitchStrikePercentage, calcPitchWhiffRate

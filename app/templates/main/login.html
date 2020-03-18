@@ -2,39 +2,32 @@
 
 {% block styles %}
     {{ super() }}
-    <style>
-        .main {
-            font-family: 'Exo', sans-serif;
-            font-weight: 500;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/login.css') }}">
 {% endblock %}
 
 {% block app_content %}
-    <div class="main">
-        <h1>Sign In</h1>
+    <div class="no-sidenav">
+        <br>
+        <h1>Sign In</h1><br>
         <form method="post" novalidate>
             {{ form.hidden_tag() }}
             <p>
-                {{ form.username.label }}<br>
-                {{ form.username(size=32) }}<br>
+                {{ form.username(size=24, placeholder="Username") }}<br>
                 {% for error in form.username.errors %}
-                    <span style="color: red;">[{{ error }}]</span>
+                    <span class="errors">[{{ error }}]</span>
                 {% endfor %}
-            </p>
+            </p><br>
             <p>
-                {{ form.password.label }}<br>
-                {{ form.password(size=32) }}<br>
+                {{ form.password(size=24, placeholder="Password") }}<br>
                 {% for error in form.password.errors %}
-                    <span style="color: red;">[{{ error }}]</span>
+                    <span class="errors">[{{ error }}]</span>
                 {% endfor %}
-            </p>
-            <p>{{ form.remember_me() }} {{ form.remember_me.label }}</p>
+            </p><br>
             <p>{{ form.submit() }}</p>
-        </form>
+        </form> <br>
         <p>
             Forgot Your Password?
-            <a href="">Click to Reset It</a>
+            <a style="color: #bd3e1f" href="">Click to Reset It</a>
         </p>
     </div>
 {% endblock %}

@@ -9,27 +9,28 @@ from wtforms.validators import EqualTo, Optional
 from .models import User, Season, Opponent, Pitcher, Game, Outing, Batter
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 
-
-# Basic form for users to login, must type in both username and a password
 class LoginForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired()])
-    password = PasswordField('Password', validators=[DataRequired()])
-    remember_me = BooleanField('Remember Me')
-    submit = SubmitField('Sign In')
+    username = StringField("Username", validators=[DataRequired()])
+    password = PasswordField("Password", validators=[DataRequired()])
+    submit = SubmitField("Sign In")
 
-
-# Creating a new season
-class SeasonForm(FlaskForm):
+class NewSeasonForm(FlaskForm):
     semester = SelectField(
         'Semester',
         choices=[('Fall', 'Fall'), ('Spring', 'Spring')],
-        validators=[DataRequired()])
-    year = StringField('Year', validators=[DataRequired()])
+        validators=[DataRequired()]
+    )
+    year = IntegerField('Year', validators=[DataRequired()])
     current_season = BooleanField('Current Season?')
     submit = SubmitField('Create New Season')
 
+class EditSeasonForm(FlaskForm):
+    semester = SelectField("Semester", validators=[DataRequired()])
+    year = IntegerField('Year', validators=[DataRequired()])
+    current_season = BooleanField('Current Season?')
+    submit = SubmitField('Save Changes')
 
-# Creating a new batter
+
 class BatterForm(FlaskForm):
     fullname = StringField('Name', validators=[Optional()])
     nickname = StringField('Initials/Number', validators=[Optional()])

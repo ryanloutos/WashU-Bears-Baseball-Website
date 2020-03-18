@@ -1,41 +1,51 @@
 {% extends "base.html" %}
 
+{% block styles %}
+    {{ super() }}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/season_forms.css') }}">
+    <script src="{{ url_for('static', filename='js/edit_season.js') }}"></script>
+{% endblock %}
+
 {% block app_content %}
-    <div class="main">
-        <h1>New Season</h1>
+    <div class="no-sidenav">
+        <h1>Edit "{{ season }}"</h1>
         <form method="post">
             {{ form.hidden_tag() }}
             <p>
                 {{ form.semester.label }}<br>
                 <select id="semester" name="semester">
-                    <option value="Fall" {% if season.semester == "Fall" %} selected='selected' {% endif %}>Fall</option>
-                    <option value="Spring" {% if season.semester == "Spring" %} selected='selected' {% endif %}>Spring</option>
+                    <option value="Fall" {% if season.semester == "Fall" %} selected="selected" {% endif %}>Fall</option>
+                    <option value="Spring" {% if season.semester == "Spring" %} selected="selected" {% endif %}>Spring</option>
                 </select>
                 {% for error in form.semester.errors %}
-                <span style="color: red;">[{{ error }}]</span>
+                    <span class="errors">[{{ error }}]</span>
                 {% endfor %}
             </p>
             <p>
                 {{ form.year.label }}<br>
-                {{ form.year(size=16, value=season.year) }}<br>
+                {{ form.year(size=16, value=season.year, type="number") }}<br>
                 {% for error in form.year.errors %}
-                <span style="color: red;">[{{ error }}]</span>
+                    <span class="errors">[{{ error }}]</span>
                 {% endfor %}
             </p>
             <p>
                 {{ form.current_season.label }}<br>
                 {% if season.current_season %}
-                    {{ form.current_season(checked='checked') }}<br>
+                    {{ form.current_season(checked="checked") }}<br>
                 {% else %}
                     {{ form.current_season() }}<br>
                 {% endif %}
                 {% for error in form.current_season.errors %}
-                <span style="color: red;">[{{ error }}]</span>
+                    <span class="errors">[{{ error }}]</span>
                 {% endfor %}
             </p>
             <p>
                 {{ form.submit() }}
             </p>
         </form>
+        or <br><button onclick="deleteSeasonOnly({{ season.id }})">Delete Season Only</button><br>
+        or <br><button onclick="deleteSeasonAndAllOtherData({{ season.id }})">Delete Season and Everything Associated With It</button>
+        <br>WARNING: IF YOU DELETE SEASON AND EVERYTHING ASSOCIATED WITH IT, ALL GAMES, OUTINGS, AT BATS, AND VIDEOS <br>
+        WILL BE DELETED AS WELL
     </div>
 {% endblock %}

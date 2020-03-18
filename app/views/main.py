@@ -8,42 +8,20 @@ from ..forms import EditUserForm, ChangePasswordForm, User
 
 main = Blueprint('main', __name__)
 
-# ***************-INDEX-*************** # DONE
+# ***************-INDEX-*************** #
 @main.route('/')
 @main.route('/index')
 @login_required
 def index():
-    '''
-    HOME PAGE:
-    Returns the home page of the portal
-
-    PARAM:
-        -None
-
-    RETURN:
-        -Displays index.html
-    '''
-    return render_template(
+    return render_template (
         'main/index.html',
-        title='WashU Pitching')
+        title='WashU Pitching'
+    )
 
-# ***************-PROFILE PAGE-*************** # DONE
+# ***************-PROFILE PAGE-*************** #
 @main.route('/user/<id>', methods=['GET', 'POST'])
 @login_required
 def user(id):
-    '''
-    PROFILE PAGE:
-    View your profile info and all changes to username,
-        email, or password
-
-    PARAM:
-        -id: the id of the currently logged
-            in user
-
-    RETURN:
-        -user.html which displays the basic info
-    '''
-
     if current_user.id is not int(id):
         flash('You can only view your own profile page')
         return redirect(url_for('main.index'))
@@ -151,20 +129,6 @@ def edit_user(id):
 # ***************-LOGIN-*************** # DONE
 @main.route('/login', methods=['GET', 'POST'])
 def login():
-    '''
-    LOGIN PAGE:
-    User enters username and password and gets
-    redirected to index.html if successful
-
-    PARAM:
-        -None
-
-    RETURN:
-        -Displays login.html and redirects to index.html or some
-            other page trying to be accessed once login is
-            successful
-    '''
-
     # if the user is already signed in then send to home page
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
@@ -189,7 +153,7 @@ def login():
         #     return redirect(url_for('login'))
 
         # login the user if nothing failed above
-        login_user(user, remember=form.remember_me.data)
+        login_user(user)
 
         # send user to the page they were trying to get to without logging in
         next_page = request.args.get('next')
