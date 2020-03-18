@@ -182,17 +182,13 @@ class Opponent(db.Model):
     games = db.relationship('Game', backref='opponent', lazy='dynamic')
 
     def __repr__(self):
-        if self.name == "Matchups":
-            return "WashU Bears"
-        else:
-            return self.name
+        return self.name
 
 
 class Batter(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     firstname = db.Column(db.String(64))
     lastname = db.Column(db.String(64))
-    short_name = db.Column(db.String(8), index=True)
     number = db.Column(db.Integer, index=True)
     initials = db.Column(db.String(8), index=True)
     notes = db.Column(db.String(1024), index=True)
@@ -201,7 +197,8 @@ class Batter(db.Model):
     opponent_id = db.Column(
         db.Integer,
         db.ForeignKey('opponent.id'),
-        index=True)
+        index=True
+    )
     retired = db.Column(db.Boolean, index=True)
     at_bats = db.relationship('AtBat', backref='batter', lazy='dynamic')
 

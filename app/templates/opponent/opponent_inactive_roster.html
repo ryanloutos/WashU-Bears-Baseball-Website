@@ -26,7 +26,7 @@
                     {% if b.retired in ["1", 1] %}
                         <tr>
                             <td><a href="{{ url_for('batter.batter_home', id=b.id) }}">{{ b.name() }}</a></td>
-                            <td>{{ b.short_name }}</td>
+                            <td>{{ b.initials }}</td>
                             <td>{{ b.bats }}</td>
                             <td>{{ b.grad_year }}</td>
                         </tr>

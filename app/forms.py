@@ -9,77 +9,72 @@ from wtforms.validators import EqualTo, Optional
 from .models import User, Season, Opponent, Pitcher, Game, Outing, Batter
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 
+# ***************-MAIN-*************** #
 class LoginForm(FlaskForm):
     username = StringField("Username", validators=[DataRequired()])
     password = PasswordField("Password", validators=[DataRequired()])
     submit = SubmitField("Sign In")
 
+
+# ***************-SEASON-*************** #
 class NewSeasonForm(FlaskForm):
     semester = SelectField(
-        'Semester',
-        choices=[('Fall', 'Fall'), ('Spring', 'Spring')],
+        "Semester",
+        choices=[("Fall", "Fall"), ("Spring", "Spring")],
         validators=[DataRequired()]
     )
-    year = IntegerField('Year', validators=[DataRequired()])
-    current_season = BooleanField('Current Season?')
-    submit = SubmitField('Create New Season')
+    year = IntegerField("Year", validators=[DataRequired()])
+    current_season = BooleanField("Current Season?")
+    submit = SubmitField("Create New Season")
 
 class EditSeasonForm(FlaskForm):
     semester = SelectField("Semester", validators=[DataRequired()])
-    year = IntegerField('Year', validators=[DataRequired()])
-    current_season = BooleanField('Current Season?')
-    submit = SubmitField('Save Changes')
+    year = IntegerField("Year", validators=[DataRequired()])
+    current_season = BooleanField("Current Season?")
+    submit = SubmitField("Save Changes")
 
 
-class BatterForm(FlaskForm):
-    fullname = StringField('Name', validators=[Optional()])
-    nickname = StringField('Initials/Number', validators=[Optional()])
-    bats = SelectField(
-        'Bats',
-        choices=[('R', 'R'), ('L', 'L'), ('S', 'S')],
-        validators=[Optional()])
-    grad_year = StringField('Grad Year', validators=[Optional()])
-    retired = BooleanField('Retired?')
-    submit = SubmitField('Create Batter', validators=[Optional()])
-
-
-# Creating a new batter
+# ***************-BATTER-*************** #
 class NewBatterForm(FlaskForm):
-    opponent = SelectField('Opponent', validators=[Optional()])
-    firstname = StringField('First Name', validators=[Optional()])
-    lastname = StringField('Last Name', validators=[Optional()])
-    initials = StringField('Initials', validators=[Optional()])
-    shortname = StringField('Short Name', validators=[Optional()])
-    number = StringField('Number', validators=[Optional()])
+    opponent = QuerySelectField(
+        "Opponent",
+        query_factory=lambda: Opponent.query,
+        get_pk=lambda o: o,
+        get_label=lambda o: o
+    )
+    firstname = StringField("First Name", validators=[DataRequired()])
+    lastname = StringField("Last Name", validators=[DataRequired()])
+    initials = StringField("Initials", validators=[Optional()])
+    number = IntegerField("Number", validators=[Optional()])
     bats = SelectField(
-        'Bats',
-        choices=[('R', 'R'), ('L', 'L'), ('S', 'S')],
-        validators=[Optional()])
-    grad_year = StringField('Grad Year', validators=[Optional()])
-    retired = BooleanField('Retired?')
-    submit = SubmitField('Create Batter', validators=[Optional()])
-
+        "Bats",
+        choices=[("R", "R"), ("L", "L"), ("S", "S")],
+        validators=[Optional()]
+    )
+    grad_year = IntegerField("Grad Year", validators=[Optional()])
+    retired = BooleanField("Inactive?")
+    submit = SubmitField("Create Batter", validators=[Optional()])
 
 class EditBatterForm(FlaskForm):
-    opponent = SelectField('Opponent', validators=[Optional()])
-    firstname = StringField('First Name', validators=[Optional()])
-    lastname = StringField('Last Name', validators=[Optional()])
-    number = StringField("Number", validators=[Optional()])
-    nickname = StringField('Initials', validators=[Optional()])
+    firstname = StringField("First Name", validators=[Optional()])
+    lastname = StringField("Last Name", validators=[Optional()])
+    initials = StringField("Initials", validators=[Optional()])
+    number = IntegerField("Number", validators=[Optional()])
     bats = SelectField(
-        'Bats',
-        choices=[('R', 'R'), ('L', 'L'), ('S', 'S')],
-        validators=[Optional()])
-    grad_year = StringField('Grad Year', validators=[Optional()])
-    retired = BooleanField('Retired?')
-    submit = SubmitField('Save Changes', validators=[Optional()])
+        "Bats",
+        choices=[("R", "R"), ("L", "L"), ("S", "S")],
+        validators=[Optional()]
+    )
+    grad_year = IntegerField("Grad Year", validators=[Optional()])
+    retired = BooleanField("Inactive?")
+    submit = SubmitField("Save Changes", validators=[Optional()])
 
 
-# Creating a new opponent
+# ***************-OPPONENT-*************** #
 class OpponentForm(FlaskForm):
-    name = StringField('Team Name', validators=[DataRequired()])
+    name = StringField("Team Name", validators=[DataRequired()])
     batter = FieldList(
-        FormField(BatterForm),
+        FormField(NewBatterForm),
         min_entries=2,
         max_entries=50,
         validators=[Optional()]

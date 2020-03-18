@@ -4,7 +4,7 @@ from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.urls import url_parse
 from app import db
 from app.forms import LoginForm, RegistrationForm, OutingForm, PitchForm
-from app.forms import NewOutingFromCSV, OpponentForm, BatterForm
+from app.forms import NewOutingFromCSV, OpponentForm
 from app.forms import OutingPitchForm, NewOutingFromCSVPitches, EditUserForm
 from app.forms import ChangePasswordForm, EditBatterForm, EditOpponentForm
 from app.forms import NewBatterForm
@@ -208,157 +208,95 @@ def batter_sequencing(batter_id):
     )
 
 # ***************-DELETE BATTER-*************** #
-@batter.route('/delete_batter/<id>', methods=['GET', 'POST'])
+@batter.route("/delete_batter/<id>", methods=["GET", "POST"])
 @login_required
 def delete_batter(id):
-    '''
-    DELETE BATTER
-    Can delete an existing batter through this function
-
-    PARAM:
-        -id: the batter id (primary key) in which the user
-            wants to delete
-
-    RETURN:
-        -deletes the batter and redirects to opponent page which the outing
-            was associated with
-    '''
-    # only admins can go back and edit outing data
     if not current_user.admin:
-        flash("You are not an admin and cannot edit someone else's outing")
-        return redirect(url_for('main.index'))
+        flash("You are not an admin and cannot delete a batter")
+        return redirect(url_for("main.index"))
 
-    # get the batter object associated with the id
     batter = Batter.query.filter_by(id=id).first()
 
-    # bug of trying to delete batter that doesn't exist
     if not batter:
         flash("Can't delete a batter that doesn't exist")
-        return redirect(url_for('main.index'))
+        return redirect(url_for("main.index"))
 
-    # delete the batter from database
     db.session.delete(batter)
     db.session.commit()
 
-    return redirect(url_for('opponent.opponent_home', id=batter.opponent_id))
+    return redirect(url_for("opponent.opponent_home", id=batter.opponent_id))
 
 # ***************-EDIT BATTER-*************** #
-@batter.route('/edit_batter/<id>', methods=['GET', 'POST'])
+@batter.route("/edit_batter/<id>", methods=["GET", "POST"])
 @login_required
 def edit_batter(id):
-    '''
-    EDIT BATTER:
-    Can edit an already existing batter
-
-    PARAM:
-        -id: The batter id (primary key) that wants to be
-            edited
-
-    RETURN:
-        -edit_batter.html and redirects to opponent page
-            once an opponent was successfully edited
-    '''
-    # make sure user is admin
     if not current_user.admin:
         flash("You are not an admin")
-        return redirect(url_for('main.index'))
+        return redirect(url_for("main.index"))
 
-    # get the correct form
     form = EditBatterForm()
-
-    # get the batter object
     batter = Batter.query.filter_by(id=id).first()
 
-    # bug or trying to edit batter that doesn't exist
     if not batter:
-        flash('URL does not exist')
-        return redirect(url_for('main.index'))
+        flash("URL does not exist")
+        return redirect(url_for("main.index"))
 
-    # set the opponent choices correctly
-    opponent_choices = []
-    opponents = Opponent.query.all()
-    for o in opponents:
-        opponent_choices.append((str(o.id), o.name))
-    form.opponent.choices = opponent_choices
-
-    # submit is clicked
     if form.validate_on_submit():
 
         # update info with data from form
         batter.firstname = form.firstname.data
         batter.lastname = form.lastname.data
         batter.number = form.number.data
-        batter.short_name = form.nickname.data
         batter.bats = form.bats.data
         batter.grad_year = form.grad_year.data
         batter.retired = form.retired.data
 
-        # commit the changes
         db.session.commit()
 
-        flash('Batter has been adjusted')
-        return redirect(url_for('opponent.opponent_home', id=batter.opponent_id))
+        flash("Batter has been adjusted")
+        return redirect(url_for("opponent.opponent_home", id=batter.opponent_id))
 
-    return render_template('opponent/batter/edit_batter.html',
-                           title='Edit Batter',
-                           batter=batter,
-                           form=form)
+    return render_template(
+        "opponent/batter/edit_batter.html",
+        title="Edit Batter",
+        batter=batter,
+        form=form
+    )
 
 # ***************-NEW BATTER-*************** #
-@batter.route('/new_batter', methods=['GET', 'POST'])
+@batter.route("/new_batter", methods=["GET", "POST"])
 @login_required
 def new_batter():
-    '''
-    NEW BATTER:
-    Can create a new batter for a specific opponent
-
-    PARAM:
-        -None
-
-    RETURN:
-        -new_batter.html
-    '''
-    # if user is not an admin, they can't create a new season
     if not current_user.admin:
-        flash('You are not an admin and cannot create a season')
-        return redirect(url_for('main.index'))
+        flash("You are not an admin and cannot create a season")
+        return redirect(url_for("main.index"))
 
-    # get the correct form
     form = NewBatterForm()
 
-    # set the opponent choices correctly
-    opponent_choices = []
-    opponents = Opponent.query.all()
-    for o in opponents:
-        opponent_choices.append((str(o.id), o.name))
-    form.opponent.choices = opponent_choices
-
-    # when the Create Season button is pressed...
     if form.validate_on_submit():
 
-        # insert data from form into season table
         batter = Batter(
             firstname=form.firstname.data,
             lastname=form.lastname.data,
             initials=form.initials.data,
-            short_name=form.shortname.data,
             number=form.number.data,
             bats=form.bats.data,
             grad_year=form.grad_year.data,
-            opponent_id=form.opponent.data,
-            retired=form.retired.data)
+            opponent_id=form.opponent.data.id,
+            retired=form.retired.data
+        )
 
-        # send Season object to data table
         db.session.add(batter)
         db.session.commit()
 
-        # redirect back to login page
-        flash('New batter created!')
-        return redirect(url_for('opponent.opponent_home', id=batter.opponent_id))
+        flash("New batter created!")
+        return redirect(url_for("opponent.opponent_home", id=batter.opponent_id))
 
-    return render_template('opponent/batter/new_batter.html',
-                           title='New Batter',
-                           form=form)
+    return render_template(
+        "opponent/batter/new_batter.html",
+        title="New Batter",
+        form=form
+    )
 
 
 # ***************-HELPFUL FUNCTIONS-*************** #

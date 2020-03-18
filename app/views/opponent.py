@@ -4,7 +4,7 @@ from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.urls import url_parse
 from app import db
 from app.forms import LoginForm, RegistrationForm, OutingForm, PitchForm
-from app.forms import NewOutingFromCSV, OpponentForm, BatterForm
+from app.forms import NewOutingFromCSV, OpponentForm
 from app.forms import OutingPitchForm, NewOutingFromCSVPitches, EditUserForm
 from app.forms import ChangePasswordForm, EditBatterForm, EditOpponentForm
 from app.forms import NewBatterForm
@@ -191,7 +191,6 @@ def new_opponent():
 
             # create Batter object
             batter = Batter(name=subform.fullname.data,
-                            short_name=subform.nickname.data,
                             bats=subform.bats.data,
                             grad_year=subform.grad_year.data,
                             opponent_id=opponent.id)
