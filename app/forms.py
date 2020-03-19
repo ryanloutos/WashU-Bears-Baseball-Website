@@ -1,13 +1,20 @@
 from flask_wtf import FlaskForm
-from flask_wtf.file import FileField, FileRequired
+from flask_wtf.file import FileField, FileRequired, FileAllowed
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms import RadioField, IntegerField, DecimalField, SelectField
-from wtforms import FieldList, FormField
+from wtforms import FieldList, FormField, TextAreaField
 from wtforms.fields.html5 import DateField
 from wtforms.validators import ValidationError, DataRequired, Email
 from wtforms.validators import EqualTo, Optional
 from .models import User, Season, Opponent, Pitcher, Game, Outing, Batter
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
+
+def getChoicesForRangeOfInputs(min, max):
+    choices = [("","")]
+    for i in range(min, max+1):
+        choices.append((i,i))
+    return choices
+
 
 # ***************-MAIN-*************** #
 class LoginForm(FlaskForm):
@@ -99,22 +106,66 @@ class EditBatterForm(FlaskForm):
 
 
 # ***************-OPPONENT-*************** #
-class OpponentForm(FlaskForm):
+class BatterForm(FlaskForm):
+    firstname = StringField("First Name", [Optional()])
+    lastname = StringField("Last Name", validators=[Optional()])
+    number = SelectField(
+        "Number",
+        choices=getChoicesForRangeOfInputs(0,999),
+        validators=[Optional()])
+    bats = SelectField(
+        "Bats",
+        choices=[("R", "R"), ("L", "L"), ("S", "S")],
+        validators=[Optional()])
+    grad_year = SelectField(
+        "Grad Year",
+        choices=getChoicesForRangeOfInputs(2017,2030),
+        validators=[Optional()])
+    notes = StringField("Scouting Notes", validators=[Optional()])
+    retired = BooleanField("Inactive?")
+
+class PitcherForm(FlaskForm):
+    firstname = StringField("First Name", validators=[Optional()])
+    lastname = StringField("Last Name", validators=[Optional()])
+    number = SelectField(
+        "Number",
+        choices=getChoicesForRangeOfInputs(0,999),
+        validators=[Optional()])
+    throws = SelectField(
+        'throws',
+        choices=[('R', 'R'), ('L', 'L')],
+        validators=[Optional()])
+    grad_year = SelectField(
+        "Grad Year",
+        choices=getChoicesForRangeOfInputs(2017,2030),
+        validators=[Optional()])
+    notes = StringField("Scouting Notes", validators=[Optional()])
+    retired = BooleanField('Inactive?')
+
+class NewOpponentForm(FlaskForm):
     name = StringField("Team Name", validators=[DataRequired()])
-    batter = FieldList(
-        FormField(NewBatterForm),
-        min_entries=2,
-        max_entries=50,
+    logo = FileField("Team Logo", validators=[
+        FileRequired(),
+        FileAllowed(["jpg", "png"], "Use .jpg or .png only!")])
+    batters = FieldList(
+        FormField(BatterForm),
+        min_entries=35,
+        max_entries=35,
         validators=[Optional()]
     )
-    submit = SubmitField('Create New Opponent')
+    pitchers = FieldList(
+        FormField(PitcherForm),
+        min_entries=35,
+        max_entries=35,
+        validators=[Optional()]
+    )
+    submit = SubmitField("Create Opponent")
 
 
 class EditOpponentForm(FlaskForm):
     name = StringField('Team Name', validators=[DataRequired()])
     file = FileField('Team Logo', validators=[FileRequired()])
     submit = SubmitField('Save Changes')
-
 
 
 class EditUserForm(FlaskForm):
@@ -287,7 +338,7 @@ class NewOutingFromCSVPitches(FlaskForm):
     submit = SubmitField('Create Outing')
 
 
-class PitcherForm(FlaskForm):
+class NewPitcherForm(FlaskForm):
     name = StringField('Name', validators=[Optional()])
     firstname = StringField("First Name", validators=[Optional()])
     lastname = StringField("Last Name", validators=[Optional()])
@@ -367,3 +418,4 @@ class BatterNewVideoForm(FlaskForm):
     batter = SelectField("Batter", validators=[Optional()])
     link = StringField("Link", validators=[Optional()])
     submit = SubmitField("Post Video")
+

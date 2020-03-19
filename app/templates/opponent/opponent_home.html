@@ -55,7 +55,7 @@
                     <tbody>
                         {% for pitcher in opponent.pitchers %}
                             <tr>
-                                <td class="text-left"><a href="{{ url_for('pitcher.pitcher_home', id=pitcher.id) }}">{{ pitcher.name }}</a></td>
+                                <td class="text-left"><a href="{{ url_for('pitcher.pitcher_home', id=pitcher.id) }}">{{ pitcher }}</a></td>
                                 <td class="text-left">{{ pitcher.number }}</td>
                                 <td class="text-left">{{ pitcher.grad_year }}</td>
                                 <td class="text-left">{{ pitcher.throws }}</td>

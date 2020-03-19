@@ -27,7 +27,6 @@ class User(UserMixin, db.Model):
 
 class Pitcher(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64), index=True)
     firstname = db.Column(db.String(64), index=True)
     lastname = db.Column(db.String(64), index=True)
     number = db.Column(db.Integer, index=True)
@@ -39,7 +38,7 @@ class Pitcher(db.Model):
     outings = db.relationship('Outing', backref='pitcher', lazy='dynamic')
 
     def __repr__(self):
-        return str(self.number) + " " + self.firstname + " " + self.lastname
+        return f"{self.firstname} {self.lastname}"
 
     def num_outings(self):
         count = 0

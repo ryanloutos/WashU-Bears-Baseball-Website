@@ -4,11 +4,11 @@ from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.urls import url_parse
 from app import db
 from app.forms import LoginForm, RegistrationForm, OutingForm, PitchForm
-from app.forms import NewOutingFromCSV, OpponentForm
+from app.forms import NewOutingFromCSV, NewOpponentForm
 from app.forms import OutingPitchForm, NewOutingFromCSVPitches, EditUserForm
 from app.forms import ChangePasswordForm, EditBatterForm, EditOpponentForm
 from app.forms import NewBatterForm
-from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat, Game
+from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat, Game, Pitcher
 from app.stats import calcPitchPercentages, pitchUsageByCount, calcAverageVelo
 from app.stats import calcPitchStrikePercentage, calcPitchWhiffRate
 from app.stats import createPitchPercentagePieChart, velocityOverTimeLineChart
@@ -24,6 +24,8 @@ import csv
 import os
 # for file naming duplication problem
 import random
+
+import re
 
 
 opponent = Blueprint("opponent", __name__)
@@ -158,50 +160,67 @@ def opponent_roster(id):
 @opponent.route('/new_opponent', methods=['GET', 'POST'])
 @login_required
 def new_opponent():
-    '''
-    NEW OPPONENT:
-    Can create a new opponent for outings to be associated
-    with
-
-    PARAM:
-        -None
-
-    RETURN:
-        -new_opponent.html and redirects to index page
-            once a new opponent was successfully created
-    '''
     # if user is not an admin, they can't create a new opponent
     if not current_user.admin:
         flash('You are not an admin and cannot create a opponent')
         return redirect(url_for('main.index'))
 
-    # when the Create Opponent button is pressed...
-    form = OpponentForm()
+    form = NewOpponentForm()
     if form.validate_on_submit():
 
-        # create Opponent object from form data
         opponent = Opponent(name=form.name.data)
 
-        # send Opponent object to database
         db.session.add(opponent)
         db.session.commit()
 
-        # create the batter objects from the form and send to database
-        for subform in form.batter:
+        file_name = opponent.id
+        file_loc = os.path.join(
+            os.path.dirname(os.path.realpath(__file__)),
+            "..",
+            "static",
+            "images",
+            "team_logos",
+            f"{file_name}.png"
+        )
+        form.logo.data.save(file_loc)
 
-            # create Batter object
-            batter = Batter(name=subform.fullname.data,
-                            bats=subform.bats.data,
-                            grad_year=subform.grad_year.data,
-                            opponent_id=opponent.id)
+        for subform in form.batters:
+            if (subform.firstname.data not in ["", None] and
+                subform.lastname.data not in ["", None] and
+                subform.number.data not in ["", None]):
 
-            # add before commit
-            db.session.add(batter)
+                initials = getInitialsFromNames(subform.firstname.data, subform.lastname.data)
 
-        # commit the batters to database
+                batter = Batter(
+                    opponent_id=opponent.id,
+                    firstname=subform.firstname.data,
+                    lastname=subform.lastname.data,
+                    number=subform.number.data,
+                    initials=initials,
+                    bats=subform.bats.data,
+                    grad_year=subform.grad_year.data,
+                    notes=subform.notes.data,
+                    retired=subform.retired.data)
+                db.session.add(batter)
+
+        for subform in form.pitchers:
+            if (subform.firstname.data not in ["", None] and
+                subform.lastname.data not in ["", None] and
+                subform.number.data not in ["", None]):
+
+                pitcher = Pitcher(
+                    opponent_id=opponent.id,
+                    firstname=subform.firstname.data,
+                    lastname=subform.lastname.data,
+                    number=subform.number.data,
+                    throws=subform.throws.data,
+                    grad_year=subform.grad_year.data,
+                    notes=subform.notes.data,
+                    retired=subform.retired.data)
+                db.session.add(pitcher)
+
         db.session.commit()
 
-        # redirect back to login page
         flash('Congratulations, you just made a new opponent!')
         return redirect(url_for('main.index'))
 
@@ -209,25 +228,15 @@ def new_opponent():
                            title='New Opponent',
                            form=form)
 
+def getInitialsFromNames(firstname, lastname):
+    first_initial = re.findall("^\w", firstname)
+    last_initial = re.findall("^\w", lastname)
+    return f"{first_initial[0]}{last_initial[0]}"
 
 # ***************-EDIT OPPONENT-*************** #
 @opponent.route('/edit_opponent/<id>', methods=['GET', 'POST'])
 @login_required
 def edit_opponent(id):
-    '''
-    EDIT OPPONENT:
-    Can edit an opponent for outings to be associated
-    with
-
-    PARAM:
-        -id: The outing id (primary key) that wants to be
-            edited
-
-    RETURN:
-        -edit_opponent.html and redirects to opponent page
-            once an opponent was successfully edited
-    '''
-
     # if user is not an admin, they can't create a new opponent
     if not current_user.admin:
         flash('You are not an admin and cannot edit an opponent')
@@ -286,116 +295,3 @@ def opponent_inactive_hitters(id):
         opponent=opponent
     )
 
-
-# ***************-HELPFUL FUNCTIONS-*************** #
-def getAvailablePitchers():
-    '''
-    Gets all of the string names you are allowed to create outings for
-
-    PARAM:
-        -None
-
-    RETURN:
-        - [array] -- [strings of pitchers names]
-    '''
-
-    # gets all the User objects that are players on the team
-    pitchers_objects = Pitcher.query.all()
-
-    # set the available choices that someone can create an outing for
-    available_pitchers = []
-
-    if current_user.admin:
-        for p in pitchers_objects:
-            available_pitchers.append((f"{p.id}", p))
-
-    return available_pitchers
-
-
-def getAvailableBatters(outing_id):
-    outing = Outing.query.filter_by(id=outing_id).first_or_404()
-    if not outing:
-        flash("URL does not exist")
-        return redirect(url_for('main.index'))
-    opponent = Opponent.query.filter_by(id=outing.opponent_id).first_or_404()
-
-    batters_tuples = []
-    for batter in opponent.batters:
-        batters_tuples.append((batter.id, batter))
-
-    return batters_tuples
-
-
-def validate_CSV(file_loc):
-    '''
-    Validates an uploaded outing csv file to see if we can create pitches
-    from it.
-
-    PARAM:
-        -file_loc {string} -- string location of the file to be validated
-
-    RETURN:
-        [boolean] -- boolean for if the file is determined valid
-    '''
-
-    # fields required to construct a pitch from Pitch class in modals. We need
-    # to check if all of these exist.
-    pitch_attributes = [
-        "velocity", "lead_runner", "time_to_plate", "pitch_type",
-        "pitch_result", "hit_spot", "ab_result", "traj", "fielder",
-        "inning"]
-    with open(file_loc) as f:
-
-        csv_file = csv.DictReader(f)
-        invalid_pitch_found = False  # State var to see if pitches are valid
-
-        for pitch_num, row in enumerate(csv_file):
-            keys = row.keys()
-
-            # Check if the our necessary keys is contained within the csv
-            # keys provided.
-            if set(pitch_attributes).issubset(set(keys)):
-                print("You have the necessary keys")
-
-            else:
-                invalid_pitch_found = True
-
-                # Debug statement. Eventually move to user facing so they can
-                # adjust input.
-                for attr in pitch_attributes:
-                    if attr not in keys:
-                        print("Pitch num " + pitch_num + " missing: " + attr)
-                break
-
-        if invalid_pitch_found:
-            return False
-        else:
-            return True
-
-
-def updateCount(balls, strikes, pitch_result, ab_result, season):
-    if ab_result is not '':
-        if (season.semester == 'Fall'):
-            balls = 1
-            strikes = 1
-        else:
-            balls = 0
-            strikes = 0
-    else:
-        if pitch_result is 'B':
-            balls += 1
-        else:
-            if strikes is not 2:
-                strikes += 1
-    count = f'{balls}-{strikes}'
-    return (balls, strikes, count)
-
-
-def getCurrentSeason():
-    current_season = Season.query.filter_by(current_season=True).first()
-    return current_season
-
-
-def getOldSeasons():
-    old_seasons = Season.query.filter_by(current_season=False).order_by(Season.year).all()
-    return old_seasons

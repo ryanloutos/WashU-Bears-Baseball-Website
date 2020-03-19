@@ -156,7 +156,6 @@ def edit_pitcher(id):
         
         form.file.data.save(file_loc)
 
-        pitcher.name = form.name.data
         pitcher.throws = form.throws.data
         pitcher.grad_year = form.grad_year.data
         pitcher.opponent_id = form.opponent.data

@@ -438,7 +438,7 @@ def staffSeasonStats(pitchers, afterDate, beforeDate, includeMatchups=True):
         players.append(
             {
                 "details": {
-                    "name": f"{pitcher.name}",
+                    "name": f"{pitcher}",
                     "class": pitcher.grad_year,
                     "throws": pitcher.throws},
                 "velos": velo_averages,
@@ -1520,7 +1520,7 @@ def staffBasicStats(pitchers, seasons=[]):
         # append to storage array
         players.append({
             "details": {
-                "name": f"{pitcher.name}",
+                "name": f"{pitcher}",
                 "class": pitcher.grad_year,
                 "throws": pitcher.throws},
             "stat_line": stat_line
@@ -1585,7 +1585,7 @@ def staffPitchStrikePercentage(pitchers):
 
         players_strike_percentage.append({
             "details": {
-                "name": f"{pitcher.name}",
+                "name": f"{pitcher}",
                 "class": pitcher.grad_year,
                 "throws": pitcher.throws},
             "percentages": pitch_strike_percentage

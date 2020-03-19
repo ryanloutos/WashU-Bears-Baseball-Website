@@ -84,7 +84,7 @@ def staff_date_filter():
     else:
         include_matchups = False
 
-    pitchers = Pitcher.query.filter_by(retired=0).filter_by(opponent_id=1).order_by(Pitcher.name).all()
+    pitchers = Pitcher.query.filter_by(retired=0).filter_by(opponent_id=1).order_by(Pitcher.lastname).all()
 
     players, staff = staffSeasonStats(pitchers, first_game.date, second_game.date, include_matchups)
 
@@ -523,7 +523,7 @@ def team_get_pitchers(team_id):
         if not pitcher.retired:
             pitchers_arr.append({
                 "id": pitcher.id,
-                "name": pitcher.name
+                "name": pitcher
             })
 
     return jsonify({
