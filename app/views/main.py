@@ -15,7 +15,7 @@ main = Blueprint('main', __name__)
 def index():
     return render_template (
         'main/index.html',
-        title='WashU Pitching'
+        title='WashU Baseball'
     )
 
 # ***************-PROFILE PAGE-*************** #
@@ -168,53 +168,31 @@ def login():
 # ***************-LOGOUT-*************** # DONE
 @main.route('/logout')
 def logout():
-    '''
-    LOGOUT:
-    Logouts the current_user and redirects to login page
-
-    PARAM:
-        -None
-
-    RETURN:
-        -Login page
-    '''
     logout_user()
     return redirect(url_for('main.login'))
 
-# ***************-REGISTER-*************** # DONE
-@main.route('/register', methods=['GET', 'POST'])
+# ***************-REGISTER-*************** # 
+@main.route("/register", methods=["GET", "POST"])
 @login_required
 def register():
-    '''
-    REGISTER:
-    Create a new user (player/coach/manager) if current user
-    is an admin
-
-    PARAM:
-        -None
-
-    RETURN:
-        -register.html to create a new user and then
-            redirects back to index.html once the user
-            was created successfully
-    '''
-
-    # if user is not an admin, they can't add player/coach to portal
+    # make sure user is an admin
     if not current_user.admin:
-        flash('You are not an admin and cannot create a user')
-        return redirect(url_for('main.index'))
+        flash("You are not an admin and cannot create a user")
+        return redirect(url_for("main.index"))
 
     # when the 'register' button is pressed
     form = RegistrationForm()
     if form.validate_on_submit():
 
         # takes in the data from the form and creates a User object (row)
-        user = User(firstname=form.firstname.data,
-                    lastname=form.lastname.data,
-                    username=form.username.data,
-                    email=form.email.data,
-                    admin=form.admin.data,
-                    retired=form.retired.data)
+        user = User(
+            firstname=form.firstname.data,
+            lastname=form.lastname.data,
+            username=form.username.data,
+            email=form.email.data,
+            admin=form.admin.data,
+            retired=form.retired.data
+        )
 
         # sets the password based on what was entered
         user.set_password(form.password.data)
@@ -224,9 +202,11 @@ def register():
         db.session.commit()
 
         # redirects to login page
-        flash('Congratulations, you just created a new user!')
-        return redirect(url_for('main.login'))
+        flash("Congratulations, you just created a new user!")
+        return redirect(url_for("main.login"))
 
-    return render_template('main/register.html',
-                           title='Register',
-                           form=form)
+    return render_template(
+        "main/register.html",
+        title="Register",
+        form=form
+    )

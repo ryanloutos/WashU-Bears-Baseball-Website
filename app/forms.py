@@ -15,6 +15,34 @@ class LoginForm(FlaskForm):
     password = PasswordField("Password", validators=[DataRequired()])
     submit = SubmitField("Sign In")
 
+class RegistrationForm(FlaskForm):
+    firstname = StringField("Firstname", validators=[DataRequired()])
+    lastname = StringField("Lastname", validators=[DataRequired()])
+    username = StringField("Username", validators=[DataRequired()])
+    email = StringField("Email", validators=[DataRequired(), Email()])
+    password = PasswordField("Password", validators=[DataRequired()])
+    password2 = PasswordField(
+        "Repeat Password", 
+        validators=[DataRequired(), 
+        EqualTo("password")]
+    )
+    admin = BooleanField("Admin?", validators=[Optional()])
+    retired = BooleanField("Retired?", validators=[Optional()])
+    submit = SubmitField("Register")
+
+    # these two functions will run automatically when a new user is trying to
+    def validate_username(self, username):
+        """Before created make sure username doesn't already exist in database"""
+        user = User.query.filter_by(username=username.data).first()
+        if user is not None:
+            raise ValidationError("Please use a different username.")
+
+    def validate_email(self, email):
+        """Make sure email doesn't already exist in database"""
+        user = User.query.filter_by(email=email.data).first()
+        if user is not None:
+            raise ValidationError("Please use a different email address.")
+
 
 # ***************-SEASON-*************** #
 class NewSeasonForm(FlaskForm):
@@ -87,33 +115,6 @@ class EditOpponentForm(FlaskForm):
     file = FileField('Team Logo', validators=[FileRequired()])
     submit = SubmitField('Save Changes')
 
-
-# Creating a new account. Only admin users can access this page
-class RegistrationForm(FlaskForm):
-    firstname = StringField('Firstname', validators=[DataRequired()])
-    lastname = StringField('Lastname', validators=[DataRequired()])
-    username = StringField('Username', validators=[DataRequired()])
-    email = StringField('Email', validators=[DataRequired(), Email()])
-    # Email() validator makes sure it's in email form
-    password = PasswordField('Password', validators=[DataRequired()])
-    password2 = PasswordField(  # make sure passwords match
-        'Repeat Password', validators=[DataRequired(), EqualTo('password')])
-    admin = BooleanField('Admin?', validators=[Optional()])
-    retired = BooleanField('Retired?', validators=[Optional()])
-    submit = SubmitField('Register')
-
-    # these two functions will run automatically when a new user is trying to
-    def validate_username(self, username):
-        '''Be created make sure username doesn't already exist in database'''
-        user = User.query.filter_by(username=username.data).first()
-        if user is not None:
-            raise ValidationError('Please use a different username.')
-
-    def validate_email(self, email):
-        '''Make sure email doesn't already exist in database'''
-        user = User.query.filter_by(email=email.data).first()
-        if user is not None:
-            raise ValidationError('Please use a different email address.')
 
 
 class EditUserForm(FlaskForm):
@@ -252,14 +253,6 @@ class OutingForm(FlaskForm):
 
 # Create a new outing from CSV
 class NewOutingFromCSV(FlaskForm):
-    """Class for the html form for making an outing from a CSV.
-
-    Arguments:
-        FlaskForm {[FlaskFrom]} -- [inheritance of form]
-
-    Fields:
-        file {file} -- csv file to be parsed with outing information
-    """
     pitcher = SelectField('Pitcher', validators=[Optional()])
     date = DateField('Date', validators=[DataRequired()], format='%Y-%m-%d')
     opponent = QuerySelectField(

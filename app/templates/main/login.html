@@ -2,32 +2,33 @@
 
 {% block styles %}
     {{ super() }}
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/login.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/forms.css') }}">
 {% endblock %}
 
 {% block app_content %}
     <div class="no-sidenav">
-        <br>
-        <h1>Sign In</h1><br>
-        <form method="post" novalidate>
-            {{ form.hidden_tag() }}
+        <div class="form-container">
+            <h1>Sign In</h1><br>
+            <form method="post" novalidate>
+                {{ form.hidden_tag() }}
+                <p>
+                    {{ form.username(size=24, placeholder="Username") }}<br>
+                    {% for error in form.username.errors %}
+                        <span class="errors">[{{ error }}]</span>
+                    {% endfor %}
+                </p><br>
+                <p>
+                    {{ form.password(size=24, placeholder="Password") }}<br>
+                    {% for error in form.password.errors %}
+                        <span class="errors">[{{ error }}]</span>
+                    {% endfor %}
+                </p><br>
+                <p>{{ form.submit() }}</p>
+            </form> <br>
             <p>
-                {{ form.username(size=24, placeholder="Username") }}<br>
-                {% for error in form.username.errors %}
-                    <span class="errors">[{{ error }}]</span>
-                {% endfor %}
-            </p><br>
-            <p>
-                {{ form.password(size=24, placeholder="Password") }}<br>
-                {% for error in form.password.errors %}
-                    <span class="errors">[{{ error }}]</span>
-                {% endfor %}
-            </p><br>
-            <p>{{ form.submit() }}</p>
-        </form> <br>
-        <p>
-            Forgot Your Password?
-            <a style="color: #bd3e1f" href="">Click to Reset It</a>
-        </p>
+                Forgot Your Password?
+                <a href="">Click to Reset It</a>
+            </p>
+        </div>
     </div>
 {% endblock %}
