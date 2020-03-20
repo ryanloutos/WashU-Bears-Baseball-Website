@@ -109,36 +109,24 @@ class EditBatterForm(FlaskForm):
 class BatterForm(FlaskForm):
     firstname = StringField("First Name", [Optional()])
     lastname = StringField("Last Name", validators=[Optional()])
-    number = SelectField(
-        "Number",
-        choices=getChoicesForRangeOfInputs(0,999),
-        validators=[Optional()])
+    number = IntegerField("Number", validators=[Optional()])
     bats = SelectField(
         "Bats",
         choices=[("R", "R"), ("L", "L"), ("S", "S")],
         validators=[Optional()])
-    grad_year = SelectField(
-        "Grad Year",
-        choices=getChoicesForRangeOfInputs(2017,2030),
-        validators=[Optional()])
+    grad_year = IntegerField("Grad Year", validators=[Optional()])
     notes = StringField("Scouting Notes", validators=[Optional()])
     retired = BooleanField("Inactive?")
 
 class PitcherForm(FlaskForm):
     firstname = StringField("First Name", validators=[Optional()])
     lastname = StringField("Last Name", validators=[Optional()])
-    number = SelectField(
-        "Number",
-        choices=getChoicesForRangeOfInputs(0,999),
-        validators=[Optional()])
+    number = IntegerField("Number", validators=[Optional()])
     throws = SelectField(
         'throws',
         choices=[('R', 'R'), ('L', 'L')],
         validators=[Optional()])
-    grad_year = SelectField(
-        "Grad Year",
-        choices=getChoicesForRangeOfInputs(2017,2030),
-        validators=[Optional()])
+    grad_year = IntegerField("Grad Year", validators=[Optional()])
     notes = StringField("Scouting Notes", validators=[Optional()])
     retired = BooleanField('Inactive?')
 
@@ -151,14 +139,12 @@ class NewOpponentForm(FlaskForm):
         FormField(BatterForm),
         min_entries=35,
         max_entries=35,
-        validators=[Optional()]
-    )
+        validators=[Optional()])
     pitchers = FieldList(
         FormField(PitcherForm),
         min_entries=35,
         max_entries=35,
-        validators=[Optional()]
-    )
+        validators=[Optional()])
     submit = SubmitField("Create Opponent")
 
 

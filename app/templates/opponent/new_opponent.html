@@ -55,7 +55,7 @@
                                 {% endfor %}
                             </td>
                             <td class="short-input">
-                                {{ subform.number() }}
+                                {{ subform.number(type="number") }}
                                 {% for error in subform.number.errors %}
                                     <span class="errors">[{{ error }}]</span>
                                 {% endfor %}
@@ -67,7 +67,7 @@
                                 {% endfor %}
                             </td>
                             <td class="long-input">
-                                {{ subform.grad_year() }}
+                                {{ subform.grad_year(type="number") }}
                                 {% for error in subform.grad_year.errors %}
                                     <span class="errors">[{{ error }}]</span>
                                 {% endfor %}
@@ -113,7 +113,7 @@
                                 {% endfor %}
                             </td>
                             <td class="short-input">
-                                {{ subform.number() }}
+                                {{ subform.number(type="number") }}
                                 {% for error in subform.number.errors %}
                                     <span class="errors">[{{ error }}]</span>
                                 {% endfor %}
@@ -125,7 +125,7 @@
                                 {% endfor %}
                             </td>
                             <td class="long-input">
-                                {{ subform.grad_year() }}
+                                {{ subform.grad_year(type="number") }}
                                 {% for error in subform.grad_year.errors %}
                                     <span class="errors">[{{ error }}]</span>
                                 {% endfor %}
