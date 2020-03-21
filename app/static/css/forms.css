@@ -49,3 +49,9 @@ a {
 a:hover {
     color: #bd2e1f;
 }
+
+.file-input {
+    width: 170px;
+    margin-left: 30%;
+    margin-right: auto;
+}

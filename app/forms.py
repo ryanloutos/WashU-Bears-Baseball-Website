@@ -8,6 +8,7 @@ from wtforms.validators import ValidationError, DataRequired, Email
 from wtforms.validators import EqualTo, Optional
 from .models import User, Season, Opponent, Pitcher, Game, Outing, Batter
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
+from flask_login import current_user
 
 def getChoicesForRangeOfInputs(min, max):
     choices = [("","")]
@@ -49,6 +50,29 @@ class RegistrationForm(FlaskForm):
         user = User.query.filter_by(email=email.data).first()
         if user is not None:
             raise ValidationError("Please use a different email address.")
+
+class EditUserForm(FlaskForm):
+    username = StringField("Username", validators=[DataRequired()])
+    email = StringField("Email", validators=[DataRequired(), Email()])
+    submit = SubmitField("Save Changes")
+
+    def validate_username(self, username):
+        '''Be created make sure username doesn't already exist in database'''
+        user = User.query.filter_by(username=username.data).first()
+        if user is not None and user.username is not current_user.username:
+            raise ValidationError("Please use a different username.")
+
+    def validate_email(self, email):
+        '''Make sure email doesn't already exist in database'''
+        user = User.query.filter_by(email=email.data).first()
+        if user is not None and user.email is not current_user.email:
+            raise ValidationError("Please use a different email address.")
+
+class ChangePasswordForm(FlaskForm):
+    current_password = PasswordField("Current Password", validators=[DataRequired()])
+    password = PasswordField("Password", validators=[DataRequired()])
+    password2 = PasswordField("Repeat Password", validators=[DataRequired(), EqualTo("password")])
+    submit = SubmitField("Update Password")
 
 
 # ***************-SEASON-*************** #
@@ -123,12 +147,12 @@ class PitcherForm(FlaskForm):
     lastname = StringField("Last Name", validators=[Optional()])
     number = IntegerField("Number", validators=[Optional()])
     throws = SelectField(
-        'throws',
-        choices=[('R', 'R'), ('L', 'L')],
+        "throws",
+        choices=[("R", "R"), ("L", "L")],
         validators=[Optional()])
     grad_year = IntegerField("Grad Year", validators=[Optional()])
     notes = StringField("Scouting Notes", validators=[Optional()])
-    retired = BooleanField('Inactive?')
+    retired = BooleanField("Inactive?")
 
 class NewOpponentForm(FlaskForm):
     name = StringField("Team Name", validators=[DataRequired()])
@@ -147,37 +171,10 @@ class NewOpponentForm(FlaskForm):
         validators=[Optional()])
     submit = SubmitField("Create Opponent")
 
-
 class EditOpponentForm(FlaskForm):
-    name = StringField('Team Name', validators=[DataRequired()])
-    file = FileField('Team Logo', validators=[FileRequired()])
-    submit = SubmitField('Save Changes')
-
-
-class EditUserForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired()])
-    email = StringField('Email', validators=[DataRequired(), Email()])
-    submit = SubmitField('Save Changes')
-
-    def validate_username(self, username):
-        '''Be created make sure username doesn't already exist in database'''
-        user = User.query.filter_by(username=username.data).first()
-        if user is not None:
-            raise ValidationError('Please use a different username.')
-
-    def validate_email(self, email):
-        '''Make sure email doesn't already exist in database'''
-        user = User.query.filter_by(email=email.data).first()
-        if user is not None:
-            raise ValidationError('Please use a different email address.')
-
-
-class ChangePasswordForm(FlaskForm):
-    current_password = PasswordField('Current Password', validators=[DataRequired()])
-    password = PasswordField('Password', validators=[DataRequired()])
-    password2 = PasswordField(  # make sure passwords match
-        'Repeat Password', validators=[DataRequired(), EqualTo('password')])
-    submit = SubmitField('Update Password')
+    name = StringField("Team Name", validators=[DataRequired()])
+    logo = FileField("Team Logo", validators=[FileAllowed(["jpg", "png"], "Use .jpg or .png only!")])
+    submit = SubmitField("Save Changes")
 
 
 # each field is based on the baseball teams velocity tracking sheets

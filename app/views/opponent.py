@@ -157,13 +157,13 @@ def opponent_roster(id):
 
 
 # ***************-NEW OPPONENT-*************** #
-@opponent.route('/new_opponent', methods=['GET', 'POST'])
+@opponent.route("/new_opponent", methods=["GET", "POST"])
 @login_required
 def new_opponent():
     # if user is not an admin, they can't create a new opponent
     if not current_user.admin:
-        flash('You are not an admin and cannot create a opponent')
-        return redirect(url_for('main.index'))
+        flash("You are not an admin and cannot create a opponent")
+        return redirect(url_for("main.index"))
 
     form = NewOpponentForm()
     if form.validate_on_submit():
@@ -174,14 +174,12 @@ def new_opponent():
         db.session.commit()
 
         file_name = opponent.id
-        file_loc = os.path.join(
-            os.path.dirname(os.path.realpath(__file__)),
-            "..",
-            "static",
-            "images",
-            "team_logos",
-            f"{file_name}.png"
-        )
+        file_loc = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                                "..",
+                                "static",
+                                "images",
+                                "team_logos",
+                                f"{file_name}.png")
         form.logo.data.save(file_loc)
 
         for subform in form.batters:
@@ -191,16 +189,15 @@ def new_opponent():
 
                 initials = getInitialsFromNames(subform.firstname.data, subform.lastname.data)
 
-                batter = Batter(
-                    opponent_id=opponent.id,
-                    firstname=subform.firstname.data,
-                    lastname=subform.lastname.data,
-                    number=subform.number.data,
-                    initials=initials,
-                    bats=subform.bats.data,
-                    grad_year=subform.grad_year.data,
-                    notes=subform.notes.data,
-                    retired=subform.retired.data)
+                batter = Batter(opponent_id=opponent.id,
+                                firstname=subform.firstname.data,
+                                lastname=subform.lastname.data,
+                                number=subform.number.data,
+                                initials=initials,
+                                bats=subform.bats.data,
+                                grad_year=subform.grad_year.data,
+                                notes=subform.notes.data,
+                                retired=subform.retired.data)
                 db.session.add(batter)
 
         for subform in form.pitchers:
@@ -208,72 +205,60 @@ def new_opponent():
                 subform.lastname.data not in ["", None] and
                 subform.number.data not in ["", None]):
 
-                pitcher = Pitcher(
-                    opponent_id=opponent.id,
-                    firstname=subform.firstname.data,
-                    lastname=subform.lastname.data,
-                    number=subform.number.data,
-                    throws=subform.throws.data,
-                    grad_year=subform.grad_year.data,
-                    notes=subform.notes.data,
-                    retired=subform.retired.data)
+                pitcher = Pitcher(opponent_id=opponent.id,
+                                  firstname=subform.firstname.data,
+                                  lastname=subform.lastname.data,
+                                  number=subform.number.data,
+                                  throws=subform.throws.data,
+                                  grad_year=subform.grad_year.data,
+                                  notes=subform.notes.data,
+                                  retired=subform.retired.data)
                 db.session.add(pitcher)
 
         db.session.commit()
 
-        flash('Congratulations, you just made a new opponent!')
-        return redirect(url_for('main.index'))
+        flash("Congratulations, you just made a new opponent!")
+        return redirect(url_for("main.index"))
 
-    return render_template('opponent/new_opponent.html',
-                           title='New Opponent',
+    return render_template("opponent/new_opponent.html",
+                           title="New Opponent",
                            form=form)
 
-def getInitialsFromNames(firstname, lastname):
-    first_initial = re.findall("^\w", firstname)
-    last_initial = re.findall("^\w", lastname)
-    return f"{first_initial[0]}{last_initial[0]}"
 
 # ***************-EDIT OPPONENT-*************** #
-@opponent.route('/edit_opponent/<id>', methods=['GET', 'POST'])
+@opponent.route("/edit_opponent/<id>", methods=["GET", "POST"])
 @login_required
 def edit_opponent(id):
-    # if user is not an admin, they can't create a new opponent
+    # if user is not an admin, they cant edit an opponent
     if not current_user.admin:
-        flash('You are not an admin and cannot edit an opponent')
-        return redirect(url_for('main.index'))
+        flash("You are not an admin and cannot edit an opponent")
+        return redirect(url_for("main.index"))
 
-    # get opponent object
     opponent = Opponent.query.filter_by(id=id).first()
-
-    # either bug or admin trying to edit opponent that doesn't exist
     if not opponent:
-        flash('URL does not exist')
-        return redirect(url_for('main.index'))
+        flash("URL does not exist")
+        return redirect(url_for("main.index"))
 
-    # once 'create opponent' button is pressed
     form = EditOpponentForm()
     if form.validate_on_submit():
+        if form.logo.data is not None:
+            file_name = opponent.id
+            file_loc = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                                    "..",
+                                    "static",
+                                    "images",
+                                    "team_logos",
+                                    f"{file_name}.png")
+            form.logo.data.save(file_loc)
 
-        file_name = opponent.id
-        file_loc = os.path.join(os.path.dirname(os.path.realpath(__file__)),
-                                "..",
-                                "static",
-                                "images",
-                                "team_logos",
-                                f"{file_name}.png")
-        
-        form.file.data.save(file_loc)
-
-        # get the updated Opponent name and commit to database
         opponent.name = form.name.data
         db.session.commit()
 
-        # redirect back to opponent page
-        flash('Congratulations, you just edited the opponent!')
-        return redirect(url_for('opponent.opponent_home', id=opponent.id))
+        flash("Changes made!")
+        return redirect(url_for("opponent.opponent_home", id=opponent.id))
 
-    return render_template('opponent/edit_opponent.html',
-                           title='Edit Opponent',
+    return render_template("opponent/edit_opponent.html",
+                           title="Edit Opponent",
                            opponent=opponent,
                            form=form)
 
@@ -295,3 +280,18 @@ def opponent_inactive_hitters(id):
         opponent=opponent
     )
 
+
+
+# ***************-HELPFUL FUNCTIONS-*************** #
+def getInitialsFromNames(firstname, lastname):
+    '''
+    PARAMS
+        - {string} firstname
+        - {string} lastname
+    RETURNS
+        - {string} first letter of firstname concatenated
+            with the first letter of lastname
+    '''
+    first_initial = re.findall("^\w", firstname)
+    last_initial = re.findall("^\w", lastname)
+    return f"{first_initial[0]}{last_initial[0]}"
