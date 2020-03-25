@@ -41,14 +41,12 @@ def new_video_pitcher():
         else:
             outing_id = form.outing.data.id
 
-        video = Video(
-            title=form.title.data,
-            date=form.date.data,
-            season_id=form.season.data.id,
-            outing_id=outing_id,
-            pitcher_id=form.pitcher.data.id,
-            link=form.link.data
-        )
+        video = Video(title=form.title.data,
+                      date=form.date.data,
+                      season_id=form.season.data.id,
+                      outing_id=outing_id,
+                      pitcher_id=form.pitcher.data.id,
+                      link=form.link.data)
 
         db.session.add(video)
         db.session.commit()
