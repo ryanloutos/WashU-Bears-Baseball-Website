@@ -56,11 +56,14 @@ def new_video_pitcher():
         flash("Video Posted!")
         return redirect(url_for("main.index")) 
     
+    js = render_template("video/new_video_pitcher.js", current_season=current_season)
+
     return render_template(
         "video/new_video_pitcher.html",
         title="Post Video",
         form=form,
-        current_season=current_season
+        current_season=current_season,
+        js=js
     )
 
 # ***************-NEW VIDEO BATTER-*************** #

@@ -2,12 +2,6 @@
 
 {% block styles %}
     {{ super() }}
-    <script>
-    document.addEventListener("DOMContentLoaded", function(){
-        let season_selector = document.getElementById("season_selector");
-        season_selector.value = {{ current_season.id }};
-    });
-    </script>
 {% endblock %}
 
 {% block app_content %}

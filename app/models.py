@@ -52,6 +52,9 @@ class Pitcher(db.Model):
         else:
             return f"{self.firstname} {self.lastname}"
 
+    def new_video_selector_display(self):
+        return f"{self.firstname} {self.lastname}" 
+
 
 class Game(db.Model):
     id = db.Column(db.Integer, primary_key=True)

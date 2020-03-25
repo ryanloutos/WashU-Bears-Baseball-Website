@@ -252,10 +252,8 @@ def pitch_tracker():
         time_to_plate = None
 
     loc_x = pitch_data["loc_x"]
-    print(loc_x)
     if loc_x in ["", "null", None]:
         loc_x = None
-    print(loc_x)
 
     loc_y = pitch_data["loc_y"]
     if loc_y in ["", "null", None]:
@@ -408,7 +406,7 @@ def outings_in_season(season_id, pitcher_id):
             "id": outing.id,
             "label": outing.__repr__()
         })
-
+    print(outings_ret)
     return jsonify({
         "status": "success",
         "outings": outings_ret
@@ -516,16 +514,15 @@ def team_get_pitchers(team_id):
             })
 
         # get a team's pitchers
-        pitchers = Pitcher.query.filter_by(opponent_id=opponent.id).all()
+        pitchers = Pitcher.query.filter_by(opponent_id=opponent.id).order_by(Pitcher.lastname).all()
 
     pitchers_arr = []
     for pitcher in pitchers:
         if not pitcher.retired:
             pitchers_arr.append({
                 "id": pitcher.id,
-                "name": pitcher
+                "name": pitcher.new_video_selector_display()
             })
-
     return jsonify({
         "status": "success",
         "data": pitchers_arr

@@ -29,11 +29,9 @@ class RegistrationForm(FlaskForm):
     username = StringField("Username", validators=[DataRequired()])
     email = StringField("Email", validators=[DataRequired(), Email()])
     password = PasswordField("Password", validators=[DataRequired()])
-    password2 = PasswordField(
-        "Repeat Password", 
-        validators=[DataRequired(), 
-        EqualTo("password")]
-    )
+    password2 = PasswordField("Repeat Password", 
+                              validators=[DataRequired(), 
+                              EqualTo("password")])
     admin = BooleanField("Admin?", validators=[Optional()])
     retired = BooleanField("Retired?", validators=[Optional()])
     submit = SubmitField("Register")
@@ -75,41 +73,19 @@ class ChangePasswordForm(FlaskForm):
     submit = SubmitField("Update Password")
 
 
-# ***************-SEASON-*************** #
-class NewSeasonForm(FlaskForm):
-    semester = SelectField(
-        "Semester",
-        choices=[("Fall", "Fall"), ("Spring", "Spring")],
-        validators=[DataRequired()]
-    )
-    year = IntegerField("Year", validators=[DataRequired()])
-    current_season = BooleanField("Current Season?")
-    submit = SubmitField("Create New Season")
-
-class EditSeasonForm(FlaskForm):
-    semester = SelectField("Semester", validators=[DataRequired()])
-    year = IntegerField("Year", validators=[DataRequired()])
-    current_season = BooleanField("Current Season?")
-    submit = SubmitField("Save Changes")
-
-
 # ***************-BATTER-*************** #
 class NewBatterForm(FlaskForm):
-    opponent = QuerySelectField(
-        "Opponent",
-        query_factory=lambda: Opponent.query,
-        get_pk=lambda o: o,
-        get_label=lambda o: o
-    )
+    opponent = QuerySelectField("Opponent",
+                                query_factory=lambda: Opponent.query,
+                                get_pk=lambda o: o,
+                                get_label=lambda o: o)
     firstname = StringField("First Name", validators=[DataRequired()])
     lastname = StringField("Last Name", validators=[DataRequired()])
     initials = StringField("Initials", validators=[Optional()])
     number = IntegerField("Number", validators=[Optional()])
-    bats = SelectField(
-        "Bats",
-        choices=[("R", "R"), ("L", "L"), ("S", "S")],
-        validators=[Optional()]
-    )
+    bats = SelectField("Bats",
+                       choices=[("R", "R"), ("L", "L"), ("S", "S")],
+                       validators=[Optional()])
     grad_year = IntegerField("Grad Year", validators=[Optional()])
     retired = BooleanField("Inactive?")
     submit = SubmitField("Create Batter", validators=[Optional()])
@@ -119,11 +95,9 @@ class EditBatterForm(FlaskForm):
     lastname = StringField("Last Name", validators=[Optional()])
     initials = StringField("Initials", validators=[Optional()])
     number = IntegerField("Number", validators=[Optional()])
-    bats = SelectField(
-        "Bats",
-        choices=[("R", "R"), ("L", "L"), ("S", "S")],
-        validators=[Optional()]
-    )
+    bats = SelectField("Bats",
+                       choices=[("R", "R"), ("L", "L"), ("S", "S")],
+                       validators=[Optional()])
     grad_year = IntegerField("Grad Year", validators=[Optional()])
     retired = BooleanField("Inactive?")
     submit = SubmitField("Save Changes", validators=[Optional()])
@@ -134,10 +108,9 @@ class BatterForm(FlaskForm):
     firstname = StringField("First Name", [Optional()])
     lastname = StringField("Last Name", validators=[Optional()])
     number = IntegerField("Number", validators=[Optional()])
-    bats = SelectField(
-        "Bats",
-        choices=[("R", "R"), ("L", "L"), ("S", "S")],
-        validators=[Optional()])
+    bats = SelectField("Bats",
+                       choices=[("R", "R"), ("L", "L"), ("S", "S")],
+                       validators=[Optional()])
     grad_year = IntegerField("Grad Year", validators=[Optional()])
     notes = StringField("Scouting Notes", validators=[Optional()])
     retired = BooleanField("Inactive?")
@@ -146,35 +119,88 @@ class PitcherForm(FlaskForm):
     firstname = StringField("First Name", validators=[Optional()])
     lastname = StringField("Last Name", validators=[Optional()])
     number = IntegerField("Number", validators=[Optional()])
-    throws = SelectField(
-        "throws",
-        choices=[("R", "R"), ("L", "L")],
-        validators=[Optional()])
+    throws = SelectField("Throws",
+                         choices=[("R", "R"), ("L", "L")],
+                         validators=[Optional()])
     grad_year = IntegerField("Grad Year", validators=[Optional()])
     notes = StringField("Scouting Notes", validators=[Optional()])
     retired = BooleanField("Inactive?")
 
 class NewOpponentForm(FlaskForm):
     name = StringField("Team Name", validators=[DataRequired()])
-    logo = FileField("Team Logo", validators=[
-        FileRequired(),
-        FileAllowed(["jpg", "png"], "Use .jpg or .png only!")])
-    batters = FieldList(
-        FormField(BatterForm),
-        min_entries=35,
-        max_entries=35,
-        validators=[Optional()])
-    pitchers = FieldList(
-        FormField(PitcherForm),
-        min_entries=35,
-        max_entries=35,
-        validators=[Optional()])
+    logo = FileField("Team Logo", 
+                     validators=[FileRequired(), 
+                                 FileAllowed(["jpg", "png"], 
+                                              "Use .jpg or .png only!")])
+    batters = FieldList(FormField(BatterForm),
+                        min_entries=35,
+                        max_entries=35,
+                        validators=[Optional()])
+    pitchers = FieldList(FormField(PitcherForm),
+                         min_entries=35,
+                         max_entries=35,
+                         validators=[Optional()])
     submit = SubmitField("Create Opponent")
 
 class EditOpponentForm(FlaskForm):
     name = StringField("Team Name", validators=[DataRequired()])
-    logo = FileField("Team Logo", validators=[FileAllowed(["jpg", "png"], "Use .jpg or .png only!")])
+    logo = FileField("Team Logo", 
+                     validators=[FileAllowed(["jpg", "png"], "Use .jpg or .png only!")])
     submit = SubmitField("Save Changes")
+
+
+# ***************-SEASON-*************** #
+class NewSeasonForm(FlaskForm):
+    semester = SelectField("Semester",
+                           choices=[("Fall", "Fall"), ("Spring", "Spring")],
+                           validators=[DataRequired()])
+    year = IntegerField("Year", validators=[DataRequired()])
+    current_season = BooleanField("Current Season?")
+    submit = SubmitField("Create New Season")
+
+class EditSeasonForm(FlaskForm):
+    semester = SelectField("Semester",
+                           choices=[("Fall", "Fall"), ("Spring", "Spring")],
+                           validators=[DataRequired()])
+    year = IntegerField("Year", validators=[DataRequired()])
+    current_season = BooleanField("Current Season?")
+    submit = SubmitField("Save Changes")
+
+
+# ***************-VIDEO-*************** #
+def getOpponents():
+    return Opponent.query.order_by(Opponent.name).all()
+
+def getSeasons():
+    return Season.query.order_by(Season.semester.desc()).order_by(Season.year.desc()).all()
+
+class PitcherNewVideoForm(FlaskForm):
+    opponent = QuerySelectField("Team",
+                                query_factory=getOpponents)
+    pitcher = QuerySelectField(query_factory=lambda: Pitcher.query, 
+                               get_pk=lambda p: p.id,
+                               get_label=lambda p: p,
+                               validators=[DataRequired()])
+    title = StringField("Title", validators=[Optional()])
+    date = DateField("Date", validators=[DataRequired()], format="%Y-%m-%d")
+    season = QuerySelectField(query_factory=getSeasons)
+    outing = QuerySelectField(query_factory=lambda: Outing.query, 
+                              get_pk=lambda o: o.id,
+                              get_label=lambda o: o,
+                              allow_blank=True)
+    link = StringField("Link", validators=[DataRequired()])
+    submit = SubmitField("Post Video")
+
+class BatterNewVideoForm(FlaskForm):
+    title = StringField("Title", validators=[Optional()])
+    date = DateField("Date", validators=[DataRequired()], format="%Y-%m-%d")
+    season = QuerySelectField(query_factory=lambda: Season.query,
+                              get_pk=lambda s: s.id,
+                              get_label=lambda s: s,
+                              allow_blank=True)
+    batter = SelectField("Batter", validators=[Optional()])
+    link = StringField("Link", validators=[Optional()])
+    submit = SubmitField("Post Video")
 
 
 # each field is based on the baseball teams velocity tracking sheets
@@ -363,42 +389,3 @@ class NewGameForm(FlaskForm):
         get_pk=lambda s: s.id,
         get_label=lambda s: s)
     submit = SubmitField("Create Game")
-
-
-class PitcherNewVideoForm(FlaskForm):
-    title = StringField("Title", validators=[Optional()])
-    date = DateField("Date", validators=[DataRequired()], format="%Y-%m-%d")
-    season = QuerySelectField(
-        query_factory=lambda: Season.query,
-        get_pk=lambda s: s.id,
-        get_label=lambda s: s,
-        allow_blank=True
-    )
-    outing = QuerySelectField(
-        query_factory=lambda: Outing.query, 
-        get_pk=lambda o: o.id,
-        get_label=lambda o: o,
-        allow_blank=True
-    )
-    pitcher = QuerySelectField(
-        query_factory=lambda: Pitcher.query, 
-        get_pk=lambda p: p.id,
-        get_label=lambda p: p,
-    )
-    link = StringField("Link", validators=[Optional()])
-    submit = SubmitField("Post Video")
-
-
-class BatterNewVideoForm(FlaskForm):
-    title = StringField("Title", validators=[Optional()])
-    date = DateField("Date", validators=[DataRequired()], format="%Y-%m-%d")
-    season = QuerySelectField(
-        query_factory=lambda: Season.query,
-        get_pk=lambda s: s.id,
-        get_label=lambda s: s,
-        allow_blank=True
-    )
-    batter = SelectField("Batter", validators=[Optional()])
-    link = StringField("Link", validators=[Optional()])
-    submit = SubmitField("Post Video")
-
