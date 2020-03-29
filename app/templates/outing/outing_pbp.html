@@ -75,7 +75,7 @@
                             <td>
                                 {% for batter in opponent.batters %}
                                     {% if pitch.batter_id==batter.id %}
-                                        {{ batter }}
+                                        {{ batter.abrev_name() }}
                                     {% endif %}
                                 {% endfor %}
                             </td>

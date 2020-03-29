@@ -63,7 +63,7 @@ def batter_home(id):
                 }
             })
     return render_template('opponent/batter/batter.html',
-                           title=batter.name,
+                           title=batter,
                            batter=batter,
                            game_stats=game_stats)
 
@@ -115,7 +115,7 @@ def batter_at_bat(batter_id, ab_num):
         at_bat=at_bat,
         pitcher=pitcher,
         batter=batter,
-        title=batter.name,
+        title=f"{batter} vs {at_bat.get_pitcher()}",
         pitches=pitches
     )
 

@@ -39,7 +39,13 @@ class Pitcher(db.Model):
     outings = db.relationship('Outing', backref='pitcher', lazy='dynamic')
 
     def __repr__(self):
-        return str(self.number) + " " + self.firstname + " " + self.lastname
+        return self.firstname + " " + self.lastname
+
+    def name_and_number(self):
+        return f"{self.number} {self.firstname} {self.lastname}"
+
+    def abrev_name(self):
+        return f"{self.number} - {self.firstname[0]}{self.lastname[0]}"
 
     def num_outings(self):
         count = 0
@@ -206,10 +212,13 @@ class Batter(db.Model):
     at_bats = db.relationship('AtBat', backref='batter', lazy='dynamic')
 
     def __repr__(self):
-        return str(self.number) + " - " + str(self.initials)
+        return self.firstname + " " + self.lastname
 
-    def name(self):
-        return f"{self.firstname} {self.lastname}"
+    def name_and_number(self):
+        return f"{self.number} {self.firstname} {self.lastname}"
+
+    def abrev_name(self):
+        return f"{self.number} - {self.initials}"
 
     def get_seasons(self):
         seasons = []

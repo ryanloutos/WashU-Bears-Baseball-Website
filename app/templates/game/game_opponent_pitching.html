@@ -24,7 +24,7 @@
             </tr>
             {% for o in basic_stats_by_outing %}
                 <tr>
-                    <td class="text-left"><a href="{{ url_for('outing.outing_home', id=o['outing_id']) }}">{{ o["Pitcher"] }}</a></td>
+                    <td class="text-left"><a href="{{ url_for('outing.outing_home', id=o['outing_id']) }}">{{ o["Pitcher"].name_and_number() }}</a></td>
                     <td>{{ o["BF"] }}</td>
                     <td>{{ o["Pitches"] }}</td>
                     <td>{{ o["Hits"] }}</td>
