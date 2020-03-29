@@ -36,7 +36,7 @@
     {% include "hitters/hitter/hitter_sidenav.html" %}
     <div class="main">
         <h1>
-            {{ batter.name() }} vs. {{ pitcher }}
+            {{ batter }} vs. {{ pitcher }} - {{ at_bat.get_date() }}
         </h1> 
         <h2>Pitches</h2>
         <table class="table">

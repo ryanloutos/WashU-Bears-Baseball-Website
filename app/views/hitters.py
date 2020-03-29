@@ -197,7 +197,7 @@ def hitter_home(id):
 
     return render_template(
         'hitters/hitter/hitter.html',
-        title=hitter.name,
+        title=hitter,
         batter=hitter,
         game_stats=game_stats)
 
@@ -304,7 +304,7 @@ def hitter_at_bat(batter_id, ab_num):
         at_bat=at_bat,
         pitcher=pitcher,
         batter=batter,
-        title=batter.name,
+        title=batter,
         pitches=pitches
     )
 
