@@ -3,7 +3,7 @@ from flask import render_template
 from flask_login import login_required
 from app import db
 from app.models import User, Outing, Pitch, Season, Pitcher
-from app.stats import staffSeasonStats, staffSeasonGoals
+from app.stats.stats import staffSeasonStats, staffSeasonGoals
 
 from datetime import date
 

@@ -6,9 +6,9 @@ from app import db
 
 from app.forms import PitcherForm, EditPitcherForm
 from app.models import User, Outing, Pitch, Season, Pitcher, Opponent, Video
-from app.stats import avgPitchVeloPitcher, veloOverCareer
-from app.stats import pitchStrikePercentageSeason
-from app.stats import pitchUsageSeason, seasonStatLine
+from app.stats.stats import avgPitchVeloPitcher, veloOverCareer
+from app.stats.stats import pitchStrikePercentageSeason
+from app.stats.stats import pitchUsageSeason, seasonStatLine
 
 # Handle CSV uploads
 import csv

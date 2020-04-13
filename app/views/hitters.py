@@ -9,25 +9,25 @@ from app.forms import OutingPitchForm, NewOutingFromCSVPitches, EditUserForm
 from app.forms import ChangePasswordForm, EditBatterForm, EditOpponentForm
 from app.forms import NewBatterForm
 from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat, Game, Video
-from app.stats import calcPitchPercentages, pitchUsageByCount, calcAverageVelo
-from app.stats import calcPitchStrikePercentage, calcPitchWhiffRate
-from app.stats import createPitchPercentagePieChart, velocityOverTimeLineChart
-from app.stats import pitchStrikePercentageBarChart, avgPitchVeloPitcher
-from app.stats import pitchUsageByCountLineCharts, pitchStrikePercentageSeason
-from app.stats import pitchUsageSeason, seasonStatLine, staffBasicStats
-from app.stats import staffPitchStrikePercentage
-from app.stats import outingPitchStatistics, outingTimeToPlate, veloOverTime
-from app.stats import stats_opponent_scouting_stats, stats_opponent_batters_stat_lines
-from app.stats import calcPitchPercentages, pitchUsageByCount, calcAverageVelo
-from app.stats import calcPitchStrikePercentage, calcPitchWhiffRate
-from app.stats import createPitchPercentagePieChart, velocityOverTimeLineChart
-from app.stats import pitchStrikePercentageBarChart, avgPitchVeloPitcher
-from app.stats import pitchUsageByCountLineCharts, pitchStrikePercentageSeason
-from app.stats import pitchUsageSeason, seasonStatLine, staffBasicStats
-from app.stats import staffPitchStrikePercentage
-from app.stats import outingPitchStatistics, outingTimeToPlate, veloOverTime
-from app.stats import batterSwingWhiffRatebyPitchbyCount, batter_summary_game_stats
-from app.stats import batterSwingWhiffRatebyPitchbyCount2, batter_ball_in_play_stats
+from app.stats.stats import calcPitchPercentages, pitchUsageByCount, calcAverageVelo
+from app.stats.stats import calcPitchStrikePercentage, calcPitchWhiffRate
+from app.stats.stats import createPitchPercentagePieChart, velocityOverTimeLineChart
+from app.stats.stats import pitchStrikePercentageBarChart, avgPitchVeloPitcher
+from app.stats.stats import pitchUsageByCountLineCharts, pitchStrikePercentageSeason
+from app.stats.stats import pitchUsageSeason, seasonStatLine, staffBasicStats
+from app.stats.stats import staffPitchStrikePercentage
+from app.stats.stats import outingPitchStatistics, outingTimeToPlate, veloOverTime
+from app.stats.stats import stats_opponent_scouting_stats, stats_opponent_batters_stat_lines
+from app.stats.stats import calcPitchPercentages, pitchUsageByCount, calcAverageVelo
+from app.stats.stats import calcPitchStrikePercentage, calcPitchWhiffRate
+from app.stats.stats import createPitchPercentagePieChart, velocityOverTimeLineChart
+from app.stats.stats import pitchStrikePercentageBarChart, avgPitchVeloPitcher
+from app.stats.stats import pitchUsageByCountLineCharts, pitchStrikePercentageSeason
+from app.stats.stats import pitchUsageSeason, seasonStatLine, staffBasicStats
+from app.stats.stats import staffPitchStrikePercentage
+from app.stats.stats import outingPitchStatistics, outingTimeToPlate, veloOverTime
+from app.stats.stats import batterSwingWhiffRatebyPitchbyCount, batter_summary_game_stats
+from app.stats.stats import batterSwingWhiffRatebyPitchbyCount2, batter_ball_in_play_stats
 
 import re
 
@@ -197,7 +197,7 @@ def hitter_home(id):
 
     return render_template(
         'hitters/hitter/hitter.html',
-        title=hitter.name,
+        title=hitter,
         batter=hitter,
         game_stats=game_stats)
 
@@ -304,7 +304,7 @@ def hitter_at_bat(batter_id, ab_num):
         at_bat=at_bat,
         pitcher=pitcher,
         batter=batter,
-        title=batter.name,
+        title=batter,
         pitches=pitches
     )
 

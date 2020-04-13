@@ -47,7 +47,7 @@
             },
             colors: ["#bd2e1f"],
             title: {
-                text: 'Pitch Usage vs {{ batter.name() }} (% of time)'
+                text: 'Pitch Usage vs {{ batter }} (% of time)'
             }
         };
 
@@ -154,17 +154,17 @@
     <div class="tab-content row">
         <div id="career-pitch-usage" class="tab-pane fade in active">
             <div class="col-xs-12">
-                <h3>Carer Pitch Usage vs {{ batter.name() }}</h3>
+                <h3>Carer Pitch Usage vs {{ batter }}</h3>
                 <div id="pitch_usage_count_chart"></div>
             </div>
         </div>
         <div id="career-swing-whiff" class="tab-pane fade">
             <div>
-                <h3>Career Swing Rates of {{ batter.name() }}</h3>
+                <h3>Career Swing Rates of {{ batter }}</h3>
                 <div id="swing_rate_chart"></div>
             </div>
             <div>
-                <h3>Career Whiff Rates of {{ batter.name() }}</h3>
+                <h3>Career Whiff Rates of {{ batter }}</h3>
                 <div id="whiff_rate_chart"></div>
             </div>
         </div>

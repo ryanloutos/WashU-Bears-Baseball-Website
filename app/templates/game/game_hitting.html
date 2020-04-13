@@ -73,7 +73,7 @@
             </tr>
             {% for batter, stats in game_opponent_stats.items() %}
                 <tr>
-                    <td class="text-left"><a href="{{ url_for('batter.batter_game_view', batter_id=batter.id, game_id=game.id) }}">{{ batter.name() }}</a></td>
+                    <td class="text-left"><a href="{{ url_for('batter.batter_game_view', batter_id=batter.id, game_id=game.id) }}">{{ batter }}</a></td>
                     <td>{{ stats["AB"] }}</td>
                     <td>{{ stats["pitches"] }}</td>
                     <td>{{ stats["hits"] }}</td>

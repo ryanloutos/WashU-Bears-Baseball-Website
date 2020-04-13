@@ -2241,7 +2241,7 @@ def stats_opponent_batters_stat_lines(opponent):
         if batter.retired in [0, "0"]:
 
             temp_stat_line = {
-                "name": batter.name(),
+                "name": batter.name_and_number(),
                 "class": batter.grad_year,
                 "ab": 0,
                 "h": 0,
@@ -2261,7 +2261,7 @@ def stats_opponent_batters_stat_lines(opponent):
                 "current_k": 0
             }
             temp_hard_hit = {
-                "name": batter.name(),
+                "name": batter.name_and_number(),
                 "num_hard": 0,
                 "num_total": 0,
                 "percent": 0,

@@ -82,7 +82,7 @@
                                         <tbody>
                                             {% for pitch in at_bat.pitches %}
                                                 <tr>
-                                                    <td>{{ at_bat.get_pitcher() }}</td>
+                                                    <td>{{ at_bat.get_pitcher().abrev_name() }}</td>
                                                     <td>{{ pitch.pitch_num }}</td>
                                                     {% if pitch.velocity==None %}
                                                         <td></td>

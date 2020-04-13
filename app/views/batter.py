@@ -9,16 +9,17 @@ from app.forms import OutingPitchForm, NewOutingFromCSVPitches, EditUserForm
 from app.forms import ChangePasswordForm, EditBatterForm, EditOpponentForm
 from app.forms import NewBatterForm
 from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat, Game, Video
-from app.stats import calcPitchPercentages, pitchUsageByCount, calcAverageVelo
-from app.stats import calcPitchStrikePercentage, calcPitchWhiffRate
-from app.stats import createPitchPercentagePieChart, velocityOverTimeLineChart
-from app.stats import pitchStrikePercentageBarChart, avgPitchVeloPitcher
-from app.stats import pitchUsageByCountLineCharts, pitchStrikePercentageSeason
-from app.stats import pitchUsageSeason, seasonStatLine, staffBasicStats
-from app.stats import staffPitchStrikePercentage
-from app.stats import outingPitchStatistics, outingTimeToPlate, veloOverTime
-from app.stats import batterSwingWhiffRatebyPitchbyCount, batter_summary_game_stats
-from app.stats import batterSwingWhiffRatebyPitchbyCount2, batter_ball_in_play_stats
+from app.stats.stats import calcPitchPercentages, pitchUsageByCount, calcAverageVelo
+from app.stats.stats import calcPitchStrikePercentage, calcPitchWhiffRate
+from app.stats.stats import createPitchPercentagePieChart, velocityOverTimeLineChart
+from app.stats.stats import pitchStrikePercentageBarChart, avgPitchVeloPitcher
+from app.stats.stats import pitchUsageByCountLineCharts, pitchStrikePercentageSeason
+from app.stats.stats import pitchUsageSeason, seasonStatLine, staffBasicStats
+from app.stats.stats import staffPitchStrikePercentage
+from app.stats.stats import outingPitchStatistics, outingTimeToPlate, veloOverTime
+from app.stats.stats import batterSwingWhiffRatebyPitchbyCount, batter_summary_game_stats
+from app.stats.stats import batterSwingWhiffRatebyPitchbyCount2, batter_ball_in_play_stats
+from app.stats.scouting_stats import zone_division_stats_batter
 
 import re
 
@@ -63,7 +64,7 @@ def batter_home(id):
                 }
             })
     return render_template('opponent/batter/batter.html',
-                           title=batter.name,
+                           title=batter,
                            batter=batter,
                            game_stats=game_stats)
 
@@ -115,7 +116,7 @@ def batter_at_bat(batter_id, ab_num):
         at_bat=at_bat,
         pitcher=pitcher,
         batter=batter,
-        title=batter.name,
+        title=f"{batter} vs {at_bat.get_pitcher()}",
         pitches=pitches
     )
 
@@ -550,6 +551,9 @@ def batter_game_view(batter_id, game_id):
 def batter_videos(id):
 
     batter = Batter.query.filter_by(id=id).first()
+    if not batter:
+        flash("URL does not exist")
+        return redirect(url_for('main.index'))
     videos = Video.query.filter_by(batter_id=id).all()
     video_ids = []
     seasons = []
@@ -574,4 +578,22 @@ def batter_videos(id):
         seasons=seasons,
         video_objects=videos,
         videos=video_ids
+    )
+
+
+@batter.route("/batter/<batter_id>/scouting")
+@login_required
+def batter_scouting(batter_id):
+
+    batter = Batter.query.filter_by(id=batter_id).first()
+    if not batter:
+        flash("URL does not exist")
+        return redirect(url_for('main.index'))
+
+    zone_division_stats = zone_division_stats_batter(batter)
+
+    return render_template(
+        'opponent/batter/batter_scouting.html',
+        batter=batter,
+        zone_division_stats=zone_division_stats
     )
