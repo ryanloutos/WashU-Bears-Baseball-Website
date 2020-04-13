@@ -1,0 +1,464 @@
+{% extends "base.html" %}
+
+{% block styles %}
+{{ super() }}
+<script src="{{ url_for('static', filename='packages/d3/d3.js') }}"></script>
+<script src="{{ url_for('static', filename='js/d3_strikezone.js') }}"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        setup_strikezones();
+    });
+
+    function setup_strikezones(){
+
+        let size = 125;
+
+        let zone_upper_half = new strikezone("strikezone-upper-half", size, size);
+        let zone_lower_half = new strikezone("strikezone-lower-half", size, size);
+
+        let zone_3b_side = new strikezone("strikezone-3b-side", size, size);
+        let zone_inner_third = new strikezone("strikezone-inner-third", size, size);
+        let zone_middle_third = new strikezone("strikezone-middle-third", size, size);
+        let zone_outer_third = new strikezone("strikezone-outer-third", size, size);
+        let zone_1b_side = new strikezone("strikezone-1b-side", size, size);
+
+
+        zone_upper_half.highlightUpperHalf();
+        zone_lower_half.highlightLowerHalf();
+        zone_3b_side.highlight3bSide();
+        zone_inner_third.highlightInnerThird();
+        zone_middle_third.highlightMiddleThird();
+        zone_outer_third.highlightOuterThird();
+        zone_1b_side.highlight1bSide();
+    }
+</script>
+{% endblock %}
+
+{% block app_content %}
+{% include "opponent/batter/batter_sidenav.html" %}
+<div class="main">
+    {% include "opponent/batter/batter_title.html" %}
+
+    <div class="row text-center">
+        <h1>Swing and Whiff Rates by Pitch Location and Type</h1>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-md-6">
+            <div class="col-xs-4" id="strikezone-upper-half"></div>
+            <div class="col-xs-8">
+                <table class="table">
+                    <thead>
+                        <tr class="table-headers">
+                            <th>Type</th>
+                            <th>Number</th>
+                            <th>Swing Rate</th>
+                            <th>Whiff Rate</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>All</td>
+                            <td>{{ zone_division_stats["top_half_pitches"]["counters"]["num_pitches"] }}</td>
+                            <td>{{ zone_division_stats["top_half_pitches"]["swing_whiff"]["swing_rate"] }}</td>
+                            <td>{{ zone_division_stats["top_half_pitches"]["swing_whiff"]["whiff_rate"] }}</td>
+                        </tr>
+                        <tr>
+                            <td>FB</td>
+                            <td>{{ zone_division_stats["top_half_pitches"]["counters"]["FB"] }}</td>
+                            <td>{{ zone_division_stats["top_half_pitches"]["swing_whiff"]["fb_swing_rate"] }}</td>
+                            <td>{{ zone_division_stats["top_half_pitches"]["swing_whiff"]["fb_whiff_rate"] }}</td>
+                        </tr>
+                        <tr>
+                            <td>CB</td>
+                            <td>{{ zone_division_stats["top_half_pitches"]["counters"]["CB"] }}</td>
+                            <td>{{ zone_division_stats["top_half_pitches"]["swing_whiff"]["ch_swing_rate"] }}</td>
+                            <td>{{ zone_division_stats["top_half_pitches"]["swing_whiff"]["ch_whiff_rate"] }}</td>
+                        </tr>
+                        <tr>
+                            <td>SL</td>
+                            <td>{{ zone_division_stats["top_half_pitches"]["counters"]["SL"] }}</td>
+                            <td>{{ zone_division_stats["top_half_pitches"]["swing_whiff"]["sl_swing_rate"] }}</td>
+                            <td>{{ zone_division_stats["top_half_pitches"]["swing_whiff"]["sl_whiff_rate"] }}</td>
+                        </tr>
+                        <tr>
+                            <td>CT</td>
+                            <td>{{ zone_division_stats["top_half_pitches"]["counters"]["CT"] }}</td>
+                            <td>{{ zone_division_stats["top_half_pitches"]["swing_whiff"]["ct_swing_rate"] }}</td>
+                            <td>{{ zone_division_stats["top_half_pitches"]["swing_whiff"]["ct_whiff_rate"] }}</td>
+                        </tr>
+                        <tr>
+                            <td>CH</td>
+                            <td>{{ zone_division_stats["top_half_pitches"]["counters"]["CH"] }}</td>
+                            <td>{{ zone_division_stats["top_half_pitches"]["swing_whiff"]["ch_swing_rate"] }}</td>
+                            <td>{{ zone_division_stats["top_half_pitches"]["swing_whiff"]["ch_whiff_rate"] }}</td>
+                        </tr>
+                        <tr>
+                            <td>2S</td>
+                            <td>{{ zone_division_stats["top_half_pitches"]["counters"]["SM"] }}</td>
+                            <td>{{ zone_division_stats["top_half_pitches"]["swing_whiff"]["sm_swing_rate"] }}</td>
+                            <td>{{ zone_division_stats["top_half_pitches"]["swing_whiff"]["sm_whiff_rate"] }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-xs-12 col-md-6">
+            <div class="col-xs-4" id="strikezone-lower-half"></div>
+            <div class="col-xs-8">
+                <table class="table">
+                    <thead>
+                        <tr class="table-headers">
+                            <th>Type</th>
+                            <th>Number</th>
+                            <th>Swing Rate</th>
+                            <th>Whiff Rate</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>All</td>
+                            <td>{{ zone_division_stats["bottom_half_pitches"]["counters"]["num_pitches"] }}</td>
+                            <td>{{ zone_division_stats["bottom_half_pitches"]["swing_whiff"]["swing_rate"] }}</td>
+                            <td>{{ zone_division_stats["bottom_half_pitches"]["swing_whiff"]["whiff_rate"] }}</td>
+                        </tr>
+                        <tr>
+                            <td>FB</td>
+                            <td>{{ zone_division_stats["bottom_half_pitches"]["counters"]["FB"] }}</td>
+                            <td>{{ zone_division_stats["bottom_half_pitches"]["swing_whiff"]["fb_swing_rate"] }}</td>
+                            <td>{{ zone_division_stats["bottom_half_pitches"]["swing_whiff"]["fb_whiff_rate"] }}</td>
+                        </tr>
+                        <tr>
+                            <td>CB</td>
+                            <td>{{ zone_division_stats["bottom_half_pitches"]["counters"]["CB"] }}</td>
+                            <td>{{ zone_division_stats["bottom_half_pitches"]["swing_whiff"]["ch_swing_rate"] }}</td>
+                            <td>{{ zone_division_stats["bottom_half_pitches"]["swing_whiff"]["ch_whiff_rate"] }}</td>
+                        </tr>
+                        <tr>
+                            <td>SL</td>
+                            <td>{{ zone_division_stats["bottom_half_pitches"]["counters"]["SL"] }}</td>
+                            <td>{{ zone_division_stats["bottom_half_pitches"]["swing_whiff"]["sl_swing_rate"] }}</td>
+                            <td>{{ zone_division_stats["bottom_half_pitches"]["swing_whiff"]["sl_whiff_rate"] }}</td>
+                        </tr>
+                        <tr>
+                            <td>CT</td>
+                            <td>{{ zone_division_stats["bottom_half_pitches"]["counters"]["CT"] }}</td>
+                            <td>{{ zone_division_stats["bottom_half_pitches"]["swing_whiff"]["ct_swing_rate"] }}</td>
+                            <td>{{ zone_division_stats["bottom_half_pitches"]["swing_whiff"]["ct_whiff_rate"] }}</td>
+                        </tr>
+                        <tr>
+                            <td>CH</td>
+                            <td>{{ zone_division_stats["bottom_half_pitches"]["counters"]["CH"] }}</td>
+                            <td>{{ zone_division_stats["bottom_half_pitches"]["swing_whiff"]["ch_swing_rate"] }}</td>
+                            <td>{{ zone_division_stats["bottom_half_pitches"]["swing_whiff"]["ch_whiff_rate"] }}</td>
+                        </tr>
+                        <tr>
+                            <td>2S</td>
+                            <td>{{ zone_division_stats["bottom_half_pitches"]["counters"]["SM"] }}</td>
+                            <td>{{ zone_division_stats["bottom_half_pitches"]["swing_whiff"]["sm_swing_rate"] }}</td>
+                            <td>{{ zone_division_stats["bottom_half_pitches"]["swing_whiff"]["sm_whiff_rate"] }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-xs-12 col-md-6">
+            <div class="col-xs-4" id="strikezone-3b-side"></div>
+            <div class="col-xs-8">
+                <table class="table">
+                    <thead>
+                        <tr class="table-headers">
+                            <th>Type</th>
+                            <th>Number</th>
+                            <th>Swing Rate</th>
+                            <th>Whiff Rate</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>All</td>
+                            <td>{{ zone_division_stats["3b_side_pitches"]["counters"]["num_pitches"] }}</td>
+                            <td>{{ zone_division_stats["3b_side_pitches"]["swing_whiff"]["swing_rate"] }}</td>
+                            <td>{{ zone_division_stats["3b_side_pitches"]["swing_whiff"]["whiff_rate"] }}</td>
+                        </tr>
+                        <tr>
+                            <td>FB</td>
+                            <td>{{ zone_division_stats["3b_side_pitches"]["counters"]["FB"] }}</td>
+                            <td>{{ zone_division_stats["3b_side_pitches"]["swing_whiff"]["fb_swing_rate"] }}</td>
+                            <td>{{ zone_division_stats["3b_side_pitches"]["swing_whiff"]["fb_whiff_rate"] }}</td>
+                        </tr>
+                        <tr>
+                            <td>CB</td>
+                            <td>{{ zone_division_stats["3b_side_pitches"]["counters"]["CB"] }}</td>
+                            <td>{{ zone_division_stats["3b_side_pitches"]["swing_whiff"]["ch_swing_rate"] }}</td>
+                            <td>{{ zone_division_stats["3b_side_pitches"]["swing_whiff"]["ch_whiff_rate"] }}</td>
+                        </tr>
+                        <tr>
+                            <td>SL</td>
+                            <td>{{ zone_division_stats["3b_side_pitches"]["counters"]["SL"] }}</td>
+                            <td>{{ zone_division_stats["3b_side_pitches"]["swing_whiff"]["sl_swing_rate"] }}</td>
+                            <td>{{ zone_division_stats["3b_side_pitches"]["swing_whiff"]["sl_whiff_rate"] }}</td>
+                        </tr>
+                        <tr>
+                            <td>CT</td>
+                            <td>{{ zone_division_stats["3b_side_pitches"]["counters"]["CT"] }}</td>
+                            <td>{{ zone_division_stats["3b_side_pitches"]["swing_whiff"]["ct_swing_rate"] }}</td>
+                            <td>{{ zone_division_stats["3b_side_pitches"]["swing_whiff"]["ct_whiff_rate"] }}</td>
+                        </tr>
+                        <tr>
+                            <td>CH</td>
+                            <td>{{ zone_division_stats["3b_side_pitches"]["counters"]["CH"] }}</td>
+                            <td>{{ zone_division_stats["3b_side_pitches"]["swing_whiff"]["ch_swing_rate"] }}</td>
+                            <td>{{ zone_division_stats["3b_side_pitches"]["swing_whiff"]["ch_whiff_rate"] }}</td>
+                        </tr>
+                        <tr>
+                            <td>2S</td>
+                            <td>{{ zone_division_stats["3b_side_pitches"]["counters"]["SM"] }}</td>
+                            <td>{{ zone_division_stats["3b_side_pitches"]["swing_whiff"]["sm_swing_rate"] }}</td>
+                            <td>{{ zone_division_stats["3b_side_pitches"]["swing_whiff"]["sm_whiff_rate"] }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-xs-12 col-md-6">
+            <div class="col-xs-4" id="strikezone-inner-third">
+                </div>
+            <div class="col-xs-8">
+                <table class="table">
+                    <thead>
+                        <tr class="table-headers">
+                            <th>Type</th>
+                            <th>Number</th>
+                            <th>Swing Rate</th>
+                            <th>Whiff Rate</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>All</td>
+                            <td>{{ zone_division_stats["inner_third_pitches"]["counters"]["num_pitches"] }}</td>
+                            <td>{{ zone_division_stats["inner_third_pitches"]["swing_whiff"]["swing_rate"] }}</td>
+                            <td>{{ zone_division_stats["inner_third_pitches"]["swing_whiff"]["whiff_rate"] }}</td>
+                        </tr>
+                        <tr>
+                            <td>FB</td>
+                            <td>{{ zone_division_stats["inner_third_pitches"]["counters"]["FB"] }}</td>
+                            <td>{{ zone_division_stats["inner_third_pitches"]["swing_whiff"]["fb_swing_rate"] }}</td>
+                            <td>{{ zone_division_stats["inner_third_pitches"]["swing_whiff"]["fb_whiff_rate"] }}</td>
+                        </tr>
+                        <tr>
+                            <td>CB</td>
+                            <td>{{ zone_division_stats["inner_third_pitches"]["counters"]["CB"] }}</td>
+                            <td>{{ zone_division_stats["inner_third_pitches"]["swing_whiff"]["ch_swing_rate"] }}</td>
+                            <td>{{ zone_division_stats["inner_third_pitches"]["swing_whiff"]["ch_whiff_rate"] }}</td>
+                        </tr>
+                        <tr>
+                            <td>SL</td>
+                            <td>{{ zone_division_stats["inner_third_pitches"]["counters"]["SL"] }}</td>
+                            <td>{{ zone_division_stats["inner_third_pitches"]["swing_whiff"]["sl_swing_rate"] }}</td>
+                            <td>{{ zone_division_stats["inner_third_pitches"]["swing_whiff"]["sl_whiff_rate"] }}</td>
+                        </tr>
+                        <tr>
+                            <td>CT</td>
+                            <td>{{ zone_division_stats["inner_third_pitches"]["counters"]["CT"] }}</td>
+                            <td>{{ zone_division_stats["inner_third_pitches"]["swing_whiff"]["ct_swing_rate"] }}</td>
+                            <td>{{ zone_division_stats["inner_third_pitches"]["swing_whiff"]["ct_whiff_rate"] }}</td>
+                        </tr>
+                        <tr>
+                            <td>CH</td>
+                            <td>{{ zone_division_stats["inner_third_pitches"]["counters"]["CH"] }}</td>
+                            <td>{{ zone_division_stats["inner_third_pitches"]["swing_whiff"]["ch_swing_rate"] }}</td>
+                            <td>{{ zone_division_stats["inner_third_pitches"]["swing_whiff"]["ch_whiff_rate"] }}</td>
+                        </tr>
+                        <tr>
+                            <td>2S</td>
+                            <td>{{ zone_division_stats["inner_third_pitches"]["counters"]["SM"] }}</td>
+                            <td>{{ zone_division_stats["inner_third_pitches"]["swing_whiff"]["sm_swing_rate"] }}</td>
+                            <td>{{ zone_division_stats["inner_third_pitches"]["swing_whiff"]["sm_whiff_rate"] }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-xs-12 col-md-6">
+            <div class="col-xs-4" id="strikezone-middle-third"></div>
+            <div class="col-xs-8">
+                <table class="table">
+                    <thead>
+                        <tr class="table-headers">
+                            <th>Type</th>
+                            <th>Number</th>
+                            <th>Swing Rate</th>
+                            <th>Whiff Rate</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>All</td>
+                            <td>{{ zone_division_stats["middle_third_pitches"]["counters"]["num_pitches"] }}</td>
+                            <td>{{ zone_division_stats["middle_third_pitches"]["swing_whiff"]["swing_rate"] }}</td>
+                            <td>{{ zone_division_stats["middle_third_pitches"]["swing_whiff"]["whiff_rate"] }}</td>
+                        </tr>
+                        <tr>
+                            <td>FB</td>
+                            <td>{{ zone_division_stats["middle_third_pitches"]["counters"]["FB"] }}</td>
+                            <td>{{ zone_division_stats["middle_third_pitches"]["swing_whiff"]["fb_swing_rate"] }}</td>
+                            <td>{{ zone_division_stats["middle_third_pitches"]["swing_whiff"]["fb_whiff_rate"] }}</td>
+                        </tr>
+                        <tr>
+                            <td>CB</td>
+                            <td>{{ zone_division_stats["middle_third_pitches"]["counters"]["CB"] }}</td>
+                            <td>{{ zone_division_stats["middle_third_pitches"]["swing_whiff"]["ch_swing_rate"] }}</td>
+                            <td>{{ zone_division_stats["middle_third_pitches"]["swing_whiff"]["ch_whiff_rate"] }}</td>
+                        </tr>
+                        <tr>
+                            <td>SL</td>
+                            <td>{{ zone_division_stats["middle_third_pitches"]["counters"]["SL"] }}</td>
+                            <td>{{ zone_division_stats["middle_third_pitches"]["swing_whiff"]["sl_swing_rate"] }}</td>
+                            <td>{{ zone_division_stats["middle_third_pitches"]["swing_whiff"]["sl_whiff_rate"] }}</td>
+                        </tr>
+                        <tr>
+                            <td>CT</td>
+                            <td>{{ zone_division_stats["middle_third_pitches"]["counters"]["CT"] }}</td>
+                            <td>{{ zone_division_stats["middle_third_pitches"]["swing_whiff"]["ct_swing_rate"] }}</td>
+                            <td>{{ zone_division_stats["middle_third_pitches"]["swing_whiff"]["ct_whiff_rate"] }}</td>
+                        </tr>
+                        <tr>
+                            <td>CH</td>
+                            <td>{{ zone_division_stats["middle_third_pitches"]["counters"]["CH"] }}</td>
+                            <td>{{ zone_division_stats["middle_third_pitches"]["swing_whiff"]["ch_swing_rate"] }}</td>
+                            <td>{{ zone_division_stats["middle_third_pitches"]["swing_whiff"]["ch_whiff_rate"] }}</td>
+                        </tr>
+                        <tr>
+                            <td>2S</td>
+                            <td>{{ zone_division_stats["middle_third_pitches"]["counters"]["SM"] }}</td>
+                            <td>{{ zone_division_stats["middle_third_pitches"]["swing_whiff"]["sm_swing_rate"] }}</td>
+                            <td>{{ zone_division_stats["middle_third_pitches"]["swing_whiff"]["sm_whiff_rate"] }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-xs-12 col-md-6">
+            <div class="col-xs-4" id="strikezone-outer-third"></div>
+            <div class="col-xs-8">
+                <table class="table">
+                    <thead>
+                        <tr class="table-headers">
+                            <th>Type</th>
+                            <th>Number</th>
+                            <th>Swing Rate</th>
+                            <th>Whiff Rate</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>All</td>
+                            <td>{{ zone_division_stats["outer_third_pitches"]["counters"]["num_pitches"] }}</td>
+                            <td>{{ zone_division_stats["outer_third_pitches"]["swing_whiff"]["swing_rate"] }}</td>
+                            <td>{{ zone_division_stats["outer_third_pitches"]["swing_whiff"]["whiff_rate"] }}</td>
+                        </tr>
+                        <tr>
+                            <td>FB</td>
+                            <td>{{ zone_division_stats["outer_third_pitches"]["counters"]["FB"] }}</td>
+                            <td>{{ zone_division_stats["outer_third_pitches"]["swing_whiff"]["fb_swing_rate"] }}</td>
+                            <td>{{ zone_division_stats["outer_third_pitches"]["swing_whiff"]["fb_whiff_rate"] }}</td>
+                        </tr>
+                        <tr>
+                            <td>CB</td>
+                            <td>{{ zone_division_stats["outer_third_pitches"]["counters"]["CB"] }}</td>
+                            <td>{{ zone_division_stats["outer_third_pitches"]["swing_whiff"]["ch_swing_rate"] }}</td>
+                            <td>{{ zone_division_stats["outer_third_pitches"]["swing_whiff"]["ch_whiff_rate"] }}</td>
+                        </tr>
+                        <tr>
+                            <td>SL</td>
+                            <td>{{ zone_division_stats["outer_third_pitches"]["counters"]["SL"] }}</td>
+                            <td>{{ zone_division_stats["outer_third_pitches"]["swing_whiff"]["sl_swing_rate"] }}</td>
+                            <td>{{ zone_division_stats["outer_third_pitches"]["swing_whiff"]["sl_whiff_rate"] }}</td>
+                        </tr>
+                        <tr>
+                            <td>CT</td>
+                            <td>{{ zone_division_stats["outer_third_pitches"]["counters"]["CT"] }}</td>
+                            <td>{{ zone_division_stats["outer_third_pitches"]["swing_whiff"]["ct_swing_rate"] }}</td>
+                            <td>{{ zone_division_stats["outer_third_pitches"]["swing_whiff"]["ct_whiff_rate"] }}</td>
+                        </tr>
+                        <tr>
+                            <td>CH</td>
+                            <td>{{ zone_division_stats["top_half_pitches"]["counters"]["CH"] }}</td>
+                            <td>{{ zone_division_stats["outer_third_pitches"]["swing_whiff"]["ch_swing_rate"] }}</td>
+                            <td>{{ zone_division_stats["outer_third_pitches"]["swing_whiff"]["ch_whiff_rate"] }}</td>
+                        </tr>
+                        <tr>
+                            <td>2S</td>
+                            <td>{{ zone_division_stats["outer_third_pitches"]["counters"]["SM"] }}</td>
+                            <td>{{ zone_division_stats["outer_third_pitches"]["swing_whiff"]["sm_swing_rate"] }}</td>
+                            <td>{{ zone_division_stats["outer_third_pitches"]["swing_whiff"]["sm_whiff_rate"] }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-xs-12 col-md-6">
+            <div class="col-xs-4" id="strikezone-1b-side"></div>
+            <div class="col-xs-8">
+                <table class="table">
+                    <thead>
+                        <tr class="table-headers">
+                            <th>Type</th>
+                            <th>Number</th>
+                            <th>Swing Rate</th>
+                            <th>Whiff Rate</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>All</td>
+                            <td>{{ zone_division_stats["1b_side_pitches"]["counters"]["num_pitches"] }}</td>
+                            <td>{{ zone_division_stats["1b_side_pitches"]["swing_whiff"]["swing_rate"] }}</td>
+                            <td>{{ zone_division_stats["1b_side_pitches"]["swing_whiff"]["whiff_rate"] }}</td>
+                        </tr>
+                        <tr>
+                            <td>FB</td>
+                            <td>{{ zone_division_stats["1b_side_pitches"]["counters"]["FB"] }}</td>
+                            <td>{{ zone_division_stats["1b_side_pitches"]["swing_whiff"]["fb_swing_rate"] }}</td>
+                            <td>{{ zone_division_stats["1b_side_pitches"]["swing_whiff"]["fb_whiff_rate"] }}</td>
+                        </tr>
+                        <tr>
+                            <td>CB</td>
+                            <td>{{ zone_division_stats["1b_side_pitches"]["counters"]["CB"] }}</td>
+                            <td>{{ zone_division_stats["1b_side_pitches"]["swing_whiff"]["ch_swing_rate"] }}</td>
+                            <td>{{ zone_division_stats["1b_side_pitches"]["swing_whiff"]["ch_whiff_rate"] }}</td>
+                        </tr>
+                        <tr>
+                            <td>SL</td>
+                            <td>{{ zone_division_stats["1b_side_pitches"]["counters"]["SL"] }}</td>
+                            <td>{{ zone_division_stats["1b_side_pitches"]["swing_whiff"]["sl_swing_rate"] }}</td>
+                            <td>{{ zone_division_stats["1b_side_pitches"]["swing_whiff"]["sl_whiff_rate"] }}</td>
+                        </tr>
+                        <tr>
+                            <td>CT</td>
+                            <td>{{ zone_division_stats["1b_side_pitches"]["counters"]["CT"] }}</td>
+                            <td>{{ zone_division_stats["1b_side_pitches"]["swing_whiff"]["ct_swing_rate"] }}</td>
+                            <td>{{ zone_division_stats["1b_side_pitches"]["swing_whiff"]["ct_whiff_rate"] }}</td>
+                        </tr>
+                        <tr>
+                            <td>CH</td>
+                            <td>{{ zone_division_stats["1b_side_pitches"]["counters"]["CH"] }}</td>
+                            <td>{{ zone_division_stats["1b_side_pitches"]["swing_whiff"]["ch_swing_rate"] }}</td>
+                            <td>{{ zone_division_stats["1b_side_pitches"]["swing_whiff"]["ch_whiff_rate"] }}</td>
+                        </tr>
+                        <tr>
+                            <td>2S</td>
+                            <td>{{ zone_division_stats["1b_side_pitches"]["counters"]["SM"] }}</td>
+                            <td>{{ zone_division_stats["1b_side_pitches"]["swing_whiff"]["sm_swing_rate"] }}</td>
+                            <td>{{ zone_division_stats["1b_side_pitches"]["swing_whiff"]["sm_whiff_rate"] }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {{zone_division_stats}}
+</div>
+{% endblock %}

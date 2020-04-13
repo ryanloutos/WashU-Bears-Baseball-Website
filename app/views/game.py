@@ -5,7 +5,7 @@ from werkzeug.urls import url_parse
 from app import db
 from app.forms import NewGameForm
 from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat, Game
-from app.stats import game_pitching_stats, game_hitting_stats
+from app.stats.stats import game_pitching_stats, game_hitting_stats
 
 # Handle CSV uploads
 import csv

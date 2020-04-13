@@ -48,14 +48,20 @@ class strikezone {
         this.g.append('path')
             .attr('id', 'zone')
             .attr(
-                'd', 'M ' + this.xScale(-.833) + ',' + this.yScale(1.75) + ' L ' + this.xScale(-.833) + ',' + this.yScale(
-                    3.4) + ' L ' +
-                this.xScale(.833) + ',' + this.yScale(3.4) + ' L ' + this.xScale(.833) + ',' + this.yScale(1.75) + ' L ' +
-                this.xScale(-.833) + ',' + this.yScale(1.75) +
-                'M' + this.xScale(0) + ',' + this.yScale(0.2) + 'L' + this.xScale(-.843) + ',' + this.yScale(0.4) + 'L' +
-                this.xScale(-.833) + ',' + this.yScale(0.6) + 'L' +
-                this.xScale(.833) + ',' + this.yScale(0.6) + 'L' + this.xScale(.843) + ',' + this.yScale(0.4) + 'L' +
-                this.xScale(0) + ',' + this.yScale(0.2)
+                'd',
+                //draw zone box
+                'M ' + this.xScale(-.833) + ',' + this.yScale(1.75) +
+                ' L ' + this.xScale(-.833) + ',' + this.yScale(3.4) +
+                ' L ' + this.xScale(.833) + ',' + this.yScale(3.4) +
+                ' L ' + this.xScale(.833) + ',' + this.yScale(1.75) +
+                ' L ' + this.xScale(-.833) + ',' + this.yScale(1.75) +
+                //draw home plate
+                'M' + this.xScale(0) + ',' + this.yScale(0.2) +
+                'L' + this.xScale(-.843) + ',' + this.yScale(0.4) +
+                'L' + this.xScale(-.833) + ',' + this.yScale(0.6) +
+                'L' + this.xScale(.833) + ',' + this.yScale(0.6) +
+                'L' + this.xScale(.843) + ',' + this.yScale(0.4) +
+                'L' + this.xScale(0) + ',' + this.yScale(0.2)
             )
             .style('stroke', 'black')
             .style('fill', 'none')
@@ -107,6 +113,78 @@ class strikezone {
     removeCircles(){
         this.zone.selectAll('zone-pitch-circle').remove();
         this.zone.selectAll('zone-pitch-text').remove();
+    }
+
+
+    /**
+     * Place a semi-transparent screen over the upper half of the zone
+     */
+    highlightUpperHalf(){
+        let rect = this.zone.append("rect")
+            .attr("x", this.xScale(-2))
+            .attr("y", this.yScale(4))
+            .attr("width", this.xScale(4))
+            .attr("height", this.yScale(2.575))
+            .attr("opacity", "0.5")
+            .attr("fill", "MidnightBlue");
+    }
+
+    highlightLowerHalf(){
+        let rect = this.zone.append("rect")
+            .attr("x", this.xScale(-2))
+            .attr("y", this.yScale(2.57))
+            .attr("width", this.xScale(4))
+            .attr("height", this.yScale(0))
+            .attr("opacity", "0.5")
+            .attr("fill", "MidnightBlue");
+    }
+
+    highlight3bSide(){
+        let rect = this.zone.append("rect")
+            .attr("x", this.xScale(-2))
+            .attr("y", this.yScale(4))
+            .attr("width", this.xScale(-0.833))
+            .attr("height", this.yScale(0))
+            .attr("opacity", "0.5")
+            .attr("fill", "MidnightBlue");
+    }
+
+    highlightInnerThird(){
+        let rect = this.zone.append("rect")
+            .attr("x", this.xScale(-0.833))
+            .attr("y", this.yScale(4))
+            .attr("width", this.xScale(-1.444))
+            .attr("height", this.yScale(0))
+            .attr("opacity", "0.5")
+            .attr("fill", "MidnightBlue");
+
+    }
+    highlightMiddleThird(){
+        let rect = this.zone.append("rect")
+            .attr("x", this.xScale(-0.277))
+            .attr("y", this.yScale(4))
+            .attr("width", this.xScale(-1.444))
+            .attr("height", this.yScale(0))
+            .attr("opacity", "0.5")
+            .attr("fill", "MidnightBlue");
+    }
+    highlightOuterThird(){
+        let rect = this.zone.append("rect")
+            .attr("x", this.xScale(0.277))
+            .attr("y", this.yScale(4))
+            .attr("width", this.xScale(-1.444))
+            .attr("height", this.yScale(0))
+            .attr("opacity", "0.5")
+            .attr("fill", "MidnightBlue");
+    }
+    highlight1bSide(){
+        let rect = this.zone.append("rect")
+            .attr("x", this.xScale(0.833))
+            .attr("y", this.yScale(4))
+            .attr("width", this.xScale(-0.8))
+            .attr("height", this.yScale(0))
+            .attr("opacity", "0.5")
+            .attr("fill", "MidnightBlue");
     }
 }
 
