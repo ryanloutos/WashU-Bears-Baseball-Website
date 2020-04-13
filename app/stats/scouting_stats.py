@@ -104,32 +104,87 @@ def zone_division_stats_batter(batter):
 
 def zone_section_stats_helper(zone):
     stats = {
-        "counters": {
-            "num_pitches": len(zone),
-            "FB": 0,
-            "CB": 0,
-            "SL": 0,
-            "SM": 0,
-            "CH": 0,
-            "CT": 0
+        "all": {
+            "counters": {
+                "num_pitches": len(zone),
+                "FB": 0,
+                "CB": 0,
+                "SL": 0,
+                "SM": 0,
+                "CH": 0,
+                "CT": 0
+            },
+            "swing_whiff": {
+                "swing_rate": 0,
+                "whiff_rate": 0,
+                "fb_swing_rate": 0,
+                "fb_whiff_rate": 0,
+                "cb_swing_rate": 0,
+                "cb_whiff_rate": 0,
+                "sl_swing_rate": 0,
+                "sl_whiff_rate": 0,
+                "sm_swing_rate": 0,
+                "sm_whiff_rate": 0,
+                "ch_swing_rate": 0,
+                "ch_whiff_rate": 0,
+                "ct_swing_rate": 0,
+                "ct_whiff_rate": 0
+            }
         },
-        "swing_whiff": {
-            "swing_rate": 0,
-            "whiff_rate": 0,
-            "fb_swing_rate": 0,
-            "fb_whiff_rate": 0,
-            "cb_swing_rate": 0,
-            "cb_whiff_rate": 0,
-            "sl_swing_rate": 0,
-            "sl_whiff_rate": 0,
-            "sm_swing_rate": 0,
-            "sm_whiff_rate": 0,
-            "ch_swing_rate": 0,
-            "ch_whiff_rate": 0,
-            "ct_swing_rate": 0,
-            "ct_whiff_rate": 0
-        }
-
+        "left": {
+            "counters": {
+                "num_pitches": 0,
+                "FB": 0,
+                "CB": 0,
+                "SL": 0,
+                "SM": 0,
+                "CH": 0,
+                "CT": 0
+            },
+            "swing_whiff": {
+                "swing_rate": 0,
+                "whiff_rate": 0,
+                "fb_swing_rate": 0,
+                "fb_whiff_rate": 0,
+                "cb_swing_rate": 0,
+                "cb_whiff_rate": 0,
+                "sl_swing_rate": 0,
+                "sl_whiff_rate": 0,
+                "sm_swing_rate": 0,
+                "sm_whiff_rate": 0,
+                "ch_swing_rate": 0,
+                "ch_whiff_rate": 0,
+                "ct_swing_rate": 0,
+                "ct_whiff_rate": 0
+            }
+        },
+        "right": {
+            "counters": {
+                "num_pitches": 0,
+                "FB": 0,
+                "CB": 0,
+                "SL": 0,
+                "SM": 0,
+                "CH": 0,
+                "CT": 0
+            },
+            "swing_whiff": {
+                "swing_rate": 0,
+                "whiff_rate": 0,
+                "fb_swing_rate": 0,
+                "fb_whiff_rate": 0,
+                "cb_swing_rate": 0,
+                "cb_whiff_rate": 0,
+                "sl_swing_rate": 0,
+                "sl_whiff_rate": 0,
+                "sm_swing_rate": 0,
+                "sm_whiff_rate": 0,
+                "ch_swing_rate": 0,
+                "ch_whiff_rate": 0,
+                "ct_swing_rate": 0,
+                "ct_whiff_rate": 0
+            }
+        },
     }
 
     for pitch in zone:
@@ -137,76 +192,100 @@ def zone_section_stats_helper(zone):
         # pull out commonly used variables for faster recall
         p_type = pitch.pitch_type
         p_res = pitch.pitch_result
+        p_hand = "left" if pitch.get_pitcher().throws == "L" else "right"
 
         # increment total for pitch type
-        stats["counters"][PitchType(pitch.pitch_type).name] += 1
+        stats["all"]["counters"][PitchType(pitch.pitch_type).name] += 1
+        stats[p_hand]["counters"][PitchType(pitch.pitch_type).name] += 1
+        stats[p_hand]["counters"]["num_pitches"] += 1
 
         # Swing whiff stats by pitch
         if (p_type is 1) and (p_res in ["SS", "IP", "F"]):
-            stats["swing_whiff"]["fb_swing_rate"] += 1
+            stats["all"]["swing_whiff"]["fb_swing_rate"] += 1
+            stats[p_hand]["swing_whiff"]["fb_swing_rate"] += 1
             if p_res in ["SS"]:
-                stats["swing_whiff"]["fb_whiff_rate"] += 1
+                stats["all"]["swing_whiff"]["fb_whiff_rate"] += 1
+                stats[p_hand]["swing_whiff"]["fb_whiff_rate"] += 1
         elif (p_type is 2) and (p_res in ["SS", "IP", "F"]):
-            stats["swing_whiff"]["cb_swing_rate"] += 1
+            stats["all"]["swing_whiff"]["cb_swing_rate"] += 1
+            stats[p_hand]["swing_whiff"]["cb_swing_rate"] += 1
             if p_res in ["SS"]:
-                stats["swing_whiff"]["cb_whiff_rate"] += 1
+                stats["all"]["swing_whiff"]["cb_whiff_rate"] += 1
+                stats[p_hand]["swing_whiff"]["cb_whiff_rate"] += 1
         elif (p_type is 3) and (p_res in ["SS", "IP", "F"]):
-            stats["swing_whiff"]["sl_swing_rate"] += 1
+            stats["all"]["swing_whiff"]["sl_swing_rate"] += 1
+            stats[p_hand]["swing_whiff"]["sl_swing_rate"] += 1
             if p_res in ["SS"]:
-                stats["swing_whiff"]["sl_whiff_rate"] += 1
+                stats["all"]["swing_whiff"]["sl_whiff_rate"] += 1
+                stats[p_hand]["swing_whiff"]["sl_whiff_rate"] += 1
         elif (p_type is 4) and (p_res in ["SS", "IP", "F"]):
-            stats["swing_whiff"]["ch_swing_rate"] += 1
+            stats["all"]["swing_whiff"]["ch_swing_rate"] += 1
+            stats[p_hand]["swing_whiff"]["ch_swing_rate"] += 1
             if p_res in ["SS"]:
-                stats["swing_whiff"]["ch_whiff_rate"] += 1
+                stats["all"]["swing_whiff"]["ch_whiff_rate"] += 1
+                stats[p_hand]["swing_whiff"]["ch_whiff_rate"] += 1
         elif (p_type is 5) and (p_res in ["SS", "IP", "F"]):
-            stats["swing_whiff"]["ct_swing_rate"] += 1
+            stats["all"]["swing_whiff"]["ct_swing_rate"] += 1
+            stats[p_hand]["swing_whiff"]["ct_swing_rate"] += 1
             if p_res in ["SS"]:
-                stats["swing_whiff"]["ct_whiff_rate"] += 1
+                stats["all"]["swing_whiff"]["ct_whiff_rate"] += 1
+                stats[p_hand]["swing_whiff"]["ct_whiff_rate"] += 1
         elif (p_type is 7) and (p_res in ["SS", "IP", "F"]):
-            stats["swing_whiff"]["sm_swing_rate"] += 1
+            stats["all"]["swing_whiff"]["sm_swing_rate"] += 1
+            stats[p_hand]["swing_whiff"]["sm_swing_rate"] += 1
             if p_res in ["SS"]:
-                stats["swing_whiff"]["sm_whiff_rate"] += 1
+                stats["all"]["swing_whiff"]["sm_whiff_rate"] += 1
+                stats[p_hand]["swing_whiff"]["sm_whiff_rate"] += 1
 
         # Swing whiff stats totals
         if p_res in ["SS", "IP", "F"]:
-            stats["swing_whiff"]["swing_rate"] += 1
+            stats["all"]["swing_whiff"]["swing_rate"] += 1
+            stats[p_hand]["swing_whiff"]["swing_rate"] += 1
             if p_res in ["SS"]:
-                stats["swing_whiff"]["whiff_rate"] += 1
+                stats["all"]["swing_whiff"]["whiff_rate"] += 1
+                stats[p_hand]["swing_whiff"]["whiff_rate"] += 1
 
     # Calculation of summaries from earlier
-    stats["swing_whiff"]["whiff_rate"] = percentage(truncate(zero_division_handler(
-        stats["swing_whiff"]["whiff_rate"], stats["swing_whiff"]["swing_rate"])))
-    stats["swing_whiff"]["swing_rate"] = percentage(truncate(zero_division_handler(
-        stats["swing_whiff"]["swing_rate"], stats["counters"]["num_pitches"])))
+    for identifier in stats.keys():
+        stats[identifier]["swing_whiff"]["whiff_rate"] = percentage(truncate(zero_division_handler(
+            stats[identifier]["swing_whiff"]["whiff_rate"], stats[identifier]["swing_whiff"]["swing_rate"])))
+        stats[identifier]["swing_whiff"]["swing_rate"] = percentage(truncate(zero_division_handler(
+            stats[identifier]["swing_whiff"]["swing_rate"], stats[identifier]["counters"]["num_pitches"])))
 
-    stats["swing_whiff"]["fb_whiff_rate"] = percentage(truncate(zero_division_handler(
-        stats["swing_whiff"]["fb_whiff_rate"], stats["swing_whiff"]["fb_swing_rate"])))
-    stats["swing_whiff"]["fb_swing_rate"] = percentage(truncate(zero_division_handler(
-        stats["swing_whiff"]["fb_swing_rate"], stats["counters"]["FB"])))
+    for identifier in stats.keys():
+        stats[identifier]["swing_whiff"]["fb_whiff_rate"] = percentage(truncate(zero_division_handler(
+            stats[identifier]["swing_whiff"]["fb_whiff_rate"], stats[identifier]["swing_whiff"]["fb_swing_rate"])))
+        stats[identifier]["swing_whiff"]["fb_swing_rate"] = percentage(truncate(zero_division_handler(
+            stats[identifier]["swing_whiff"]["fb_swing_rate"], stats[identifier]["counters"]["FB"])))
 
-    stats["swing_whiff"]["cb_whiff_rate"] = percentage(truncate(zero_division_handler(
-        stats["swing_whiff"]["cb_whiff_rate"], stats["swing_whiff"]["cb_swing_rate"])))
-    stats["swing_whiff"]["cb_swing_rate"] = percentage(truncate(zero_division_handler(
-        stats["swing_whiff"]["cb_swing_rate"], stats["counters"]["CB"])))
+    for identifier in stats.keys():
+        stats[identifier]["swing_whiff"]["cb_whiff_rate"] = percentage(truncate(zero_division_handler(
+            stats[identifier]["swing_whiff"]["cb_whiff_rate"], stats[identifier]["swing_whiff"]["cb_swing_rate"])))
+        stats[identifier]["swing_whiff"]["cb_swing_rate"] = percentage(truncate(zero_division_handler(
+            stats[identifier]["swing_whiff"]["cb_swing_rate"], stats[identifier]["counters"]["CB"])))
 
-    stats["swing_whiff"]["sl_whiff_rate"] = percentage(truncate(zero_division_handler(
-        stats["swing_whiff"]["sl_whiff_rate"], stats["swing_whiff"]["sl_swing_rate"])))
-    stats["swing_whiff"]["sl_swing_rate"] = percentage(truncate(zero_division_handler(
-        stats["swing_whiff"]["sl_swing_rate"], stats["counters"]["SL"])))
+    for identifier in stats.keys():
+        stats[identifier]["swing_whiff"]["sl_whiff_rate"] = percentage(truncate(zero_division_handler(
+            stats[identifier]["swing_whiff"]["sl_whiff_rate"], stats[identifier]["swing_whiff"]["sl_swing_rate"])))
+        stats[identifier]["swing_whiff"]["sl_swing_rate"] = percentage(truncate(zero_division_handler(
+            stats[identifier]["swing_whiff"]["sl_swing_rate"], stats[identifier]["counters"]["SL"])))
 
-    stats["swing_whiff"]["ch_whiff_rate"] = percentage(truncate(zero_division_handler(
-        stats["swing_whiff"]["ch_whiff_rate"], stats["swing_whiff"]["ch_swing_rate"])))
-    stats["swing_whiff"]["ch_swing_rate"] = percentage(truncate(zero_division_handler(
-        stats["swing_whiff"]["ch_swing_rate"], stats["counters"]["CH"])))
+    for identifier in stats.keys():
+        stats[identifier]["swing_whiff"]["ch_whiff_rate"] = percentage(truncate(zero_division_handler(
+            stats[identifier]["swing_whiff"]["ch_whiff_rate"], stats[identifier]["swing_whiff"]["ch_swing_rate"])))
+        stats[identifier]["swing_whiff"]["ch_swing_rate"] = percentage(truncate(zero_division_handler(
+            stats[identifier]["swing_whiff"]["ch_swing_rate"], stats[identifier]["counters"]["CH"])))
 
-    stats["swing_whiff"]["ct_whiff_rate"] = percentage(truncate(zero_division_handler(
-        stats["swing_whiff"]["ct_whiff_rate"], stats["swing_whiff"]["ct_swing_rate"])))
-    stats["swing_whiff"]["ct_swing_rate"] = percentage(truncate(zero_division_handler(
-        stats["swing_whiff"]["ct_swing_rate"], stats["counters"]["CT"])))
+    for identifier in stats.keys():
+        stats[identifier]["swing_whiff"]["ct_whiff_rate"] = percentage(truncate(zero_division_handler(
+            stats[identifier]["swing_whiff"]["ct_whiff_rate"], stats[identifier]["swing_whiff"]["ct_swing_rate"])))
+        stats[identifier]["swing_whiff"]["ct_swing_rate"] = percentage(truncate(zero_division_handler(
+            stats[identifier]["swing_whiff"]["ct_swing_rate"], stats[identifier]["counters"]["CT"])))
 
-    stats["swing_whiff"]["sm_whiff_rate"] = percentage(truncate(zero_division_handler(
-        stats["swing_whiff"]["sm_whiff_rate"], stats["swing_whiff"]["sm_swing_rate"])))
-    stats["swing_whiff"]["sm_swing_rate"] = percentage(truncate(zero_division_handler(
-        stats["swing_whiff"]["sm_swing_rate"], stats["counters"]["SM"])))
+    for identifier in stats.keys():
+        stats[identifier]["swing_whiff"]["sm_whiff_rate"] = percentage(truncate(zero_division_handler(
+            stats[identifier]["swing_whiff"]["sm_whiff_rate"], stats[identifier]["swing_whiff"]["sm_swing_rate"])))
+        stats[identifier]["swing_whiff"]["sm_swing_rate"] = percentage(truncate(zero_division_handler(
+            stats[identifier]["swing_whiff"]["sm_swing_rate"], stats[identifier]["counters"]["SM"])))
 
     return stats
