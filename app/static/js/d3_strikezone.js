@@ -14,6 +14,8 @@ class strikezone {
 
     constructor(div_id, width=457, height=457){
 
+        this.width = width;
+        this.height = height;
         //setup pitch colors array for drawing circles
         this.pitch_colors = {
             "1": 'rgb(230, 25, 75)',
@@ -107,6 +109,23 @@ class strikezone {
             text.text(pitch_num);
         }
     }
+    
+    drawOpaqueCircle(x, y, pitch_type=null) {
+
+        //add circle to the zone svg
+        let circle = this.zone.append("circle")
+            .attr("class", "zone-pitch-circle")
+            .attr("cx", this.xScale(x))
+            .attr("cy", this.yScale(y))
+            .attr('r', '8')
+            .style("opacity", 0.5);
+
+            if(pitch_type != null){
+                circle.style("fill", this.pitch_colors[pitch_type]);
+            } else {
+                circle.style("fill", "black");
+            }
+    }
 
     /**
      * Delete all existing circles and labels from strikezone svg
@@ -120,7 +139,8 @@ class strikezone {
      * Highlights areas of the strikezone based on user input. Takes input
      * of an array of (x, y) pairs. Each pair given will highlight that
      * area of the zone.
-     * @param {*} coords
+     * @param {Array} coords Array of (x,y) coordinate pairs correlating to zone
+     *      regions
      * 
      * Coordinate plane for zone highlighting:
      * 
@@ -283,6 +303,33 @@ class strikezone {
             .attr("height", this.yScale(0))
             .attr("opacity", "0.5")
             .attr("fill", "MidnightBlue");
+    }
+
+    highlightDensityRegion(coords){
+        if (!Array.isArray(coords)) {
+            //Passed parameter is not an array... Do nothing
+            return;
+        }
+        
+        
+        let density_data = d3.contourDensity()
+            .x(d => this.xScale(d[0]))
+            .y(d => this.yScale(d[1]))
+            .size([this.xScale(2), this.yScale(0)])
+            .bandwidth(5)
+            (coords);
+        
+        var color = d3.scaleLinear()
+            .domain([0, 0.1]) // Points per square pixel.
+            .range(["white", "#69b3a2"]);
+        console.log(density_data);
+            
+        this.zone.insert("g", "g2")
+        .selectAll("path")
+            .data(density_data)
+            .enter().append("path")
+                .attr("d", d3.geoPath())
+                .attr("fill", function (d) {return color(d.value);})
     }
 }
 

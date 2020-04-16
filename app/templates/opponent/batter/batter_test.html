@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block styles %}
+{{ super() }}
+<script src="{{ url_for('static', filename='packages/d3/d3.js') }}"></script>
+<script src="{{ url_for('static', filename='js/d3_strikezone.js') }}"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        setup_strikezones();
+    });
+
+    function setup_strikezones() {
+
+        let size = 125;
+
+        let test_zone = new strikezone("strikezone-upper-half");
+
+        let pitches = {{data|tojson}};
+        let pitch_type = "FB";
+        for(let pitch in pitches[pitch_type]){
+            console.log(pitches[pitch_type][pitch][0]+ " " + pitches[pitch_type][pitch][1]);
+            test_zone.drawOpaqueCircle(pitches[pitch_type][pitch][0], pitches[pitch_type][pitch][1]);
+        }
+        pitch_type = "SM"
+        for(let pitch in pitches[pitch_type]){
+            console.log(pitches[pitch_type][pitch][0]+ " " + pitches[pitch_type][pitch][1]);
+            test_zone.drawOpaqueCircle(pitches[pitch_type][pitch][0], pitches[pitch_type][pitch][1]);
+        }
+
+    }
+</script>
+{% endblock %}
+
+{% block app_content %}
+{% include "opponent/batter/batter_sidenav.html" %}
+<div class="main">
+    {% include "opponent/batter/batter_title.html" %}
+
+    <div class="row text-center">
+        <h1>TESTING</h1>
+    </div>
+    <div id="strikezone-upper-half"></div>
+</div>
+{% endblock %}

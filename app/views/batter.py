@@ -3,23 +3,58 @@ from flask import render_template, flash, redirect, url_for, request
 from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.urls import url_parse
 from app import db
-from app.forms import LoginForm, RegistrationForm, OutingForm, PitchForm
-from app.forms import NewOutingFromCSV, SeasonForm, OpponentForm, BatterForm
-from app.forms import OutingPitchForm, NewOutingFromCSVPitches, EditUserForm
-from app.forms import ChangePasswordForm, EditBatterForm, EditOpponentForm
+
+from app.forms import LoginForm
+from app.forms import PitchForm
+from app.forms import BatterForm
+from app.forms import OutingForm
+from app.forms import SeasonForm
+from app.forms import EditUserForm
+from app.forms import OpponentForm
 from app.forms import NewBatterForm
-from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat, Game, Video
-from app.stats.stats import calcPitchPercentages, pitchUsageByCount, calcAverageVelo
-from app.stats.stats import calcPitchStrikePercentage, calcPitchWhiffRate
-from app.stats.stats import createPitchPercentagePieChart, velocityOverTimeLineChart
-from app.stats.stats import pitchStrikePercentageBarChart, avgPitchVeloPitcher
-from app.stats.stats import pitchUsageByCountLineCharts, pitchStrikePercentageSeason
-from app.stats.stats import pitchUsageSeason, seasonStatLine, staffBasicStats
+from app.forms import EditBatterForm
+from app.forms import OutingPitchForm
+from app.forms import EditOpponentForm
+from app.forms import NewOutingFromCSV
+from app.forms import RegistrationForm
+from app.forms import ChangePasswordForm
+from app.forms import NewOutingFromCSVPitches
+
+from app.models import Game
+from app.models import User
+from app.models import AtBat
+from app.models import Pitch
+from app.models import Video
+from app.models import Outing
+from app.models import Season
+from app.models import Batter
+from app.models import Opponent
+
+from app.stats.stats import veloOverTime
+from app.stats.stats import seasonStatLine
+from app.stats.stats import calcAverageVelo
+from app.stats.stats import staffBasicStats
+from app.stats.stats import pitchUsageSeason
+from app.stats.stats import outingTimeToPlate
+from app.stats.stats import pitchUsageByCount
+from app.stats.stats import calcPitchWhiffRate
+from app.stats.stats import avgPitchVeloPitcher
+from app.stats.stats import calcPitchPercentages
+from app.stats.stats import outingPitchStatistics
+from app.stats.stats import velocityOverTimeLineChart
+from app.stats.stats import batter_summary_game_stats
+from app.stats.stats import calcPitchStrikePercentage
+from app.stats.stats import batter_ball_in_play_stats
 from app.stats.stats import staffPitchStrikePercentage
-from app.stats.stats import outingPitchStatistics, outingTimeToPlate, veloOverTime
-from app.stats.stats import batterSwingWhiffRatebyPitchbyCount, batter_summary_game_stats
-from app.stats.stats import batterSwingWhiffRatebyPitchbyCount2, batter_ball_in_play_stats
+from app.stats.stats import pitchUsageByCountLineCharts
+from app.stats.stats import pitchStrikePercentageSeason
+from app.stats.stats import createPitchPercentagePieChart
+from app.stats.stats import pitchStrikePercentageBarChart
+from app.stats.stats import batterSwingWhiffRatebyPitchbyCount
+from app.stats.stats import batterSwingWhiffRatebyPitchbyCount2
+
 from app.stats.scouting_stats import zone_division_stats_batter
+from app.stats.scouting_stats import whiff_coords_by_pitch_batter
 
 import re
 
@@ -591,9 +626,28 @@ def batter_scouting(batter_id):
         return redirect(url_for('main.index'))
 
     zone_division_stats = zone_division_stats_batter(batter)
+    whiff_coords_by_pitch = whiff_coords_by_pitch_batter(batter)
 
     return render_template(
         'opponent/batter/batter_scouting.html',
         batter=batter,
-        zone_division_stats=zone_division_stats
+        zone_division_stats=zone_division_stats,
+        whiff_coords_by_pitch=whiff_coords_by_pitch
+    )
+
+
+@batter.route("/batter/<batter_id>/tester")
+@login_required
+def batter_testing(batter_id):
+
+    batter = Batter.query.filter_by(id=batter_id).first()
+    if not batter:
+        flash("URL does not exist")
+        return redirect(url_for('main.index'))
+
+    data = whiff_coords_by_pitch_batter(batter)
+    return render_template(
+        "opponent/batter/batter_test.html",
+        batter=batter,
+        data=data
     )

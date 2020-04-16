@@ -4,11 +4,24 @@ from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.urls import url_parse
 from app import db
 
-from app.forms import PitcherForm, EditPitcherForm
-from app.models import User, Outing, Pitch, Season, Pitcher, Opponent, Video
-from app.stats.stats import avgPitchVeloPitcher, veloOverCareer
+from app.forms import PitcherForm
+from app.forms import EditPitcherForm
+
+from app.models import User
+from app.models import Pitch
+from app.models import Video
+from app.models import Outing
+from app.models import Season
+from app.models import Pitcher
+from app.models import Opponent
+
+from app.stats.stats import avgPitchVeloPitcher
+from app.stats.stats import veloOverCareer
 from app.stats.stats import pitchStrikePercentageSeason
-from app.stats.stats import pitchUsageSeason, seasonStatLine
+from app.stats.stats import seasonStatLine
+from app.stats.stats import pitchUsageSeason
+
+from app.stats.scouting_stats import whiff_coords_by_pitch_pitcher
 
 # Handle CSV uploads
 import csv
@@ -340,4 +353,25 @@ def pitcher_videos(id):
         seasons=seasons,
         video_objects=videos,
         videos=video_ids
+    )
+
+
+@pitcher.route('/pitcher/<pitcher_id>/testing')
+@login_required
+def pitcher_testing(pitcher_id):
+
+    # get the user object associated with the username in the url
+    pitcher = Pitcher.query.filter_by(id=pitcher_id).first()
+
+    # either bug or user trying to access pitcher page that DNE
+    if not pitcher:
+        flash('URL does not exist')
+        return redirect(url_for('main.index'))
+
+    data = whiff_coords_by_pitch_pitcher(pitcher)
+
+    return render_template(
+        "/pitcher/pitcher_testing.html",
+        pitcher=pitcher,
+        data=data
     )

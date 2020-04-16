@@ -4,7 +4,11 @@ import pygal
 from pygal.style import DarkSolarizedStyle, DefaultStyle
 import lxml
 import math
-from app.models import Season, Outing, Game, Batter
+
+from app.models import Game
+from app.models import Batter
+from app.models import Outing
+from app.models import Season
 
 
 # ***************-USEFUL FUNCTIONS-*************** # 
@@ -184,7 +188,7 @@ def zone_section_stats_helper(zone):
                 "ct_swing_rate": 0,
                 "ct_whiff_rate": 0
             }
-        },
+        }
     }
 
     for pitch in zone:
@@ -287,5 +291,48 @@ def zone_section_stats_helper(zone):
             stats[identifier]["swing_whiff"]["sm_whiff_rate"], stats[identifier]["swing_whiff"]["sm_swing_rate"])))
         stats[identifier]["swing_whiff"]["sm_swing_rate"] = percentage(truncate(zero_division_handler(
             stats[identifier]["swing_whiff"]["sm_swing_rate"], stats[identifier]["counters"]["SM"])))
+
+    return stats
+
+
+def whiff_coords_by_pitch_batter(batter):
+
+    stats = {
+        "FB": [],
+        "CB": [],
+        "SL": [],
+        "CH": [],
+        "CT": [],
+        "SM": []
+    }
+
+    for at_bat in batter.at_bats:
+        for pitch in at_bat.pitches:
+            if pitch.loc_y is None or pitch.loc_x is None:
+                continue
+            if pitch.pitch_result in ['SS']:
+                stats[PitchType(pitch.pitch_type).name].append((pitch.loc_x, pitch.loc_y))
+
+    return stats
+
+
+def whiff_coords_by_pitch_pitcher(pitcher):
+
+    stats = {
+        "FB": [],
+        "CB": [],
+        "SL": [],
+        "CH": [],
+        "CT": [],
+        "SM": []
+    }
+
+    for outing in pitcher.outings:
+        for ab in outing.at_bats:
+            for pitch in ab.pitches:
+                if pitch.loc_y is None or pitch.loc_x is None:
+                    continue
+                if pitch.pitch_result in ['SS']:
+                    stats[PitchType(pitch.pitch_type).name].append((pitch.loc_x, pitch.loc_y))
 
     return stats
