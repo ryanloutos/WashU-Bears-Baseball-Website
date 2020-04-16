@@ -1,31 +1,50 @@
-from flask import Blueprint, make_response
-from flask import render_template, flash, redirect, url_for, request
-from flask_login import login_user, logout_user, current_user, login_required
-from werkzeug.urls import url_parse
-from app import db
-from app.forms import LoginForm, RegistrationForm, OutingForm, PitchForm
-from app.forms import NewOutingFromCSV, SeasonForm, OpponentForm, BatterForm
-from app.forms import OutingPitchForm, NewOutingFromCSVPitches, EditUserForm
-from app.forms import ChangePasswordForm, EditBatterForm, EditOpponentForm
-from app.forms import NewBatterForm
-from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat, Pitcher, Game, Video
-from app.stats.stats import calcPitchPercentages, pitchUsageByCount, calcAverageVelo
-from app.stats.stats import calcPitchStrikePercentage, calcPitchWhiffRate
-from app.stats.stats import createPitchPercentagePieChart, velocityOverTimeLineChart
-from app.stats.stats import pitchStrikePercentageBarChart, avgPitchVeloPitcher
-from app.stats.stats import pitchUsageByCountLineCharts, pitchStrikePercentageSeason
-from app.stats.stats import pitchUsageSeason, seasonStatLine, staffBasicStats
-from app.stats.stats import staffPitchStrikePercentage
-from app.stats.stats import outingPitchStatistics, outingTimeToPlate, veloOverTime
-from datetime import datetime
-import json
-# Handle CSV uploads
-import csv
-import os
-# for file naming duplication problem
-import random
 import re
+import os
+import csv
+import json
 import math
+import random
+
+from app import db
+
+from flask import flash
+from flask import request
+from flask import url_for
+from flask import redirect
+from flask import Blueprint
+from flask import make_response
+from flask import render_template
+
+from datetime import datetime
+
+from app.forms import PitchForm
+from app.forms import OutingForm
+from app.forms import OutingPitchForm
+from app.forms import NewOutingFromCSV
+from app.forms import NewOutingFromCSVPitches
+
+from flask_login import login_user
+from flask_login import logout_user
+from flask_login import current_user
+from flask_login import login_required
+
+from werkzeug.urls import url_parse
+
+from app.models import Game
+from app.models import User
+from app.models import AtBat
+from app.models import Video
+from app.models import Pitch
+from app.models import Batter
+from app.models import Outing
+from app.models import Season
+from app.models import Pitcher
+from app.models import Opponent
+
+from app.stats.stats import veloOverTime
+from app.stats.stats import outingTimeToPlate
+from app.stats.stats import outingPitchStatistics
+
 
 outing = Blueprint("outing", __name__)
 
@@ -130,19 +149,6 @@ def outing_pbp(id):
         return redirect(url_for('main.index'))
 
     opponent = Opponent.query.filter_by(id=outing.opponent_id).first()
-
-    # THESE WERE PHASED OUT/MOVED TO DIFFERENT PAGES
-    # Get statistical data
-    # usages, usage_percentages = calcPitchPercentages(outing)
-    # pitch_avg_velo = calcAverageVelo(outing)
-    # pitch_strike_percentage = calcPitchStrikePercentage(outing)
-    # pitch_whiff = calcPitchWhiffRate(outing)
-
-    # THESE WERE PHASED OUT/MOVED TO DIFFERENT PAGES
-    # Get statistical graphics
-    # usage_percentages_pie_chart = createPitchPercentagePieChart(usage_percentages)
-    # velocity_over_time_line_chart = velocityOverTimeLineChart(outing)
-    # strike_percentage_bar_chart = pitchStrikePercentageBarChart(pitch_strike_percentage)
 
     # for pitch location graph
     pitches = []

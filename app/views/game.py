@@ -1,17 +1,30 @@
+from flask import flash
+from flask import url_for
+from flask import request
+from flask import redirect
 from flask import Blueprint
-from flask import render_template, flash, redirect, url_for, request
-from flask_login import login_user, logout_user, current_user, login_required
-from werkzeug.urls import url_parse
-from app import db
-from app.forms import NewGameForm
-from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat, Game
-from app.stats.stats import game_pitching_stats, game_hitting_stats
+from flask import render_template
 
-# Handle CSV uploads
-import csv
+from flask_login import login_user
+from flask_login import logout_user
+from flask_login import current_user
+from flask_login import login_required
+
+from werkzeug.urls import url_parse
+
+from app import db
+
+from app.forms import NewGameForm
+
+from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat, Game
+
+from app.stats.stats import game_hitting_stats
+from app.stats.stats import game_pitching_stats
+
 import os
-# for file naming duplication problem
+import csv
 import random
+
 
 
 game = Blueprint("game", __name__)

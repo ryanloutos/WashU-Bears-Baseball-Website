@@ -1,8 +1,13 @@
-from flask import Blueprint
-from flask import render_template, flash, redirect, url_for, request
-from flask_login import login_user, logout_user, current_user, login_required
-from werkzeug.urls import url_parse
+import re
+
 from app import db
+
+from flask import flash
+from flask import url_for
+from flask import request
+from flask import redirect
+from flask import Blueprint
+from flask import render_template
 
 from app.forms import LoginForm
 from app.forms import PitchForm
@@ -30,6 +35,13 @@ from app.models import Season
 from app.models import Batter
 from app.models import Opponent
 
+from flask_login import login_user
+from flask_login import logout_user
+from flask_login import current_user
+from flask_login import login_required
+
+from werkzeug.urls import url_parse
+
 from app.stats.stats import veloOverTime
 from app.stats.stats import seasonStatLine
 from app.stats.stats import calcAverageVelo
@@ -56,7 +68,6 @@ from app.stats.stats import batterSwingWhiffRatebyPitchbyCount2
 from app.stats.scouting_stats import zone_division_stats_batter
 from app.stats.scouting_stats import whiff_coords_by_pitch_batter
 
-import re
 
 batter = Blueprint('batter', __name__)
 

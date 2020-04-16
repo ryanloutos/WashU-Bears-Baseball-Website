@@ -1,3 +1,5 @@
+# Focused on returning data to dynamic browser calls as requested
+
 from flask import Blueprint, jsonify, request, send_file, url_for, send_from_directory
 from flask_login import login_required
 from app import db

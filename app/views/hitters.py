@@ -1,33 +1,38 @@
+from flask import flash
+from flask import url_for
+from flask import request
+from flask import redirect
 from flask import Blueprint
-from flask import render_template, flash, redirect, url_for, request
-from flask_login import login_user, logout_user, current_user, login_required
+from flask import render_template
+
+from flask_login import login_user
+from flask_login import logout_user
+from flask_login import current_user
+from flask_login import login_required
+
 from werkzeug.urls import url_parse
+
 from app import db
-from app.forms import LoginForm, RegistrationForm, OutingForm, PitchForm
-from app.forms import NewOutingFromCSV, SeasonForm, OpponentForm, BatterForm
-from app.forms import OutingPitchForm, NewOutingFromCSVPitches, EditUserForm
-from app.forms import ChangePasswordForm, EditBatterForm, EditOpponentForm
-from app.forms import NewBatterForm
-from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat, Game, Video
-from app.stats.stats import calcPitchPercentages, pitchUsageByCount, calcAverageVelo
-from app.stats.stats import calcPitchStrikePercentage, calcPitchWhiffRate
-from app.stats.stats import createPitchPercentagePieChart, velocityOverTimeLineChart
-from app.stats.stats import pitchStrikePercentageBarChart, avgPitchVeloPitcher
-from app.stats.stats import pitchUsageByCountLineCharts, pitchStrikePercentageSeason
-from app.stats.stats import pitchUsageSeason, seasonStatLine, staffBasicStats
-from app.stats.stats import staffPitchStrikePercentage
-from app.stats.stats import outingPitchStatistics, outingTimeToPlate, veloOverTime
-from app.stats.stats import stats_opponent_scouting_stats, stats_opponent_batters_stat_lines
-from app.stats.stats import calcPitchPercentages, pitchUsageByCount, calcAverageVelo
-from app.stats.stats import calcPitchStrikePercentage, calcPitchWhiffRate
-from app.stats.stats import createPitchPercentagePieChart, velocityOverTimeLineChart
-from app.stats.stats import pitchStrikePercentageBarChart, avgPitchVeloPitcher
-from app.stats.stats import pitchUsageByCountLineCharts, pitchStrikePercentageSeason
-from app.stats.stats import pitchUsageSeason, seasonStatLine, staffBasicStats
-from app.stats.stats import staffPitchStrikePercentage
-from app.stats.stats import outingPitchStatistics, outingTimeToPlate, veloOverTime
-from app.stats.stats import batterSwingWhiffRatebyPitchbyCount, batter_summary_game_stats
-from app.stats.stats import batterSwingWhiffRatebyPitchbyCount2, batter_ball_in_play_stats
+
+from app.forms import BatterForm
+from app.forms import EditBatterForm
+from app.forms import EditOpponentForm
+
+from app.models import User
+from app.models import Game
+from app.models import AtBat
+from app.models import Pitch
+from app.models import Video
+from app.models import Outing
+from app.models import Season
+from app.models import Batter
+from app.models import Opponent
+
+from app.stats.stats import batter_summary_game_stats
+from app.stats.stats import batter_ball_in_play_stats
+from app.stats.stats import stats_opponent_batters_stat_lines
+from app.stats.stats import batterSwingWhiffRatebyPitchbyCount
+from app.stats.stats import batterSwingWhiffRatebyPitchbyCount2
 
 import re
 
