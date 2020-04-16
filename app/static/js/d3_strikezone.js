@@ -11,6 +11,7 @@ class strikezone {
      * @param {Number} height - The height of the strikezone svg
      * 
      */
+
     constructor(div_id, width=457, height=457){
 
         //setup pitch colors array for drawing circles
@@ -50,11 +51,11 @@ class strikezone {
             .attr(
                 'd',
                 //draw zone box
-                'M ' + this.xScale(-.833) + ',' + this.yScale(1.75) +
-                ' L ' + this.xScale(-.833) + ',' + this.yScale(3.4) +
-                ' L ' + this.xScale(.833) + ',' + this.yScale(3.4) +
-                ' L ' + this.xScale(.833) + ',' + this.yScale(1.75) +
-                ' L ' + this.xScale(-.833) + ',' + this.yScale(1.75) +
+                'M ' + this.xScale(-.833) + ',' + this.yScale(1.75) +   //bottom left
+                ' L ' + this.xScale(-.833) + ',' + this.yScale(3.4) +   //top left
+                ' L ' + this.xScale(.833) + ',' + this.yScale(3.4) +    //top right
+                ' L ' + this.xScale(.833) + ',' + this.yScale(1.75) +   //bottom right
+                ' L ' + this.xScale(-.833) + ',' + this.yScale(1.75) +  //bottom left
                 //draw home plate
                 'M' + this.xScale(0) + ',' + this.yScale(0.2) +
                 'L' + this.xScale(-.843) + ',' + this.yScale(0.4) +
@@ -115,6 +116,103 @@ class strikezone {
         this.zone.selectAll('zone-pitch-text').remove();
     }
 
+    /**
+     * Highlights areas of the strikezone based on user input. Takes input
+     * of an array of (x, y) pairs. Each pair given will highlight that
+     * area of the zone.
+     * @param {*} coords
+     * 
+     * Coordinate plane for zone highlighting:
+     * 
+     *       x   0     1  2  3     4
+     *       __ __ __ __ __ __ __ __ __
+     *     y|        |  |  |  |        |
+     *     0|        |  |  |  |        |
+     *      |________|__|__|__|________|
+     *     1|________|__|__|__|________|
+     *     2|________|__|__|__|________|
+     *     3|________|__|__|__|________|
+     *      |        |  |  |  |        |
+     *     4|        |  |  |  |        |
+     *      |________|__|__|__|________|
+     * 
+     */
+    highlightZonesDynamically(coords){
+
+        if(!Array.isArray(coords)){
+            //Passed parameter is not an array... Do nothing
+            return;
+        }
+
+        let index = 0;
+        while(index < coords.length){
+            let pair = coords[index];
+            let x = pair[0];
+            let y = pair[1];
+
+            let dx = -2, dy = 4;
+
+            let width = 0, height = 0;
+
+            // zone width
+            switch(x){
+                case 4:
+                    dx+=2.833;
+                case 0:
+                    width = this.xScale(-0.833);
+                    break;
+
+                case 3:
+                    dx+=0.556
+                case 2:
+                    dx+=0.556
+                case 1:
+                    dx+=1.167
+                    width = this.xScale(-1.444);
+                    break;
+
+                default:
+                    width = 0;
+                    break;
+            }
+
+            // zone height
+            switch(y){
+                case 0:
+                    dy = 4;
+                    height = this.yScale(3.4);
+                    break;
+
+                case 4:
+                    dy = 1.75;
+                    height = this.yScale(1.75);
+                    break;
+
+                case 3:
+                    dy -= 0.55;
+                case 2:
+                    dy -= 0.55;
+                case 1:
+                    dy -= 0.6;
+                    height = this.yScale(3.45)
+                    break;
+
+                default:
+                    width = 0;
+                    break;
+            }
+
+            this.zone.append("rect")
+                .attr("x", this.xScale(dx))
+                .attr("y", this.yScale(dy))
+                .attr("width", width)
+                .attr("height", height)
+                .attr("opacity", "0.5")
+                .attr("fill", "MidnightBlue");
+
+            index++;
+        }
+    }
 
     /**
      * Place a semi-transparent screen over the upper half of the zone
