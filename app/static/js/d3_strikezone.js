@@ -444,8 +444,10 @@ class dynamic_scouting_strikezone extends strikezone{
      * different regions of the strikezone, stat calculations, and click
      * based dynamic highlighting.
      */
-    constructor(div_id, width = 457, height = 457){
+    constructor(div_id, stats_table_div, data_obj={}, width = 457, height = 457){
         super(div_id, width, height);
+
+        this.stats_table_div = d3.select("#".concat(stats_table_div));
 
         //Add guidelines to base appearance of strikezone
         this.g.append('path')
@@ -477,7 +479,7 @@ class dynamic_scouting_strikezone extends strikezone{
 
 
         //Setup the click highlighting of the regions of the zone
-        var zone_highlight_bools = {    //state checking for zones
+        this.zone_highlight_bools = {    //state checking for zones
             "00": false, "01": false, "02": false, "03": false, "04": false,
             "10": false, "11": false, "12": false, "13": false, "14": false,
             "20": false, "21": false, "22": false, "23": false, "24": false,
@@ -532,18 +534,99 @@ class dynamic_scouting_strikezone extends strikezone{
                 //above zone region
                 y_coord = 4;
             }
-            if(zone_highlight_bools["".concat(x_coord, y_coord)]){
-                //unhighlight the zone
+
+            //unhighlights the clicked zone
+            if(self.zone_highlight_bools["".concat(x_coord, y_coord)]){
                 self.zone.select("#".concat("zone-highlight-", x_coord, "-", y_coord)).remove();
-            } else{
-                //highlight the zone
+            } 
+            //Highlights the clicked zone
+            else{
                 self.highlightZonesDynamically([[x_coord, y_coord]]);
             }
-            //switch bool
-            zone_highlight_bools["".concat(x_coord, y_coord)] = !zone_highlight_bools["".concat(x_coord, y_coord)];
+            //switch bool and calc new values
+            self.zone_highlight_bools["".concat(x_coord, y_coord)] = !self.zone_highlight_bools["".concat(x_coord, y_coord)];
+            self.calcStatValue()
         });
 
         //to be filled in by function
-        this.pitches_data = {};
+        this.pitches_data = data_obj;
+    }
+
+    provideData(data_obj){
+        this.pitches_data = data_obj;
+    }
+
+    calcStatValue(){
+
+        //hold the totals for each stat type for the current state
+        var temp_totals = {
+            "FB": {"count": 0, "swing_rate": 0, "whiff_rate": 0, "foul_rate": 0, "in_play_rate": 0, "in_play_out_rate" :0, "in_play_safe_rate": 0},
+            "CB": {"count": 0, "swing_rate": 0, "whiff_rate": 0, "foul_rate": 0, "in_play_rate": 0, "in_play_out_rate" :0, "in_play_safe_rate": 0},
+            "SL": {"count": 0, "swing_rate": 0, "whiff_rate": 0, "foul_rate": 0, "in_play_rate": 0, "in_play_out_rate" :0, "in_play_safe_rate": 0},
+            "CH": {"count": 0, "swing_rate": 0, "whiff_rate": 0, "foul_rate": 0, "in_play_rate": 0, "in_play_out_rate" :0, "in_play_safe_rate": 0},
+            "SM": {"count": 0, "swing_rate": 0, "whiff_rate": 0, "foul_rate": 0, "in_play_rate": 0, "in_play_out_rate" :0, "in_play_safe_rate": 0},
+            "CT": {"count": 0, "swing_rate": 0, "whiff_rate": 0, "foul_rate": 0, "in_play_rate": 0, "in_play_out_rate" :0, "in_play_safe_rate": 0}
+        };
+
+        //process through selected zones
+        console.log("Adding values to control var");
+        for(let coord in this.zone_highlight_bools){
+            if(this.zone_highlight_bools[coord]){
+                for(let stat in this.pitches_data[coord]){
+                    for(let p_type in this.pitches_data[coord][stat]){
+                        temp_totals[p_type][stat] += this.pitches_data[coord][stat][p_type];
+                    }
+                }
+            }
+        }
+
+        //do calculations for accrued data
+        console.log("Performing Stat Calculations");
+        for(let p_type in temp_totals){
+            temp_totals[p_type]["whiff_rate"] = this.percentage(this.zero_division_handler(temp_totals[p_type]["whiff_rate"], temp_totals[p_type]["swing_rate"]));
+
+            temp_totals[p_type]["foul_rate"] = this.percentage(this.zero_division_handler(temp_totals[p_type]["foul_rate"], temp_totals[p_type]["swing_rate"]));
+
+            temp_totals[p_type]["in_play_out_rate"] = this.percentage(this.zero_division_handler(temp_totals[p_type]["in_play_out_rate"], temp_totals[p_type]["in_play_rate"]));
+
+            temp_totals[p_type]["in_play_safe_rate"] = this.percentage(this.zero_division_handler(temp_totals[p_type]["in_play_safe_rate"], temp_totals[p_type]["in_play_rate"]));
+
+            temp_totals[p_type]["in_play_rate"] = this.percentage(this.zero_division_handler(temp_totals[p_type]["in_play_rate"], temp_totals[p_type]["swing_rate"]));
+
+            temp_totals[p_type]["swing_rate"] = this.percentage(this.zero_division_handler(temp_totals[p_type]["swing_rate"], temp_totals[p_type]["count"]));
+        }
+
+        //place values in table
+        console.log("Placing values in html");
+        for (let p_type in temp_totals) {
+            for (let stat in temp_totals[p_type]) {
+
+                let stat_loc;
+                if (stat == "count") {
+                    stat_loc = document.getElementById("".concat(p_type, "-data-row")).getElementsByClassName("pitch_count")[0];
+                } else {
+                    stat_loc = document.getElementById("".concat(p_type, "-data-row")).getElementsByClassName(stat)[0];
+                }
+
+                let stat_value = stat_loc.innerHTML;
+                stat_value = Number(temp_totals[p_type][stat]);
+                stat_loc.innerHTML = stat_value;
+            }
+        }
+    }
+
+    zero_division_handler(val1, val2){
+        console.log(val1 + " " + val2);
+        if(Number(val2) != 0){
+            return Number(val1)/Number(val2)
+        }
+        else {
+            return 0
+        }
+    }
+
+    percentage(val){
+        let percentage = (100 * val).toFixed(0);
+        return percentage;
     }
 }

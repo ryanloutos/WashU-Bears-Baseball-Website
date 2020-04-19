@@ -355,24 +355,24 @@ def batter_dynamic_zone_scouting(batter):
                     else:
                         zones_data[region]["in_play_safe_rate"][p_type] += 1
 
-    for k1, v1 in zones_data.items():
-        for k2, v2 in zones_data[k1]["swing_rate"].items():
-            zones_data[k1]["whiff_rate"][k2] = percentage(truncate(zero_division_handler(
-                zones_data[k1]["whiff_rate"][k2], zones_data[k1]["swing_rate"][k2])))
+    # for k1, v1 in zones_data.items():
+    #     for k2, v2 in zones_data[k1]["swing_rate"].items():
+    #         zones_data[k1]["whiff_rate"][k2] = percentage(truncate(zero_division_handler(
+    #             zones_data[k1]["whiff_rate"][k2], zones_data[k1]["swing_rate"][k2])))
 
-            zones_data[k1]["foul_rate"][k2] = percentage(truncate(zero_division_handler(
-                zones_data[k1]["foul_rate"][k2], zones_data[k1]["swing_rate"][k2])))
+    #         zones_data[k1]["foul_rate"][k2] = percentage(truncate(zero_division_handler(
+    #             zones_data[k1]["foul_rate"][k2], zones_data[k1]["swing_rate"][k2])))
 
-            zones_data[k1]["in_play_out_rate"][k2] = percentage(truncate(zero_division_handler(
-                zones_data[k1]["in_play_out_rate"][k2], zones_data[k1]["in_play_rate"][k2])))
+    #         zones_data[k1]["in_play_out_rate"][k2] = percentage(truncate(zero_division_handler(
+    #             zones_data[k1]["in_play_out_rate"][k2], zones_data[k1]["in_play_rate"][k2])))
 
-            zones_data[k1]["in_play_safe_rate"][k2] = percentage(truncate(zero_division_handler(
-                zones_data[k1]["in_play_safe_rate"][k2], zones_data[k1]["in_play_rate"][k2])))
+    #         zones_data[k1]["in_play_safe_rate"][k2] = percentage(truncate(zero_division_handler(
+    #             zones_data[k1]["in_play_safe_rate"][k2], zones_data[k1]["in_play_rate"][k2])))
 
-            zones_data[k1]["in_play_rate"][k2] = percentage(truncate(zero_division_handler(
-                zones_data[k1]["in_play_rate"][k2], zones_data[k1]["swing_rate"][k2])))
+    #         zones_data[k1]["in_play_rate"][k2] = percentage(truncate(zero_division_handler(
+    #             zones_data[k1]["in_play_rate"][k2], zones_data[k1]["swing_rate"][k2])))
 
-            zones_data[k1]["swing_rate"][k2] = percentage(truncate(zero_division_handler(
-                zones_data[k1]["swing_rate"][k2], zones_data[k1]["count"][k2])))
+    #         zones_data[k1]["swing_rate"][k2] = percentage(truncate(zero_division_handler(
+    #             zones_data[k1]["swing_rate"][k2], zones_data[k1]["count"][k2])))
 
     return zones_data
