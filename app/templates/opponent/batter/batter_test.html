@@ -7,14 +7,19 @@
 <script>
     document.addEventListener("DOMContentLoaded", function () {
 
-        setup_strikezones();
+        // setup_strikezone_1();
+        setup_strikezone_2();
     });
 
-    function setup_strikezones() {
+    function setup_strikezone_2() {
+        let test_zone = new dynamic_scouting_strikezone("test-strikezone")
+    }
+
+    function setup_strikezone_1() {
 
         let size = 125;
 
-        let test_zone = new strikezone("strikezone-upper-half");
+        let test_zone = new strikezone("test-strikezone");
 
         let pitches = {{data|tojson}};
         let pitch_type = "FB";
@@ -40,6 +45,6 @@
     <div class="row text-center">
         <h1>TESTING</h1>
     </div>
-    <div id="strikezone-upper-half"></div>
+    <div id="test-strikezone"></div>
 </div>
 {% endblock %}
