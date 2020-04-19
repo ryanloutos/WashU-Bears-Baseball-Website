@@ -12,7 +12,9 @@
     });
 
     function setup_strikezone_2() {
-        let test_zone = new dynamic_scouting_strikezone("test-strikezone")
+        let test_zone = new dynamic_scouting_strikezone("test-strikezone");
+        let complex_data = {{data|tojson}};
+        console.log(complex_data);
     }
 
     function setup_strikezone_1() {

@@ -66,6 +66,7 @@ from app.stats.stats import batterSwingWhiffRatebyPitchbyCount
 from app.stats.stats import batterSwingWhiffRatebyPitchbyCount2
 
 from app.stats.scouting_stats import zone_division_stats_batter
+from app.stats.scouting_stats import batter_dynamic_zone_scouting
 from app.stats.scouting_stats import whiff_coords_by_pitch_batter
 
 
@@ -656,7 +657,8 @@ def batter_testing(batter_id):
         flash("URL does not exist")
         return redirect(url_for('main.index'))
 
-    data = whiff_coords_by_pitch_batter(batter)
+    # data = whiff_coords_by_pitch_batter(batter)
+    data = batter_dynamic_zone_scouting(batter)
     return render_template(
         "opponent/batter/batter_test.html",
         batter=batter,

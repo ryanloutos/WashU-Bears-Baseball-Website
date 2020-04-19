@@ -433,6 +433,17 @@ class dynamic_scouting_strikezone extends strikezone{
     this.yScale
     */ 
 
+    /**
+     * 
+     * @param {String} div_id The id of the div to create a strikezone in
+     * @param {Number} width  Width of the strikezone svg
+     * @param {Number} height Height of the strikeone svg
+     * 
+     * Creates an object of type dynamic_scouting_strikezone, which extends
+     * from the strikezone class. The additions include guidelines for the 
+     * different regions of the strikezone, stat calculations, and click
+     * based dynamic highlighting.
+     */
     constructor(div_id, width = 457, height = 457){
         super(div_id, width, height);
 
@@ -464,35 +475,16 @@ class dynamic_scouting_strikezone extends strikezone{
             .style('fill', 'none')
             .style('stroke-width', 0.5);
 
+
         //Setup the click highlighting of the regions of the zone
-        var zone_highlight_bools = {
-            "00": false,
-            "01": false,
-            "02": false,
-            "03": false,
-            "04": false,
-            "10": false,
-            "11": false,
-            "12": false,
-            "13": false,
-            "14": false,
-            "20": false,
-            "21": false,
-            "22": false,
-            "23": false,
-            "24": false,
-            "30": false,
-            "31": false,
-            "32": false,
-            "33": false,
-            "34": false,
-            "40": false,
-            "41": false,
-            "42": false,
-            "43": false,
-            "44": false
-        }
-        var self = this;
+        var zone_highlight_bools = {    //state checking for zones
+            "00": false, "01": false, "02": false, "03": false, "04": false,
+            "10": false, "11": false, "12": false, "13": false, "14": false,
+            "20": false, "21": false, "22": false, "23": false, "24": false,
+            "30": false, "31": false, "32": false, "33": false, "34": false,
+            "40": false, "41": false, "42": false, "43": false, "44": false
+        };
+        var self = this;    //used so that in access class values and functions from within below func
         this.zone.on('click', function(){
             var mouse = d3.mouse(this);
             let x_coord, y_coord;
@@ -550,5 +542,8 @@ class dynamic_scouting_strikezone extends strikezone{
             //switch bool
             zone_highlight_bools["".concat(x_coord, y_coord)] = !zone_highlight_bools["".concat(x_coord, y_coord)];
         });
+
+        //to be filled in by function
+        this.pitches_data = {};
     }
 }

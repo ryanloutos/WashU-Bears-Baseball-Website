@@ -1,59 +1,23 @@
-from app import db
-from enum import Enum
-import pygal
-from pygal.style import DarkSolarizedStyle, DefaultStyle
 import lxml
 import math
+import pygal
+
+from app import db
 
 from app.models import Game
 from app.models import Batter
 from app.models import Outing
 from app.models import Season
 
+from pygal.style import DefaultStyle
+from pygal.style import DarkSolarizedStyle
 
-# ***************-USEFUL FUNCTIONS-*************** # 
-class PitchType(Enum):
-    '''
-    Enum that is helpful in translating pitch types easier.
-    '''
-    FB = 1
-    CB = 2
-    SL = 3
-    CH = 4
-    CT = 5
-    SM = 7
-
-
-def truncate(n, decimals=2):
-    """Truncates the passed value to decimal places.
-
-    Arguments:
-        n {number} -- Number to be truncated
-
-    Keyword Arguments:
-        decimals {int} -- Number of decimal places to truncate to(default: {2})
-
-    Returns:
-        [int] -- truncated verison of passed value
-    """
-    multiplier = 10 ** decimals
-    return int(n * multiplier) / multiplier
-
-
-def zero_division_handler(n, d):
-    return n / d if d else 0
-
-
-def percentage(n, decimals=0):
-    '''
-    Gets the percentage rounded to a specific decimal place
-    PARAM:
-        - n - is a the decimal number 0<=n<=1
-        - decimals - is the place you want to round to
-    '''
-    multiplier = 10 ** decimals
-    percentage = 100 * n
-    return int(math.floor(percentage*multiplier + 0.5) / multiplier)
+from app.stats.util import truncate
+from app.stats.util import PitchType
+from app.stats.util import percentage
+from app.stats.util import ZONE_CONSTANTS
+from app.stats.util import get_zone_region
+from app.stats.util import zero_division_handler
 
 
 def zone_division_stats_batter(batter):
@@ -336,3 +300,79 @@ def whiff_coords_by_pitch_pitcher(pitcher):
                     stats[PitchType(pitch.pitch_type).name].append((pitch.loc_x, pitch.loc_y))
 
     return stats
+
+
+def batter_dynamic_zone_scouting(batter):
+
+    zones_data = {}
+
+    # Setup zones_data contents
+    for x in range(5):
+        for y in range(5):
+            zones_data[f"{x}{y}"] = {
+                "swing_rate": {},
+                "whiff_rate": {},
+                "foul_rate": {},
+                "in_play_rate": {},
+                "in_play_out_rate": {},
+                "in_play_safe_rate": {},
+                "count": {}
+            }
+    for k1, v1 in zones_data.items():
+        for k2, v2 in zones_data[k1].items():
+            zones_data[k1][k2] = {
+                "FB": 0,
+                "CB": 0,
+                "SL": 0,
+                "CH": 0,
+                "CT": 0,
+                "SM": 0
+            }
+
+    # process data
+    for at_bat in batter.at_bats:
+        for pitch in at_bat.pitches:
+            # only the pitches we care about
+            if pitch.loc_x in ["", None] or pitch.loc_y in ["", None]:
+                continue
+
+            region = get_zone_region(pitch)
+            p_type = PitchType(pitch.pitch_type).name
+            p_res = pitch.pitch_result
+
+            zones_data[region]["count"][p_type] += 1
+
+            if p_res in ["SS", "F", "IP"]:
+                zones_data[region]["swing_rate"][p_type] += 1
+                if p_res in ["SS"]:
+                    zones_data[region]["whiff_rate"][p_type] += 1
+                elif p_res in ["F"]:
+                    zones_data[region]["foul_rate"][p_type] += 1
+                else:
+                    zones_data[region]["in_play_rate"][p_type] += 1
+                    if pitch.ab_result in ["IP->Out", "FC", "Error", "Other"]:
+                        zones_data[region]["in_play_out_rate"][p_type] += 1
+                    else:
+                        zones_data[region]["in_play_safe_rate"][p_type] += 1
+
+    for k1, v1 in zones_data.items():
+        for k2, v2 in zones_data[k1]["swing_rate"].items():
+            zones_data[k1]["whiff_rate"][k2] = percentage(truncate(zero_division_handler(
+                zones_data[k1]["whiff_rate"][k2], zones_data[k1]["swing_rate"][k2])))
+
+            zones_data[k1]["foul_rate"][k2] = percentage(truncate(zero_division_handler(
+                zones_data[k1]["foul_rate"][k2], zones_data[k1]["swing_rate"][k2])))
+
+            zones_data[k1]["in_play_out_rate"][k2] = percentage(truncate(zero_division_handler(
+                zones_data[k1]["in_play_out_rate"][k2], zones_data[k1]["in_play_rate"][k2])))
+
+            zones_data[k1]["in_play_safe_rate"][k2] = percentage(truncate(zero_division_handler(
+                zones_data[k1]["in_play_safe_rate"][k2], zones_data[k1]["in_play_rate"][k2])))
+
+            zones_data[k1]["in_play_rate"][k2] = percentage(truncate(zero_division_handler(
+                zones_data[k1]["in_play_rate"][k2], zones_data[k1]["swing_rate"][k2])))
+
+            zones_data[k1]["swing_rate"][k2] = percentage(truncate(zero_division_handler(
+                zones_data[k1]["swing_rate"][k2], zones_data[k1]["count"][k2])))
+
+    return zones_data
