@@ -6,16 +6,7 @@ from app import db
 
 from enum import Enum
 
-from app.models import Game
-from app.models import Batter
-from app.models import Outing
-from app.models import Season
 
-from pygal.style import DefaultStyle
-from pygal.style import DarkSolarizedStyle
-
-
-# ***************-USEFUL ITEMS-*************** #
 class PitchType(Enum):
     '''
     Enum that is helpful in translating pitch types easier.
@@ -84,9 +75,17 @@ ZONE_CONSTANTS = zone_constants()
 
 
 def get_zone_region(pitch):
-    """Gets the region of the zone that the pitch was in based on the 
+    """Gets the region of the zone that the pitch was in based on the
     coordinated defined in the zone constants object, which related to
-    the js file d3_strikezone.js"""
+    the js file d3_strikezone.js
+
+    Arguments:
+        pitch {pitch object} -- Pitch object to be classified.
+
+    Returns:
+        string -- string region of the zone as defined in the d3_strikezone.js
+        file.
+    """
 
     if pitch.loc_x in ["", None] or pitch.loc_y in ["", None]:
         return None

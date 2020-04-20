@@ -420,6 +420,10 @@ class strikezone_legend {
     }
 }
 
+/**
+ * Class representing a d3_dynamic scouting strikezone whic inherits
+ * from the d3_strikezone.
+ */
 class dynamic_scouting_strikezone extends strikezone{
 
     /*
@@ -448,6 +452,85 @@ class dynamic_scouting_strikezone extends strikezone{
         super(div_id, width, height);
 
         this.stats_table_div = d3.select("#".concat(stats_table_div));
+        //Creates entire stats table associated with zone, in the div provided
+        this.stats_table_div.html(`
+            <table class="table">
+                <thead>
+                    <tr class="table-headers">
+                        <th>Pitch</th>
+                        <th>Num</th>
+                        <th>Swing %</th>
+                        <th>Whiff %</th>
+                        <th>Foul %</th>
+                        <th>In Play %</th>
+                        <th>In Play Out %</th>
+                        <th>In Play Safe %</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr id="FB-data-row">
+                        <td class="pitch_type">FB</td>
+                        <td class="pitch_count">0</td>
+                        <td class="swing_rate">0</td>
+                        <td class="whiff_rate">0</td>
+                        <td class="foul_rate">0</td>
+                        <td class="in_play_rate">0</td>
+                        <td class="in_play_out_rate">0</td>
+                        <td class="in_play_safe_rate">0</td>
+                    </tr>
+                    <tr id="SM-data-row">
+                        <td class="pitch_type">2S</td>
+                        <td class="pitch_count">0</td>
+                        <td class="swing_rate">0</td>
+                        <td class="whiff_rate">0</td>
+                        <td class="foul_rate">0</td>
+                        <td class="in_play_rate">0</td>
+                        <td class="in_play_out_rate">0</td>
+                        <td class="in_play_safe_rate">0</td>
+                    </tr>
+                    <tr id="CB-data-row">
+                        <td class="pitch_type">CB</td>
+                        <td class="pitch_count">0</td>
+                        <td class="swing_rate">0</td>
+                        <td class="whiff_rate">0</td>
+                        <td class="foul_rate">0</td>
+                        <td class="in_play_rate">0</td>
+                        <td class="in_play_out_rate">0</td>
+                        <td class="in_play_safe_rate">0</td>
+                    </tr>
+                    <tr id="SL-data-row">
+                        <td class="pitch_type">SL</td>
+                        <td class="pitch_count">0</td>
+                        <td class="swing_rate">0</td>
+                        <td class="whiff_rate">0</td>
+                        <td class="foul_rate">0</td>
+                        <td class="in_play_rate">0</td>
+                        <td class="in_play_out_rate">0</td>
+                        <td class="in_play_safe_rate">0</td>
+                    </tr>
+                    <tr id="CH-data-row">
+                        <td class="pitch_type">CH</td>
+                        <td class="pitch_count">0</td>
+                        <td class="swing_rate">0</td>
+                        <td class="whiff_rate">0</td>
+                        <td class="foul_rate">0</td>
+                        <td class="in_play_rate">0</td>
+                        <td class="in_play_out_rate">0</td>
+                        <td class="in_play_safe_rate">0</td>
+                    </tr>
+                    <tr id="CT-data-row">
+                        <td class="pitch_type">CT</td>
+                        <td class="pitch_count">0</td>
+                        <td class="swing_rate">0</td>
+                        <td class="whiff_rate">0</td>
+                        <td class="foul_rate">0</td>
+                        <td class="in_play_rate">0</td>
+                        <td class="in_play_out_rate">0</td>
+                        <td class="in_play_safe_rate">0</td>
+                    </tr>
+                </tbody>
+            </table>
+        `);
 
         //Add guidelines to base appearance of strikezone
         this.g.append('path')
@@ -552,10 +635,20 @@ class dynamic_scouting_strikezone extends strikezone{
         this.pitches_data = data_obj;
     }
 
+    /**
+     * Gives an opportinity to pass a dataset to the class after
+     * construction.
+     * 
+     * @param {Object} data_obj Object to be given to the class' data
+     */
     provideData(data_obj){
         this.pitches_data = data_obj;
     }
 
+    /**
+     * Creates a statistical summary for all currently highlighted zones, and
+     * displays all of the stats in the table of the provided id.
+     */
     calcStatValue(){
 
         //hold the totals for each stat type for the current state
@@ -615,8 +708,13 @@ class dynamic_scouting_strikezone extends strikezone{
         }
     }
 
+    /**
+     * Utility function for doing division without having to worry about
+     * divide by 0 errors.
+     * @param {Number} val1 Division Numerator
+     * @param {Number} val2 Division Denomenator
+     */
     zero_division_handler(val1, val2){
-        console.log(val1 + " " + val2);
         if(Number(val2) != 0){
             return Number(val1)/Number(val2)
         }
@@ -625,8 +723,14 @@ class dynamic_scouting_strikezone extends strikezone{
         }
     }
 
-    percentage(val){
-        let percentage = (100 * val).toFixed(0);
+    /**
+     * Utility function for creating a whole number percent value out of 
+     * a decimal. Currently set to 0 places
+     * @param {Number} val Value to be turned to percentage
+     * @param {Number} places Number of places after decimal. Default=0
+     */
+    percentage(val, places=0){
+        let percentage = (100 * val).toFixed(places);
         return percentage;
     }
 }
