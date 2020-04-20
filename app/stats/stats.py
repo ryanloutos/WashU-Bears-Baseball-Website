@@ -1,3 +1,4 @@
+# General stats calculation file
 import math
 import lxml
 import pygal

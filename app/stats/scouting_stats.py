@@ -1,3 +1,4 @@
+# All stats calculations associated with scouting
 import lxml
 import math
 import pygal
