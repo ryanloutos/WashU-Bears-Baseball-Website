@@ -33,6 +33,7 @@ from app.stats.stats import seasonStatLine
 from app.stats.stats import pitchUsageSeason
 
 from app.stats.scouting_stats import whiff_coords_by_pitch_pitcher
+from app.stats.scouting_stats import pitcher_dynamic_zone_scouting
 
 import csv
 import os
@@ -378,9 +379,11 @@ def pitcher_testing(pitcher_id):
         return redirect(url_for('main.index'))
 
     data = whiff_coords_by_pitch_pitcher(pitcher)
+    data2 = pitcher_dynamic_zone_scouting(pitcher)
 
     return render_template(
         "/pitcher/pitcher_testing.html",
         pitcher=pitcher,
-        data=data
+        data=data,
+        data2=data2
     )

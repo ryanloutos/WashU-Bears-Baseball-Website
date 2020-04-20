@@ -302,6 +302,63 @@ def whiff_coords_by_pitch_pitcher(pitcher):
     return stats
 
 
+def pitcher_dynamic_zone_scouting(pitcher):
+
+    zones_data = {}
+
+    # Setup zones_data contents
+    for x in range(5):
+        for y in range(5):
+            zones_data[f"{x}{y}"] = {
+                "swing_rate": {},
+                "whiff_rate": {},
+                "foul_rate": {},
+                "in_play_rate": {},
+                "in_play_out_rate": {},
+                "in_play_safe_rate": {},
+                "count": {}
+            }
+    for k1, v1 in zones_data.items():
+        for k2, v2 in zones_data[k1].items():
+            zones_data[k1][k2] = {
+                "FB": 0,
+                "CB": 0,
+                "SL": 0,
+                "CH": 0,
+                "CT": 0,
+                "SM": 0
+            }
+
+    # process data
+    for outing in pitcher.outings:
+        for at_bat in outing.at_bats:
+            for pitch in at_bat.pitches:
+                # only the pitches we care about
+                if pitch.loc_x in ["", None] or pitch.loc_y in ["", None]:
+                    continue
+
+                region = get_zone_region(pitch)
+                p_type = PitchType(pitch.pitch_type).name
+                p_res = pitch.pitch_result
+
+                zones_data[region]["count"][p_type] += 1
+
+                if p_res in ["SS", "F", "IP"]:
+                    zones_data[region]["swing_rate"][p_type] += 1
+                    if p_res in ["SS"]:
+                        zones_data[region]["whiff_rate"][p_type] += 1
+                    elif p_res in ["F"]:
+                        zones_data[region]["foul_rate"][p_type] += 1
+                    else:
+                        zones_data[region]["in_play_rate"][p_type] += 1
+                        if pitch.ab_result in ["IP->Out", "FC", "Error", "Other"]:
+                            zones_data[region]["in_play_out_rate"][p_type] += 1
+                        else:
+                            zones_data[region]["in_play_safe_rate"][p_type] += 1
+
+    return zones_data
+
+
 def batter_dynamic_zone_scouting(batter):
 
     zones_data = {}
@@ -354,25 +411,5 @@ def batter_dynamic_zone_scouting(batter):
                         zones_data[region]["in_play_out_rate"][p_type] += 1
                     else:
                         zones_data[region]["in_play_safe_rate"][p_type] += 1
-
-    # for k1, v1 in zones_data.items():
-    #     for k2, v2 in zones_data[k1]["swing_rate"].items():
-    #         zones_data[k1]["whiff_rate"][k2] = percentage(truncate(zero_division_handler(
-    #             zones_data[k1]["whiff_rate"][k2], zones_data[k1]["swing_rate"][k2])))
-
-    #         zones_data[k1]["foul_rate"][k2] = percentage(truncate(zero_division_handler(
-    #             zones_data[k1]["foul_rate"][k2], zones_data[k1]["swing_rate"][k2])))
-
-    #         zones_data[k1]["in_play_out_rate"][k2] = percentage(truncate(zero_division_handler(
-    #             zones_data[k1]["in_play_out_rate"][k2], zones_data[k1]["in_play_rate"][k2])))
-
-    #         zones_data[k1]["in_play_safe_rate"][k2] = percentage(truncate(zero_division_handler(
-    #             zones_data[k1]["in_play_safe_rate"][k2], zones_data[k1]["in_play_rate"][k2])))
-
-    #         zones_data[k1]["in_play_rate"][k2] = percentage(truncate(zero_division_handler(
-    #             zones_data[k1]["in_play_rate"][k2], zones_data[k1]["swing_rate"][k2])))
-
-    #         zones_data[k1]["swing_rate"][k2] = percentage(truncate(zero_division_handler(
-    #             zones_data[k1]["swing_rate"][k2], zones_data[k1]["count"][k2])))
 
     return zones_data
