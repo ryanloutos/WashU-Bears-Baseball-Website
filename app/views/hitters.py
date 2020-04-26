@@ -34,6 +34,9 @@ from app.stats.stats import stats_opponent_batters_stat_lines
 from app.stats.stats import batterSwingWhiffRatebyPitchbyCount
 from app.stats.stats import batterSwingWhiffRatebyPitchbyCount2
 
+from app.stats.scouting_stats import zone_division_stats_batter
+from app.stats.scouting_stats import batter_dynamic_zone_scouting
+
 import re
 
 hitters = Blueprint("hitters", __name__)
@@ -513,3 +516,25 @@ def hitter_edit(id):
         title='Edit Hitter',
         batter=batter,
         form=form)
+
+
+@hitter.route('/hitter/<id>/scouting')
+@login_required
+def hitter_scouting(id):
+    batter = Batter.query.filter_by(id=id).first()
+    if not batter:
+        flash("URL does not exist")
+        return redirect(url_for('main.index'))
+
+    zone_division_stats = zone_division_stats_batter(batter)
+    dynamic_data = batter_dynamic_zone_scouting(batter)
+    # whiff_coords_by_pitch = whiff_coords_by_pitch_batter(batter)
+
+    return render_template(
+        'hitters/hitter/hitter_scouting.html',
+        batter=batter,
+        title=batter,
+        dynamic_data=dynamic_data,
+        zone_division_stats=zone_division_stats
+        # whiff_coords_by_pitch=whiff_coords_by_pitch
+    )
