@@ -638,13 +638,15 @@ def batter_scouting(batter_id):
         return redirect(url_for('main.index'))
 
     zone_division_stats = zone_division_stats_batter(batter)
-    whiff_coords_by_pitch = whiff_coords_by_pitch_batter(batter)
+    dynamic_data = batter_dynamic_zone_scouting(batter)
+    # whiff_coords_by_pitch = whiff_coords_by_pitch_batter(batter)
 
     return render_template(
         'opponent/batter/batter_scouting.html',
         batter=batter,
-        zone_division_stats=zone_division_stats,
-        whiff_coords_by_pitch=whiff_coords_by_pitch
+        dynamic_data=dynamic_data,
+        zone_division_stats=zone_division_stats
+        # whiff_coords_by_pitch=whiff_coords_by_pitch
     )
 
 
