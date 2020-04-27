@@ -201,33 +201,42 @@ class BatterNewVideoForm(FlaskForm):
 class NewPitcherForm(FlaskForm):
     firstname = StringField("First Name", validators=[DataRequired()])
     lastname = StringField("Last Name", validators=[DataRequired()])
-    number = StringField('Number', validators=[Optional()])
-    throws = SelectField(
-        'Throws',
-        choices=[('R', 'R'), ('L', 'L')],
-        validators=[Optional()])
+    number = StringField("Number", validators=[Optional()])
+    throws = SelectField("Throws",
+                         choices=[("R", "R"), ("L", "L")],
+                         validators=[Optional()])
     grad_year = IntegerField("Grad Year", validators=[DataRequired()])
     opponent = QuerySelectField("Team", query_factory=getOpponents)
-    retired = BooleanField('Retired?')
-    submit = SubmitField('Submit')
-
+    retired = BooleanField("Retired?")
+    submit = SubmitField("Submit")
 
 class EditPitcherForm(FlaskForm):
-    firstname = StringField("First Name", validators=[Optional()])
-    lastname = StringField("Last Name", validators=[Optional()])
-    number = StringField('Number', validators=[Optional()])
-    throws = SelectField(
-        'Throws',
-        choices=[('R', 'R'), ('L', 'L')],
-        validators=[Optional()])
-    grad_year = IntegerField('Grad Year', validators=[Optional()])
-    opponent = SelectField('Team', validators=[Optional()])
-    retired = BooleanField('Retired?')
+    firstname = StringField("First Name", validators=[DataRequired()])
+    lastname = StringField("Last Name", validators=[DataRequired()])
+    number = StringField("Number", validators=[Optional()])
+    throws = SelectField("Throws",
+                         choices=[("R", "R"), ("L", "L")],
+                         validators=[Optional()])
+    grad_year = IntegerField("Grad Year", validators=[Optional()])
+    opponent = SelectField("Team", validators=[Optional()])
+    retired = BooleanField("Retired?")
     photo = FileField("Pitcher Photo", 
                      validators=[FileAllowed(["jpg", "png"], 
                                               "Use .jpg or .png only!")])
-    submit = SubmitField('Save Changes')
+    submit = SubmitField("Save Changes")
 
+# ***************-GAME-*************** #
+class NewGameForm(FlaskForm):
+    date = DateField('Date', validators=[Optional()], format='%Y-%m-%d')
+    opponent = QuerySelectField(
+        query_factory=lambda: Opponent.query,
+        get_pk=lambda o: o,
+        get_label=lambda o: o)
+    season = QuerySelectField(
+        query_factory=lambda: Season.query,
+        get_pk=lambda s: s.id,
+        get_label=lambda s: s)
+    submit = SubmitField("Create Game")
 
 
 class PitchForm(FlaskForm):
@@ -372,14 +381,3 @@ class NewOutingFromCSVPitches(FlaskForm):
     submit = SubmitField('Create Outing')
 
 
-class NewGameForm(FlaskForm):
-    date = DateField('Date', validators=[Optional()], format='%Y-%m-%d')
-    opponent = QuerySelectField(
-        query_factory=lambda: Opponent.query,
-        get_pk=lambda o: o,
-        get_label=lambda o: o)
-    season = QuerySelectField(
-        query_factory=lambda: Season.query,
-        get_pk=lambda s: s.id,
-        get_label=lambda s: s)
-    submit = SubmitField("Create Game")
