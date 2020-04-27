@@ -8,7 +8,7 @@
 {% block app_content %}
     <div class="no-sidenav">
         <div class="form-container">
-            <h1>Post Video</h1>
+            <h1 class="form-title">Post Video</h1>
             <form method="post">
                 {{ form.hidden_tag() }}
                 <p>
@@ -49,7 +49,7 @@
                 </p>
                 <p>
                     {{ form.link.label }}<br>
-                    {{ form.link(size=48) }}<br>
+                    {{ form.link() }}<br>
                     {% for error in form.link.errors %}
                         <span class="errors">[{{ error }}]</span>
                     {% endfor %}

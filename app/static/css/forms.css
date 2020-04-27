@@ -2,7 +2,7 @@
     color: #bd2e1f;
 }
 
-h1 {
+.form-title {
     text-align: center;
     color: #bd2e1f;
     font-weight: 700;
@@ -12,8 +12,12 @@ h1 {
     font-size: 20px;
 }
 
+p {
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
 .form-container {
-    text-align: center;
     margin-top: 20px;
     margin-left: 20%;
     width: 60%;
@@ -26,8 +30,7 @@ h1 {
 }
 
 input, select, option {
-    text-align: center;
-    /* box-shadow: 0px 0px 1px; */
+    width: 100%;
 }
 
 input[type=number]::-webkit-inner-spin-button, 
@@ -53,8 +56,3 @@ a:hover {
     color: #bd2e1f;
 }
 
-.file-input {
-    width: 170px;
-    margin-left: 30%;
-    margin-right: auto;
-}
