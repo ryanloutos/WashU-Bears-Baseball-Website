@@ -137,16 +137,19 @@ def edit_pitcher(id):
 
     if form.validate_on_submit():
 
-        file_name = pitcher.id
-        file_loc = os.path.join(os.path.dirname(os.path.realpath(__file__)),
-                                "..",
-                                "static",
-                                "images",
-                                "pitcher_photos",
-                                f"{file_name}.png")
-        
-        form.file.data.save(file_loc)
+        if form.photo.data:
+            file_name = pitcher.id
+            file_loc = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                                    "..",
+                                    "static",
+                                    "images",
+                                    "pitcher_photos",
+                                    f"{file_name}.png")
+            
+            form.photo.data.save(file_loc)
 
+        pitcher.firstname = form.firstname.data
+        pitcher.lastname = form.lastname.data
         pitcher.throws = form.throws.data
         pitcher.grad_year = form.grad_year.data
         pitcher.opponent_id = form.opponent.data

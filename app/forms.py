@@ -199,21 +199,20 @@ class BatterNewVideoForm(FlaskForm):
 
 # ***************-PITCHER-*************** #
 class NewPitcherForm(FlaskForm):
-    firstname = StringField("First Name", validators=[Optional()])
-    lastname = StringField("Last Name", validators=[Optional()])
+    firstname = StringField("First Name", validators=[DataRequired()])
+    lastname = StringField("Last Name", validators=[DataRequired()])
     number = StringField('Number', validators=[Optional()])
     throws = SelectField(
         'Throws',
         choices=[('R', 'R'), ('L', 'L')],
         validators=[Optional()])
-    grad_year = IntegerField("Grad Year", validators=[Optional()])
+    grad_year = IntegerField("Grad Year", validators=[DataRequired()])
     opponent = QuerySelectField("Team", query_factory=getOpponents)
     retired = BooleanField('Retired?')
     submit = SubmitField('Submit')
 
 
 class EditPitcherForm(FlaskForm):
-    name = StringField('Name', validators=[Optional()])
     firstname = StringField("First Name", validators=[Optional()])
     lastname = StringField("Last Name", validators=[Optional()])
     number = StringField('Number', validators=[Optional()])
@@ -221,10 +220,12 @@ class EditPitcherForm(FlaskForm):
         'Throws',
         choices=[('R', 'R'), ('L', 'L')],
         validators=[Optional()])
-    grad_year = StringField('Grad Year', validators=[Optional()])
-    opponent = SelectField('Opponent', validators=[Optional()])
+    grad_year = IntegerField('Grad Year', validators=[Optional()])
+    opponent = SelectField('Team', validators=[Optional()])
     retired = BooleanField('Retired?')
-    file = FileField('Pitcher Photo', validators=[FileRequired()])
+    photo = FileField("Pitcher Photo", 
+                     validators=[FileAllowed(["jpg", "png"], 
+                                              "Use .jpg or .png only!")])
     submit = SubmitField('Save Changes')
 
 
