@@ -4,7 +4,7 @@ from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.urls import url_parse
 from app import db
 
-from app.forms import PitcherForm, EditPitcherForm
+from app.forms import NewPitcherForm, EditPitcherForm
 from app.models import User, Outing, Pitch, Season, Pitcher, Opponent, Video
 from app.stats import avgPitchVeloPitcher, veloOverCareer
 from app.stats import pitchStrikePercentageSeason
@@ -92,25 +92,16 @@ def new_pitcher():
         flash("Admin feature only")
         return redirect(url_for('index'))
 
-    form = PitcherForm()
-
-    # set the opponent choices for the form
-    opponents = Opponent.query.all()
-    opponent_choices = []
-    for o in opponents:
-        opponent_choices.append((str(o.id),o))
-    form.opponent.choices = opponent_choices
+    form = NewPitcherForm()
 
     if form.validate_on_submit():
-
         pitcher = Pitcher(
-            name=form.name.data,
             firstname=form.firstname.data,
             lastname=form.lastname.data,
             number=form.number.data,
             throws=form.throws.data,
             grad_year=form.grad_year.data,
-            opponent_id=form.opponent.data,
+            opponent_id=form.opponent.data.id,
             retired=form.retired.data
         )
 

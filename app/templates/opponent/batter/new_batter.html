@@ -3,6 +3,12 @@
 {% block styles %}
     {{ super() }}
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/forms.css') }}">
+    <script>
+        var defaultTeamId = "1";
+        $(document).ready(function() {
+            $("#opponent").val(defaultTeamId);
+        });
+    </script>
 {% endblock %}
 
 {% block app_content %}

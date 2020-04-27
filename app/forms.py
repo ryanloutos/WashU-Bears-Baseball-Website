@@ -16,6 +16,11 @@ def getChoicesForRangeOfInputs(min, max):
         choices.append((i,i))
     return choices
 
+def getOpponents():
+    return Opponent.query.order_by(Opponent.name).all()
+
+def getSeasons():
+    return Season.query.order_by(Season.year.desc()).order_by(Season.semester.desc()).all()
 
 # ***************-MAIN-*************** #
 class LoginForm(FlaskForm):
@@ -75,10 +80,7 @@ class ChangePasswordForm(FlaskForm):
 
 # ***************-BATTER-*************** #
 class NewBatterForm(FlaskForm):
-    opponent = QuerySelectField("Opponent",
-                                query_factory=lambda: Opponent.query,
-                                get_pk=lambda o: o,
-                                get_label=lambda o: o)
+    opponent = QuerySelectField("Opponent", query_factory=getOpponents)
     firstname = StringField("First Name", validators=[DataRequired()])
     lastname = StringField("Last Name", validators=[DataRequired()])
     initials = StringField("Initials", validators=[Optional()])
@@ -168,12 +170,6 @@ class EditSeasonForm(FlaskForm):
 
 
 # ***************-VIDEO-*************** #
-def getOpponents():
-    return Opponent.query.order_by(Opponent.name).all()
-
-def getSeasons():
-    return Season.query.order_by(Season.year.desc()).order_by(Season.semester.desc()).all()
-
 class PitcherNewVideoForm(FlaskForm):
     opponent = QuerySelectField("Team",
                                 query_factory=getOpponents)
@@ -201,7 +197,38 @@ class BatterNewVideoForm(FlaskForm):
     submit = SubmitField("Post Video")
 
 
-# each field is based on the baseball teams velocity tracking sheets
+# ***************-PITCHER-*************** #
+class NewPitcherForm(FlaskForm):
+    firstname = StringField("First Name", validators=[Optional()])
+    lastname = StringField("Last Name", validators=[Optional()])
+    number = StringField('Number', validators=[Optional()])
+    throws = SelectField(
+        'Throws',
+        choices=[('R', 'R'), ('L', 'L')],
+        validators=[Optional()])
+    grad_year = IntegerField("Grad Year", validators=[Optional()])
+    opponent = QuerySelectField("Team", query_factory=getOpponents)
+    retired = BooleanField('Retired?')
+    submit = SubmitField('Submit')
+
+
+class EditPitcherForm(FlaskForm):
+    name = StringField('Name', validators=[Optional()])
+    firstname = StringField("First Name", validators=[Optional()])
+    lastname = StringField("Last Name", validators=[Optional()])
+    number = StringField('Number', validators=[Optional()])
+    throws = SelectField(
+        'Throws',
+        choices=[('R', 'R'), ('L', 'L')],
+        validators=[Optional()])
+    grad_year = StringField('Grad Year', validators=[Optional()])
+    opponent = SelectField('Opponent', validators=[Optional()])
+    retired = BooleanField('Retired?')
+    file = FileField('Pitcher Photo', validators=[FileRequired()])
+    submit = SubmitField('Save Changes')
+
+
+
 class PitchForm(FlaskForm):
     batter_id = SelectField('Batter', validators=[Optional()])
     velocity = IntegerField('Velo', validators=[Optional()])
@@ -277,7 +304,6 @@ class PitchForm(FlaskForm):
         kwargs['csrf_enabled'] = False
         FlaskForm.__init__(self, *args, **kwargs)
 
-
 # Fieldlist to input all pitches in an outing
 class OutingPitchForm(FlaskForm):
     pitch = FieldList(
@@ -343,37 +369,6 @@ class NewOutingFromCSVPitches(FlaskForm):
         max_entries=150,
         validators=[Optional()])
     submit = SubmitField('Create Outing')
-
-
-class NewPitcherForm(FlaskForm):
-    name = StringField('Name', validators=[Optional()])
-    firstname = StringField("First Name", validators=[Optional()])
-    lastname = StringField("Last Name", validators=[Optional()])
-    number = StringField('Number', validators=[Optional()])
-    throws = SelectField(
-        'throws',
-        choices=[('R', 'R'), ('L', 'L')],
-        validators=[Optional()])
-    grad_year = StringField('Grad Year', validators=[Optional()])
-    opponent = SelectField('Opponent', validators=[Optional()])
-    retired = BooleanField('Retired?')
-    submit = SubmitField('Submit')
-
-
-class EditPitcherForm(FlaskForm):
-    name = StringField('Name', validators=[Optional()])
-    firstname = StringField("First Name", validators=[Optional()])
-    lastname = StringField("Last Name", validators=[Optional()])
-    number = StringField('Number', validators=[Optional()])
-    throws = SelectField(
-        'throws',
-        choices=[('R', 'R'), ('L', 'L')],
-        validators=[Optional()])
-    grad_year = StringField('Grad Year', validators=[Optional()])
-    opponent = SelectField('Opponent', validators=[Optional()])
-    retired = BooleanField('Retired?')
-    file = FileField('Pitcher Photo', validators=[FileRequired()])
-    submit = SubmitField('Save Changes')
 
 
 class NewGameForm(FlaskForm):
