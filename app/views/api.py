@@ -1,7 +1,9 @@
+# Focused on returning data to dynamic browser calls as requested
+
 from flask import Blueprint, jsonify, request, send_file, url_for, send_from_directory
 from flask_login import login_required
 from app import db
-from app.stats import batterSwingWhiffRatebyPitchbyCount, staffSeasonGoals, staffBasicStats, staffSeasonStats, truncate
+from app.stats.stats import batterSwingWhiffRatebyPitchbyCount, staffSeasonGoals, staffBasicStats, staffSeasonStats, truncate
 from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat, Pitcher, Game, Video
 from datetime import datetime
 import os

@@ -1,31 +1,37 @@
-from flask import Blueprint
-from flask import render_template, flash, redirect, url_for, request
-from flask_login import login_user, logout_user, current_user, login_required
-from werkzeug.urls import url_parse
-from app import db
-from app.forms import LoginForm, RegistrationForm, OutingForm, PitchForm
-from app.forms import NewOutingFromCSV, NewOpponentForm
-from app.forms import OutingPitchForm, NewOutingFromCSVPitches, EditUserForm
-from app.forms import ChangePasswordForm, EditBatterForm, EditOpponentForm
-from app.forms import NewBatterForm
-from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat, Game, Pitcher
-from app.stats import calcPitchPercentages, pitchUsageByCount, calcAverageVelo
-from app.stats import calcPitchStrikePercentage, calcPitchWhiffRate
-from app.stats import createPitchPercentagePieChart, velocityOverTimeLineChart
-from app.stats import pitchStrikePercentageBarChart, avgPitchVeloPitcher
-from app.stats import pitchUsageByCountLineCharts, pitchStrikePercentageSeason
-from app.stats import pitchUsageSeason, seasonStatLine, staffBasicStats
-from app.stats import staffPitchStrikePercentage
-from app.stats import outingPitchStatistics, outingTimeToPlate, veloOverTime
-from app.stats import stats_opponent_scouting_stats, stats_opponent_batters_stat_lines
-
-# Handle CSV uploads
-import csv
 import os
-# for file naming duplication problem
+import csv
 import random
 
 import re
+from app import db
+
+from flask import flash
+from flask import url_for
+from flask import request
+from flask import redirect
+from flask import Blueprint
+from flask import render_template
+
+from app.forms import OpponentForm
+from app.forms import EditOpponentForm
+
+from app.models import Game
+from app.models import User
+from app.models import AtBat
+from app.models import Pitch
+from app.models import Batter
+from app.models import Outing
+from app.models import Season
+from app.models import Opponent
+
+from flask_login import login_user
+from flask_login import logout_user
+from flask_login import current_user
+from flask_login import login_required
+
+from werkzeug.urls import url_parse
+
+from app.stats.stats import stats_opponent_batters_stat_lines
 
 
 opponent = Blueprint("opponent", __name__)

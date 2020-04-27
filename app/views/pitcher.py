@@ -1,8 +1,30 @@
-from flask import Blueprint
-from flask import render_template, flash, redirect, url_for, request
-from flask_login import login_user, logout_user, current_user, login_required
-from werkzeug.urls import url_parse
+# All pages related to individual pitchers
 from app import db
+
+from flask import flash
+from flask import url_for
+from flask import request
+from flask import redirect
+from flask import Blueprint
+from flask import render_template
+
+from app.forms import PitcherForm
+from app.forms import EditPitcherForm
+
+from app.models import User
+from app.models import Pitch
+from app.models import Video
+from app.models import Outing
+from app.models import Season
+from app.models import Pitcher
+from app.models import Opponent
+
+from flask_login import login_user
+from flask_login import logout_user
+from flask_login import current_user
+from flask_login import login_required
+
+from werkzeug.urls import url_parse
 
 from app.forms import NewPitcherForm, EditPitcherForm
 from app.models import User, Outing, Pitch, Season, Pitcher, Opponent, Video
@@ -10,10 +32,8 @@ from app.stats import avgPitchVeloPitcher, veloOverCareer
 from app.stats import pitchStrikePercentageSeason
 from app.stats import pitchUsageSeason, seasonStatLine
 
-# Handle CSV uploads
 import csv
 import os
-# for file naming duplication problem
 import random
 import re
 
@@ -337,3 +357,22 @@ def pitcher_videos(id):
 
 
 
+@pitcher.route('/pitcher/<pitcher_id>/testing')
+@login_required
+def pitcher_testing(pitcher_id):
+
+    # get the user object associated with the username in the url
+    pitcher = Pitcher.query.filter_by(id=pitcher_id).first()
+
+    # either bug or user trying to access pitcher page that DNE
+    if not pitcher:
+        flash('URL does not exist')
+        return redirect(url_for('main.index'))
+
+    data = whiff_coords_by_pitch_pitcher(pitcher)
+
+    return render_template(
+        "/pitcher/pitcher_testing.html",
+        pitcher=pitcher,
+        data=data
+    )

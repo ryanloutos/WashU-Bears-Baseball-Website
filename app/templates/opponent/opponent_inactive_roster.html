@@ -25,8 +25,8 @@
                 {% for b in opponent.batters %}
                     {% if b.retired in ["1", 1] %}
                         <tr>
-                            <td><a href="{{ url_for('batter.batter_home', id=b.id) }}">{{ b.name() }}</a></td>
-                            <td>{{ b.initials }}</td>
+                            <td><a href="{{ url_for('batter.batter_home', id=b.id) }}">{{ b }}</a></td>
+                            <td>{{ b.abrev_name() }}</td>
                             <td>{{ b.bats }}</td>
                             <td>{{ b.grad_year }}</td>
                         </tr>

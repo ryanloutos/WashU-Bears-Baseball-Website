@@ -1,26 +1,73 @@
-from flask import Blueprint
-from flask import render_template, flash, redirect, url_for, request
-from flask_login import login_user, logout_user, current_user, login_required
-from werkzeug.urls import url_parse
-from app import db
-from app.forms import LoginForm, RegistrationForm, OutingForm, PitchForm
-from app.forms import NewOutingFromCSV
-from app.forms import OutingPitchForm, NewOutingFromCSVPitches, EditUserForm
-from app.forms import ChangePasswordForm, EditBatterForm, EditOpponentForm
-from app.forms import NewBatterForm
-from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat, Game, Video
-from app.stats import calcPitchPercentages, pitchUsageByCount, calcAverageVelo
-from app.stats import calcPitchStrikePercentage, calcPitchWhiffRate
-from app.stats import createPitchPercentagePieChart, velocityOverTimeLineChart
-from app.stats import pitchStrikePercentageBarChart, avgPitchVeloPitcher
-from app.stats import pitchUsageByCountLineCharts, pitchStrikePercentageSeason
-from app.stats import pitchUsageSeason, seasonStatLine, staffBasicStats
-from app.stats import staffPitchStrikePercentage
-from app.stats import outingPitchStatistics, outingTimeToPlate, veloOverTime
-from app.stats import batterSwingWhiffRatebyPitchbyCount, batter_summary_game_stats
-from app.stats import batterSwingWhiffRatebyPitchbyCount2, batter_ball_in_play_stats
-
 import re
+
+from app import db
+
+from flask import flash
+from flask import url_for
+from flask import request
+from flask import redirect
+from flask import Blueprint
+from flask import render_template
+
+from app.forms import LoginForm
+from app.forms import PitchForm
+from app.forms import BatterForm
+from app.forms import OutingForm
+from app.forms import SeasonForm
+from app.forms import EditUserForm
+from app.forms import OpponentForm
+from app.forms import NewBatterForm
+from app.forms import EditBatterForm
+from app.forms import OutingPitchForm
+from app.forms import EditOpponentForm
+from app.forms import NewOutingFromCSV
+from app.forms import RegistrationForm
+from app.forms import ChangePasswordForm
+from app.forms import NewOutingFromCSVPitches
+
+from app.models import Game
+from app.models import User
+from app.models import AtBat
+from app.models import Pitch
+from app.models import Video
+from app.models import Outing
+from app.models import Season
+from app.models import Batter
+from app.models import Opponent
+
+from flask_login import login_user
+from flask_login import logout_user
+from flask_login import current_user
+from flask_login import login_required
+
+from werkzeug.urls import url_parse
+
+from app.stats.stats import veloOverTime
+from app.stats.stats import seasonStatLine
+from app.stats.stats import calcAverageVelo
+from app.stats.stats import staffBasicStats
+from app.stats.stats import pitchUsageSeason
+from app.stats.stats import outingTimeToPlate
+from app.stats.stats import pitchUsageByCount
+from app.stats.stats import calcPitchWhiffRate
+from app.stats.stats import avgPitchVeloPitcher
+from app.stats.stats import calcPitchPercentages
+from app.stats.stats import outingPitchStatistics
+from app.stats.stats import velocityOverTimeLineChart
+from app.stats.stats import batter_summary_game_stats
+from app.stats.stats import calcPitchStrikePercentage
+from app.stats.stats import batter_ball_in_play_stats
+from app.stats.stats import staffPitchStrikePercentage
+from app.stats.stats import pitchUsageByCountLineCharts
+from app.stats.stats import pitchStrikePercentageSeason
+from app.stats.stats import createPitchPercentagePieChart
+from app.stats.stats import pitchStrikePercentageBarChart
+from app.stats.stats import batterSwingWhiffRatebyPitchbyCount
+from app.stats.stats import batterSwingWhiffRatebyPitchbyCount2
+
+from app.stats.scouting_stats import zone_division_stats_batter
+from app.stats.scouting_stats import whiff_coords_by_pitch_batter
+
 
 batter = Blueprint('batter', __name__)
 
@@ -63,7 +110,7 @@ def batter_home(id):
                 }
             })
     return render_template('opponent/batter/batter.html',
-                           title=batter.name,
+                           title=batter,
                            batter=batter,
                            game_stats=game_stats)
 
@@ -115,7 +162,7 @@ def batter_at_bat(batter_id, ab_num):
         at_bat=at_bat,
         pitcher=pitcher,
         batter=batter,
-        title=batter.name,
+        title=f"{batter} vs {at_bat.get_pitcher()}",
         pitches=pitches
     )
 
@@ -488,6 +535,9 @@ def batter_game_view(batter_id, game_id):
 def batter_videos(id):
 
     batter = Batter.query.filter_by(id=id).first()
+    if not batter:
+        flash("URL does not exist")
+        return redirect(url_for('main.index'))
     videos = Video.query.filter_by(batter_id=id).all()
     video_ids = []
     seasons = []
@@ -512,4 +562,41 @@ def batter_videos(id):
         seasons=seasons,
         video_objects=videos,
         videos=video_ids
+    )
+
+
+@batter.route("/batter/<batter_id>/scouting")
+@login_required
+def batter_scouting(batter_id):
+
+    batter = Batter.query.filter_by(id=batter_id).first()
+    if not batter:
+        flash("URL does not exist")
+        return redirect(url_for('main.index'))
+
+    zone_division_stats = zone_division_stats_batter(batter)
+    whiff_coords_by_pitch = whiff_coords_by_pitch_batter(batter)
+
+    return render_template(
+        'opponent/batter/batter_scouting.html',
+        batter=batter,
+        zone_division_stats=zone_division_stats,
+        whiff_coords_by_pitch=whiff_coords_by_pitch
+    )
+
+
+@batter.route("/batter/<batter_id>/tester")
+@login_required
+def batter_testing(batter_id):
+
+    batter = Batter.query.filter_by(id=batter_id).first()
+    if not batter:
+        flash("URL does not exist")
+        return redirect(url_for('main.index'))
+
+    data = whiff_coords_by_pitch_batter(batter)
+    return render_template(
+        "opponent/batter/batter_test.html",
+        batter=batter,
+        data=data
     )

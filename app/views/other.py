@@ -1,10 +1,20 @@
-from flask import Blueprint
-from flask import render_template, flash, redirect, url_for, request
-from flask_login import login_user, logout_user, current_user, login_required
-from werkzeug.urls import url_parse
 from app import db
 
-from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat
+from flask import flash
+from flask import url_for
+from flask import request
+from flask import redirect
+from flask import Blueprint
+from flask import render_template
+
+from app.models import Season
+
+from flask_login import login_user
+from flask_login import logout_user
+from flask_login import current_user
+from flask_login import login_required
+
+from werkzeug.urls import url_parse
 
 other = Blueprint("other", __name__)
 

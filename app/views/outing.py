@@ -25,7 +25,52 @@ import os
 # for file naming duplication problem
 import random
 import re
+import os
+import csv
+import json
 import math
+import random
+
+from app import db
+
+from flask import flash
+from flask import request
+from flask import url_for
+from flask import redirect
+from flask import Blueprint
+from flask import make_response
+from flask import render_template
+
+from datetime import datetime
+
+from app.forms import PitchForm
+from app.forms import OutingForm
+from app.forms import OutingPitchForm
+from app.forms import NewOutingFromCSV
+from app.forms import NewOutingFromCSVPitches
+
+from flask_login import login_user
+from flask_login import logout_user
+from flask_login import current_user
+from flask_login import login_required
+
+from werkzeug.urls import url_parse
+
+from app.models import Game
+from app.models import User
+from app.models import AtBat
+from app.models import Video
+from app.models import Pitch
+from app.models import Batter
+from app.models import Outing
+from app.models import Season
+from app.models import Pitcher
+from app.models import Opponent
+
+from app.stats.stats import veloOverTime
+from app.stats.stats import outingTimeToPlate
+from app.stats.stats import outingPitchStatistics
+
 
 outing = Blueprint("outing", __name__)
 
@@ -130,19 +175,6 @@ def outing_pbp(id):
         return redirect(url_for('main.index'))
 
     opponent = Opponent.query.filter_by(id=outing.opponent_id).first()
-
-    # THESE WERE PHASED OUT/MOVED TO DIFFERENT PAGES
-    # Get statistical data
-    # usages, usage_percentages = calcPitchPercentages(outing)
-    # pitch_avg_velo = calcAverageVelo(outing)
-    # pitch_strike_percentage = calcPitchStrikePercentage(outing)
-    # pitch_whiff = calcPitchWhiffRate(outing)
-
-    # THESE WERE PHASED OUT/MOVED TO DIFFERENT PAGES
-    # Get statistical graphics
-    # usage_percentages_pie_chart = createPitchPercentagePieChart(usage_percentages)
-    # velocity_over_time_line_chart = velocityOverTimeLineChart(outing)
-    # strike_percentage_bar_chart = pitchStrikePercentageBarChart(pitch_strike_percentage)
 
     # for pitch location graph
     pitches = []
