@@ -86,7 +86,7 @@ def staff_date_filter():
     else:
         include_matchups = False
 
-    pitchers = Pitcher.query.filter_by(retired=0).filter_by(opponent_id=1).order_by(Pitcher.name).all()
+    pitchers = Pitcher.query.filter_by(retired=0).filter_by(opponent_id=1).order_by(Pitcher.lastname).all()
 
     players, staff = staffSeasonStats(pitchers, first_game.date, second_game.date, include_matchups)
 
@@ -254,10 +254,8 @@ def pitch_tracker():
         time_to_plate = None
 
     loc_x = pitch_data["loc_x"]
-    print(loc_x)
     if loc_x in ["", "null", None]:
         loc_x = None
-    print(loc_x)
 
     loc_y = pitch_data["loc_y"]
     if loc_y in ["", "null", None]:
@@ -410,7 +408,6 @@ def outings_in_season(season_id, pitcher_id):
             "id": outing.id,
             "label": outing.__repr__()
         })
-
     return jsonify({
         "status": "success",
         "outings": outings_ret
@@ -518,16 +515,15 @@ def team_get_pitchers(team_id):
             })
 
         # get a team's pitchers
-        pitchers = Pitcher.query.filter_by(opponent_id=opponent.id).all()
+        pitchers = Pitcher.query.filter_by(opponent_id=opponent.id).order_by(Pitcher.lastname).all()
 
     pitchers_arr = []
     for pitcher in pitchers:
         if not pitcher.retired:
             pitchers_arr.append({
                 "id": pitcher.id,
-                "name": pitcher.name
+                "name": pitcher.new_video_selector_display()
             })
-
     return jsonify({
         "status": "success",
         "data": pitchers_arr
@@ -575,3 +571,34 @@ def hitters_goals():
             "obp": obp
         }
     })
+
+
+@api.route("/api/team/<team_id>/get_batters")
+@login_required
+def team_get_hitters(team_id):
+    # get opponent of passed id if they exist
+    if team_id in [0, "0"]:
+        batters = Batter.query.all()
+    else:
+        opponent = Opponent.query.filter_by(id=team_id).first()
+        if not opponent:
+            return jsonify({
+                "status": "Failure",
+                "error": "Invalid team id."
+            })
+
+        # get a team's pitchers
+        batters = Batter.query.filter_by(opponent_id=opponent.id).order_by(Batter.lastname).all()
+
+    batter_arr = []
+    for batter in batters:
+        if not batter.retired:
+            batter_arr.append({
+                "id": batter.id,
+                "name": batter.new_video_selector_display()
+            })
+    return jsonify({
+        "status": "success",
+        "data": batter_arr
+    })
+

@@ -1,76 +1,82 @@
 {% extends "base.html" %}
 
+{% block styles %}
+    {{ super() }}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/forms.css') }}">
+    <script>
+        var defaultTeamId = "1";
+        $(document).ready(function() {
+            $("#opponent").val(defaultTeamId);
+        });
+    </script>
+{% endblock %}
+
 {% block app_content %}
-    <div class="main">
-        <h1>New Batter</h1>
-        <form method="post" novalidate>
-            {{ form.hidden_tag() }} {# Preventing CSRF attacks #}
-            <p>
-                {{ form.opponent.label }}<br>
-                {{ form.opponent() }}
-                {% for error in form.opponent.errors %}
-                    <span style="color: red;">[{{ error }}]</span>
-                {% endfor %}
-            </p>
-            <p>
-                {{ form.firstname.label }}<br>
-                {{ form.firstname(size=32) }}
-                {% for error in form.firstname.errors %}
-                    <span style="color: red;">[{{ error }}]</span>
-                {% endfor %}
-            </p>
-            <p>
-                {{ form.lastname.label }}<br>
-                {{ form.lastname(size=32) }}
-                {% for error in form.lastname.errors %}
-                    <span style="color: red;">[{{ error }}]</span>
-                {% endfor %}
-            </p>
-            <p>
-                {{ form.initials.label }}<br>
-                {{ form.initials(size=32) }}
-                {% for error in form.initials.errors %}
-                    <span style="color: red;">[{{ error }}]</span>
-                {% endfor %}
-            </p>
-            <p>
-                {{ form.shortname.label }}<br>
-                {{ form.shortname(size=32) }}
-                {% for error in form.shortname.errors %}
-                    <span style="color: red;">[{{ error }}]</span>
-                {% endfor %}
-            </p>
-            <p>
-                {{ form.number.label }}<br>
-                {{ form.number(size=32, type='number') }}
-                {% for error in form.number.errors %}
-                    <span style="color: red;">[{{ error }}]</span>
-                {% endfor %}
-            </p>
-            <p>
-                {{ form.bats.label }}<br>
-                {{ form.bats() }}
-                {% for error in form.bats.errors %}
-                    <span style="color: red;">[{{ error }}]</span>
-                {% endfor %}
-            </p>
-            <p>
-                {{ form.grad_year.label }}<br>
-                {{ form.grad_year(size=32) }}
-                {% for error in form.grad_year.errors %}
-                    <span style="color: red;">[{{ error }}]</span>
-                {% endfor %}
-            </p>
-            <p>
-                {{ form.retired.label }}<br>
-                {{ form.retired(size=32) }}
-                {% for error in form.retired.errors %}
-                    <span style="color: red;">[{{ error }}]</span>
-                {% endfor %}
-            </p>
-            <p>
-                {{ form.submit() }}
-            </p>
-        </form>
+    <div class="no-sidenav">
+        <div class="form-container">
+            <h1 class="form-title">New Batter</h1>
+            <form method="post" novalidate>
+                {{ form.hidden_tag() }}
+                <p>
+                    {{ form.opponent.label }}<br>
+                    {{ form.opponent() }}
+                    {% for error in form.opponent.errors %}
+                        <span class="errors">[{{ error }}]</span>
+                    {% endfor %}
+                </p>
+                <p>
+                    {{ form.firstname.label }}<br>
+                    {{ form.firstname(size=32) }}
+                    {% for error in form.firstname.errors %}
+                        <span class="errors">[{{ error }}]</span>
+                    {% endfor %}
+                </p>
+                <p>
+                    {{ form.lastname.label }}<br>
+                    {{ form.lastname(size=32) }}
+                    {% for error in form.lastname.errors %}
+                        <span class="errors">[{{ error }}]</span>
+                    {% endfor %}
+                </p>
+                <p>
+                    {{ form.initials.label }}<br>
+                    {{ form.initials(size=8) }}
+                    {% for error in form.initials.errors %}
+                        <span class="errors">[{{ error }}]</span>
+                    {% endfor %}
+                </p>
+                <p>
+                    {{ form.number.label }}<br>
+                    {{ form.number(type="number") }}
+                    {% for error in form.number.errors %}
+                        <span class="errors">[{{ error }}]</span>
+                    {% endfor %}
+                </p>
+                <p>
+                    {{ form.bats.label }}<br>
+                    {{ form.bats() }}
+                    {% for error in form.bats.errors %}
+                        <span class="errors">[{{ error }}]</span>
+                    {% endfor %}
+                </p>
+                <p>
+                    {{ form.grad_year.label }}<br>
+                    {{ form.grad_year(size=32, type="number") }}
+                    {% for error in form.grad_year.errors %}
+                        <span class="errors">[{{ error }}]</span>
+                    {% endfor %}
+                </p>
+                <p>
+                    {{ form.retired.label }}<br>
+                    {{ form.retired(size=32) }}
+                    {% for error in form.retired.errors %}
+                        <span class="errors">[{{ error }}]</span>
+                    {% endfor %}
+                </p>
+                <p>
+                    {{ form.submit() }}
+                </p>
+            </form>
+        </div>
     </div>
 {% endblock %}

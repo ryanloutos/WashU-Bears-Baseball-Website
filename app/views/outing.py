@@ -1,3 +1,29 @@
+from flask import Blueprint, make_response
+from flask import render_template, flash, redirect, url_for, request
+from flask_login import login_user, logout_user, current_user, login_required
+from werkzeug.urls import url_parse
+from app import db
+from app.forms import LoginForm, RegistrationForm, OutingForm, PitchForm
+from app.forms import NewOutingFromCSV
+from app.forms import OutingPitchForm, NewOutingFromCSVPitches, EditUserForm
+from app.forms import ChangePasswordForm, EditBatterForm, EditOpponentForm
+from app.forms import NewBatterForm
+from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat, Pitcher, Game, Video
+from app.stats import calcPitchPercentages, pitchUsageByCount, calcAverageVelo
+from app.stats import calcPitchStrikePercentage, calcPitchWhiffRate
+from app.stats import createPitchPercentagePieChart, velocityOverTimeLineChart
+from app.stats import pitchStrikePercentageBarChart, avgPitchVeloPitcher
+from app.stats import pitchUsageByCountLineCharts, pitchStrikePercentageSeason
+from app.stats import pitchUsageSeason, seasonStatLine, staffBasicStats
+from app.stats import staffPitchStrikePercentage
+from app.stats import outingPitchStatistics, outingTimeToPlate, veloOverTime
+from datetime import datetime
+import json
+# Handle CSV uploads
+import csv
+import os
+# for file naming duplication problem
+import random
 import re
 import os
 import csv
@@ -455,7 +481,10 @@ def edit_outing_pitches(outing_id):
 
     pitcher = Pitcher.query.filter_by(id=outing.pitcher_id).first_or_404()
     opponent = Opponent.query.filter_by(id=outing.opponent_id).first_or_404()
-    season = Season.query.filter_by(id=outing.season_id).first_or_404()
+    if outing.season_id not in [None, ""]:
+        season = Season.query.filter_by(id=outing.season_id).first_or_404()
+    else:
+        season = None
 
     # only admins can go back and edit outing data
     if not current_user.admin:
@@ -482,10 +511,15 @@ def edit_outing_pitches(outing_id):
         db.session.commit()
 
         # sets up count for first pitch of outing
-        if season.semester == 'Fall':
-            balls = 1
-            strikes = 1
-            count = f'{balls}-{strikes}'
+        if season is not None:
+            if season.semester == 'Fall':
+                balls = 1
+                strikes = 1
+                count = f'{balls}-{strikes}'
+            else:
+                balls = 0
+                strikes = 0
+                count = f'{balls}-{strikes}'
         else:
             balls = 0
             strikes = 0
@@ -605,7 +639,10 @@ def edit_outing(outing_id):
         return redirect(url_for('main.index'))
 
     opponent = Opponent.query.filter_by(id=outing.opponent_id).first_or_404()
-    this_season = Season.query.filter_by(id=outing.season_id).first_or_404()
+    if outing.season_id in [None, ""]:
+        this_season = None
+    else:
+        this_season = Season.query.filter_by(id=outing.season_id).first_or_404()
     all_seasons = Season.query.all()
     this_pitcher = Pitcher.query.filter_by(id=outing.pitcher_id).first_or_404()
     all_pitchers = Pitcher.query.all()
@@ -1260,12 +1297,16 @@ def validate_CSV(file_loc):
 
 def updateCount(balls, strikes, pitch_result, ab_result, season):
     if ab_result is not '':
-        if (season.semester == 'Spring' and season.year == "2020"):
-            balls = 0
-            strikes = 0
-        elif season.semester == 'Fall':
-            balls = 1
-            strikes = 1
+        if season is not None:
+            if (season.semester == 'Spring' and season.year == "2020"):
+                balls = 0
+                strikes = 0
+            elif season.semester == 'Fall':
+                balls = 1
+                strikes = 1
+            else:
+                balls = 0
+                strikes = 0
         else:
             balls = 0
             strikes = 0

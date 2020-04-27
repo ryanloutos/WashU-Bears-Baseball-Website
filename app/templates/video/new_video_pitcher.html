@@ -2,103 +2,69 @@
 
 {% block styles %}
     {{ super() }}
-    <script>
-    document.addEventListener("DOMContentLoaded", function(){
-        let season_selector = document.getElementById("season_selector");
-        let pitcher_selector = document.getElementById("pitcher_selector")
-        let outing_selector = document.getElementById("outing_selector");
-        season_selector.value = {{ current_season.id }};
-        
-        getOutings();
-
-        pitcher_selector.addEventListener("change", function() {
-            getOutings();
-        });
-
-        season_selector.addEventListener("change", function() {
-            getOutings();
-        });
-
-    });
-
-    function getOutings() {
-        season = season_selector.value;
-        pitcher = pitcher_selector.value;
-
-        fetch(
-            "/api/outings/season/" + season + "/pitcher/" + pitcher,
-        ).then(res => res.json())
-        .then(function(response){
-            // check to make sure that server stuff happened ok
-            if(response.status == "failure"){
-                console.log("Request ended in failure");
-                console.log("Error: " + response.error);
-            } else {
-                // create element for each item in response
-                let options = "<option value=''> </option>";
-                for(let outing of response.outings){
-                    // create html element string
-                    options += "<option value='" + outing.id +"'>" + outing.label + "</option>";
-                }
-                // replace current options html with our options html
-                outing_selector.innerHTML = options;
-            }
-        });
-    }
-    
-    </script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/forms.css') }}">
 {% endblock %}
 
 {% block app_content %}
-    <div class="main">
-        <h1>Post Video</h1>
-        <form method="post">
-            {{ form.hidden_tag() }}
-            <p>
-                {{ form.title.label }}<br>
-                {{ form.title() }}<br>
-                {% for error in form.title.errors %}
-                <span style="color: red;">[{{ error }}]</span>
-                {% endfor %}
-            </p>
-            <p>
-                {{ form.date.label }}<br>
-                {{ form.date(class='datepicker') }}<br>
-                If in safari, enter date as YYYY-MM-DD
-                {% for error in form.date.errors %}
-                <span style="color: red;">[{{ error }}]</span>
-                {% endfor %}
-            </p>
-            <p>
-                {{ form.season.label }}<br>
-                {{ form.season(id="season_selector") }}<br>
-                {% for error in form.season.errors %}
-                <span style="color: red;">[{{ error }}]</span>
-                {% endfor %}
-            </p>
-            <p>
-                {{ form.pitcher.label }}<br>
-                {{ form.pitcher(id="pitcher_selector") }}<br>
-                {% for error in form.pitcher.errors %}
-                    <span style="color: red;">[{{ error }}]</span>
-                {% endfor %}
-            </p>
-            <p>
-                {{ form.outing.label }}<br>
-                {{ form.outing(id="outing_selector") }}<br>
-                {% for error in form.outing.errors %}
-                    <span style="color: red;">[{{ error }}]</span>
-                {% endfor %}
-            </p>
-            <p>
-                {{ form.link.label }}<br>
-                {{ form.link(size=64) }}<br>
-                {% for error in form.link.errors %}
-                <span style="color: red;">[{{ error }}]</span>
-                {% endfor %}
-            </p>
-            <br>
-            <p>{{ form.submit() }}</p>
-        </form>
+    <div class="no-sidenav">
+        <div class="form-container">
+            <h1 class="form-title">New Video Pitcher</h1>
+            <form method="post">
+                {{ form.hidden_tag() }}
+                <p>
+                    {{ form.opponent.label }}<br>
+                    {{ form.opponent() }}<br>
+                    {% for error in form.opponent.errors %}
+                        <span class="errors">[{{ error }}]</span>
+                    {% endfor %}
+                </p>
+                <p>
+                    {{ form.pitcher.label }}<br>
+                    {{ form.pitcher() }}<br>
+                    {% for error in form.pitcher.errors %}
+                        <span class="errors">[{{ error }}]</span>
+                    {% endfor %}
+                </p>
+                <p>
+                    {{ form.title.label }}<br>
+                    {{ form.title() }}<br>
+                    {% for error in form.title.errors %}
+                        <span class="errors">[{{ error }}]</span>
+                    {% endfor %}
+                </p>
+                <p>
+                    {{ form.date.label }}<br>
+                    {{ form.date(class="datepicker") }}<br>
+                    If in safari, enter date as YYYY-MM-DD
+                    {% for error in form.date.errors %}
+                        <span class="errors">[{{ error }}]</span>
+                    {% endfor %}
+                </p>
+                <p>
+                    {{ form.season.label }}<br>
+                    {{ form.season() }}<br>
+                    {% for error in form.season.errors %}
+                        <span class="errors">[{{ error }}]</span>
+                    {% endfor %}
+                </p>
+                <p>
+                    {{ form.outing.label }}<br>
+                    {{ form.outing() }}<br>
+                    {% for error in form.outing.errors %}
+                        <span class="errors">[{{ error }}]</span>
+                    {% endfor %}
+                </p>
+                <p>
+                    {{ form.link.label }}<br>
+                    {{ form.link() }}<br>
+                    {% for error in form.link.errors %}
+                        <span class="errors">[{{ error }}]</span>
+                    {% endfor %}
+                </p>
+                <br>
+                <p>{{ form.submit() }}</p>
+            </form>
+        </div>
     </div>
+    <script>{{ js|safe }}</script>
 {% endblock %}

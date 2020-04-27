@@ -55,7 +55,7 @@
                 let options = "";
                 for(let pitcher of response.data){
                     // create html element string
-                    options += "<option value='" + pitcher.id +"'>" + pitcher.name + "</option>";
+                    options += "<option value='" + pitcher.id +"'>" + pitcher + "</option>";
                 }
 
                 pitcher_selector.innerHTML = options;

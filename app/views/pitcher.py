@@ -26,13 +26,11 @@ from flask_login import login_required
 
 from werkzeug.urls import url_parse
 
-from app.stats.stats import avgPitchVeloPitcher
-from app.stats.stats import veloOverCareer
-from app.stats.stats import pitchStrikePercentageSeason
-from app.stats.stats import seasonStatLine
-from app.stats.stats import pitchUsageSeason
-
-from app.stats.scouting_stats import whiff_coords_by_pitch_pitcher
+from app.forms import NewPitcherForm, EditPitcherForm
+from app.models import User, Outing, Pitch, Season, Pitcher, Opponent, Video
+from app.stats import avgPitchVeloPitcher, veloOverCareer
+from app.stats import pitchStrikePercentageSeason
+from app.stats import pitchUsageSeason, seasonStatLine
 
 import csv
 import os
@@ -114,25 +112,16 @@ def new_pitcher():
         flash("Admin feature only")
         return redirect(url_for('index'))
 
-    form = PitcherForm()
-
-    # set the opponent choices for the form
-    opponents = Opponent.query.all()
-    opponent_choices = []
-    for o in opponents:
-        opponent_choices.append((str(o.id),o))
-    form.opponent.choices = opponent_choices
+    form = NewPitcherForm()
 
     if form.validate_on_submit():
-
         pitcher = Pitcher(
-            name=form.name.data,
             firstname=form.firstname.data,
             lastname=form.lastname.data,
             number=form.number.data,
             throws=form.throws.data,
             grad_year=form.grad_year.data,
-            opponent_id=form.opponent.data,
+            opponent_id=form.opponent.data.id,
             retired=form.retired.data
         )
 
@@ -168,17 +157,19 @@ def edit_pitcher(id):
 
     if form.validate_on_submit():
 
-        file_name = pitcher.id
-        file_loc = os.path.join(os.path.dirname(os.path.realpath(__file__)),
-                                "..",
-                                "static",
-                                "images",
-                                "pitcher_photos",
-                                f"{file_name}.png")
-        
-        form.file.data.save(file_loc)
+        if form.photo.data:
+            file_name = pitcher.id
+            file_loc = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                                    "..",
+                                    "static",
+                                    "images",
+                                    "pitcher_photos",
+                                    f"{file_name}.png")
+            
+            form.photo.data.save(file_loc)
 
-        pitcher.name = form.name.data
+        pitcher.firstname = form.firstname.data
+        pitcher.lastname = form.lastname.data
         pitcher.throws = form.throws.data
         pitcher.grad_year = form.grad_year.data
         pitcher.opponent_id = form.opponent.data
@@ -363,6 +354,7 @@ def pitcher_videos(id):
         video_objects=videos,
         videos=video_ids
     )
+
 
 
 @pitcher.route('/pitcher/<pitcher_id>/testing')

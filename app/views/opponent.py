@@ -2,6 +2,7 @@ import os
 import csv
 import random
 
+import re
 from app import db
 
 from flask import flash
@@ -162,96 +163,21 @@ def opponent_roster(id):
 
 
 # ***************-NEW OPPONENT-*************** #
-@opponent.route('/new_opponent', methods=['GET', 'POST'])
+@opponent.route("/new_opponent", methods=["GET", "POST"])
 @login_required
 def new_opponent():
-    '''
-    NEW OPPONENT:
-    Can create a new opponent for outings to be associated
-    with
-
-    PARAM:
-        -None
-
-    RETURN:
-        -new_opponent.html and redirects to index page
-            once a new opponent was successfully created
-    '''
     # if user is not an admin, they can't create a new opponent
     if not current_user.admin:
-        flash('You are not an admin and cannot create a opponent')
-        return redirect(url_for('main.index'))
+        flash("You are not an admin and cannot create a opponent")
+        return redirect(url_for("main.index"))
 
-    # when the Create Opponent button is pressed...
-    form = OpponentForm()
+    form = NewOpponentForm()
     if form.validate_on_submit():
 
-        # create Opponent object from form data
         opponent = Opponent(name=form.name.data)
 
-        # send Opponent object to database
         db.session.add(opponent)
         db.session.commit()
-
-        # create the batter objects from the form and send to database
-        for subform in form.batter:
-
-            # create Batter object
-            batter = Batter(name=subform.fullname.data,
-                            short_name=subform.nickname.data,
-                            bats=subform.bats.data,
-                            grad_year=subform.grad_year.data,
-                            opponent_id=opponent.id)
-
-            # add before commit
-            db.session.add(batter)
-
-        # commit the batters to database
-        db.session.commit()
-
-        # redirect back to login page
-        flash('Congratulations, you just made a new opponent!')
-        return redirect(url_for('main.index'))
-
-    return render_template('opponent/new_opponent.html',
-                           title='New Opponent',
-                           form=form)
-
-
-# ***************-EDIT OPPONENT-*************** #
-@opponent.route('/edit_opponent/<id>', methods=['GET', 'POST'])
-@login_required
-def edit_opponent(id):
-    '''
-    EDIT OPPONENT:
-    Can edit an opponent for outings to be associated
-    with
-
-    PARAM:
-        -id: The outing id (primary key) that wants to be
-            edited
-
-    RETURN:
-        -edit_opponent.html and redirects to opponent page
-            once an opponent was successfully edited
-    '''
-
-    # if user is not an admin, they can't create a new opponent
-    if not current_user.admin:
-        flash('You are not an admin and cannot edit an opponent')
-        return redirect(url_for('main.index'))
-
-    # get opponent object
-    opponent = Opponent.query.filter_by(id=id).first()
-
-    # either bug or admin trying to edit opponent that doesn't exist
-    if not opponent:
-        flash('URL does not exist')
-        return redirect(url_for('main.index'))
-
-    # once 'create opponent' button is pressed
-    form = EditOpponentForm()
-    if form.validate_on_submit():
 
         file_name = opponent.id
         file_loc = os.path.join(os.path.dirname(os.path.realpath(__file__)),
@@ -260,19 +186,85 @@ def edit_opponent(id):
                                 "images",
                                 "team_logos",
                                 f"{file_name}.png")
-        
-        form.file.data.save(file_loc)
+        form.logo.data.save(file_loc)
 
-        # get the updated Opponent name and commit to database
+        for subform in form.batters:
+            if (subform.firstname.data not in ["", None] and
+                subform.lastname.data not in ["", None] and
+                subform.number.data not in ["", None]):
+
+                initials = getInitialsFromNames(subform.firstname.data, subform.lastname.data)
+
+                batter = Batter(opponent_id=opponent.id,
+                                firstname=subform.firstname.data,
+                                lastname=subform.lastname.data,
+                                number=subform.number.data,
+                                initials=initials,
+                                bats=subform.bats.data,
+                                grad_year=subform.grad_year.data,
+                                notes=subform.notes.data,
+                                retired=subform.retired.data)
+                db.session.add(batter)
+
+        for subform in form.pitchers:
+            if (subform.firstname.data not in ["", None] and
+                subform.lastname.data not in ["", None] and
+                subform.number.data not in ["", None]):
+
+                pitcher = Pitcher(opponent_id=opponent.id,
+                                  firstname=subform.firstname.data,
+                                  lastname=subform.lastname.data,
+                                  number=subform.number.data,
+                                  throws=subform.throws.data,
+                                  grad_year=subform.grad_year.data,
+                                  notes=subform.notes.data,
+                                  retired=subform.retired.data)
+                db.session.add(pitcher)
+
+        db.session.commit()
+
+        flash("Congratulations, you just made a new opponent!")
+        return redirect(url_for("main.index"))
+
+    return render_template("opponent/new_opponent.html",
+                           title="New Opponent",
+                           form=form)
+
+
+# ***************-EDIT OPPONENT-*************** #
+@opponent.route("/edit_opponent/<id>", methods=["GET", "POST"])
+@login_required
+def edit_opponent(id):
+    # if user is not an admin, they cant edit an opponent
+    if not current_user.admin:
+        flash("You are not an admin and cannot edit an opponent")
+        return redirect(url_for("main.index"))
+
+    opponent = Opponent.query.filter_by(id=id).first()
+    if not opponent:
+        flash("URL does not exist")
+        return redirect(url_for("main.index"))
+
+    form = EditOpponentForm()
+    if form.validate_on_submit():
+        if form.logo.data is not None:
+            file_name = opponent.id
+            file_loc = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                                    "..",
+                                    "static",
+                                    "images",
+                                    "team_logos",
+                                    f"{file_name}.png")
+            form.logo.data.save(file_loc)
+
         opponent.name = form.name.data
         db.session.commit()
 
-        # redirect back to opponent page
-        flash('Congratulations, you just edited the opponent!')
-        return redirect(url_for('opponent.opponent_home', id=opponent.id))
+        flash("Changes made!")
+        return redirect(url_for("opponent.opponent_home", id=opponent.id))
 
-    return render_template('opponent/edit_opponent.html',
-                           title='Edit Opponent',
+    return render_template("opponent/edit_opponent.html",
+                           title="Edit Opponent",
                            opponent=opponent,
                            form=form)
 
@@ -295,115 +287,17 @@ def opponent_inactive_hitters(id):
     )
 
 
+
 # ***************-HELPFUL FUNCTIONS-*************** #
-def getAvailablePitchers():
+def getInitialsFromNames(firstname, lastname):
     '''
-    Gets all of the string names you are allowed to create outings for
-
-    PARAM:
-        -None
-
-    RETURN:
-        - [array] -- [strings of pitchers names]
+    PARAMS
+        - {string} firstname
+        - {string} lastname
+    RETURNS
+        - {string} first letter of firstname concatenated
+            with the first letter of lastname
     '''
-
-    # gets all the User objects that are players on the team
-    pitchers_objects = Pitcher.query.all()
-
-    # set the available choices that someone can create an outing for
-    available_pitchers = []
-
-    if current_user.admin:
-        for p in pitchers_objects:
-            available_pitchers.append((f"{p.id}", p))
-
-    return available_pitchers
-
-
-def getAvailableBatters(outing_id):
-    outing = Outing.query.filter_by(id=outing_id).first_or_404()
-    if not outing:
-        flash("URL does not exist")
-        return redirect(url_for('main.index'))
-    opponent = Opponent.query.filter_by(id=outing.opponent_id).first_or_404()
-
-    batters_tuples = []
-    for batter in opponent.batters:
-        batters_tuples.append((batter.id, batter))
-
-    return batters_tuples
-
-
-def validate_CSV(file_loc):
-    '''
-    Validates an uploaded outing csv file to see if we can create pitches
-    from it.
-
-    PARAM:
-        -file_loc {string} -- string location of the file to be validated
-
-    RETURN:
-        [boolean] -- boolean for if the file is determined valid
-    '''
-
-    # fields required to construct a pitch from Pitch class in modals. We need
-    # to check if all of these exist.
-    pitch_attributes = [
-        "velocity", "lead_runner", "time_to_plate", "pitch_type",
-        "pitch_result", "hit_spot", "ab_result", "traj", "fielder",
-        "inning"]
-    with open(file_loc) as f:
-
-        csv_file = csv.DictReader(f)
-        invalid_pitch_found = False  # State var to see if pitches are valid
-
-        for pitch_num, row in enumerate(csv_file):
-            keys = row.keys()
-
-            # Check if the our necessary keys is contained within the csv
-            # keys provided.
-            if set(pitch_attributes).issubset(set(keys)):
-                print("You have the necessary keys")
-
-            else:
-                invalid_pitch_found = True
-
-                # Debug statement. Eventually move to user facing so they can
-                # adjust input.
-                for attr in pitch_attributes:
-                    if attr not in keys:
-                        print("Pitch num " + pitch_num + " missing: " + attr)
-                break
-
-        if invalid_pitch_found:
-            return False
-        else:
-            return True
-
-
-def updateCount(balls, strikes, pitch_result, ab_result, season):
-    if ab_result is not '':
-        if (season.semester == 'Fall'):
-            balls = 1
-            strikes = 1
-        else:
-            balls = 0
-            strikes = 0
-    else:
-        if pitch_result is 'B':
-            balls += 1
-        else:
-            if strikes is not 2:
-                strikes += 1
-    count = f'{balls}-{strikes}'
-    return (balls, strikes, count)
-
-
-def getCurrentSeason():
-    current_season = Season.query.filter_by(current_season=True).first()
-    return current_season
-
-
-def getOldSeasons():
-    old_seasons = Season.query.filter_by(current_season=False).order_by(Season.year).all()
-    return old_seasons
+    first_initial = re.findall("^\w", firstname)
+    last_initial = re.findall("^\w", lastname)
+    return f"{first_initial[0]}{last_initial[0]}"

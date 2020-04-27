@@ -27,7 +27,6 @@ class User(UserMixin, db.Model):
 
 class Pitcher(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64), index=True)
     firstname = db.Column(db.String(64), index=True)
     lastname = db.Column(db.String(64), index=True)
     number = db.Column(db.Integer, index=True)
@@ -58,6 +57,9 @@ class Pitcher(db.Model):
             return f"{self.firstname} {self.lastname} #{self.number}"
         else:
             return f"{self.firstname} {self.lastname}"
+
+    def new_video_selector_display(self):
+        return f"{self.firstname} {self.lastname}" 
 
 
 class Game(db.Model):
@@ -169,7 +171,7 @@ class Pitch(db.Model):
 class Season(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     semester = db.Column(db.String(8), index=True)
-    year = db.Column(db.String(8), index=True)
+    year = db.Column(db.Integer, index=True)
     current_season = db.Column(db.Boolean, index=True)
     outings = db.relationship('Outing', backref='season', lazy='dynamic')
     videos = db.relationship('Video', backref='season', lazy='dynamic')
@@ -188,17 +190,13 @@ class Opponent(db.Model):
     games = db.relationship('Game', backref='opponent', lazy='dynamic')
 
     def __repr__(self):
-        if self.name == "Matchups":
-            return "WashU Bears"
-        else:
-            return self.name
+        return self.name
 
 
 class Batter(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     firstname = db.Column(db.String(64))
     lastname = db.Column(db.String(64))
-    short_name = db.Column(db.String(8), index=True)
     number = db.Column(db.Integer, index=True)
     initials = db.Column(db.String(8), index=True)
     notes = db.Column(db.String(1024), index=True)
@@ -207,7 +205,8 @@ class Batter(db.Model):
     opponent_id = db.Column(
         db.Integer,
         db.ForeignKey('opponent.id'),
-        index=True)
+        index=True
+    )
     retired = db.Column(db.Boolean, index=True)
     at_bats = db.relationship('AtBat', backref='batter', lazy='dynamic')
 
@@ -246,6 +245,9 @@ class Batter(db.Model):
         for ab in self.at_bats:
             count += 1
         return count
+    
+    def new_video_selector_display(self):
+        return f"{self.firstname} {self.lastname}" 
 
 
 class AtBat(db.Model):

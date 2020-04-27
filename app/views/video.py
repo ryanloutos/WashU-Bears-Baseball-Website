@@ -4,7 +4,7 @@ from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.urls import url_parse
 from app import db
 from app.forms import LoginForm, RegistrationForm, OutingForm, PitchForm
-from app.forms import NewOutingFromCSV, SeasonForm, OpponentForm, BatterForm
+from app.forms import NewOutingFromCSV
 from app.forms import OutingPitchForm, NewOutingFromCSVPitches, EditUserForm
 from app.forms import ChangePasswordForm, EditBatterForm, EditOpponentForm
 from app.forms import NewBatterForm, NewGameForm, PitcherNewVideoForm, BatterNewVideoForm
@@ -41,14 +41,12 @@ def new_video_pitcher():
         else:
             outing_id = form.outing.data.id
 
-        video = Video(
-            title=form.title.data,
-            date=form.date.data,
-            season_id=form.season.data.id,
-            outing_id=outing_id,
-            pitcher_id=form.pitcher.data.id,
-            link=form.link.data
-        )
+        video = Video(title=form.title.data,
+                      date=form.date.data,
+                      season_id=form.season.data.id,
+                      outing_id=outing_id,
+                      pitcher_id=form.pitcher.data.id,
+                      link=form.link.data)
 
         db.session.add(video)
         db.session.commit()
@@ -56,11 +54,14 @@ def new_video_pitcher():
         flash("Video Posted!")
         return redirect(url_for("main.index")) 
     
+    js = render_template("video/new_video_pitcher.js", current_season=current_season)
+
     return render_template(
         "video/new_video_pitcher.html",
         title="Post Video",
         form=form,
-        current_season=current_season
+        current_season=current_season,
+        js=js
     )
 
 # ***************-NEW VIDEO BATTER-*************** #
@@ -92,10 +93,13 @@ def new_video_batter():
         flash("Video Posted!")
         return redirect(url_for("main.index")) 
     
+    js = render_template("video/new_video_batter.js", current_season=current_season)
+
     return render_template(
         "video/new_video_batter.html",
         title="Post Video",
         form=form,
-        current_season=current_season
+        current_season=current_season,
+        js=js
     )
     
