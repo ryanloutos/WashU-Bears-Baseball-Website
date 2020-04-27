@@ -172,7 +172,7 @@ def getOpponents():
     return Opponent.query.order_by(Opponent.name).all()
 
 def getSeasons():
-    return Season.query.order_by(Season.semester.desc()).order_by(Season.year.desc()).all()
+    return Season.query.order_by(Season.year.desc()).order_by(Season.semester.desc()).all()
 
 class PitcherNewVideoForm(FlaskForm):
     opponent = QuerySelectField("Team",
@@ -194,12 +194,10 @@ class PitcherNewVideoForm(FlaskForm):
 class BatterNewVideoForm(FlaskForm):
     title = StringField("Title", validators=[Optional()])
     date = DateField("Date", validators=[DataRequired()], format="%Y-%m-%d")
-    season = QuerySelectField(query_factory=lambda: Season.query,
-                              get_pk=lambda s: s.id,
-                              get_label=lambda s: s,
-                              allow_blank=True)
+    opponent = QuerySelectField("Team", query_factory=getOpponents)
+    season = QuerySelectField("Season", query_factory=getSeasons)
     batter = SelectField("Batter", validators=[Optional()])
-    link = StringField("Link", validators=[Optional()])
+    link = StringField("Link", validators=[DataRequired()])
     submit = SubmitField("Post Video")
 
 

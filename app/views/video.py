@@ -93,10 +93,13 @@ def new_video_batter():
         flash("Video Posted!")
         return redirect(url_for("main.index")) 
     
+    js = render_template("video/new_video_batter.js", current_season=current_season)
+
     return render_template(
         "video/new_video_batter.html",
         title="Post Video",
         form=form,
-        current_season=current_season
+        current_season=current_season,
+        js=js
     )
     

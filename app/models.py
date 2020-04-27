@@ -236,6 +236,9 @@ class Batter(db.Model):
         for ab in self.at_bats:
             count += 1
         return count
+    
+    def new_video_selector_display(self):
+        return f"{self.firstname} {self.lastname}" 
 
 
 class AtBat(db.Model):

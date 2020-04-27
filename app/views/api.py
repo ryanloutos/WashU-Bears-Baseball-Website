@@ -406,7 +406,6 @@ def outings_in_season(season_id, pitcher_id):
             "id": outing.id,
             "label": outing.__repr__()
         })
-    print(outings_ret)
     return jsonify({
         "status": "success",
         "outings": outings_ret
@@ -570,3 +569,34 @@ def hitters_goals():
             "obp": obp
         }
     })
+
+
+@api.route("/api/team/<team_id>/get_batters")
+@login_required
+def team_get_hitters(team_id):
+    # get opponent of passed id if they exist
+    if team_id in [0, "0"]:
+        batters = Batter.query.all()
+    else:
+        opponent = Opponent.query.filter_by(id=team_id).first()
+        if not opponent:
+            return jsonify({
+                "status": "Failure",
+                "error": "Invalid team id."
+            })
+
+        # get a team's pitchers
+        batters = Batter.query.filter_by(opponent_id=opponent.id).order_by(Batter.lastname).all()
+
+    batter_arr = []
+    for batter in batters:
+        if not batter.retired:
+            batter_arr.append({
+                "id": batter.id,
+                "name": batter.new_video_selector_display()
+            })
+    return jsonify({
+        "status": "success",
+        "data": batter_arr
+    })
+
