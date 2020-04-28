@@ -523,7 +523,7 @@ def team_get_pitchers(team_id):
         if not pitcher.retired:
             pitchers_arr.append({
                 "id": pitcher.id,
-                "name": pitcher.new_video_selector_display()
+                "name": pitcher.name_and_number()
             })
     return jsonify({
         "status": "success",

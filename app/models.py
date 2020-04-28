@@ -59,7 +59,7 @@ class Pitcher(db.Model):
             return f"{self.firstname} {self.lastname}"
 
     def new_video_selector_display(self):
-        return f"{self.firstname} {self.lastname}" 
+        return f"{self.firstname} {self.lastname}"
 
 
 class Game(db.Model):
