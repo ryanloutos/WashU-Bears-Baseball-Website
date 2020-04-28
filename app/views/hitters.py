@@ -297,6 +297,7 @@ def hitter_at_bat(batter_id, ab_num):
         return redirect(url_for('main.index'))
 
     pitches = []
+    ab_res = 0
     for p in at_bat.pitches:
         pitches.append({
             "pitch_num": p.pitch_num,
@@ -304,6 +305,13 @@ def hitter_at_bat(batter_id, ab_num):
             "x": p.loc_x,
             "y": p.loc_y
         })
+        if p.pitch_result in ["IP"]:
+            ab_res = {
+                "x": p.spray_x,
+                "y": p.spray_y,
+                "traj": p.traj,
+                "hard_hit": p.hit_hard,
+            }
 
     pitcher = at_bat.get_pitcher()
 
@@ -313,7 +321,8 @@ def hitter_at_bat(batter_id, ab_num):
         pitcher=pitcher,
         batter=batter,
         title=batter,
-        pitches=pitches
+        pitches=pitches,
+        ab_res=ab_res
     )
 
 
@@ -464,6 +473,7 @@ def hitter_stats(batter_id):
         batter=batter,
         seasons=seasons
         )
+
 
 @hitter.route('/hitter/<id>/edit', methods=['GET', 'POST'])
 @login_required

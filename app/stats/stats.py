@@ -27,7 +27,7 @@ def getSeasons(pitcher):
 
     PARAM:
         - pitcher {object}
-    
+
     RETURN:
         - seasons {array} which holds the season objects
     '''
@@ -40,7 +40,7 @@ def getSeasons(pitcher):
 
 
 # ***************-STAFF PAGES-*************** # 
-def staffSeasonGoals(pitchers, includeMatchups=True): 
+def staffSeasonGoals(pitchers, includeMatchups=True):
     # weighted strike percentage
     strikes = 0
     total_pitches = 0
@@ -908,35 +908,6 @@ def pitchUsageByCountLineCharts(data):
     return line_chart
 
 
-# UTILITY STAT FUNCTIONS-------------------------------------------------------
-def truncate(n, decimals=2):
-    """Truncates the passed value to decimal places.
-
-    Arguments:
-        n {number} -- Number to be truncated
-
-    Keyword Arguments:
-        decimals {int} -- Number of decimal places to truncate to(default: {2})
-
-    Returns:
-        [int] -- truncated verison of passed value
-    """
-    multiplier = 10 ** decimals
-    return int(n * multiplier) / multiplier
-
-
-def percentage(n, decimals=0):
-    '''
-    Gets the percentage rounded to a specific decimal place
-    PARAM:
-        - n - is a the decimal number 0<=n<=1
-        - decimals - is the place you want to round to
-    '''
-    multiplier = 10 ** decimals
-    percentage = 100 * n
-    return int(math.floor(percentage*multiplier + 0.5) / multiplier)
-
-
 def getSeasons(pitcher):
     '''
     gets all of the seasons the pitcher has thrown in
@@ -953,6 +924,7 @@ def getSeasons(pitcher):
         if outing.season not in seasons:
             seasons.append(outing.season)
     return seasons
+
 
 # PITCHER ADVANCED STATISTICS -------------------------------------------------
 def avgPitchVeloPitcher(pitcher):
