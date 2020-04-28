@@ -169,7 +169,7 @@ class field {
         
         //add hard hit star if needed
         if (!pitch_tracker) {
-            if(hard_hit != false){
+            if(hard_hit){
                 this.field_svg.append("path")
                     .attr("d", star)
                     .attr("transform", "translate("+this.xScalef(x)+","+this.yScalef(y)+")")

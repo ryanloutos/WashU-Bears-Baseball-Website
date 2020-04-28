@@ -146,6 +146,7 @@ def batter_at_bat(batter_id, ab_num):
         return redirect(url_for('main.index'))
 
     pitches = []
+    ab_res = 0
     for p in at_bat.pitches:
         pitches.append({
             "pitch_num": p.pitch_num,
@@ -153,6 +154,13 @@ def batter_at_bat(batter_id, ab_num):
             "x": p.loc_x,
             "y": p.loc_y
         })
+        if p.pitch_result in ["IP"]:
+            ab_res = {
+                "x": p.spray_x,
+                "y": p.spray_y,
+                "traj": p.traj,
+                "hard_hit": p.hit_hard,
+            }
 
     pitcher = at_bat.get_pitcher()
 
@@ -162,7 +170,8 @@ def batter_at_bat(batter_id, ab_num):
         pitcher=pitcher,
         batter=batter,
         title=f"{batter} vs {at_bat.get_pitcher()}",
-        pitches=pitches
+        pitches=pitches,
+        ab_res=ab_res
     )
 
 
@@ -607,3 +616,4 @@ def batter_testing(batter_id):
         batter=batter,
         data=data
     )
+ 

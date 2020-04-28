@@ -213,6 +213,9 @@ class Batter(db.Model):
     def __repr__(self):
         return self.firstname + " " + self.lastname
 
+    def name(self):
+        return f"{self.firstname} {self.lastname}"
+
     def name_and_number(self):
         return f"{self.number} {self.firstname} {self.lastname}"
 
@@ -246,7 +249,7 @@ class Batter(db.Model):
         for ab in self.at_bats:
             count += 1
         return count
-    
+
     def new_video_selector_display(self):
         return f"{self.firstname} {self.lastname}" 
 
