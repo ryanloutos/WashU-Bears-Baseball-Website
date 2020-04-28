@@ -10,7 +10,7 @@ from datetime import date
 # setup blueprint
 staff = Blueprint('staff', __name__)
 
-# ***************-STAFF HOMEPAGE-*************** # 
+# ***************-STAFF HOMEPAGE-*************** #
 @staff.route("/staff", methods=["GET", "POST"])
 @login_required
 def staff_home():
@@ -22,7 +22,7 @@ def staff_home():
     )
 
 
-# ***************-STAFF ARMCARE-*************** # 
+# ***************-STAFF ARMCARE-*************** #
 @staff.route("/staff/armcare", methods=["GET", "POST"])
 @login_required
 def staff_armcare():
@@ -36,7 +36,7 @@ def staff_armcare():
 @staff.route('/staff/season_stats', methods=['GET', 'POST'])
 @login_required
 def staff_season_stats():
-    pitchers = Pitcher.query.filter(Pitcher.retired != 1).filter(Pitcher.opponent_id == 1).order_by(Pitcher.name).all()    
+    pitchers = Pitcher.query.filter(Pitcher.retired != 1).filter(Pitcher.opponent_id == 1).order_by(Pitcher.lastname).all()    
 
     first_date = date(2000, 1, 1)
     second_date = date(9999, 12, 31)

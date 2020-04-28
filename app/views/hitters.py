@@ -465,7 +465,6 @@ def hitter_stats(batter_id):
         seasons=seasons
         )
 
-
 @hitter.route('/hitter/<id>/edit', methods=['GET', 'POST'])
 @login_required
 def hitter_edit(id):

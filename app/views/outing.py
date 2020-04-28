@@ -1,3 +1,8 @@
+# Handle CSV uploads
+import csv
+import os
+# for file naming duplication problem
+import random
 import re
 import os
 import csv
@@ -78,7 +83,7 @@ def outing_home(id):
     if not outing:
         flash("URL does not exits")
         return redirect(url_for('main.index'))
-    
+
     # Get statistical data
     pitch_stats = outingPitchStatistics(outing)
     time_to_plate = outingTimeToPlate(outing)
@@ -105,8 +110,6 @@ def outing_home(id):
             # line chart
             horizontal_axis.append(i)
             i += 1
-
-
 
     velos = veloOverTime(outing)
 
@@ -455,7 +458,10 @@ def edit_outing_pitches(outing_id):
 
     pitcher = Pitcher.query.filter_by(id=outing.pitcher_id).first_or_404()
     opponent = Opponent.query.filter_by(id=outing.opponent_id).first_or_404()
-    season = Season.query.filter_by(id=outing.season_id).first_or_404()
+    if outing.season_id not in [None, ""]:
+        season = Season.query.filter_by(id=outing.season_id).first_or_404()
+    else:
+        season = None
 
     # only admins can go back and edit outing data
     if not current_user.admin:
@@ -482,10 +488,15 @@ def edit_outing_pitches(outing_id):
         db.session.commit()
 
         # sets up count for first pitch of outing
-        if season.semester == 'Fall':
-            balls = 1
-            strikes = 1
-            count = f'{balls}-{strikes}'
+        if season is not None:
+            if season.semester == 'Fall':
+                balls = 1
+                strikes = 1
+                count = f'{balls}-{strikes}'
+            else:
+                balls = 0
+                strikes = 0
+                count = f'{balls}-{strikes}'
         else:
             balls = 0
             strikes = 0
@@ -605,7 +616,10 @@ def edit_outing(outing_id):
         return redirect(url_for('main.index'))
 
     opponent = Opponent.query.filter_by(id=outing.opponent_id).first_or_404()
-    this_season = Season.query.filter_by(id=outing.season_id).first_or_404()
+    if outing.season_id in [None, ""]:
+        this_season = None
+    else:
+        this_season = Season.query.filter_by(id=outing.season_id).first_or_404()
     all_seasons = Season.query.all()
     this_pitcher = Pitcher.query.filter_by(id=outing.pitcher_id).first_or_404()
     all_pitchers = Pitcher.query.all()
@@ -778,7 +792,7 @@ def new_outing_csv():
 
 
 # ***************-NEW OUTING CSV PITCHES-*************** #
-@outing.route('/new_outing_csv_pitches/<file_name>/<outing_id>',methods=['GET', 'POST'])
+@outing.route('/new_outing_csv_pitches/<file_name>/<outing_id>', methods=['GET', 'POST'])
 @login_required
 def new_outing_csv_pitches(file_name, outing_id):
     '''
@@ -928,7 +942,7 @@ def new_outing_csv_pitches(file_name, outing_id):
                            batters=batters)
 
 
-@outing.route('/outing_report/<id>',methods=['GET', 'POST'])
+@outing.route('/outing_report/<id>', methods=['GET', 'POST'])
 @login_required
 def outing_report(id):
     # get the outing object associated by the id in the url
@@ -946,7 +960,7 @@ def outing_report(id):
     if not outing:
         flash("URL does not exits")
         return redirect(url_for('main.index'))
-    
+
     # Get statistical data
     pitch_stats = outingPitchStatistics(outing)
     time_to_plate = outingTimeToPlate(outing)
@@ -995,7 +1009,7 @@ def outing_report(id):
 @outing.route('/new_outing_pitch_tracker/<id>', methods=['GET', 'POST'])
 @login_required
 def new_outing_pitch_tracker(id):
-    
+
     outing = Outing.query.filter_by(id=id).first_or_404()
 
     # to hold all the pitches from outing to be displayed in table
@@ -1117,9 +1131,9 @@ def new_outing_pitch_tracker(id):
     for key, val in enumerate(pitches):
         if val in ["", None]:
             pitches[key] = ""
-        elif val == True:
+        elif val is True:
             pitches[key] = 1
-        elif val == False:
+        elif val is False:
             pitches[key] = 0
         else:
             pitches[key] = val
@@ -1260,12 +1274,16 @@ def validate_CSV(file_loc):
 
 def updateCount(balls, strikes, pitch_result, ab_result, season):
     if ab_result is not '':
-        if (season.semester == 'Spring' and season.year == "2020"):
-            balls = 0
-            strikes = 0
-        elif season.semester == 'Fall':
-            balls = 1
-            strikes = 1
+        if season is not None:
+            if (season.semester == 'Spring' and season.year == "2020"):
+                balls = 0
+                strikes = 0
+            elif season.semester == 'Fall':
+                balls = 1
+                strikes = 1
+            else:
+                balls = 0
+                strikes = 0
         else:
             balls = 0
             strikes = 0

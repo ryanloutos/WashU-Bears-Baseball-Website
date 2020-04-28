@@ -2,34 +2,31 @@
 
 {% block styles %}
     {{ super() }}
-    <style>
-        .main {
-            font-family: 'Exo', sans-serif;
-            font-weight: 500;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/forms.css') }}">
 {% endblock %}
 
 {% block app_content %}
-    <div class="main">
-        <h1></h1>
-        <form method="post" novalidate>
-            {{ form.hidden_tag() }}
-            <p>
-                {{ form.username.label }}<br>
-                {{ form.username(size=32, value=user.username) }}<br>
-                {% for error in form.username.errors %}
-                    <span style="color: red;">[{{ error }}]</span>
-                {% endfor %}
-            </p>
-            <p>
-                {{ form.email.label }}<br>
-                {{ form.email(size=32, value=user.email) }}<br>
-                {% for error in form.email.errors %}
-                    <span style="color: red;">[{{ error }}]</span>
-                {% endfor %}
-            </p>
-            <p>{{ form.submit() }}</p>
-        </form>
+    <div class="no-sidenav">
+        <div class="form-container">
+            <h1 class="form-title">Edit Username/Email</h1>
+            <form method="post" novalidate>
+                {{ form.hidden_tag() }}
+                <p>
+                    {{ form.username.label }}<br>
+                    {{ form.username(size=32, value=user.username) }}<br>
+                    {% for error in form.username.errors %}
+                        <span class="errors">[{{ error }}]</span>
+                    {% endfor %}
+                </p>
+                <p>
+                    {{ form.email.label }}<br>
+                    {{ form.email(size=32, value=user.email) }}<br>
+                    {% for error in form.email.errors %}
+                        <span class="errors">[{{ error }}]</span>
+                    {% endfor %}
+                </p>
+                <p>{{ form.submit() }}</p>
+            </form>
+        </div>
     </div>
 {% endblock %}

@@ -2,31 +2,33 @@
 
 {% block styles %}
     {{ super() }}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/forms.css') }}">
 {% endblock %}
 
 {% block app_content %}
-    <div class="main">
-        <h1>Edit Opponent</h1>
-        <form method="post" enctype="multipart/form-data" novalidate>
-            {{ form.hidden_tag() }} {# Preventing CSRF attacks #}
-            <p>
-                {{ form.name.label }}<br>
-                {{ form.name(size=32, value=opponent.name) }}
-                {% for error in form.name.errors %}
-                    <span style="color: red;">[{{ error }}]</span>
-                {% endfor %}
-            </p>
-            <p>
-                {{ form.file.label }} <br>
-                MUST BE PNG FILE TYPE
-                {{ form.file() }}
-                {% for error in form.file.errors %}
-                    <span style="color: red;">[{{ error }}] </span>
-                {% endfor %}
-            </p>
-            <p>
-                {{ form.submit() }}
-            </p>
-        </form>
+    <div class="no-sidenav">
+        <div class="form-container">
+            <h1 class="form-title">Edit Opponent</h1>
+            <form method="post" enctype="multipart/form-data" novalidate>
+                {{ form.hidden_tag() }}
+                <p>
+                    {{ form.name.label }}<br>
+                    {{ form.name(size=32, value=opponent.name) }}
+                    {% for error in form.name.errors %}
+                        <span class="errors">[{{ error }}]</span>
+                    {% endfor %}
+                </p>
+                <p>
+                    {{ form.logo.label }}<br>
+                    {{ form.logo(class="file-input") }}
+                    {% for error in form.logo.errors %}
+                        <span class="errors">[{{ error }}] </span>
+                    {% endfor %}
+                </p>
+                <p>
+                    {{ form.submit() }}
+                </p>
+            </form>
+        </div>
     </div>
 {% endblock %}

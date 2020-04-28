@@ -2,64 +2,153 @@
 
 {% block styles %}
     {{ super() }}
-    <script src="{{ url_for('static', filename='js/opponent_table.js') }}"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/new_opponent.css') }}">
 {% endblock %}
 
 {% block app_content %}
-    <div class="main">
-        <h1>New Opponent</h1>
-        <form method="post">
-            {{ form.hidden_tag() }}
-            <p>
-                {{ form.name.label }}<br>
-                {{ form.name(size=32) }}<br>
-                {% for error in form.name.errors %}
-                    <span style="color: red;">[{{ error }}]</span>
-                {% endfor %}
-            </p>
-            <br>
-            <table class='table' id='table'>
-                <tr class="table-headers">
-                    <th>Name</th>
-                    <th>Initials/Number</th>
-                    <th>Bats (R/L)</th>
-                    <th>Graduation Year</th>
-                    <th>Delete Row</th>
-                </tr>
-                {% for subform in form.batter %}
-                <tr class='subform' id='batter-{{ loop.index0 }}-form' data-index='{{ loop.index0 }}'>
-                    <td>
-                        {{ subform.fullname(size=24) }}
-                        {% for error in subform.fullname.errors %}
-                            <span style="color: red;">[{{ error }}]</span>
-                        {% endfor %}
-                    </td>
-                    <td>
-                        {{ subform.nickname(size=8) }}
-                        {% for error in subform.nickname.errors %}
-                            <span style="color: red;">[{{ error }}]</span>
-                        {% endfor %}
-                    </td>
-                    <td>
-                        {{ subform.bats() }}
-                        {% for error in subform.bats.errors %}
-                            <span style="color: red;">[{{ error }}]</span>
-                        {% endfor %}
-                    </td>
-                    <td>
-                        {{ subform.grad_year(size=8) }}
-                        {% for error in subform.grad_year.errors %}
-                            <span style="color: red;">[{{ error }}]</span>
-                        {% endfor %}
-                    </td>
-                    <td><a class="delete" data-index="{{ loop.index0 }}">Delete</a></td>
-                </tr>
-                {% endfor %}
-            </table>
-            <p>
-                {{ form.submit() }}
-            </p>
-        </form>
-        <button id="add">Add Row</button>
+    <div class="no-sidenav">
+        <div class="form-container">
+            <h1 class="form-title">New Team</h1>
+            <form method="post" enctype="multipart/form-data" novalidate>
+                {{ form.hidden_tag() }}
+                <p>
+                    {{ form.name.label }}<br>
+                    {{ form.name(size=64, maxlength=64) }}<br>
+                    {% for error in form.name.errors %}
+                        <span class="errors">[{{ error }}]</span>
+                    {% endfor %}
+                </p>
+                <p>
+                    {{ form.logo.label }}
+                    {{ form.logo() }}<br>
+                    {% for error in form.logo.errors %}
+                        <span class="errors">[{{ error }}]</span>
+                    {% endfor %}
+                </p>
+                <i>
+                    Insert all the batters for the team below. Scroll down to insert the pitchers
+                    and submit the form.
+                </i>
+                <h3>Batters</h3>
+                <table class="table" id="table">
+                    <tr class="table-headers">
+                        <th class="long-input">Firstname</th>
+                        <th class="long-input">Lastname</th>
+                        <th class="short-input">Number</th>
+                        <th class="short-input">Bats</th>
+                        <th class="short-input">Grad Year</th>
+                        <th class="checkbox-input">Inactive</th>
+                        <th class="scouting-input">Scouting Notes</th>
+                    </tr>
+                    {% for subform in form.batters %}
+                        <tr class="subform" id="batter-{{ loop.index0 }}-form" data-index="{{ loop.index0 }}">
+                            <td class="long-input">
+                                {{ subform.firstname(maxlength="64") }}
+                                {% for error in subform.firstname.errors %}
+                                    <span class="errors">[{{ error }}]</span>
+                                {% endfor %}
+                            </td>
+                            <td class="long-input">
+                                {{ subform.lastname(maxlength="64") }}
+                                {% for error in subform.lastname.errors %}
+                                    <span class="errors">[{{ error }}]</span>
+                                {% endfor %}
+                            </td>
+                            <td class="short-input">
+                                {{ subform.number(type="number") }}
+                                {% for error in subform.number.errors %}
+                                    <span class="errors">[{{ error }}]</span>
+                                {% endfor %}
+                            </td>
+                            <td class="short-input">
+                                {{ subform.bats() }}
+                                {% for error in subform.bats.errors %}
+                                    <span class="errors">[{{ error }}]</span>
+                                {% endfor %}
+                            </td>
+                            <td class="long-input">
+                                {{ subform.grad_year(type="number") }}
+                                {% for error in subform.grad_year.errors %}
+                                    <span class="errors">[{{ error }}]</span>
+                                {% endfor %}
+                            </td>
+                            <td class="checkbox-input">
+                                {{ subform.retired() }}
+                                {% for error in subform.retired.errors %}
+                                    <span class="errors">[{{ error }}]</span>
+                                {% endfor %}
+                            </td>
+                            <td class="scouting-input">
+                                {{ subform.notes(maxlength="1024") }}
+                                {% for error in subform.notes.errors %}
+                                    <span class="errors">[{{ error }}]</span>
+                                {% endfor %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+                <h3>Pitchers</h3>
+                <table class="table" id="table">
+                    <tr class="table-headers">
+                        <th class="long-input">Firstname</th>
+                        <th class="long-input">Lastname</th>
+                        <th class="short-input">Number</th>
+                        <th class="short-input">Throws</th>
+                        <th class="short-input">Grad Year</th>
+                        <th class="checkbox-input">Inactive</th>
+                        <th class="scouting-input">Scouting Notes</th>
+                    </tr>
+                    {% for subform in form.pitchers %}
+                        <tr class="subform" id="batter-{{ loop.index0 }}-form" data-index="{{ loop.index0 }}">
+                            <td class="long-input">
+                                {{ subform.firstname(maxlength="64") }}
+                                {% for error in subform.firstname.errors %}
+                                    <span class="errors">[{{ error }}]</span>
+                                {% endfor %}
+                            </td>
+                            <td class="long-input">
+                                {{ subform.lastname(maxlength="64") }}
+                                {% for error in subform.lastname.errors %}
+                                    <span class="errors">[{{ error }}]</span>
+                                {% endfor %}
+                            </td>
+                            <td class="short-input">
+                                {{ subform.number(type="number") }}
+                                {% for error in subform.number.errors %}
+                                    <span class="errors">[{{ error }}]</span>
+                                {% endfor %}
+                            </td>
+                            <td class="short-input">
+                                {{ subform.throws() }}
+                                {% for error in subform.throws.errors %}
+                                    <span class="errors">[{{ error }}]</span>
+                                {% endfor %}
+                            </td>
+                            <td class="long-input">
+                                {{ subform.grad_year(type="number") }}
+                                {% for error in subform.grad_year.errors %}
+                                    <span class="errors">[{{ error }}]</span>
+                                {% endfor %}
+                            </td>
+                            <td class="checkbox-input">
+                                {{ subform.retired() }}
+                                {% for error in subform.retired.errors %}
+                                    <span class="errors">[{{ error }}]</span>
+                                {% endfor %}
+                            </td>
+                            <td class="scouting-input">
+                                {{ subform.notes(maxlength="1024") }}
+                                {% for error in subform.notes.errors %}
+                                    <span class="errors">[{{ error }}]</span>
+                                {% endfor %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+                <p>
+                    {{ form.submit() }}
+                </p>
+            </form>
+        </div>
     </div>
 {% endblock %}
