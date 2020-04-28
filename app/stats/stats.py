@@ -1,49 +1,25 @@
-from app import db
-from enum import Enum
-import pygal
-from pygal.style import DarkSolarizedStyle, DefaultStyle
-import lxml
+# General stats calculation file
 import math
-from app.models import Season, Outing, Game, Batter
+import lxml
+import pygal
 
+from app import db
 
-# ***************-USEFUL FUNCTIONS-*************** # 
-class PitchType(Enum):
-    '''
-    Enum that is helpful in translating pitch types easier.
-    '''
-    FB = 1
-    CB = 2
-    SL = 3
-    CH = 4
-    CT = 5
-    SM = 7
+from enum import Enum
 
-def truncate(n, decimals=2):
-    """Truncates the passed value to decimal places.
+from app.models import Game
+from app.models import Batter
+from app.models import Season
+from app.models import Outing
 
-    Arguments:
-        n {number} -- Number to be truncated
+from pygal.style import DefaultStyle
+from pygal.style import DarkSolarizedStyle
 
-    Keyword Arguments:
-        decimals {int} -- Number of decimal places to truncate to(default: {2})
+from app.stats.util import truncate
+from app.stats.util import PitchType
+from app.stats.util import percentage
+from app.stats.util import zero_division_handler
 
-    Returns:
-        [int] -- truncated verison of passed value
-    """
-    multiplier = 10 ** decimals
-    return int(n * multiplier) / multiplier
-
-def percentage(n, decimals=0):
-    '''
-    Gets the percentage rounded to a specific decimal place
-    PARAM:
-        - n - is a the decimal number 0<=n<=1
-        - decimals - is the place you want to round to
-    '''
-    multiplier = 10 ** decimals
-    percentage = 100 * n
-    return int(math.floor(percentage*multiplier + 0.5) / multiplier)
 
 def getSeasons(pitcher):
     '''
@@ -152,6 +128,7 @@ def staffSeasonGoals(pitchers, includeMatchups=True):
         offspeed_strike_pct = percentage(offspeed_strikes/offspeed_pitches)
 
     return strike_percentage, fps_percentage, k_to_bb, offspeed_strike_pct
+
 
 def staffSeasonStats(pitchers, afterDate, beforeDate, includeMatchups=True):
     # to hold info for each player
@@ -506,7 +483,6 @@ def staffSeasonStats(pitchers, afterDate, beforeDate, includeMatchups=True):
     staff["csw_pct"] = total_csw_pct
 
     return players, staff
-
 
 
 def calcPitchWhiffRate(outing):
@@ -932,7 +908,6 @@ def pitchUsageByCountLineCharts(data):
     return line_chart
 
 
-
 # UTILITY STAT FUNCTIONS-------------------------------------------------------
 def truncate(n, decimals=2):
     """Truncates the passed value to decimal places.
@@ -978,7 +953,6 @@ def getSeasons(pitcher):
         if outing.season not in seasons:
             seasons.append(outing.season)
     return seasons
-
 
 # PITCHER ADVANCED STATISTICS -------------------------------------------------
 def avgPitchVeloPitcher(pitcher):

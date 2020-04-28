@@ -1,5 +1,6 @@
-//import d3 so can build objects out of it
-// var d3 = import("../packages/d3/d3.js");
+/**
+ * NEW JS FILE SO THAT BROWSERS WILL UPDATE CACHE FOR CHANGES
+ */
 
 /**
  * Zone constants based on scale defined in class strikezone

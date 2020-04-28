@@ -5,6 +5,7 @@
     <li><a class="sidenav-item" href="{{ url_for('hitter.hitter_games', batter_id=batter.id) }}">Games</a></li>
     <li><a class="sidenav-item" href="{{ url_for('hitter.hitter_videos', id=batter.id) }}">Videos</a></li>
     <li><a class="sidenav-item" href="{{ url_for('hitter.hitter_spray_chart', batter_id=batter.id) }}">Sprays</a></li>
+    <li><a class="sidenav-item" href="{{ url_for('hitter.hitter_scouting', id=batter.id) }}">Scouting</a></li>
     <!-- <li><a class="sidenav-item" href="{{ url_for('batter.batter_sequencing', batter_id=batter.id) }}">Sequencing</a></li> -->
     <li><a class="sidenav-item" href="{{ url_for('hitter.hitter_stats', batter_id=batter.id) }}">Stats</a></li>
     {% if current_user.admin %}

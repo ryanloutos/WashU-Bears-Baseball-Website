@@ -31,6 +31,9 @@ from app.stats.stats import pitchUsageSeason, seasonStatLine
 
 from werkzeug.urls import url_parse
 
+from app.stats.scouting_stats import whiff_coords_by_pitch_pitcher
+from app.stats.scouting_stats import pitcher_dynamic_zone_scouting
+
 import csv
 import os
 import random
@@ -355,6 +358,23 @@ def pitcher_videos(id):
     )
 
 
+@pitcher.route("/pitcher/<id>/scouting")
+@login_required
+def pitcher_scouting(id):
+    pitcher = Pitcher.query.filter_by(id=id).first()
+    if not pitcher:
+        flash('URL does not exist')
+        return redirect(url_for('main.index'))
+
+    dynamic_data = pitcher_dynamic_zone_scouting(pitcher)
+
+    return render_template(
+        '/pitcher/pitcher_scouting.html',
+        title=pitcher,
+        pitcher=pitcher,
+        dynamic_data=dynamic_data
+    )
+
 
 @pitcher.route('/pitcher/<pitcher_id>/testing')
 @login_required
@@ -369,9 +389,11 @@ def pitcher_testing(pitcher_id):
         return redirect(url_for('main.index'))
 
     data = whiff_coords_by_pitch_pitcher(pitcher)
+    data2 = pitcher_dynamic_zone_scouting(pitcher)
 
     return render_template(
         "/pitcher/pitcher_testing.html",
         pitcher=pitcher,
-        data=data
+        data=data,
+        data2=data2
     )
