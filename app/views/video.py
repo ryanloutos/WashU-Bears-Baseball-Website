@@ -74,7 +74,7 @@ def new_video_batter():
 
     batters = []
     for b in Batter.query.filter_by(opponent_id=1).filter_by(retired=0).all():
-        batters.append((str(b.id),f"{b.firstname} {b.lastname}"))
+        batters.append((str(b.id), f"{b.firstname} {b.lastname}"))
     form.batter.choices = batters
 
     if form.validate_on_submit():
@@ -102,4 +102,3 @@ def new_video_batter():
         current_season=current_season,
         js=js
     )
-    

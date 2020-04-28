@@ -177,6 +177,32 @@ class field {
             }
         }
     }
+
+    removeCircles(){
+        this.field_svg.selectAll('.field-circle').remove();
+        this.field_svg.selectAll('.field-star').remove();
+    }
+
+    getLeftyZoneDivision(){
+        //done from left to right
+        const off = [-2, -1.01];
+        const outside = [-1, -0.27];
+        const middle = [-0.26, 0.26];
+        const inside = [0.25, 2];
+
+        return {inside:inside, middle:middle, outside:outside, off:off};
+    }
+
+    getRightyZoneDivision(){
+
+        //done from left to right
+        const inside = [-2, -0.28];
+        const middle = [-0.27, 0.27];
+        const outside = [0.26, 1];
+        const off = [1.01, 2];
+
+        return {inside:inside, middle:middle, outside:outside, off:off};
+    }
 }
 
 /**

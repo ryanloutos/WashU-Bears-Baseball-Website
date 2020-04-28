@@ -103,7 +103,7 @@ def pitcher_home(id):
                            recent_outings=recent_outings)
 
 # ***************-NEW PITCHER-*************** #
-@pitcher.route('/new_pitcher', methods=['GET','POST'])
+@pitcher.route('/new_pitcher', methods=['GET', 'POST'])
 @login_required
 def new_pitcher():
 
@@ -135,14 +135,14 @@ def new_pitcher():
         form=form)
 
 # ***************-EDIT PITCHER-*************** #
-@pitcher.route('/edit_pitcher/<id>', methods=['GET','POST'])
+@pitcher.route('/edit_pitcher/<id>', methods=['GET', 'POST'])
 @login_required
 def edit_pitcher(id):
 
     if not current_user.admin:
         flash("Admin feature only")
         return redirect(url_for('index'))
-    
+
     form = EditPitcherForm()
 
     pitcher = Pitcher.query.filter_by(id=id).first()
@@ -151,7 +151,7 @@ def edit_pitcher(id):
     opponents = Opponent.query.all()
     opponent_choices = []
     for o in opponents:
-        opponent_choices.append((str(o.id),o))
+        opponent_choices.append((str(o.id), o))
     form.opponent.choices = opponent_choices
 
     if form.validate_on_submit():
@@ -178,12 +178,12 @@ def edit_pitcher(id):
 
         flash("Changes made!")
         return redirect(url_for('pitcher.pitcher_home', id=id))
-    
+
     return render_template(
         'pitcher/edit_pitcher.html',
-        pitcher = pitcher,
-        opponents = opponents,
-        form = form
+        pitcher=pitcher,
+        opponents=opponents,
+        form=form
     )
 
 

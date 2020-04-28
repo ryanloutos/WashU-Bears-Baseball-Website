@@ -10,7 +10,7 @@ from datetime import date
 # setup blueprint
 staff = Blueprint('staff', __name__)
 
-# ***************-STAFF HOMEPAGE-*************** # 
+# ***************-STAFF HOMEPAGE-*************** #
 @staff.route("/staff", methods=["GET", "POST"])
 @login_required
 def staff_home():
@@ -22,7 +22,7 @@ def staff_home():
     )
 
 
-# ***************-STAFF ARMCARE-*************** # 
+# ***************-STAFF ARMCARE-*************** #
 @staff.route("/staff/armcare", methods=["GET", "POST"])
 @login_required
 def staff_armcare():

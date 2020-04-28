@@ -218,6 +218,7 @@ class Batter(db.Model):
 
     def abrev_name(self):
         return f"{self.number} - {self.initials}"
+        return self.short_name
 
     def get_seasons(self):
         seasons = []

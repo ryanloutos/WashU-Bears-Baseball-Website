@@ -408,6 +408,7 @@ def outings_in_season(season_id, pitcher_id):
             "id": outing.id,
             "label": outing.__repr__()
         })
+
     return jsonify({
         "status": "success",
         "outings": outings_ret
