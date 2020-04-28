@@ -13,9 +13,7 @@ from app.forms import LoginForm
 from app.forms import PitchForm
 from app.forms import BatterForm
 from app.forms import OutingForm
-from app.forms import SeasonForm
 from app.forms import EditUserForm
-from app.forms import OpponentForm
 from app.forms import NewBatterForm
 from app.forms import EditBatterForm
 from app.forms import OutingPitchForm

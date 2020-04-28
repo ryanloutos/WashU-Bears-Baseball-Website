@@ -8,7 +8,7 @@ from flask import redirect
 from flask import Blueprint
 from flask import render_template
 
-from app.forms import PitcherForm
+from app.forms import NewPitcherForm
 from app.forms import EditPitcherForm
 
 from app.models import User
@@ -24,13 +24,12 @@ from flask_login import logout_user
 from flask_login import current_user
 from flask_login import login_required
 
-from werkzeug.urls import url_parse
+from app.stats.stats import avgPitchVeloPitcher
+from app.stats.stats import veloOverCareer
+from app.stats.stats import pitchStrikePercentageSeason
+from app.stats.stats import pitchUsageSeason, seasonStatLine
 
-from app.forms import NewPitcherForm, EditPitcherForm
-from app.models import User, Outing, Pitch, Season, Pitcher, Opponent, Video
-from app.stats import avgPitchVeloPitcher, veloOverCareer
-from app.stats import pitchStrikePercentageSeason
-from app.stats import pitchUsageSeason, seasonStatLine
+from werkzeug.urls import url_parse
 
 import csv
 import os

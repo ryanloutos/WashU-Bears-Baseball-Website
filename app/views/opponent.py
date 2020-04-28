@@ -12,7 +12,7 @@ from flask import redirect
 from flask import Blueprint
 from flask import render_template
 
-from app.forms import OpponentForm
+from app.forms import NewOpponentForm
 from app.forms import EditOpponentForm
 
 from app.models import Game
