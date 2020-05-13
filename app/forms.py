@@ -154,7 +154,7 @@ class EditOpponentForm(FlaskForm):
 # ***************-SEASON-*************** #
 class NewSeasonForm(FlaskForm):
     semester = SelectField("Semester",
-                           choices=[("Fall", "Fall"), ("Spring", "Spring")],
+                           choices=[("Fall", "Fall"), ("Spring", "Spring"), ("Summer", "Summer"), ("Winter", "Winter")],
                            validators=[DataRequired()])
     year = IntegerField("Year", validators=[DataRequired()])
     current_season = BooleanField("Current Season?")
@@ -162,7 +162,7 @@ class NewSeasonForm(FlaskForm):
 
 class EditSeasonForm(FlaskForm):
     semester = SelectField("Semester",
-                           choices=[("Fall", "Fall"), ("Spring", "Spring")],
+                           choices=[("Fall", "Fall"), ("Spring", "Spring"), ("Summer", "Summer"), ("Winter", "Winter")],
                            validators=[DataRequired()])
     year = IntegerField("Year", validators=[DataRequired()])
     current_season = BooleanField("Current Season?")

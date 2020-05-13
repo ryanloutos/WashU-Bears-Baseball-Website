@@ -17,6 +17,8 @@
                     <select id="semester" name="semester">
                         <option value="Fall" {% if season.semester == "Fall" %} selected="selected" {% endif %}>Fall</option>
                         <option value="Spring" {% if season.semester == "Spring" %} selected="selected" {% endif %}>Spring</option>
+                        <option value="Summer" {% if season.semester == "Summer" %} selected="selected" {% endif %}>Summer</option>
+                        <option value="Winter" {% if season.semester == "Winter" %} selected="selected" {% endif %}>Winter</option>
                     </select>
                     {% for error in form.semester.errors %}
                         <span class="errors">[{{ error }}]</span>

@@ -1,59 +1,24 @@
-from app import db
-from enum import Enum
-import pygal
-from pygal.style import DarkSolarizedStyle, DefaultStyle
+# All stats calculations associated with scouting
 import lxml
 import math
+import pygal
+
+from app import db
 
 from app.models import Game
 from app.models import Batter
 from app.models import Outing
 from app.models import Season
 
+from pygal.style import DefaultStyle
+from pygal.style import DarkSolarizedStyle
 
-# ***************-USEFUL FUNCTIONS-*************** # 
-class PitchType(Enum):
-    '''
-    Enum that is helpful in translating pitch types easier.
-    '''
-    FB = 1
-    CB = 2
-    SL = 3
-    CH = 4
-    CT = 5
-    SM = 7
-
-
-def truncate(n, decimals=2):
-    """Truncates the passed value to decimal places.
-
-    Arguments:
-        n {number} -- Number to be truncated
-
-    Keyword Arguments:
-        decimals {int} -- Number of decimal places to truncate to(default: {2})
-
-    Returns:
-        [int] -- truncated verison of passed value
-    """
-    multiplier = 10 ** decimals
-    return int(n * multiplier) / multiplier
-
-
-def zero_division_handler(n, d):
-    return n / d if d else 0
-
-
-def percentage(n, decimals=0):
-    '''
-    Gets the percentage rounded to a specific decimal place
-    PARAM:
-        - n - is a the decimal number 0<=n<=1
-        - decimals - is the place you want to round to
-    '''
-    multiplier = 10 ** decimals
-    percentage = 100 * n
-    return int(math.floor(percentage*multiplier + 0.5) / multiplier)
+from app.stats.util import truncate
+from app.stats.util import PitchType
+from app.stats.util import percentage
+from app.stats.util import ZONE_CONSTANTS
+from app.stats.util import get_zone_region
+from app.stats.util import zero_division_handler
 
 
 def zone_division_stats_batter(batter):
@@ -107,6 +72,17 @@ def zone_division_stats_batter(batter):
 
 
 def zone_section_stats_helper(zone):
+    """Helper function for repeated calculations for
+    zone_division_stats_batter
+
+    Arguments:
+        zone {dict} -- dictionary of pitch objects that correlate
+        to a certain region of the strikezone.
+
+    Returns:
+        [dict] -- complex dictionary containing statistical breakdowns
+        for the pitches in the region passed in.
+    """
     stats = {
         "all": {
             "counters": {
@@ -296,7 +272,16 @@ def zone_section_stats_helper(zone):
 
 
 def whiff_coords_by_pitch_batter(batter):
+    """Returns the x,y coordinates for every pitch that a batter
+    swung and missed at
 
+    Arguments:
+        batter {Batter object} -- batter to be analyzed
+
+    Returns:
+        dictionary -- A dict of array containing swing and miss
+        x,y coordinates by pitch for a batter
+    """
     stats = {
         "FB": [],
         "CB": [],
@@ -317,7 +302,16 @@ def whiff_coords_by_pitch_batter(batter):
 
 
 def whiff_coords_by_pitch_pitcher(pitcher):
+    """Returns the x,y coordinates for every pitch that a pitcher
+    threw that was whiffed by a hitter
 
+    Arguments:
+        pitcher {Pitcher object} -- Pitcher to be analyzed
+
+    Returns:
+        dictionary -- A dict of array containing swing and miss
+        x,y coordinates by pitch for a pitcher
+    """
     stats = {
         "FB": [],
         "CB": [],
@@ -336,3 +330,139 @@ def whiff_coords_by_pitch_pitcher(pitcher):
                     stats[PitchType(pitch.pitch_type).name].append((pitch.loc_x, pitch.loc_y))
 
     return stats
+
+
+def pitcher_dynamic_zone_scouting(pitcher):
+    """For a given pitcher, generates a dictionary tracking a number
+    of statistical categories for different regions of the strikezone.
+
+    Arguments:
+        pitcher {pitcher object} -- Pitcher to be analyzed
+
+    Returns:
+        [dictionary] -- Complex dictionary containing summary values for
+        each category. Calculation needs to happen elsewhere.
+    """
+    zones_data = {}
+
+    # Setup zones_data stat categories
+    for x in range(5):
+        for y in range(5):
+            zones_data[f"{x}{y}"] = {
+                "swing_rate": {},
+                "whiff_rate": {},
+                "foul_rate": {},
+                "in_play_rate": {},
+                "in_play_out_rate": {},
+                "in_play_safe_rate": {},
+                "count": {}
+            }
+    # setup pitch types for stat category
+    for k1, v1 in zones_data.items():
+        for k2, v2 in zones_data[k1].items():
+            zones_data[k1][k2] = {
+                "FB": 0,
+                "CB": 0,
+                "SL": 0,
+                "CH": 0,
+                "CT": 0,
+                "SM": 0
+            }
+
+    # process data
+    for outing in pitcher.outings:
+        for at_bat in outing.at_bats:
+            for pitch in at_bat.pitches:
+                # only the pitches we care about
+                if pitch.loc_x in ["", None] or pitch.loc_y in ["", None]:
+                    continue
+
+                # for faster memory access
+                region = get_zone_region(pitch)
+                p_type = PitchType(pitch.pitch_type).name
+                p_res = pitch.pitch_result
+
+                zones_data[region]["count"][p_type] += 1
+
+                if p_res in ["SS", "F", "IP"]:
+                    zones_data[region]["swing_rate"][p_type] += 1
+                    if p_res in ["SS"]:
+                        zones_data[region]["whiff_rate"][p_type] += 1
+                    elif p_res in ["F"]:
+                        zones_data[region]["foul_rate"][p_type] += 1
+                    else:
+                        zones_data[region]["in_play_rate"][p_type] += 1
+                        if pitch.ab_result in ["IP->Out", "FC", "Error", "Other"]:
+                            zones_data[region]["in_play_out_rate"][p_type] += 1
+                        else:
+                            zones_data[region]["in_play_safe_rate"][p_type] += 1
+
+    return zones_data
+
+
+def batter_dynamic_zone_scouting(batter):
+    """For a given batter, generates a dictionary tracking a number
+    of statistical categories for different regions of the strikezone.
+
+    Arguments:
+        batter {batter object} -- Batter to be analyzed
+
+    Returns:
+        [dictionary] -- Complex dictionary containing summary values for
+        each category. Calculation needs to happen elsewhere.
+    """
+
+    zones_data = {}
+
+    # Setup zones_data statistical categories
+    for x in range(5):
+        for y in range(5):
+            zones_data[f"{x}{y}"] = {
+                "swing_rate": {},
+                "whiff_rate": {},
+                "foul_rate": {},
+                "in_play_rate": {},
+                "in_play_out_rate": {},
+                "in_play_safe_rate": {},
+                "count": {}
+            }
+    # Setup pitch types for each category
+    for k1, v1 in zones_data.items():
+        for k2, v2 in zones_data[k1].items():
+            zones_data[k1][k2] = {
+                "FB": 0,
+                "CB": 0,
+                "SL": 0,
+                "CH": 0,
+                "CT": 0,
+                "SM": 0
+            }
+
+    # process data
+    for at_bat in batter.at_bats:
+        for pitch in at_bat.pitches:
+            # only the pitches we care about
+            if pitch.loc_x in ["", None] or pitch.loc_y in ["", None]:
+                continue
+
+            # Pull commonly used vars for faster mem access
+            region = get_zone_region(pitch)
+            p_type = PitchType(pitch.pitch_type).name
+            p_res = pitch.pitch_result
+
+            zones_data[region]["count"][p_type] += 1
+
+            if p_res in ["SS", "F", "IP"]:
+                zones_data[region]["swing_rate"][p_type] += 1
+                if p_res in ["SS"]:
+                    zones_data[region]["whiff_rate"][p_type] += 1
+                elif p_res in ["F"]:
+                    zones_data[region]["foul_rate"][p_type] += 1
+                else:
+                    zones_data[region]["in_play_rate"][p_type] += 1
+                    if pitch.ab_result in ["IP->Out", "FC", "Error", "Other"]:
+                        zones_data[region]["in_play_out_rate"][p_type] += 1
+                    else:
+                        zones_data[region]["in_play_safe_rate"][p_type] += 1
+
+    return zones_data

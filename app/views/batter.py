@@ -64,6 +64,7 @@ from app.stats.stats import batterSwingWhiffRatebyPitchbyCount
 from app.stats.stats import batterSwingWhiffRatebyPitchbyCount2
 
 from app.stats.scouting_stats import zone_division_stats_batter
+from app.stats.scouting_stats import batter_dynamic_zone_scouting
 from app.stats.scouting_stats import whiff_coords_by_pitch_batter
 
 
@@ -145,6 +146,7 @@ def batter_at_bat(batter_id, ab_num):
         return redirect(url_for('main.index'))
 
     pitches = []
+    ab_res = 0
     for p in at_bat.pitches:
         pitches.append({
             "pitch_num": p.pitch_num,
@@ -152,6 +154,13 @@ def batter_at_bat(batter_id, ab_num):
             "x": p.loc_x,
             "y": p.loc_y
         })
+        if p.pitch_result in ["IP"]:
+            ab_res = {
+                "x": p.spray_x,
+                "y": p.spray_y,
+                "traj": p.traj,
+                "hard_hit": p.hit_hard,
+            }
 
     pitcher = at_bat.get_pitcher()
 
@@ -161,7 +170,8 @@ def batter_at_bat(batter_id, ab_num):
         pitcher=pitcher,
         batter=batter,
         title=f"{batter} vs {at_bat.get_pitcher()}",
-        pitches=pitches
+        pitches=pitches,
+        ab_res=ab_res
     )
 
 
@@ -578,13 +588,15 @@ def batter_scouting(batter_id):
         return redirect(url_for('main.index'))
 
     zone_division_stats = zone_division_stats_batter(batter)
-    whiff_coords_by_pitch = whiff_coords_by_pitch_batter(batter)
+    dynamic_data = batter_dynamic_zone_scouting(batter)
+    # whiff_coords_by_pitch = whiff_coords_by_pitch_batter(batter)
 
     return render_template(
         'opponent/batter/batter_scouting.html',
         batter=batter,
-        zone_division_stats=zone_division_stats,
-        whiff_coords_by_pitch=whiff_coords_by_pitch
+        dynamic_data=dynamic_data,
+        zone_division_stats=zone_division_stats
+        # whiff_coords_by_pitch=whiff_coords_by_pitch
     )
 
 
@@ -597,9 +609,11 @@ def batter_testing(batter_id):
         flash("URL does not exist")
         return redirect(url_for('main.index'))
 
-    data = whiff_coords_by_pitch_batter(batter)
+    # data = whiff_coords_by_pitch_batter(batter)
+    data = batter_dynamic_zone_scouting(batter)
     return render_template(
         "opponent/batter/batter_test.html",
         batter=batter,
         data=data
     )
+ 

@@ -3,7 +3,7 @@
 {% block styles %}
 {{ super() }}
 <script src="{{ url_for('static', filename='packages/d3/d3.js') }}"></script>
-<script src="{{ url_for('static', filename='js/d3_strikezone.js') }}"></script>
+<script src="{{ url_for('static', filename='js/d3_strikezone/d3_strikezone.js') }}"></script>
 <script src="{{ url_for('static', filename='js/d3_field.js') }}"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
@@ -15,6 +15,10 @@
     function setup_field(){
         let spray_legend = new field_legend("field-legend");
         let spray = new field("field");
+        var ab_res = {{ab_res|tojson}};
+        if(ab_res != 0){
+            spray.drawCircle(ab_res.x, ab_res.y, ab_res.traj, ab_res.hard_hit);
+        }
     }
 
     function setup_strikezone(){

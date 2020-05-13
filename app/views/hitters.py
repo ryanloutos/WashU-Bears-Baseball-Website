@@ -34,6 +34,9 @@ from app.stats.stats import stats_opponent_batters_stat_lines
 from app.stats.stats import batterSwingWhiffRatebyPitchbyCount
 from app.stats.stats import batterSwingWhiffRatebyPitchbyCount2
 
+from app.stats.scouting_stats import zone_division_stats_batter
+from app.stats.scouting_stats import batter_dynamic_zone_scouting
+
 import re
 
 hitters = Blueprint("hitters", __name__)
@@ -294,6 +297,7 @@ def hitter_at_bat(batter_id, ab_num):
         return redirect(url_for('main.index'))
 
     pitches = []
+    ab_res = 0
     for p in at_bat.pitches:
         pitches.append({
             "pitch_num": p.pitch_num,
@@ -301,6 +305,13 @@ def hitter_at_bat(batter_id, ab_num):
             "x": p.loc_x,
             "y": p.loc_y
         })
+        if p.pitch_result in ["IP"]:
+            ab_res = {
+                "x": p.spray_x,
+                "y": p.spray_y,
+                "traj": p.traj,
+                "hard_hit": p.hit_hard,
+            }
 
     pitcher = at_bat.get_pitcher()
 
@@ -310,7 +321,8 @@ def hitter_at_bat(batter_id, ab_num):
         pitcher=pitcher,
         batter=batter,
         title=batter,
-        pitches=pitches
+        pitches=pitches,
+        ab_res=ab_res
     )
 
 
@@ -461,3 +473,77 @@ def hitter_stats(batter_id):
         batter=batter,
         seasons=seasons
         )
+
+
+@hitter.route('/hitter/<id>/edit', methods=['GET', 'POST'])
+@login_required
+def hitter_edit(id):
+
+    # make sure user is admin
+    if not current_user.admin:
+        flash("You are not an admin")
+        return redirect(url_for('main.index'))
+
+    # get the correct form
+    form = EditBatterForm()
+
+    # get the batter object
+    batter = Batter.query.filter_by(id=id).first()
+
+    # bug or trying to edit batter that doesn't exist
+    if not batter:
+        flash('URL does not exist')
+        return redirect(url_for('main.index'))
+
+    # set the opponent choices correctly
+    opponent_choices = []
+    opponents = Opponent.query.all()
+    for o in opponents:
+        opponent_choices.append((str(o.id), o.name))
+    form.opponent.choices = opponent_choices
+
+    # submit is clicked
+    if form.validate_on_submit():
+
+        # update info with data from form
+        batter.firstname = form.firstname.data
+        batter.lastname = form.lastname.data
+        batter.number = form.number.data
+        batter.short_name = form.nickname.data
+        batter.bats = form.bats.data
+        batter.grad_year = form.grad_year.data
+        batter.retired = form.retired.data
+
+        # commit the changes
+        db.session.commit()
+
+        flash('Batter has been adjusted')
+        return redirect(url_for('hitters.hitters_home', id=batter.opponent_id))
+
+    return render_template(
+        'hitters/hitter/hitter_edit.html',
+        title='Edit Hitter',
+        batter=batter,
+        form=form)
+
+
+@hitter.route('/hitter/<id>/scouting')
+@login_required
+def hitter_scouting(id):
+    batter = Batter.query.filter_by(id=id).first()
+    if not batter:
+        flash("URL does not exist")
+        return redirect(url_for('main.index'))
+
+    zone_division_stats = zone_division_stats_batter(batter)
+    dynamic_data = batter_dynamic_zone_scouting(batter)
+    # whiff_coords_by_pitch = whiff_coords_by_pitch_batter(batter)
+
+    return render_template(
+        'hitters/hitter/hitter_scouting.html',
+        batter=batter,
+        title=batter,
+        dynamic_data=dynamic_data,
+        zone_division_stats=zone_division_stats
+        # whiff_coords_by_pitch=whiff_coords_by_pitch
+    )

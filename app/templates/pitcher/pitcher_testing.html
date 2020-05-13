@@ -3,18 +3,27 @@
 {% block styles %}
 {{ super() }}
 <script src="{{ url_for('static', filename='packages/d3/d3.js') }}"></script>
-<script src="{{ url_for('static', filename='js/d3_strikezone.js') }}"></script>
+<script src="{{ url_for('static', filename='js/d3_strikezone/d3_strikezone-1.0.js') }}"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
 
-        setup_strikezones();
+        // setup_strikezones();
+        setup_strikezone_2();
     });
+
+    function setup_strikezone_2(){
+        let test_zone = new dynamic_scouting_strikezone("test-strikezone", "test-strikezone-table");
+        let complex_data = {{data2|tojson}};
+        test_zone.provideData(complex_data);
+        // console.log(complex_data);
+
+    }
 
     function setup_strikezones() {
 
         let size = 125;
 
-        let test_zone = new strikezone("strikezone-upper-half");
+        let test_zone = new strikezone("test-strikezone");
 
         let pitches = {{data|tojson }};
         let pitch_type = "FB";
@@ -29,6 +38,7 @@
         }
 
     }
+
 </script>
 {% endblock %}
 
@@ -40,6 +50,9 @@
     <div class="row text-center">
         <h1>TESTING</h1>
     </div>
-    <div id="strikezone-upper-half"></div>
+<div class="row">
+    <div class="col-md-6 col-xs-12" id="test-strikezone"></div>
+    <div class="col-md-6 col-xs-12" id="test-strikezone-table"></div>
+</div>
 </div>
 {% endblock %}
