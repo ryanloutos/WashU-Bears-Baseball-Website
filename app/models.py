@@ -2,6 +2,7 @@ from app import db, login
 from datetime import date
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
+from datetime import datetime
 
 
 class User(UserMixin, db.Model):
@@ -33,7 +34,8 @@ class Pitcher(db.Model):
     notes = db.Column(db.String(1024), index=True)
     throws = db.Column(db.String(64), index=True)
     grad_year = db.Column(db.String(8), index=True)
-    opponent_id = db.Column(db.Integer, db.ForeignKey('opponent.id'), index=True)
+    opponent_id = db.Column(
+        db.Integer, db.ForeignKey('opponent.id'), index=True)
     retired = db.Column(db.Boolean, index=True)
     outings = db.relationship('Outing', backref='pitcher', lazy='dynamic')
 
@@ -115,7 +117,7 @@ class Outing(db.Model):
         month = self.date.month
         day = self.date.day
         return f"{month}/{year}"
-    
+
     def getFullDate(self):
         year = self.date.year
         month = self.date.month
@@ -185,8 +187,10 @@ class Opponent(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), index=True)
     outings = db.relationship('Outing', backref='opponent', lazy='dynamic')
-    batters = db.relationship('Batter', backref='opponent', lazy='dynamic', order_by="Batter.lastname")
-    pitchers = db.relationship('Pitcher', backref='opponent', lazy='dynamic', order_by="Pitcher.lastname")
+    batters = db.relationship(
+        'Batter', backref='opponent', lazy='dynamic', order_by="Batter.lastname")
+    pitchers = db.relationship(
+        'Pitcher', backref='opponent', lazy='dynamic', order_by="Pitcher.lastname")
     games = db.relationship('Game', backref='opponent', lazy='dynamic')
 
     def __repr__(self):
@@ -251,7 +255,7 @@ class Batter(db.Model):
         return count
 
     def new_video_selector_display(self):
-        return f"{self.firstname} {self.lastname}" 
+        return f"{self.firstname} {self.lastname}"
 
 
 class AtBat(db.Model):
@@ -314,6 +318,17 @@ class Video(db.Model):
 
     def __repr__(self):
         return f"{self.date.month}/{self.date.day} - {self.title}"
+
+
+class Resource(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    title = db.Column(db.String(32), index=True)
+    description = db.Column(db.String(256), index=True)
+    article_link = db.Column(db.String(256))
+    video_link = db.Column(db.String(256))
+    file_data = db.Column(db.LargeBinary)
+    category = db.Column(db.String(32))
 
 
 @login.user_loader
