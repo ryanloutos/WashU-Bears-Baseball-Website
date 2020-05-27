@@ -380,4 +380,38 @@ class NewOutingFromCSVPitches(FlaskForm):
         validators=[Optional()])
     submit = SubmitField('Create Outing')
 
-
+class NewResourceForm(FlaskForm):
+    category = SelectField(
+        'Category',
+        choices=[
+            ('', '[SELECT A CATEGORY]'),
+            ('Pitching', 'Pitching'),
+            ('Hitting', 'Hitting'),
+            ('Defense', 'Defense'),
+            ('Mental Game', 'Mental Game'),
+            ('Miscellaneous', 'Miscellaneous')
+        ],
+        validators=[DataRequired()]
+    )
+    title = StringField('Title', validators=[DataRequired()])
+    description = StringField('Description (Optional)', validators=[Optional()])
+    upload_type = SelectField(
+        'Upload Type',
+        choices=[
+            ('', '[SELECT A TYPE OF UPLOAD]'),
+            ('article', 'Article'),
+            ('video', 'YouTube Video'),
+            ('pdf', 'PDF')
+        ],
+        validators=[DataRequired()]
+    )
+    article_link = StringField('Link', validators=[Optional()])
+    video_link = StringField('Link', validators=[Optional()])
+    file = FileField(
+        'File Upload',
+        validators=[
+            FileAllowed(["pdf"], 
+            "File must be a .pdf")
+        ]
+    )
+    submit = SubmitField('Upload Resource')
