@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+
+{% block styles %}
+{{ super() }}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/forms.css') }}">
+<style>
+    .upload-fields {
+        display: none;
+    }
+</style>
+{% endblock %}
+
+{% block app_content %}
+<div class="no-sidenav">
+    <div class="form-container">
+        <h1 class="form-title">New Resource</h1>
+        <form method="POST" enctype="multipart/form-data" onsubmit="return validate_form()" action="/resource">
+            {{ form.hidden_tag() }}
+            <p>
+                {{ form.category.label }}<br>
+                {{ form.category() }}
+                {% for error in form.category.errors %}
+                <span class="errors">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.title.label }}<br>
+                {{ form.title(val=previous_title) }}
+                {% for error in form.title.errors %}
+                <span class="errors">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.description.label }}<br>
+                {{ form.description(val=previous_description) }}
+                {% for error in form.description.errors %}
+                <span class="errors">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.upload_type.label }}<br>
+                {{ form.upload_type() }}
+                {% for error in form.upload_type.errors %}
+                <span class="errors">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p class="upload-fields" id="article">
+                {{ form.article_link.label }}<br>
+                {{ form.article_link() }}
+            </p>
+            <p class="upload-fields" id="video">
+                {{ form.video_link.label }}<br>
+                {{ form.video_link() }}
+            </p>
+            <p class="upload-fields" id="pdf">
+                {{ form.file.label }}<br>
+                {{ form.file() }}
+            </p>
+            <p><span class="errors" id="input-error"></span></p>
+            <p class="upload-fields" id="submit-button">
+                {{ form.submit() }}
+            </p>
+        </form>
+    </div>
+</div>
+<script>
+    // setup variables for different components of the form
+    const category = $('#category');
+    const title = $('#title');
+    const description = $('#description');
+    const upload_type = $('#upload_type');
+    const article_link = $('#article_link');
+    const video_link = $('#video_link');
+    const file = $('#file');
+    const submit_button = $('#submit-button');
+    const input_error = $('#input-error');
+
+    /** 
+    * Determines whether or not to show the submit button based on current
+    * values of the form. Makes it harder for the user to enter invalid information
+    */
+    const show_submit = () => {
+        if (validate_form()) {
+            submit_button.css('display', 'block');
+        } else {
+            submit_button.css('display', 'none');
+        }
+    };
+
+    /**
+    * Returns true if the parameter is a url, false otherwise
+    */
+    const is_url = (url) => {
+        const expression = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
+        const regex = new RegExp(expression);
+        if (!url.match(regex)) {
+            return false;
+        }
+        return true;
+    };
+
+    /**
+    * Returns true if the file path contains .pdf at the end, false otherwise
+    */
+    const is_pdf = (file_path) => {
+        const expression = /.pdf$/;
+        const regex = new RegExp(expression);
+        if (!file_path.match(regex)) {
+            return false;
+        }
+        return true;
+    }
+
+    // https://gist.github.com/jphase/9086823
+    /**
+    * Returns true if the url param is a youtube video, false otherwise
+    */
+    const is_youtube_url = (url) => {
+        console.log(url)
+        const expression = /(http:|https:)?\/\/(www\.)?(youtube.com|youtu.be)\/(watch)?(\?v=)?(\S+)?/;
+        const regex = new RegExp(expression);
+        if (!url.match(regex)) {
+            return false;
+        }
+        return true;
+    };
+
+    /**
+    * Returns true if the form is in a valid state to submit, false otherwise
+    * Also indicates to the user what they need to fix
+    */
+    const validate_form = () => {
+        let upload_type_val = upload_type.val();
+        input_error.text('')
+        if (upload_type_val === 'article') {
+            video_link.val('');
+            file.val('');
+            if (!article_link.val() || !is_url(article_link.val())) {
+                input_error.text('Please enter a valid URL to upload');
+                return false;
+            }
+        } else if (upload_type_val === 'video') {
+            article_link.val('');
+            file.val('');
+            if (!video_link.val() || !is_youtube_url(video_link.val())) {
+                input_error.text('Please enter a valid YouTube URL to upload');
+                return false;
+            }
+        } else if (upload_type_val === 'pdf') {
+            article_link.val('');
+            video_link.val('');
+            if (!file.val() || !is_pdf(file.val())) {
+                input_error.text('Please upload a .pdf file');
+                return false;
+            }
+        } else {
+            article_link.val('');
+            video_link.val('');
+            file.val('');
+            input_error.text('');
+        }
+        return true;
+    };
+
+    /**
+    * Only shows the field based on the what type of resource is trying to be uploaded
+    */
+    $('#upload_type').change(function () {
+        const val = $(this).val();
+        $('.upload-fields').css('display', 'none');
+        $(`#${val}`).css('display', 'block');
+        show_submit();
+    });
+
+    /**
+    * Determine whether or not to show submit button based on what file was uploaded
+    */
+    $('#file').change(show_submit);
+
+    /**
+    * Determine whether or not to show submit button based on link inputs
+    */
+    $('input').not('#submit').not('#title').not('#description').keyup(show_submit);
+</script>
+{% endblock %}
