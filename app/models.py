@@ -335,32 +335,15 @@ class Resource(db.Model):
         return f'{self.title} -- {self.description}'
     
     def to_dict(self):
-        if self.article_link:
-            return {
-                'timestamp': self.timestamp,
-                'category': self.category,
-                'title': self.title,
-                'description': self.description,
-                'article_link': self.article_link,
-            }
-        elif self.video_link:
-            return {
-                'timestamp': self.timestamp,
-                'category': self.category,
-                'title': self.title,
-                'description': self.description,
-                'video_link': self.video_link,
-            }
-        elif self.file_data:
-            return {
-                'timestamp': self.timestamp,
-                'category': self.category,
-                'title': self.title,
-                'description': self.description,
-                'file_data': str(self.file_data),
-            }
-        else:
-            return None
+        return {
+            'timestamp': self.timestamp,
+            'category': self.category,
+            'title': self.title,
+            'description': self.description,
+            'article_link': self.article_link,
+            'video_link': self.video_link,
+            'file_path': self.file_path
+        }
 
 
 @login.user_loader

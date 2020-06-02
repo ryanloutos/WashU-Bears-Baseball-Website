@@ -8,6 +8,8 @@ from flask import Blueprint
 from flask import render_template
 from flask import jsonify
 
+from flask_api import status
+
 from app.models import Resource
 
 from flask_login import login_user
@@ -17,9 +19,11 @@ from flask_login import login_required
 
 from app.forms import NewResourceForm 
 
+import os
+
 resource = Blueprint("resource", __name__)
 
-# TEMPLATES
+# ***************-TEMPLATES-*************** #
 @resource.route('/new_resource', methods=['GET', 'POST'])
 @login_required
 def new_resource():
@@ -30,9 +34,12 @@ def new_resource():
     )
 
 
-# CRUD
+
+
+# ***************-CRUD OPERATIONS-*************** #
 # create
 @resource.route('/resource', methods=['POST'])
+@login_required
 def create_resource():
     '''API Route to create a new resource
     Only thing that could be added here is url validation for the articles or videos, 
@@ -47,14 +54,14 @@ def create_resource():
             video_link: a valid youtube url to a video
             file: a pdf file 
     Returns:
-        HTML based on the request and whether it was successfull or not
+        A status code with a message
     '''
     # Make sure form data exists in request
-    if request.form:
-        form_data = request.form
-    else:
-        flash('Invalid request. No form data present')
-        return redirect(url_for('main.index')) 
+    message = ''
+    if not request.form:
+        message = 'No form data present in request'
+        return message, status.HTTP_400_BAD_REQUEST
+    form_data = request.form
     
     # Filter string form params to make sure everything is valid
     params = {'category': '', 'title': '', 'description': '', 'article_link': '', 'video_link': ''}
@@ -64,16 +71,25 @@ def create_resource():
             params[param] = form_data[param]
         else:
             if param in required_params:
-                flash(f'Invalid request. No {param} present')
-                return redirect(url_for('main.index'))            
+                message = f'Invalid request. No {param} present'
+                return message, status.HTTP_400_BAD_REQUEST
+    
+    # Check to make sure title doesn't exist
+    resources_with_same_title = Resource.query.filter_by(title=params['title']).filter_by(category=params['category']).all()
+    if resources_with_same_title:
+        message = 'There already exists a resource in that category with that title'
+        return message, status.HTTP_400_BAD_REQUEST
 
     # Check for file in request
-    file_data = read_file_from_request(request, 'file')
+    file_path = save_file_to_file_system(request, 'file', params['title'])
+    if file_path == 'Error':
+        message = 'There was an error while saving the file'
+        return message, status.HTTP_500_INTERNAL_SERVER_ERROR
     
     # Only one of three params must be present: article_line, video_link, file_data
-    if not exactly_one_param_present(params['article_link'], params['video_link'], file_data):
-        flash('Invalid request. Need exactly one of: article link, video link, file')
-        return redirect(url_for('main.index'))
+    if not exactly_one_param_present(params['article_link'], params['video_link'], file_path):
+        message = f'Invalid request. Need exactly one of: article link, video link, file'
+        return message, status.HTTP_400_BAD_REQUEST
 
     # If all goes well above, add the resource to the database
     resource = Resource(
@@ -82,14 +98,27 @@ def create_resource():
         description=params['description'],
         article_link=params['article_link'],
         video_link=params['video_link'],
-        file_data=file_data
+        file_path=file_path
     )
     db.session.add(resource)
     db.session.commit()
-    return redirect(url_for('main.index'))
+    return message, status.HTTP_200_OK
 
+# read
 @resource.route('/resource', methods=['GET'])
+@login_required
 def read_resource():
+    '''API Route to read resources based on query strings
+
+    Query String Params:
+        - category (optional): the category of resources you want to get
+        - resource_type (optional): file, video, or article
+        
+    Returns:
+        An array of resources based on the query string params. Will return all resources
+        if no params are given
+
+    '''
     # Gather data from query string params
     category = request.args.get('category')
     resource_type = request.args.get('resource_type')
@@ -104,9 +133,9 @@ def read_resource():
     if resource_type in ['youtube', 'YouTube', 'video', 'Video', 'video_link']:
         resource_type = 'video'
         query += f".filter(Resource.video_link != '')"
-    if resource_type in ['file', 'file_data', 'pdf', 'PDF', 'File']:
+    if resource_type in ['file', 'pdf', 'PDF', 'File']:
         resource_type = 'file'
-        query += f".filter(Resource.file_data != None)"
+        query += f".filter(Resource.file_path != None)"
     
     if category in ['Pitching', 'pitching', 'pitchers', 'Pitchers']:
         category = 'Pitching'
@@ -124,16 +153,17 @@ def read_resource():
 
     query += '.all()'
 
+    # query database and return an array of resources
     resources = eval(query)
     return_resources = []
     for resource in resources:
         return_resources.append(resource.to_dict())
-    print(return_resources)
-    return 'hey'
-    # return jsonify(return_resources)
+
+    return jsonify(return_resources), status.HTTP_200_OK
     
 # update
 @resource.route('/resource/<id>', methods=['PATCH'])
+@login_required
 def update_resource(id):
     '''API Route to update a resource
     The update will take the exact form of the request, so if something doesn't need to
@@ -155,15 +185,16 @@ def update_resource(id):
     '''
 
     # Check to make sure resource exists
+    message = ''
     resource = Resource.query.filter_by(id=id).first()
     if not resource:
-        flash('Invalid request. ID passed does not match any resource')
-        return redirect(url_for('main.index'))
+        message = 'Invalid request. ID passed does not match any resource'
+        return message, status.HTTP_400_BAD_REQUEST
     
     # Check to make sure form data was present in request
     if not request.form:
-        flash('Invalid request. No form data present')
-        return redirect(url_for('main.index'))
+        message = 'No form data present in request'
+        return message, status.HTTP_400_BAD_REQUEST
     form_data = request.form
 
     # Filter string form params to make sure everything is valid
@@ -174,16 +205,21 @@ def update_resource(id):
             params[param] = form_data[param]
         else:
             if param in required_params:
-                flash(f'Invalid request. No {param} present')
-                return redirect(url_for('main.index'))            
+                message = f'Invalid request. No {param} present'
+                return message, status.HTTP_400_BAD_REQUEST          
 
     # Check for file in request
-    file_data = read_file_from_request(request, 'file')
+    if file_exists(resource.file_path):
+        os.remove(resource.file_path)
+    file_path = save_file_to_file_system(request, 'file', params['title'])
+    if file_path == 'Error':
+        message = 'There was an error while saving the file'
+        return message, status.HTTP_500_INTERNAL_SERVER_ERROR
     
     # Only one of three params must be present: article_line, video_link, file_data
-    if not exactly_one_param_present(params['article_link'], params['video_link'], file_data):
-        flash('Invalid request. Need exactly one of: article link, video link, file')
-        return redirect(url_for('main.index'))
+    if not exactly_one_param_present(params['article_link'], params['video_link'], file_path):
+        message = f'Invalid request. Need exactly one of: article link, video link, file'
+        return message, status.HTTP_400_BAD_REQUEST
 
     # Update the resource based on everything passed through
     resource.category = params['category']
@@ -191,13 +227,14 @@ def update_resource(id):
     resource.description = params['description']
     resource.article_link = params['article_link']
     resource.video_link = params['video_link']
-    resource.file_data = file_data
+    resource.file_path = file_path
 
     db.session.commit()
-    return redirect(url_for('main.index'))
+    return message, status.HTTP_200_OK
 
 # delete
 @resource.route('/resource/<id>', methods=['DELETE'])
+@login_required
 def delete_resource(id):
     '''API Route to delete a resource by its id
 
@@ -206,16 +243,22 @@ def delete_resource(id):
     Returns:
         HTML based on the request and whether it was successfull or not
     '''
+    message = ''
+    # check to make sure the resource exists
     resource = Resource.query.filter_by(id=id).first()
     if not resource:
-        flash('Invalid request. ID passed does not match any resource')
-        return redirect(url_for('main.index'))
+        message = 'Invalid request. ID passed does not match any resource'
+        return message, status.HTTP_400_BAD_REQUEST
+    
+    # delete the file if the resource is a file
+    if file_exists(resource.file_path):
+        os.remove(resource.file_path)
 
     db.session.delete(resource)
     db.session.commit()
-    return redirect(url_for('main.index'))
+    return message, status.HTTP_200_OK
 
-# UTIL FUNCTIONS
+# ***************-UTIL FUNCTIONS-*************** #
 def exactly_one_param_present(one, two, three):
     number_present = 0
     if one:
@@ -226,8 +269,42 @@ def exactly_one_param_present(one, two, three):
         number_present += 1
     return number_present == 1
 
-def read_file_from_request(request, file_name):
-    if file_name in request.files:
-        return request.files[file_name].read()
+def save_file_to_file_system(request, file_name_in_request, file_name):
+    if file_name_in_request in request.files:
+        file_loc = os.path.join(
+            os.path.dirname(os.path.realpath(__file__)),
+            "..",
+            "static",
+            "files",
+            "resources",
+            f"{file_name}.pdf"
+        )
+        if not file_exists(file_loc):
+            request.files[file_name_in_request].save(file_loc)
+            return file_loc
+        else:
+            extra_text_for_file_name = 1
+            while file_exists(file_loc):
+                file_loc = os.path.join(
+                    os.path.dirname(os.path.realpath(__file__)),
+                    "..",
+                    "static",
+                    "files",
+                    "resources",
+                    f"{file_name}{extra_text_for_file_name}.pdf"
+                )
+                extra_text_for_file_name += 1
+                if extra_text_for_file_name == 10:
+                    return 'Error'
+            request.files[file_name_in_request].save(file_loc)
+            return file_loc
     return None
 
+def file_exists(file_path):
+    try:
+        if not file_path:
+            return False
+        open(file_path)
+        return True
+    except IOError:
+        return False
