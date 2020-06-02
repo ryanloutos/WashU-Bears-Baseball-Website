@@ -3,6 +3,7 @@ from datetime import date
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from datetime import datetime
+from io import BytesIO
 
 
 class User(UserMixin, db.Model):
@@ -327,8 +328,39 @@ class Resource(db.Model):
     description = db.Column(db.String(256), index=True)
     article_link = db.Column(db.String(256))
     video_link = db.Column(db.String(256))
-    file_data = db.Column(db.LargeBinary)
+    file_path = db.Column(db.String(256))
     category = db.Column(db.String(32))
+
+    def __repr__(self):
+        return f'{self.title} -- {self.description}'
+    
+    def to_dict(self):
+        if self.article_link:
+            return {
+                'timestamp': self.timestamp,
+                'category': self.category,
+                'title': self.title,
+                'description': self.description,
+                'article_link': self.article_link,
+            }
+        elif self.video_link:
+            return {
+                'timestamp': self.timestamp,
+                'category': self.category,
+                'title': self.title,
+                'description': self.description,
+                'video_link': self.video_link,
+            }
+        elif self.file_data:
+            return {
+                'timestamp': self.timestamp,
+                'category': self.category,
+                'title': self.title,
+                'description': self.description,
+                'file_data': str(self.file_data),
+            }
+        else:
+            return None
 
 
 @login.user_loader

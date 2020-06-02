@@ -32,6 +32,8 @@ from .views.game import game
 from .views.video import video
 from .views.hitters import hitters
 from .views.hitters import hitter
+from .views.resource import resource
+
 
 # Register Blueprints
 app.register_blueprint(main)
@@ -47,3 +49,4 @@ app.register_blueprint(game)
 app.register_blueprint(video)
 app.register_blueprint(hitters)
 app.register_blueprint(hitter)
+app.register_blueprint(resource)
