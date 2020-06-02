@@ -328,7 +328,7 @@ class Resource(db.Model):
     description = db.Column(db.String(256), index=True)
     article_link = db.Column(db.String(256))
     video_link = db.Column(db.String(256))
-    file_data = db.Column(db.LargeBinary)
+    file_path = db.Column(db.String(256))
     category = db.Column(db.String(32))
 
     def __repr__(self):
