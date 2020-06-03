@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block styles %}
+{{ super() }}
+<style>
+    #page-title {
+        border-bottom: 5px solid #bd231f;
+        font-size: 45px;
+        font-weight: 600;
+        text-align: center;
+    }
+</style>
+{% endblock %}
+
+{% block app_content %}
+{% include "resource/resource_sidenav.html" %}
+<div class="main">
+    <h1 id="page-title">
+        HITTING RESOURCES
+    </h1>
+    Hey
+</div>
+{% endblock %}

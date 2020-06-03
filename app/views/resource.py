@@ -24,19 +24,65 @@ import os
 resource = Blueprint("resource", __name__)
 
 # ***************-TEMPLATES-*************** #
-@resource.route('/new_resource', methods=['GET', 'POST'])
+@resource.route('/new_resource', methods=['GET'])
 @login_required
 def new_resource():
     return render_template(
-        "resource/new_resource.html",
-        title="New Resource",
+        'resource/new_resource.html',
+        title='New Resource',
         form=NewResourceForm()
     )
 
+@resource.route('/resource/home', methods=['GET'])
+@login_required
+def resource_home():
+    return render_template(
+        'resource/resources_home.html',
+        title='Team Resources',
+    )
+
+@resource.route('/resource/pitching', methods=['GET'])
+@login_required
+def pitching_resources():
+    return render_template(
+        'resource/pitching_resources.html',
+        title='Pitching Resources',
+    )
+
+@resource.route('/resource/hitting', methods=['GET'])
+@login_required
+def hitting_resources():
+    return render_template(
+        'resource/hitting_resources.html',
+        title='Hitting Resources',
+    )
+
+@resource.route('/resource/defense', methods=['GET'])
+@login_required
+def defense_resources():
+    return render_template(
+        'resource/defense_resources.html',
+        title='Defense Resources',
+    )
+
+@resource.route('/resource/mental_game', methods=['GET'])
+@login_required
+def mental_game_resources():
+    return render_template(
+        'resource/mental_game_resources.html',
+        title='Mental Game Resources',
+    )
+
+@resource.route('/resource/miscellaneous', methods=['GET'])
+@login_required
+def miscellaneous_resources():
+    return render_template(
+        'resource/miscellaneous_resources.html',
+        title='Miscellaneous Resources',
+    )
 
 
-
-# ***************-CRUD OPERATIONS-*************** #
+# ***************-CRUD API OPERATIONS-*************** #
 # create
 @resource.route('/resource', methods=['POST'])
 @login_required
