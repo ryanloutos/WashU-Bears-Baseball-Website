@@ -7,6 +7,7 @@ from flask import redirect
 from flask import Blueprint
 from flask import render_template
 from flask import jsonify
+from flask import send_from_directory
 
 from flask_api import status
 
@@ -81,6 +82,23 @@ def miscellaneous_resources():
         title='Miscellaneous Resources',
     )
 
+@resource.route("/resource/download/<id>")
+@login_required
+def download_resource(id):
+    resource = Resource.query.filter_by(id=id).first()
+    if not resource or not resource.file_path:
+        return send_from_directory(
+            "static", "files/resources/file_does_not_exist.pdf",
+            as_attachment=True,
+            mimetype="application/pdf",
+            attachment_filename="file_does_not_exist.pdf"
+        )
+
+    return send_from_directory(
+        "static", resource.file_path,
+        as_attachment=True,
+        mimetype="application/pdf",
+        attachment_filename=f"{resource.title}.pdf")
 
 # ***************-CRUD API OPERATIONS-*************** #
 # create
@@ -317,33 +335,34 @@ def exactly_one_param_present(one, two, three):
 
 def save_file_to_file_system(request, file_name_in_request, file_name):
     if file_name_in_request in request.files:
-        file_loc = os.path.join(
-            os.path.dirname(os.path.realpath(__file__)),
-            "..",
-            "static",
-            "files",
-            "resources",
-            f"{file_name}.pdf"
-        )
-        if not file_exists(file_loc):
-            request.files[file_name_in_request].save(file_loc)
-            return file_loc
-        else:
-            extra_text_for_file_name = 1
-            while file_exists(file_loc):
-                file_loc = os.path.join(
-                    os.path.dirname(os.path.realpath(__file__)),
-                    "..",
-                    "static",
-                    "files",
-                    "resources",
-                    f"{file_name}{extra_text_for_file_name}.pdf"
-                )
-                extra_text_for_file_name += 1
-                if extra_text_for_file_name == 10:
-                    return 'Error'
-            request.files[file_name_in_request].save(file_loc)
-            return file_loc
+        if not request.files[file_name_in_request].filename == '':
+            file_loc = os.path.join(
+                os.path.dirname(os.path.realpath(__file__)),
+                "..",
+                "static",
+                "files",
+                "resources",
+                f"{file_name}.pdf"
+            )
+            if not file_exists(file_loc):
+                request.files[file_name_in_request].save(file_loc)
+                return f'files/resources/{file_name}.pdf'
+            else:
+                extra_text_for_file_name = 1
+                while file_exists(file_loc):
+                    file_loc = os.path.join(
+                        os.path.dirname(os.path.realpath(__file__)),
+                        "..",
+                        "static",
+                        "files",
+                        "resources",
+                        f"{file_name}{extra_text_for_file_name}.pdf"
+                    )
+                    extra_text_for_file_name += 1
+                    if extra_text_for_file_name == 10:
+                        return 'Error'
+                request.files[file_name_in_request].save(file_loc)
+                return f'files/resources/{file_name}{extra_text_for_file_name}.pdf'
     return None
 
 def file_exists(file_path):

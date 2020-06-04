@@ -116,7 +116,6 @@
     * Returns true if the url param is a youtube video, false otherwise
     */
     const is_youtube_url = (url) => {
-        console.log(url)
         const expression = /(http:|https:)?\/\/(www\.)?(youtube.com|youtu.be)\/(watch)?(\?v=)?(\S+)?/;
         const regex = new RegExp(expression);
         if (!url.match(regex)) {
