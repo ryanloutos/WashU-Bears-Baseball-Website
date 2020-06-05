@@ -150,6 +150,7 @@ class Pitch(db.Model):
     loc_y = db.Column(db.Float)
     hit_spot = db.Column(db.Boolean, index=True)
     count = db.Column(db.String(8), index=True)
+
     ab_result = db.Column(db.String(32), index=True)
     traj = db.Column(db.String(8), index=True)
     fielder = db.Column(db.String(8), index=True)
@@ -263,6 +264,16 @@ class AtBat(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     batter_id = db.Column(db.Integer, db.ForeignKey('batter.id'), index=True)
     outing_id = db.Column(db.Integer, db.ForeignKey('outing.id'), index=True)
+    # Moved over from Pitch
+    ab_result = db.Column(db.String(32), index=True)
+    traj = db.Column(db.String(8), index=True)
+    fielder = db.Column(db.String(8), index=True)
+    spray_x = db.Column(db.Float)
+    spray_y = db.Column(db.Float)
+    hit_hard = db.Column(db.Boolean, index=True)
+    inning = db.Column(db.Integer, index=True)
+
+    notes = db.Column(db.String(128))
     pitches = db.relationship('Pitch', backref='at_bat', lazy='dynamic')
 
     def __repr__(self):
