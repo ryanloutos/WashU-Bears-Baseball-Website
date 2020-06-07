@@ -310,8 +310,15 @@ def update_resource(id):
             return message, status.HTTP_400_BAD_REQUEST
 
         # delete the old file if it exists
-        if file_exists(resource.file_path):
-            os.remove(resource.file_path)
+        if file_path:
+            file_loc = os.path.join(
+                os.path.dirname(os.path.realpath(__file__)),
+                "..",
+                "static",
+                resource.file_path
+            )
+            if file_exists(file_loc):
+                os.remove(file_loc)
 
     else:
         params['article_link'] = resource.article_link
@@ -348,8 +355,15 @@ def delete_resource(id):
         return message, status.HTTP_400_BAD_REQUEST
     
     # delete the file if the resource is a file
-    if file_exists(resource.file_path):
-        os.remove(resource.file_path)
+    if resource.file_path:
+        file_loc = os.path.join(
+            os.path.dirname(os.path.realpath(__file__)),
+            "..",
+            "static",
+            resource.file_path
+        )
+        if file_exists(file_loc):
+            os.remove(file_loc)
 
     db.session.delete(resource)
     db.session.commit()

@@ -110,7 +110,7 @@
                 return window.location.href = '/resource/home';
             }).fail((xhr, status, error) => {
                 input_error.text(xhr.responseText);
-                submit_button.text('Save Changes');
+                submit_button.val('Save Changes');
                 return;
             });
         }

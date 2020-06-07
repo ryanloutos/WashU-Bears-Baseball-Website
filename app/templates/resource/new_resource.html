@@ -186,7 +186,7 @@
                 return window.location.href = '/resource/home';
             }).fail((xhr, status, error) => {
                 input_error.text(xhr.responseText);
-                submit_button.text('Upload Resource');
+                submit_button.val('Upload Resource');
                 return;
             });
         }

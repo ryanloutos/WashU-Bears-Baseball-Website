@@ -58,7 +58,7 @@ $.get(`/resource?recent=true`, resources => {
             {% endif %}</p>
             <p><i>Uploaded: ${resources[i].timestamp}</i></p></div></div></div>`;
 
-        if (!new_row) {
+        if (!new_row || i == resources.length - 1) {
             thumbnail += "</div>"
             $('#resources').append(thumbnail);
             thumbnail = '';
