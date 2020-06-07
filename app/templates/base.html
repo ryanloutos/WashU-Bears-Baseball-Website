@@ -1,104 +1,110 @@
 {% extends 'bootstrap/base.html' %}
 
 {% block title %}
-    {% if title %}
-        {{ title }} 
-    {% else %}
-        WashU Bears Pitching
-    {% endif %}
+{% if title %}
+{{ title }}
+{% else %}
+WashU Bears Pitching
+{% endif %}
 {% endblock %}
 
 {% block styles %}
-    {{ super() }}
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/fonts.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/base.css') }}">
-    
-    <script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/sortable_table.js') }}"></script>
+{{ super() }}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/fonts.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/base.css') }}">
 
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidenav.css') }}">
-    <script src="{{ url_for('static', filename='js/sidenav.js') }}"></script>
+<script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
+<script src="{{ url_for('static', filename='js/sortable_table.js') }}"></script>
+
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sidenav.css') }}">
+<script src="{{ url_for('static', filename='js/sidenav.js') }}"></script>
 
 {% endblock %}
 
 {% block navbar %}
 <nav class="navbar navbar-default navbar-fixed-top">
-    <div class="container-fluid">
-      <!-- Brand and toggle get grouped for better mobile display -->
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class='navbar-brand' href="{{ url_for('main.index') }}">
-            <img alt='Brand' src="{{ url_for('static', filename='images/Bear_Head.png') }}">
-        </a>
-      </div>
-  
-      <!-- Collect the nav links, forms, and other content for toggling -->
-      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-        <ul class="nav navbar-nav">
-          <li><a href="{{ url_for('main.index') }}">Home</a></li>
-          <li><a href="{{ url_for('staff.staff_home') }}">Pitching</a></li>
-          <li><a href="{{ url_for('hitters.hitters_home') }}">Hitting</a></li>
-          <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Seasons <span class="caret"></span></a>
-            <ul class="dropdown-menu">
-                <li><a href="{{ url_for('season.season_home', id=current_season.id) }}">{{ current_season }}</a></li>
-                <li role="separator" class="divider"></li>
-                {% for s in old_seasons %}
-                  <li><a href="{{ url_for('season.season_home', id=s.id) }}">{{ s }}</a></li>
-                {% endfor %}
-            </ul>
-          </li>
-          <li><a href="{{ url_for('opponent.all_opponents') }}">Opponents</a></li>
-        </ul>
-        <ul class="nav navbar-nav navbar-right">
-          {% if current_user.is_anonymous %}
-          <li><a href="{{ url_for('main.login') }}">Sign In</a></li>
-          {% else %}
-          {% if current_user.admin %}
-          <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Create <span class="caret"></span></a>
-            <ul class="dropdown-menu">
-                
-                <li><a href="{{ url_for('outing.new_outing') }}">New Outing</a></li>
-                <li><a href="{{ url_for('game.game_new_game') }}">New Game</a></li>
-                <li><a href="{{ url_for('outing.new_outing_csv') }}">New Outing CSV</a></li>
-                <li role="separator" class="divider"></li>
-                <li><a href="{{ url_for('video.new_video_pitcher') }}">New Video Pitcher</a></li>
-                <li><a href="{{ url_for('video.new_video_batter') }}">New Video Hitter</a></li>
-                <li role="separator" class="divider"></li>
-                <li><a href="{{ url_for('main.register') }}">New User</a></li>
-                <li><a href="{{ url_for('opponent.new_opponent') }}">New Opponent</a></li>
-                <li><a href="{{ url_for('season.new_season') }}">New Season</a></li>
-                <li><a href="{{ url_for('batter.new_batter') }}">New Batter</a></li>
-                <li><a href="{{ url_for('pitcher.new_pitcher') }}">New Pitcher</a></li>
-            </ul>
-          </li>
-          {% endif %}
-          <li><a href="{{ url_for('main.user', id=current_user.id) }}">Profile</a></li>
-          <li><a href="{{ url_for('main.logout') }}">Logout</a></li>
-          {% endif %}
-        </ul>
-      </div><!-- /.navbar-collapse -->
-    </div><!-- /.container-fluid -->
-  </nav>
+	<div class="container-fluid">
+		<!-- Brand and toggle get grouped for better mobile display -->
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+				data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			<a class='navbar-brand' href="{{ url_for('main.index') }}">
+				<img alt='Brand' src="{{ url_for('static', filename='images/Bear_Head.png') }}">
+			</a>
+		</div>
+
+		<!-- Collect the nav links, forms, and other content for toggling -->
+		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+			<ul class="nav navbar-nav">
+				<li><a href="{{ url_for('main.index') }}">Home</a></li>
+				<li><a href="{{ url_for('staff.staff_home') }}">Pitching</a></li>
+				<li><a href="{{ url_for('hitters.hitters_home') }}">Hitting</a></li>
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+						aria-expanded="false">Seasons <span class="caret"></span></a>
+					<ul class="dropdown-menu">
+						<li><a href="{{ url_for('season.season_home', id=current_season.id) }}">{{ current_season }}</a>
+						</li>
+						<li role="separator" class="divider"></li>
+						{% for s in old_seasons %}
+						<li><a href="{{ url_for('season.season_home', id=s.id) }}">{{ s }}</a></li>
+						{% endfor %}
+					</ul>
+				</li>
+				<li><a href="{{ url_for('opponent.all_opponents') }}">Opponents</a></li>
+				<li><a href="{{ url_for('resource.resource_home') }}">Resources</a></li>
+			</ul>
+			<ul class="nav navbar-nav navbar-right">
+				{% if current_user.is_anonymous %}
+				<li><a href="{{ url_for('main.login') }}">Sign In</a></li>
+				{% else %}
+				{% if current_user.admin %}
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+						aria-expanded="false">Create <span class="caret"></span></a>
+					<ul class="dropdown-menu">
+
+						<li><a href="{{ url_for('outing.new_outing') }}">New Outing</a></li>
+						<li><a href="{{ url_for('game.game_new_game') }}">New Game</a></li>
+						<li><a href="{{ url_for('outing.new_outing_csv') }}">New Outing CSV</a></li>
+						<li role="separator" class="divider"></li>
+						<li><a href="{{ url_for('video.new_video_pitcher') }}">New Video Pitcher</a></li>
+						<li><a href="{{ url_for('video.new_video_batter') }}">New Video Hitter</a></li>
+						<li role="separator" class="divider"></li>
+						<li><a href="{{ url_for('main.register') }}">New User</a></li>
+						<li><a href="{{ url_for('opponent.new_opponent') }}">New Opponent</a></li>
+						<li><a href="{{ url_for('season.new_season') }}">New Season</a></li>
+						<li><a href="{{ url_for('batter.new_batter') }}">New Batter</a></li>
+						<li><a href="{{ url_for('pitcher.new_pitcher') }}">New Pitcher</a></li>
+						<li><a href="{{ url_for('resource.new_resource') }}">New Resource</a></li>
+					</ul>
+				</li>
+				{% endif %}
+				<li><a href="{{ url_for('main.user', id=current_user.id) }}">Profile</a></li>
+				<li><a href="{{ url_for('main.logout') }}">Logout</a></li>
+				{% endif %}
+			</ul>
+		</div><!-- /.navbar-collapse -->
+	</div><!-- /.container-fluid -->
+</nav>
 {% endblock %}
 
 {% block content %}
-    <div class="container">
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            {% for message in messages %}
-            <div class="alert alert-danger" role="alert">{{ message }}</div>
-            {% endfor %}
-        {% endif %}
-        {% endwith %}
+<div class="container">
+	{% with messages = get_flashed_messages() %}
+	{% if messages %}
+	{% for message in messages %}
+	<div class="alert alert-danger" role="alert">{{ message }}</div>
+	{% endfor %}
+	{% endif %}
+	{% endwith %}
 
-        {# application content needs to be provided in the app_content block #}
-        {% block app_content %}{% endblock %}
-    </div><br><br><br><br><br><br><br><br>
+	{# application content needs to be provided in the app_content block #}
+	{% block app_content %}{% endblock %}
+</div><br><br><br><br><br><br><br><br>
 {% endblock %}
