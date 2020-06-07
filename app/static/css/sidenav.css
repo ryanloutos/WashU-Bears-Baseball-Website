@@ -56,3 +56,8 @@
     .sidenav a {font-size: 18px;}
 }
 
+@media screen and (max-width: 600px) {
+    .sidenav a {font-size: 10px;}
+    .sidenav {width: 100px;}
+}
+

@@ -1,0 +1,27 @@
+#page-title {
+    border-bottom: 5px solid #bd2e1f;
+    font-size: 45px;
+    font-weight: 600;
+    text-align: center;
+}
+
+@media screen and (max-width: 600px) {
+    #page-title {
+        border-bottom: 5px solid #bd2e1f;
+        font-size: 25px;
+        font-weight: 600;
+        text-align: center;
+    }
+
+    iframe {
+        width: 150px;
+        height: 100px
+    }
+}
+
+@media screen and (max-width: 400px) {
+    iframe {
+        width: 0px;
+        height: 0px
+    }
+}
