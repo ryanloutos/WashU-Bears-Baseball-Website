@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block styles %}
+{{ super() }}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/forms.css') }}">
+{% endblock %}
+
+{% block app_content %}
+<div class="no-sidenav">
+    <div class="form-container">
+        <h1 class="form-title">Edit Resource</h1>
+        <form onsubmit="return false">
+            {{ form.hidden_tag() }}
+            <p>
+                {{ form.category.label }}<br>
+                <select id="category" name="category" required>
+                    <option value="">[SELECT A CATEGORY]</option>
+                    <option value="Pitching" {% if resource.category=='Pitching' %} selected='selected' {% endif %}>
+                        Pitching
+                    </option>
+                    <option value="Hitting" {% if resource.category=='Hitting' %} selected='selected' {% endif %}>
+                        Hitting
+                    </option>
+                    <option value="Defense" {% if resource.category=='Defense' %} selected='selected' {% endif %}>
+                        Defense
+                    </option>
+                    <option value="Mental Game" {% if resource.category=='Mental Game' %} selected='selected'
+                        {% endif %}>
+                        Mental Game</option>
+                    <option value="Miscellaneous" {% if resource.category=='Miscellaneous' %} selected='selected'
+                        {% endif %}>Miscellaneous</option>
+                </select>
+                {% for error in form.category.errors %}
+                <span class="errors">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.title.label }}<br>
+                {{ form.title(value=resource.title) }}
+                {% for error in form.title.errors %}
+                <span class="errors">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.description.label }}<br>
+                {{ form.description(value=resource.description) }}
+                {% for error in form.description.errors %}
+                <span class="errors">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p><span class="errors" id="input-error"></span></p>
+            <p id="submit-button">
+                {{ form.submit() }}
+            </p>
+        </form>
+        <p style="text-align: center">
+            -OR-
+            <a id="delete-resource"><button style="width: 100%">Delete Resource</button></a>
+        </p>
+    </div>
+</div>
+<script>
+    const input_error = $('#input-error');
+    const title = $('#title');
+    const category = $('#category');
+    const submit_button = $('#submit');
+    const form = $('form')[0];
+    const input_fields = $('input').not('#submit');
+    const delete_button = $('#delete-resource');
+
+    /**
+    * Returns true if the form is in a valid state to submit, false otherwise
+    * Also indicates to the user what they need to fix
+    */
+    const validate_form = () => {
+        input_error.text('');
+        if (title.val() === '') {
+            input_error.text('Please provide a title');
+            return false;
+        } else if (category.val() === '') {
+            input_error.text('Please select a category');
+            return false;
+        } else {
+            return true;
+        }
+    };
+
+    // give the user feedback on the form as they type
+    input_fields.keyup(validate_form);
+
+    // give the user feedback if a category is not selected
+    category.change(validate_form);
+
+    /**
+    * If the submit button is clicked and the form is validated,
+    * submit a PATCH request to the server for the current resource
+    */
+    submit_button.on('click', () => {
+        if (validate_form()) {
+            submit_button.val('Saving Resource....');
+            const formData = new FormData(form);
+            $.ajax({
+                type: 'PATCH',
+                url: `/resource/{{ resource.id }}`,
+                contentType: false,
+                processData: false,
+                data: formData
+            }).done(response => {
+                submit_button.val('Success');
+                return window.location.href = '/resource/home';
+            }).fail((xhr, status, error) => {
+                input_error.text(xhr.responseText);
+                submit_button.text('Save Changes');
+                return;
+            });
+        }
+        return;
+    });
+
+    // Basic delete request
+    delete_button.on('click', () => {
+        $.ajax({
+            type: 'DELETE',
+            url: `/resource/{{ resource.id }}`
+        }).done(response => {
+            return window.location.href = '/resource/home';
+        }).fail((xhr, status, error) => {
+            input_error.text(xhr.responseText);
+            return;
+        });
+    });
+
+</script>
+{% endblock %}

@@ -415,3 +415,20 @@ class NewResourceForm(FlaskForm):
         ]
     )
     submit = SubmitField('Upload Resource')
+
+class EditResourceForm(FlaskForm):
+    category = SelectField(
+        'Category',
+        choices=[
+            ('', '[SELECT A CATEGORY]'),
+            ('Pitching', 'Pitching'),
+            ('Hitting', 'Hitting'),
+            ('Defense', 'Defense'),
+            ('Mental Game', 'Mental Game'),
+            ('Miscellaneous', 'Miscellaneous')
+        ],
+        validators=[DataRequired()]
+    )
+    title = StringField('Title', validators=[DataRequired()])
+    description = StringField('Description (Optional)', validators=[Optional()])
+    submit = SubmitField('Save Changes')
