@@ -335,8 +335,10 @@ class Resource(db.Model):
         return f'{self.title} -- {self.description}'
     
     def to_dict(self):
+        timestamp = self.timestamp.strftime("%m/%d/%Y")        
         return {
-            'timestamp': self.timestamp,
+            'id': self.id,
+            'timestamp': timestamp,
             'category': self.category,
             'title': self.title,
             'description': self.description,

@@ -3,19 +3,14 @@
 {% block styles %}
 {{ super() }}
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/forms.css') }}">
-<style>
-    .upload-fields {
-        display: none;
-    }
-</style>
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/new_resource.css') }}">
 {% endblock %}
 
 {% block app_content %}
 <div class="no-sidenav">
     <div class="form-container">
-        <h1 class="form-title">New Resource</h1>
-        <form method="POST" enctype="multipart/form-data" onsubmit="return validate_form()" action="/resource">
-            {{ form.hidden_tag() }}
+        <form onsubmit="return false">
+            <h1 class="form-title">New Resource</h1>
             <p>
                 {{ form.category.label }}<br>
                 {{ form.category() }}
@@ -44,20 +39,20 @@
                 <span class="errors">[{{ error }}]</span>
                 {% endfor %}
             </p>
-            <p class="upload-fields" id="article">
+            <p class="initially-hidden" id="article">
                 {{ form.article_link.label }}<br>
                 {{ form.article_link() }}
             </p>
-            <p class="upload-fields" id="video">
+            <p class="initially-hidden" id="video">
                 {{ form.video_link.label }}<br>
                 {{ form.video_link() }}
             </p>
-            <p class="upload-fields" id="pdf">
+            <p class="initially-hidden" id="pdf">
                 {{ form.file.label }}<br>
                 {{ form.file() }}
             </p>
             <p><span class="errors" id="input-error"></span></p>
-            <p class="upload-fields" id="submit-button">
+            <p class="initially-hidden" id="submit-p">
                 {{ form.submit() }}
             </p>
         </form>
@@ -72,8 +67,10 @@
     const article_link = $('#article_link');
     const video_link = $('#video_link');
     const file = $('#file');
-    const submit_button = $('#submit-button');
+    const submit_p = $('#submit-p');
     const input_error = $('#input-error');
+    const initially_hidden = $('.initially-hidden');
+    const submit_button = $('#submit');
 
     /** 
     * Determines whether or not to show the submit button based on current
@@ -81,48 +78,38 @@
     */
     const show_submit = () => {
         if (validate_form()) {
-            submit_button.css('display', 'block');
+            submit_p.css('display', 'block');
         } else {
-            submit_button.css('display', 'none');
+            submit_p.css('display', 'none');
         }
     };
 
     /**
     * Returns true if the parameter is a url, false otherwise
     */
-    const is_url = (url) => {
+    const is_url = url => {
         const expression = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
         const regex = new RegExp(expression);
-        if (!url.match(regex)) {
-            return false;
-        }
-        return true;
+        return url.match(regex);
     };
 
     /**
     * Returns true if the file path contains .pdf at the end, false otherwise
     */
-    const is_pdf = (file_path) => {
+    const is_pdf = file_path => {
         const expression = /.pdf$/;
         const regex = new RegExp(expression);
-        if (!file_path.match(regex)) {
-            return false;
-        }
-        return true;
+        return file_path.match(regex);
     }
 
     // https://gist.github.com/jphase/9086823
     /**
     * Returns true if the url param is a youtube video, false otherwise
     */
-    const is_youtube_url = (url) => {
-        console.log(url)
+    const is_youtube_url = url => {
         const expression = /(http:|https:)?\/\/(www\.)?(youtube.com|youtu.be)\/(watch)?(\?v=)?(\S+)?/;
         const regex = new RegExp(expression);
-        if (!url.match(regex)) {
-            return false;
-        }
-        return true;
+        return url.match(regex);
     };
 
     /**
@@ -131,7 +118,7 @@
     */
     const validate_form = () => {
         let upload_type_val = upload_type.val();
-        input_error.text('')
+        input_error.text('');
         if (upload_type_val === 'article') {
             video_link.val('');
             file.val('');
@@ -165,21 +152,44 @@
     /**
     * Only shows the field based on the what type of resource is trying to be uploaded
     */
-    $('#upload_type').change(function () {
-        const val = $(this).val();
-        $('.upload-fields').css('display', 'none');
-        $(`#${val}`).css('display', 'block');
+    upload_type.change(() => {
+        initially_hidden.css('display', 'none');
+        $(`#${upload_type.val()}`).css('display', 'block');
         show_submit();
     });
 
     /**
     * Determine whether or not to show submit button based on what file was uploaded
     */
-    $('#file').change(show_submit);
+    file.change(show_submit);
 
     /**
     * Determine whether or not to show submit button based on link inputs
     */
     $('input').not('#submit').not('#title').not('#description').keyup(show_submit);
+
+    /**
+    * When the form is submitted, and validated, it will send the form data to the API
+    */
+    submit_button.on('click', () => {
+        if (validate_form()) {
+            submit_button.val('Creating Resource....');
+            const formData = new FormData($('form')[0]);
+            $.ajax({
+                type: 'POST',
+                url: '/resource',
+                contentType: false,
+                processData: false,
+                data: formData
+            }).done(response => {
+                submit_button.val('Success');
+                return window.location.href = '/resource/home';
+            }).fail((xhr, status, error) => {
+                input_error.text(xhr.responseText);
+                submit_button.text('Upload Resource');
+                return;
+            });
+        }
+    });
 </script>
 {% endblock %}
