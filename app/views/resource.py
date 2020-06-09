@@ -12,14 +12,15 @@ from flask import send_from_directory
 from flask_api import status
 
 from app.models import Resource
+from app.models import User
 
-from flask_login import login_user
-from flask_login import logout_user
 from flask_login import current_user
 from flask_login import login_required
 
 from app.forms import NewResourceForm 
-from app.forms import EditResourceForm 
+from app.forms import EditResourceForm
+
+from app.emails import send_email
 
 import os
 
@@ -98,7 +99,7 @@ def miscellaneous_resources():
         title='Miscellaneous Resources',
     )
 
-@resource.route("/resource/download/<id>")
+@resource.route('/resource/download/<id>')
 @login_required
 def download_resource(id):
     resource = Resource.query.filter_by(id=id).first()
@@ -115,6 +116,49 @@ def download_resource(id):
         as_attachment=True,
         mimetype="application/pdf",
         attachment_filename=f"{resource.title}.pdf")
+
+@resource.route('/resource/email', methods=['GET'])
+@login_required
+def new_resource_email():
+    # get the query params
+    include_players = request.args.get('players')
+    include_coaches = request.args.get('coaches')
+    title = request.args.get('title')
+    description = request.args.get('description')
+
+    # make sure the email should be sent to either or both coaches and players
+    true_list = ['True', 'true', 'TRUE']
+    if include_players not in true_list and include_coaches not in true_list:
+        return "Set 'players' or 'coaches' equal to 'true'", status.HTTP_400_BAD_REQUEST
+
+    # make sure a title is present to send the email
+    if not title:
+        return "Missing 'title' query param for the resource", status.HTTP_400_BAD_REQUEST
+    
+    # set up the email list of players/coaches
+    email_list = []
+    if include_players:
+        team_players = User.query.filter_by(current_player=1).all()
+        for player in team_players:
+            email_list.append(player.email)
+    if include_coaches:
+        team_coaches = User.query.filter_by(current_coach=1).all()
+        for coach in team_coaches:
+            email_list.append(coach.email)
+        
+    # set up basic message requirements 
+    subject = 'Check out the new resource just uploaded!'
+    sender = 'Bears Baseball'
+    html = ''
+
+    # set up the body of the email
+    message = f'Title: {title}\n'
+    if description:
+        message += f'Description: {description}\n\n'
+    message += f'\nYou can check it out at bearsbaseball.pythonanywhere.com/resource/home'
+
+    send_email(subject, sender, email_list, message, html)
+    return 'success', status.HTTP_200_OK
 
 # ***************-CRUD API OPERATIONS-*************** #
 @resource.route('/resource', methods=['POST'])
