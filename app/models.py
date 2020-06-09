@@ -15,7 +15,8 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(128))
     firstname = db.Column(db.String(64))
     lastname = db.Column(db.String(64))
-    # each user will have all their outings accessible through this
+    current_player = db.Column(db.Boolean, index=True)
+    current_coach = db.Column(db.Boolean, index=True)
 
     def __repr__(self):
         return f'{self.firstname} {self.lastname}'
