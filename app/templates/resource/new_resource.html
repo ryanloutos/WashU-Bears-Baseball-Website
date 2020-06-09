@@ -53,6 +53,15 @@
             </p>
             <p><span class="errors" id="input-error"></span></p>
             <p class="initially-hidden" id="submit-p">
+                <input type="checkbox" id="notify-players" style="width: auto">&nbsp;
+                <label>
+                    Notify players via email about this resource
+                </label>
+                <br>
+                <input type="checkbox" id="notify-coaches" style="width: auto">&nbsp;
+                <label>
+                    Notify coaches via email about this resource
+                </label>
                 {{ form.submit() }}
             </p>
         </form>
@@ -71,6 +80,8 @@
     const input_error = $('#input-error');
     const initially_hidden = $('.initially-hidden');
     const submit_button = $('#submit');
+    const notify_players = $('#notify-players');
+    const notify_coaches = $('#notify-coaches');
 
     /** 
     * Determines whether or not to show the submit button based on current
@@ -169,20 +180,51 @@
     $('input').not('#submit').not('#title').not('#description').keyup(show_submit);
 
     /**
+    * Send a http request to have an email sent to notify coaches/players about a new resource
+    */
+    const send_new_resource_email = (players = false, coaches = false, title = '', description = '') => {
+        // setup GET url
+        send_email_url = `/resource/email?title=${title}&`;
+        if (players) send_email_url += 'players=true&';
+        if (coaches) send_email_url += 'coaches=true&';
+        if (description) send_email_url += `description=${description}`;
+
+        // send request to have email sent
+        if (players || coaches) {
+            $.ajax({
+                type: 'GET',
+                url: send_email_url
+            }).done(response => {
+                return true;
+            }).fail((xhr, status, error) => {
+                return false;
+            });
+        }
+        return false;
+    };
+
+    /**
     * When the form is submitted, and validated, it will send the form data to the API
     */
     submit_button.on('click', () => {
         if (validate_form()) {
             submit_button.val('Creating Resource....');
-            const formData = new FormData($('form')[0]);
             $.ajax({
                 type: 'POST',
                 url: '/resource',
                 contentType: false,
                 processData: false,
-                data: formData
+                data: new FormData($('form')[0])
             }).done(response => {
                 submit_button.val('Success');
+                if (notify_players.prop('checked') || notify_coaches.prop('checked')) {
+                    send_new_resource_email(
+                        notify_players.prop('checked'),
+                        notify_coaches.prop('checked'),
+                        title.val(),
+                        description.val()
+                    );
+                }
                 return window.location.href = '/resource/home';
             }).fail((xhr, status, error) => {
                 input_error.text(xhr.responseText);
