@@ -30,6 +30,10 @@ resource = Blueprint("resource", __name__)
 @resource.route('/new_resource', methods=['GET'])
 @login_required
 def new_resource():
+    if not current_user.admin:
+        flash("Admin feature only")
+        return redirect(url_for('resource.resource_home'))
+        
     return render_template(
         'resource/new_resource.html',
         title='New Resource',
@@ -39,6 +43,10 @@ def new_resource():
 @resource.route('/edit_resource/<id>', methods=['GET'])
 @login_required
 def edit_resource(id):
+    if not current_user.admin:
+        flash("Admin feature only")
+        return redirect(url_for('resource.resource_home'))
+
     resource = Resource.query.filter_by(id=id).first()
     if not resource:
         flash('URL does not exist')
@@ -120,6 +128,10 @@ def download_resource(id):
 @resource.route('/resource/email', methods=['GET'])
 @login_required
 def new_resource_email():
+    if not current_user.admin:
+        flash("Admin feature only")
+        return redirect(url_for('resource.resource_home'))
+
     # get the query params
     include_players = request.args.get('players')
     include_coaches = request.args.get('coaches')
@@ -279,7 +291,7 @@ def read_resource():
     if category:
         query += f".filter_by(category = '{category}')"
     
-    query += '.all()'
+    query += '.order_by(Resource.timestamp.desc()).all()'
 
     # query database and return an array of resources
     resources = eval(query)
