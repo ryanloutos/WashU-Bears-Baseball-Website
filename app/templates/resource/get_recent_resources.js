@@ -56,7 +56,8 @@ $.get(`/resource?recent=true`, resources => {
             {% if current_user.admin %}
                 <a href="/edit_resource/${resources[i].id}" class="btn btn-default" role="button">Edit</a>
             {% endif %}</p>
-            <p><i>Uploaded: ${resources[i].timestamp}</i></p></div></div></div>`;
+            <p><i>Uploaded: ${resources[i].timestamp}</i></p>
+            <p style='color: #bd2e1f'>Category: ${resources[i].category}</p></div></div></div>`;
 
         if (!new_row || i == resources.length - 1) {
             thumbnail += "</div>"
