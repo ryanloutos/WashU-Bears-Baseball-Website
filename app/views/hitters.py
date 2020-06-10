@@ -69,6 +69,8 @@ def hitters_home():
 @hitters.route("/hitters/games", methods=["GET", "POST"])
 @login_required
 def hitters_games():
+    '''This is a depreciated route. It is not included in the nav, 
+    and has no real value in the site.'''
 
     opponent = Opponent.query.filter_by(id=1).first()
     if not opponent:
@@ -114,7 +116,7 @@ def hitters_stats():
 @hitters.route("/hitters/inactive_roster")
 @login_required
 def hitters_inactive_roster():
-
+    '''Loads the inactive roster of WashU hitters. Ex players and such'''
     # get opponent object
     opponent = Opponent.query.filter_by(id=1).first()
 
@@ -132,7 +134,8 @@ def hitters_inactive_roster():
 @hitters.route('/hitters/edit', methods=['GET', 'POST'])
 @login_required
 def hitters_edit():
-
+    '''This is a depreciated route. It should not ever be used. If washU
+    is to be edited, it needs to be as an opponent.'''
     # if user is not an admin, they can't create a new opponent
     if not current_user.admin:
         flash('You are not an admin and cannot edit an opponent')
