@@ -291,7 +291,7 @@ def read_resource():
     if category:
         query += f".filter_by(category = '{category}')"
     
-    query += '.all()'
+    query += '.order_by(Resource.timestamp.desc()).all()'
 
     # query database and return an array of resources
     resources = eval(query)
