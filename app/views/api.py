@@ -3,6 +3,7 @@
 from flask import Blueprint, jsonify, request, send_file, url_for, send_from_directory
 from flask_login import login_required
 from app import db
+from app.stats.util import zero_division_handler
 from app.stats.stats import batterSwingWhiffRatebyPitchbyCount, staffSeasonGoals, staffBasicStats, staffSeasonStats, truncate
 from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat, Pitcher, Game, Video
 from datetime import datetime
@@ -28,7 +29,7 @@ def staff_season_goals():
         "data": {
             "strike_percentage": strike_percentage,
             "fps_percentage": fps_percentage,
-            "k_to_bb": k_to_bb, 
+            "k_to_bb": k_to_bb,
             "offspeed_strike_pct": offspeed_strike_pct
         }
     }
@@ -571,7 +572,7 @@ def hitters_goals():
                         if pitch.ab_result in ["1B", "2B", "3B", "HR"]:
                             hits += 1
 
-    obp = truncate(((hits + hbp + bb) / pa) * 1000)
+    obp = truncate(zero_division_handler((hits + hbp + bb), pa) * 1000)
 
     return jsonify({
         "status": "success",

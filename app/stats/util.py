@@ -36,6 +36,12 @@ def truncate(n, decimals=2):
 
 
 def zero_division_handler(n, d):
+    '''
+    Handle division in cases where division by 0 may be possible
+
+    PARAM:
+        - n - Numerator of devision
+        - d - denomenator of division.'''
     return n / d if d else 0
 
 
