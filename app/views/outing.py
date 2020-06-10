@@ -368,29 +368,21 @@ def new_outing_pitches(outing_id):
         # add each individual pitch to the database
         for index, subform in enumerate(form.pitch):
 
-            # get the batter_id for the AtBat and Pitch objects
             batter_id = subform.batter_id.data
 
-            # if a new at bat has started, make a new AtBat object
             if new_at_bat:
                 at_bat = AtBat(
                     batter_id=batter_id,
                     outing_id=outing_id)
 
-                # Add the AtBat object to database
                 db.session.add(at_bat)
                 db.session.commit()
 
-                # Set the current_at_bat for subsequent pitches accordingly
                 current_at_bat = at_bat
-
-                # So new at_bat variables aren't made every pitch
                 new_at_bat = False
 
-            # sets the pitch_num column automatically
             pitch_num = index + 1
 
-            # create Pitch object
             pitch = Pitch(
                 atbat_id=current_at_bat.id,
                 pitch_num=pitch_num,
@@ -407,14 +399,12 @@ def new_outing_pitches(outing_id):
                 fielder=subform.fielder.data,
                 inning=subform.inning.data)
 
-            # update count based on current count and pitch result
             balls, strikes, count = updateCount(balls,
                                                 strikes,
                                                 pitch.pitch_result,
                                                 pitch.ab_result,
                                                 season)
 
-            # adds pitch to database
             db.session.add(pitch)
             db.session.commit()
 
@@ -511,28 +501,20 @@ def edit_outing_pitches(outing_id):
         # add each individual pitch to the database
         for index, subform in enumerate(form.pitch):
 
-            # get the batter_id for the AtBat and Pitch objects
             batter_id = subform.batter_id.data
 
-            # if a new at bat has started, make a new AtBat object
             if new_at_bat:
                 at_bat = AtBat(batter_id=batter_id,
                                outing_id=outing_id)
 
-                # Add the AtBat object to database
                 db.session.add(at_bat)
                 db.session.commit()
 
-                # Set the current_at_bat for subsequent pitches accordingly
                 current_at_bat = at_bat
-
-                # So new at_bat variables aren't made every pitch
                 new_at_bat = False
 
-            # sets the pitch_num column automatically
             pitch_num = index + 1
 
-            # create Pitch object
             pitch = Pitch(atbat_id=current_at_bat.id,
                           pitch_num=pitch_num,
                           batter_id=batter_id,
@@ -556,20 +538,28 @@ def edit_outing_pitches(outing_id):
                           spray_y=subform.spray_y.data,
                           notes=subform.notes.data)
 
-            # update count based on current count and pitch result
             balls, strikes, count = updateCount(balls,
                                                 strikes,
                                                 pitch.pitch_result,
                                                 pitch.ab_result,
                                                 season)
 
-            # adds pitch to database
             db.session.add(pitch)
             db.session.commit()
 
-            # after the pitch was made, if the at_bat ended, reset variable
-            # so a new at_bat starts during the next loop
+            # If at bat ended, update end of at_bat vars, and get ready for new AB
             if pitch.ab_result is not '':
+                current_at_bat.ab_result = subform.ab_result.data
+                current_at_bat.traj = subform.traj.data
+                current_at_bat.fielder = subform.fielder.data
+                current_at_bat.spray_x = subform.spray_x.data
+                current_at_bat.spray_y = subform.spray_y.data
+                current_at_bat.hit_hard = subform.hit_hard.data
+                current_at_bat.inning = subform.inning.data
+
+                db.session.add(current_at_bat)
+                db.session.commit()
+
                 new_at_bat = True
 
         # redirect to outing page

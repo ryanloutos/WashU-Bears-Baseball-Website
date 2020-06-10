@@ -294,9 +294,20 @@ def pitch_tracker():
         spray_y=spray_y,
         notes=pitch_data["notes"]
     )
-
-    # send pitch to database
     db.session.add(pitch)
+
+    # Update atbat objec with relevant info if necessary
+    if pitch_data["ab_result"] not in ["", "null", None, 0]:
+        at_bat_object.ab_result = pitch_data["ab_result"]
+        at_bat_object.traj = pitch_data["traj"]
+        at_bat_object.fielder = pitch_data["fielder"]
+        at_bat_object.hit_hard = hit_hard
+        at_bat_object.inning = pitch_data["inning"]
+        at_bat_object.spray_x = spray_x
+        at_bat_object.spray_y = spray_y
+
+        db.session.add(at_bat_object)
+
     db.session.commit()
 
     # get the balls and strikes from the count
