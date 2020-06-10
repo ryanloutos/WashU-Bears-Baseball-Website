@@ -15,7 +15,8 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(128))
     firstname = db.Column(db.String(64))
     lastname = db.Column(db.String(64))
-    # each user will have all their outings accessible through this
+    current_player = db.Column(db.Boolean, index=True)
+    current_coach = db.Column(db.Boolean, index=True)
 
     def __repr__(self):
         return f'{self.firstname} {self.lastname}'
@@ -150,7 +151,6 @@ class Pitch(db.Model):
     loc_y = db.Column(db.Float)
     hit_spot = db.Column(db.Boolean, index=True)
     count = db.Column(db.String(8), index=True)
-
     ab_result = db.Column(db.String(32), index=True)
     traj = db.Column(db.String(8), index=True)
     fielder = db.Column(db.String(8), index=True)
@@ -346,8 +346,10 @@ class Resource(db.Model):
         return f'{self.title} -- {self.description}'
     
     def to_dict(self):
+        timestamp = self.timestamp.strftime("%m/%d/%Y")        
         return {
-            'timestamp': self.timestamp,
+            'id': self.id,
+            'timestamp': timestamp,
             'category': self.category,
             'title': self.title,
             'description': self.description,
