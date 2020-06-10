@@ -1,0 +1,389 @@
+outcome,location,color,Total,type,line.type,x,y
+,,,,,,,
+bunt, c,blue,bunt c,1,2,0,0.2
+,,,,,,,
+bunt, p,blue,bunt p,1,2,0,0.2
+,,,,,,,
+bunt,1b,blue,bunt 1b,1,2,0,0.2
+,,,,,,,
+bunt,2b,blue,bunt 2b,1,2,0,0.2
+,,,,,,,
+bunt,3b,blue,bunt 3b,1,2,0,0.2
+,,,,,,,
+choice, ss,blue,choice  ss,1,2,-0.4,1.6
+,,,,,,,
+choice,1b,blue,choice 1b,1,2,0.8,1
+,,,,,,,
+choice,2b,blue,choice 2b,1,2,0.4,1.3
+,,,,,,,
+choice,3b,blue,choice 3b,1,2,-0.35,1
+,,,,,,,
+choice,first base,blue,choice first base,1,2,0.35,1
+,,,,,,,
+choice,second base,blue,choice second base,1,2,0.25,1.3
+,,,,,,,
+choice,shortstop,blue,choice shortstop,1,2,-0.25,1.3
+,,,,,,,
+choice,third base,blue,choice third base,1,2,-0.35,1
+,,,,,,,
+choice, p ,blue,choice  p ,1,2,0,0.6
+,,,,,,,
+choice, p.,blue,choice  p.,1,2,0,0.6
+,,,,,,,
+choice," p,",blue,"choice  p,",1,2,0,0.6
+,,,,,,,
+double,1B,orange,double 1B,19,1,2.33,2.87
+,,,,,,,
+double,3b,orange,double 3b,19,1,-3.44,4.36
+,,,,,,,
+double,center,orange,double center,19,1,0,3.6
+,,,,,,,
+double,cf,orange,double cf,19,1,0,3.7
+,,,,,,,
+double,left,orange,double left,19,1,-1.4,2.65
+,,,,,,,
+double,left center,orange,double left center,19,1,-1,3
+,,,,,,,
+double,left field line,orange,double left field line,19,1,-1.7,2
+,,,,,,,
+double,lf,orange,double lf,19,1,-1.4,2.65
+,,,,,,,
+double,lf line,orange,double lf line,19,1,-1.7,2.3
+,,,,,,,
+double,rf,orange,double rf,19,1,0.7,2.65
+,,,,,,,
+double,rf line,orange,double rf line,19,1,1.7,2
+,,,,,,,
+double,right,orange,double right,19,1,1.7,2.65
+,,,,,,,
+double,right center,orange,double right center,19,1,1.2,3
+,,,,,,,
+double,right field line,orange,double right field line,19,1,1.7,2
+,,,,,,,
+error, p ,blue,error  p ,1,2,0,0.6
+,,,,,,,
+error, p.,blue,"error  p,",1,2,0,0.6
+,,,,,,,
+error, p.,blue,error  p.,1,2,0,0.6
+,,,,,,,
+error, ss,blue,error  ss,1,2,-0.4,1.6
+,,,,,,,
+error,1b,blue,error 1b,1,2,0.8,1.2
+,,,,,,,
+error,2b,blue,error 2b,1,2,0.4,1.6
+,,,,,,,
+error,3b,blue,error 3b,1,2,-0.8,1.2
+,,,,,,,
+error,center,red,error center,1,2,0,3
+,,,,,,,
+error,cf,red,error cf,1,2,0,3
+,,,,,,,
+error,first base,blue,error first base,1,2,0.8,1.2
+,,,,,,,
+error,left,red,error left,1,2,-0.7,2.45
+,,,,,,,
+error,lf,red,error lf,1,2,-0.7,2.45
+,,,,,,,
+error,rf,red,error rf,1,2,0.7,2.45
+,,,,,,,
+error,right,red,error right,1,2,0.7,2.45
+,,,,,,,
+error,second base,blue,error second base,1,2,0.6,1.6
+,,,,,,,
+error,shortstop,blue,error shortstop,1,2,-0.6,1.6
+,,,,,,,
+error,third base,blue,error third base,1,2,-0.8,1.2
+,,,,,,,
+flied, ss,red,flied  ss,1,2,-0.4,1.6
+,,,,,,,
+flied,1b,red,flied 1b,1,2,0.8,1.2
+,,,,,,,
+flied,2b,red,flied 2b,1,2,0.4,1.6
+,,,,,,,
+flied,3b,red,flied 3b,1,2,-0.8,1.2
+,,,,,,,
+flied,cf,red,flied cf,1,2,0,3
+,,,,,,,
+flied,first base,red,flied first base,1,2,0.8,1
+,,,,,,,
+flied,left center,red,flied left center,1,2,-1,2.8
+,,,,,,,
+flied,left,red,flied left,1,2,-1.5,2.2
+,,,,,,,
+flied,lf,red,flied lf,1,2,-1.5,2.2
+,,,,,,,
+flied,rf,red,flied rf,1,2,1.5,2.2
+,,,,,,,
+flied,right center,red,flied right center,1,2,1,2.8
+,,,,,,,
+flied,second base,red,flied second base,1,2,0.6,1.6
+,,,,,,,
+flied,shortstop,red,flied shortstop,1,2,-0.6,1.6
+,,,,,,,
+flied,third base,red,flied third base,1,2,-0.8,1
+,,,,,,,
+force, p ,blue,force  p ,1,2,0,0.6
+,,,,,,,
+force, p.,blue,force p.,1,2,0,0.6
+,,,,,,,
+force, ss,blue,force  ss,1,2,-0.4,1.6
+,,,,,,,
+force,1b,blue,force 1b,1,2,0.8,1.2
+,,,,,,,
+force,2b,blue,force 2b,1,2,0.4,1.6
+,,,,,,,
+force,3b,blue,force 3b,1,2,-0.8,1.2
+,,,,,,,
+foul, ss,red,foul  ss,1,2,-0.4,1.2
+,,,,,,,
+foul,1b,red,foul 1b,1,2,-0.56,1.12
+,,,,,,,
+foul,2b,red,foul 2b,1,2,-0.72,1.04
+,,,,,,,
+foul,3b,red,foul 3b,1,2,-0.8,1.2
+,,,,,,,
+foul, c ,red,foul  c ,1,2,0,0.1
+,,,,,,,
+foul,catcher,red,foul catcher,1,2,0,0.1
+,,,,,,,
+foul, c.,red,foul  c.,1,2,0,0.1
+,,,,,,,
+foul," c,",red,"foul  c,",1,2,0,0.1
+,,,,,,,
+foul, p ,red,foul  p ,1,2,0,0.1
+,,,,,,,
+foul, p.,red,foul  p.,1,2,0,0.1
+,,,,,,,
+foul," p,",red,"foul  p,",1,2,0,0.1
+,,,,,,,
+foul,right field,red,foul right field,1,2,1.5,2.2
+,,,,,,,
+foul,rf,red,foul rf,1,2,1.5,2.2
+,,,,,,,
+foul,left field,red,foul left field,1,2,-1.5,2.2
+,,,,,,,
+foul,lf,red,foul lf,1,2,-1.5,2.2
+,,,,,,,
+grounded,pitcher,blue,grounded pitcher,1,2,0,0.6
+,,,,,,,
+grounded, p ,blue,grounded  p ,1,2,0,0.6
+,,,,,,,
+singled, p ,blue,singled  p ,19,1,0,0.6
+,,,,,,,
+grounded, p.,blue,"grounded  p,",1,2,0,0.6
+,,,,,,,
+grounded, p.,blue,grounded  p.,1,2,0,0.6
+,,,,,,,
+grounded, ss,blue,grounded  ss,1,2,-0.4,1.6
+,,,,,,,
+grounded,1b,blue,grounded 1b,1,2,0.8,1.2
+,,,,,,,
+grounded,2b,blue,grounded 2b,1,2,0.4,1.6
+,,,,,,,
+grounded,3b,blue,grounded 3b,1,2,-0.75,1.2
+,,,,,,,
+muffed throw,3b,blue,muffed throw 3b,1,2,-0.75,1.2
+,,,,,,,
+muffed throw, ss,blue,muffed throw  ss,1,2,-0.4,1.6
+,,,,,,,
+muffed throw,2b,blue,muffed throw 2b,1,2,0.4,1.6
+,,,,,,,
+home,1B line,turquoise,home 1B,19,1,2.17,2.755
+,,,,,,,
+home,3B line,turquoise,home 3B,19,1,-3.06,3.965
+,,,,,,,
+home,center,turquoise,home center,19,1,0,4.3
+,,,,,,,
+home,cf,turquoise,home cf,19,1,0,4.3
+,,,,,,,
+home,left,turquoise,home left,19,1,-2.2,3.2
+,,,,,,,
+home,left center,turquoise,home left center,19,1,-0.6,4.3
+,,,,,,,
+home,left field line,turquoise,home left field line,19,1,-1.75,3.2
+,,,,,,,
+home,lf,turquoise,home lf,19,1,-0.8,3.6
+,,,,,,,
+home,lf line,turquoise,home lf line,19,1,-1.75,3.2
+,,,,,,,
+home,rf,turquoise,home rf,19,1,0.8,4.2
+,,,,,,,
+home,rf line,turquoise,home rf  line,19,1,1.5,3.2
+,,,,,,,
+home,right,turquoise,home right,19,1,2.2,3.2
+,,,,,,,
+home,right center,turquoise,home right center,19,1,0.6,4.3
+,,,,,,,
+home,right field line,turquoise,home right field line,19,1,1.5,3.2
+,,,,,,,
+line, ss,black,line  ss,1,2,-0.4,1.6
+,,,,,,,
+line,1b,black,line 1b,1,2,0.8,1.2
+,,,,,,,
+line,2b,black,line 2b,1,2,0.4,1.6
+,,,,,,,
+line,3b,black,line 3b,1,2,-0.8,1.2
+,,,,,,,
+line,cf,black,line cf,1,2,0,2.5
+,,,,,,,
+line,lf,black,line lf,1,2,-1.2,2
+,,,,,,,
+line,rf,black,line rf,1,2,1.2,2
+,,,,,,,
+lined, ss,black,lined  ss,1,2,-0.4,1.6
+,,,,,,,
+lined,1b,black,lined 1b,1,2,0.8,1.2
+,,,,,,,
+lined,2b,black,lined 2b,1,2,0.4,1.6
+,,,,,,,
+lined,3b,black,lined 3b,1,2,-0.8,1.2
+,,,,,,,
+lined,cf,black,lined cf,1,2,0,2.5
+,,,,,,,
+lined,lf,black,lined lf,1,2,-1.2,2
+,,,,,,,
+lined,rf,black,lined rf,1,2,1.2,2
+,,,,,,,
+lines, ss,black,lines  ss,1,2,-0.4,1.6
+,,,,,,,
+lines,1b,black,lines 1b,1,2,0.8,1.2
+,,,,,,,
+lines,2b,black,lines 2b,1,2,0.4,1.6
+,,,,,,,
+lines,3b,black,lines 3b,1,2,-0.8,1.2
+,,,,,,,
+lines,cf,black,lines cf,1,2,0,2.5
+,,,,,,,
+lines,lf,black,lines lf,1,2,-1.2,2
+,,,,,,,
+lines,rf,black,lines rf,1,2,1.2,2
+,,,,,,,
+out at, p ,blue,out at  p ,1,2,0.2,0.8
+,,,,,,,
+out at, p.,blue,out at  p.,1,2,0.2,0.8
+,,,,,,,
+out at,pitcher,blue,out at pitcher,1,2,0.2,0.8
+,,,,,,,
+out at," p,",blue,"out at  p,",1,2,0.2,0.8
+,,,,,,,
+out at, ss,blue,out at  ss,1,2,-0.4,1.3
+,,,,,,,
+out at,1b,blue,out at 1b,1,2,0.8,1.2
+,,,,,,,
+out at,2b,blue,out at 2b,1,2,0.4,1.3
+,,,,,,,
+out at,3b,blue,out at 3b,1,2,-0.75,1.2
+,,,,,,,
+out at , c ,blue,out at  c ,1,2,0,0.4
+,,,,,,,
+out at , c.,blue,out at  c.,1,2,0,0.4
+,,,,,,,
+out at ,catcher,blue,out at catcher,1,2,0,0.4
+,,,,,,,
+out at ," c,",blue,"out at  c,",1,2,0,0.4
+,,,,,,,
+grounded, c ,blue,grounded  c ,1,2,0,0.4
+,,,,,,,
+grounded, c.,blue,grounded  c.,1,2,0,0.4
+,,,,,,,
+grounded," c,",blue,"grounded  c,",1,2,0,0.4
+,,,,,,,
+grounded,catcher,blue,grounded catcher,1,2,0,0.4
+,,,,,,,
+pop, ss,red,pop  ss,1,2,-0.4,1.6
+,,,,,,,
+pop,1b,red,pop 1b,1,2,0.8,1.2
+,,,,,,,
+pop,2b,red,pop 2b,1,2,0.4,1.6
+,,,,,,,
+pop,3b,red,pop 3b,1,2,-0.8,1.2
+,,,,,,,
+pop,cf,red,pop cf,1,2,0,2.2
+,,,,,,,
+pop,lf,red,pop lf,1,2,-1.5,2.2
+,,,,,,,
+pop,rf,red,pop rf,1,2,1.5,2.2
+,,,,,,,
+single, ss,green,single  ss,19,1,-0.7,1.5
+,,,,,,,
+single,1b,blue,single 1b,19,1,0.7,1.5
+,,,,,,,
+single,1B line,green,single 1B line,19,1,2.01,2.64
+,,,,,,,
+single,2b,green,single 2b,19,1,0.7,1.5
+,,,,,,,
+single,3b,blue,single 3b,19,1,-0.7,1.5
+,,,,,,,
+single,3B line,green,single 3B line,19,1,-2.68,3.57
+,,,,,,,
+single,center,green,single center,19,1,0,2.2
+,,,,,,,
+single,cf,green,single cf,19,1,0,2.2
+,,,,,,,
+single,first base,blue,single first base,19,1,0.7,1.5
+,,,,,,,
+single,left,green,single left,19,1,-1,1.8
+,,,,,,,
+single,left center,green,single left center,19,1,-0.8,2.2
+,,,,,,,
+single,left field line,green,single left field line,19,1,-1.2,1.8
+,,,,,,,
+single,lf,green,single lf,19,1,-1.2,1.8
+,,,,,,,
+single,lf line,green,single lf line,19,1,-1.4,1.8
+,,,,,,,
+single,middle,green,single middle,19,1,0,2.2
+,,,,,,,
+single, p ,blue,single  p ,19,1,0,0.6
+,,,,,,,
+single, p.,blue,single  p.,19,1,0,0.6
+,,,,,,,
+single,pitcher,blue,single pitcher,19,1,0,0.6
+,,,,,,,
+single,rf,green,single rf,19,1,1,1.8
+,,,,,,,
+single,rf line,green,single rf line,19,1,1.4,1.6
+,,,,,,,
+single,right,green,single right,19,1,1,2.2
+,,,,,,,
+single,right center,green,single right center,19,1,0.6,2.5
+,,,,,,,
+single,right field line,green,single right field line,19,1,1.1,2.2
+,,,,,,,
+single,second base,blue,single second base,19,1,0.7,1.5
+,,,,,,,
+single,shortstop,blue,single shortstop,19,1,-0.7,1.5
+,,,,,,,
+single,third base,blue,single third base,19,1,-0.7,1.5
+,,,,,,,
+single,through the left side,blue,single through the left side,19,1,-1,1.8
+,,,,,,,
+single,through the right side,blue,single through the right side,19,1,1,1.8
+,,,,,,,
+triple,1B line,purple,triple 1B,19,1,1.85,2.525
+,,,,,,,
+triple,3B line,purple,triple 3B,19,1,-2.3,3.175
+,,,,,,,
+triple,center,purple,triple center,19,1,0,3.7
+,,,,,,,
+triple,cf,purple,triple cf,19,1,0,3.7
+,,,,,,,
+triple,left,purple,triple left,19,1,-0.7,3.5
+,,,,,,,
+triple,left center,purple,triple left center,19,1,-0.8,3.5
+,,,,,,,
+triple,left field line,purple,triple left field line,19,1,-1.2,2.5
+,,,,,,,
+triple,lf,purple,triple lf,19,1,-1.2,2.5
+,,,,,,,
+triple,lf line,purple,triple lf line,19,1,-0.55,1.45
+,,,,,,,
+triple,rf,purple,triple rf,19,1,1.2,2.5
+,,,,,,,
+triple,rf line,purple,triple rf line,19,1,1.2,2.5
+,,,,,,,
+triple,right,purple,triple right,19,1,0.7,3.1
+,,,,,,,
+triple,right center,purple,triple right center,19,1,0.8,3.25
+,,,,,,,
+triple,right field line,purple,triple right field line,19,1,1.2,2.15
