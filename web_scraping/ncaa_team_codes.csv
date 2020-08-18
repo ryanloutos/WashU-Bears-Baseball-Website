@@ -1,0 +1,1542 @@
+,Code,School
+0,2,Abilene Christian
+1,30123,Academy of Art
+2,929,Adams St.
+3,3,Adelphi
+4,4,Adrian
+5,11324,Agnes Scott
+6,5,Akron
+7,506337,Akron-Wayne
+8,8,Alabama
+9,6,Alabama A&M
+10,10,Alabama Huntsville
+11,7,Alabama St.
+12,9,UAB
+13,11,Alas. Anchorage
+14,12,Alas. Fairbanks
+15,14,Albany (NY)
+16,500075,Albany Pharmacy
+17,13,Albany St. (GA)
+18,506450,Alberta (CAN)
+19,2798,Albertus Magnus
+20,15,Albion
+21,16,Albright
+22,17,Alcorn
+23,934,Alderson Broaddus
+24,30170,Alfred St.
+25,18,Alfred
+26,506430,Algoma (CAN)
+27,500112,Alice Lloyd
+28,19,Allegheny
+29,500120,Allen
+30,21,Alma
+31,938,Alvernia
+32,28746,Alverno
+33,506413,American (PR)
+34,22,American Int'l
+35,23,American
+36,24,Amherst
+37,506365,Ana G. Méndez (PR)
+38,939,Anderson (IN)
+39,13028,Anderson (SC)
+40,506268,Andrews
+41,25,Angelo St.
+42,26,Anna Maria
+43,506476,Antelope Valley
+44,500174,Appalachian Bible
+45,27,Appalachian St.
+46,506125,Apprentice
+47,500180,Aquinas
+48,966,Arcadia
+49,29,Arizona
+50,500187,Arizona Bible
+51,504994,Arizona Christian
+52,28,Arizona St.
+53,30,Arkansas St.
+54,947,Arkansas Tech
+55,31,Arkansas
+56,30105,Ark.-Fort Smith
+57,32,Little Rock
+58,8411,Ark.-Monticello
+59,2678,Ark.-Pine Bluff
+60,500232,Arlington Baptist
+61,506029,Asbury
+62,35,Ashland
+63,36,Assumption
+64,37,Auburn
+65,30093,AUM
+66,38,Augsburg
+67,39,Augusta
+68,40,Augustana (IL)
+69,41,Augustana (SD)
+70,42,Aurora
+71,953,Austin
+72,43,Austin Peay
+73,506346,Ave Maria
+74,44,Averett
+75,500322,Avila
+76,30146,Azusa Pacific
+77,45,Babson
+78,506174,Bacone
+79,506059,Baker
+80,46,Baldwin Wallace
+81,47,Ball St.
+82,500365,Baptist Bible (MO)
+83,500381,Barclay
+84,962,Bard
+85,49,Barry
+86,15646,Barton
+87,58,Baruch
+88,50,Bates
+89,26520,Bay Path
+90,51,Baylor
+91,26107,Becker
+92,30197,Belhaven
+93,52,Bellarmine
+94,500415,Bellevue
+95,2683,Belmont Abbey
+96,14927,Belmont
+97,53,Beloit
+98,54,Bemidji St.
+99,55,Benedict
+100,506015,Benedictine (KS)
+101,506498,Benedictine Mesa
+102,296,Benedictine (IL)
+103,506374,Benedictine-Sprngfld
+104,56,Bentley
+105,30171,Berea
+106,506167,Berkeley (NJ)
+107,506384,Berkeley (NY)
+108,973,Berry
+109,506014,Bethany (KS)
+110,59,Bethany (WV)
+111,30038,Bethany Lutheran
+112,500485,Bethel (IN)
+113,506120,Bethel (KS)
+114,500500,Bethel (TN)
+115,60,Bethel (MN)
+116,506379,Bethesda (CA)
+117,61,Bethune-Cookman
+118,62,Binghamton
+119,30220,Biola
+120,28593,Birmingham-So.
+121,30134,Black Hills St.
+122,64,Blackburn
+123,984,Bloomfield
+124,65,Bloomsburg
+125,500551,Blue Mountain (MS)
+126,500552,Bluefield Col.
+127,985,Bluefield St.
+128,987,Bluffton
+129,30232,Bob Jones
+130,66,Boise St.
+131,67,Boston College
+132,68,Boston U.
+133,69,Bowdoin
+134,70,Bowie St.
+135,71,Bowling Green
+136,506316,Boyce
+137,72,Bradley
+138,73,Brandeis
+139,506451,Brandon (CAN)
+140,506178,Brenau
+141,500610,Brescia
+142,30094,Brevard
+143,500612,Brewton-Parker
+144,500615,Briar Cliff (IA)
+145,74,Bridgeport
+146,75,Bridgewater (VA)
+147,76,Bridgewater St.
+148,506366,Briercrest (CAN)
+149,77,BYU
+150,506196,British Colum. (CAN)
+151,506452,B.C.-Okanagan (CAN)
+152,506438,Brock (CAN)
+153,78,Brockport
+154,79,Brooklyn
+155,80,Brown
+156,506542,Bry. & Strat. (Roc.)
+157,506538,Bry. & Strat. (Alb.)
+158,506496,Bry. & Strat. (Buf.)
+159,506539,Bry. & Strat. (Syr.)
+160,500660,Bryan
+161,81,Bryant
+162,30188,Bryn Athyn
+163,82,Bryn Mawr
+164,83,Bucknell
+165,84,Buena Vista
+166,85,Buffalo St.
+167,86,Buffalo
+168,87,Butler
+169,88,Cabrini
+170,1305,Cairn
+171,91,Cal Poly Pomona
+172,995,Caldwell
+173,506453,Calgary (CAN)
+174,30135,California Baptist
+175,105,Cal Lutheran
+176,500745,Cal Maritime
+177,506371,UC Merced
+178,90,Cal Poly
+179,30055,Cal St. Monterey Bay
+180,94,CSU Bakersfield
+181,95,Chico St.
+182,92,Cal St. Dom. Hills
+183,98,Cal St. East Bay
+184,96,Fresno St.
+185,97,Cal St. Fullerton
+186,101,CSUN
+187,102,Sacramento St.
+188,93,Cal St. San B'dino
+189,103,Stanislaus St.
+190,100,Cal State LA
+191,30198,Cal St. San Marcos
+192,106,Cal U (PA)
+193,107,California
+194,108,UC Davis
+195,109,UC Irvine
+196,110,UCLA
+197,111,UC Riverside
+198,112,UC San Diego
+199,104,UC Santa Barbara
+200,113,UC Santa Cruz
+201,89,Caltech
+202,506194,Calumet Col.
+203,500768,Calvary
+204,114,Calvin
+205,996,Cameron
+206,506461,Camosun (CAN)
+207,506534,Camp. Harrodsburg
+208,506535,Camp. Somerset
+209,115,Campbell
+210,500785,Campbellsville
+211,506490,Canadian Mennonite
+212,116,Canisius
+213,30165,SUNY Canton
+214,506409,Capilano (CAN)
+215,117,Capital
+216,506030,Cardinal Stritch
+217,118,Carleton
+218,500802,Carlow
+219,119,Carnegie Mellon
+220,506056,Carroll (MT)
+221,120,Carroll (WI)
+222,1000,Carson-Newman
+223,121,Carthage
+224,506006,Carver
+225,122,CWRU
+226,123,Castleton
+227,1001,Catawba
+228,500855,Catholic (PR)
+229,124,Catholic
+230,23624,Cazenovia
+231,14795,Cedar Crest
+232,30124,Cedarville
+233,125,Centenary (LA)
+234,12884,Centenary (NJ)
+235,1004,Central Ark.
+236,506117,Central Baptist
+237,500402,Central Bayamon
+238,506327,Cent. Christian (KS)
+239,500879,Cent. Christian Bib.
+240,126,Central (IA)
+241,127,Central Conn. St.
+242,128,UCF
+243,506026,Central Methodist
+244,129,Central Mich.
+245,130,Central Mo.
+246,1009,Central Okla.
+247,506372,Central Penn
+248,30049,Central St. (OH)
+249,1010,Central Wash.
+250,132,Centre
+251,1012,Chadron St.
+252,133,Chaminade
+253,506304,Champion Chris.
+254,134,Chapman
+255,1014,Col. of Charleston
+256,1013,Charleston (WV)
+257,48,Charleston So.
+258,10972,Chatham
+259,21323,Chestnut Hill
+260,506537,Cheyney
+261,137,Chicago
+262,136,Chicago St.
+263,8875,Chowan
+264,500958,Christendom
+265,1015,Christian Brothers
+266,139,Chris. Newport
+267,140,Cincinnati
+268,500975,Cincinnati Christian
+269,141,The Citadel
+270,480,CCNY
+271,30058,Claflin
+272,142,Claremont-M-S
+273,143,Clarion
+274,144,Clark Atlanta
+275,958,Clarks Summit
+276,145,Clark (MA)
+277,506382,Clarke
+278,146,Clarkson
+279,20576,Clayton St.
+280,506322,Cleary
+281,147,Clemson
+282,148,Cleveland St.
+283,149,Coastal Carolina
+284,502747,Coastal Ga.
+285,30083,Cobleskill St.
+286,150,Coe
+287,1023,Coker
+288,151,Colby
+289,152,Colby-Sawyer
+290,153,Colgate
+291,157,Colorado
+292,11403,Colo. Christian
+293,154,Colorado Col.
+294,11416,Colorado Mesa
+295,155,Colo. Sch. of Mines
+296,156,Colorado St.
+297,2720,Colorado St.-Pueblo
+298,9754,UC-Colo. Springs
+299,501097,Columbia (MO)
+300,501098,Columbia (SC)
+301,506287,Columbia Bible (CAN)
+302,506478,Columbia Int'l
+303,158,Columbia
+304,159,Columbus St.
+305,1028,Concord
+306,501123,Concordia (MI)
+307,506061,Concordia (NE)
+308,161,Concordia-M'head
+309,162,Concordia (NY)
+310,160,Concordia Chicago
+311,30199,Concordia (CA)
+312,30200,Concordia Portland
+313,24400,Concordia (TX)
+314,1036,Concordia Wisconsin
+315,506358,Concordia-Montreal
+316,9081,Concordia-St. Paul
+317,164,UConn
+318,163,Connecticut Col.
+319,8935,Converse
+320,501167,Cooper Union
+321,165,Coppin St.
+322,505690,Corban
+323,166,Cornell College
+324,167,Cornell
+325,501182,Cornerstone
+326,168,SUNY Cortland
+327,506533,Cottey
+328,30111,Covenant
+329,169,Creighton
+330,506350,Crowley's Ridge
+331,30035,Crown (MN)
+332,506352,Culinary Institute
+333,506032,Culver-Stockton
+334,501207,Cumberland (TN)
+335,506101,Cumberlands (KY)
+336,170,Curry
+337,1059,D'Youville
+338,30174,Daemen
+339,506066,Dakota St.
+340,506033,Dakota Wesleyan
+341,1044,Dallas
+342,1045,DBU
+343,501242,Dallas Christian
+344,506472,Dalton St.
+345,172,Dartmouth
+346,30221,Davenport
+347,173,Davidson
+348,174,Davis & Elkins
+349,506376,Dayspring Bible
+350,175,Dayton
+351,30219,Dean
+352,1050,Defiance
+353,180,Delaware
+354,178,Delaware St.
+355,179,Delaware Valley
+356,30225,SUNY Delhi
+357,181,Delta St.
+358,182,Denison
+359,183,Denver
+360,176,DePaul
+361,177,DePauw
+362,20,DeSales
+363,184,Detroit Mercy
+364,185,Dickinson
+365,506123,Dickinson St.
+366,501365,Dillard
+367,506505,Diné
+368,186,Dist. Columbia
+369,30095,Dixie St.
+370,506020,Doane
+371,30118,Dominican (CA)
+372,8956,Dominican (NY)
+373,1332,Dominican (IL)
+374,501390,Dordt
+375,506462,Douglas (CAN)
+376,189,Drake
+377,190,Drew
+378,191,Drexel
+379,1057,Drury
+380,192,Dubuque
+381,193,Duke
+382,194,Duquesne
+383,195,Earlham
+384,196,East Carolina
+385,8965,East Central
+386,197,East Stroudsburg
+387,198,ETSU
+388,1062,East Tex. Baptist
+389,506193,East-West U.
+390,200,Eastern Conn. St.
+391,201,Eastern Ill.
+392,202,Eastern Ky.
+393,203,East. Mennonite
+394,204,Eastern Mich.
+395,1064,Eastern Nazarene
+396,206,Eastern N.M.
+397,506406,Eastern Ore.
+398,8968,Eastern
+399,207,Eastern Wash.
+400,506323,Ecclesia
+401,208,Eckerd
+402,1066,Edgewood
+403,209,Edinboro
+404,501555,Edward Waters
+405,210,Elizabeth City St.
+406,211,Elizabethtown
+407,212,Elmhurst
+408,213,Elmira
+409,532,Elms
+410,1068,Elon
+411,506341,Embry-Riddle (AZ)
+412,9680,Embry-Riddle (FL)
+413,214,Emerson
+414,30193,Emmanuel (GA)
+415,215,Emmanuel (MA)
+416,506096,Emmaus
+417,216,Emory & Henry
+418,217,Emory
+419,1071,Emporia St.
+420,8981,Endicott
+421,1072,Erskine
+422,218,Eureka
+423,506080,Evangel
+424,219,Evansville
+425,506184,Evergreen St.
+426,220,Fairfield
+427,221,FDU-Florham
+428,222,Fairleigh Dickinson
+429,1076,Fairmont St.
+430,501657,Faith Bapt. Bible
+431,506541,Fanshawe (CAN)
+432,27892,Farmingdale St.
+433,501659,Faulkner
+434,223,Fayetteville St.
+435,23157,Felician
+436,224,Ferris St.
+437,225,Ferrum
+438,1079,Findlay
+439,30032,Finlandia
+440,501678,Fisher
+441,506381,Fisk
+442,227,Fitchburg St.
+443,506170,Five Towns
+444,30092,Flagler
+445,235,Florida
+446,228,Florida A&M
+447,229,Fla. Atlantic
+448,506300,Florida Col.
+449,28755,FGCU
+450,230,Florida Tech
+451,231,FIU
+452,501725,Fla. Memorial
+453,506479,Fla. National
+454,233,Fla. Southern
+455,234,Florida St.
+456,11538,Fontbonne
+457,236,Fordham
+458,9011,Fort Hays St.
+459,1083,Fort Lewis
+460,237,Fort Valley St.
+461,238,Framingham St.
+462,1085,Francis Marion
+463,30069,Franciscan
+464,239,Franklin & Marshall
+465,2694,Franklin
+466,241,Franklin Pierce
+467,506454,Fraser Valley (CAN)
+468,242,Fredonia
+469,501810,Freed-Hardeman
+470,30147,Fresno Pacific
+471,501826,Friends
+472,243,Frostburg St.
+473,244,Furman
+474,245,Gallaudet
+475,246,Gannon
+476,1092,Gardner-Webb
+477,247,SUNY Geneseo
+478,30084,Geneva
+479,1094,George Fox
+480,248,George Mason
+481,249,George Washington
+482,506003,Georgetown (KY)
+483,251,Georgetown
+484,257,Georgia
+485,1096,Georgia College
+486,506449,Georgia Gwinnett
+487,255,Georgia Tech
+488,253,Ga. Southern
+489,1097,Ga. Southwestern
+490,254,Georgia St.
+491,9004,Georgian Court
+492,258,Gettysburg
+493,1098,Glenville St.
+494,8366,Goldey-Beacom
+495,260,Gonzaga
+496,1099,Gordon
+497,501955,Goshen
+498,1467,Goucher
+499,506495,Governors St.
+500,501960,Grace (IN)
+501,501962,Grace (NE)
+502,501961,Grace Christian (MI)
+503,506062,Graceland (IA)
+504,261,Grambling
+505,1104,Grand Canyon
+506,262,Grand Valley St.
+507,501982,Grand View
+508,501987,Great Lake Christian
+509,263,Greensboro
+510,1111,Greenville
+511,264,Grinnell
+512,265,Grove City
+513,506437,Guelph (CAN)
+514,1112,Guilford
+515,266,Gust. Adolphus
+516,12399,Gwynedd Mercy
+517,267,Hamilton
+518,268,Hamline
+519,269,Hampden-Sydney
+520,270,Hampton
+521,502043,Hannibal-La Grange
+522,1115,Hanover
+523,271,Hardin-Simmons
+524,1116,Harding
+525,502060,Harris-Stowe
+526,272,Hartford
+527,273,Hartwick
+528,275,Harvard
+529,506153,Haskell
+530,506007,Hastings
+531,276,Haverford
+532,277,Hawaii
+533,2697,Hawaii Hilo
+534,2696,Hawaii Pacific
+535,278,Heidelberg
+536,1123,Henderson St.
+537,1124,Hendrix
+538,19651,High Point
+539,8398,Hilbert
+540,280,Hillsdale
+541,281,Hiram
+542,282,Hobart
+543,283,Hofstra
+544,284,Hollins
+545,506345,Holy Cross (IN)
+546,285,Holy Cross
+547,1126,Holy Family
+548,504805,Holy Fam. Col. (WI)
+549,30175,Holy Names
+550,8404,Hood
+551,286,Hope
+552,504017,Hope Int'l
+553,30160,Houghton
+554,288,Houston
+555,287,Houston Baptist
+556,506338,Houston-Victoria
+557,2741,Howard Payne
+558,290,Howard
+559,506492,Humber (CAN)
+560,291,Humboldt St.
+561,292,Hunter
+562,1130,Huntingdon
+563,502195,Huntington
+564,1133,Husson
+565,502215,Huston-Tillotson
+566,295,Idaho
+567,294,Idaho St.
+568,500088,Col. of Idaho
+569,297,Illinois Col.
+570,30172,IIT
+571,299,Illinois St.
+572,300,Ill. Wesleyan
+573,302,UIC
+574,30050,Ill. Springfield
+575,301,Illinois
+576,303,Immaculata
+577,2743,UIW
+578,502288,Ind.-East
+579,502278,Ind.-Kokomo
+580,502290,Ind.-Northwest
+581,502302,Ind.-South Bend
+582,502300,Ind.-Southeast
+583,305,Indiana St.
+584,502330,Indiana Tech
+585,307,Indiana (PA)
+586,502332,Ind. Wesleyan
+587,306,Indiana
+588,2699,IUPUI
+589,309,UIndy
+590,502335,Int. Am.-San German
+591,310,Iona
+592,312,Iowa
+593,311,Iowa St.
+594,30173,Iowa Wesleyan
+595,313,Ithaca
+596,314,Jackson St.
+597,315,Jacksonville St.
+598,316,Jacksonville
+599,317,James Madison
+600,506057,Jamestown
+601,506004,Jarvis Christian
+602,502395,John Brown
+603,320,John Carroll
+604,321,John Jay
+605,506488,John Wesley
+606,322,Johns Hopkins
+607,30046,JWU (Denver)
+608,22626,JWU (Providence)
+609,501712,Johnson (FL)
+610,502420,Johnson (TN)
+611,323,Johnson C. Smith
+612,502441,Judson (AL)
+613,502440,Judson (IL)
+614,325,Juniata
+615,506375,JWU (Charlotte)
+616,506232,JWU (North Miami)
+617,326,Kalamazoo
+618,328,Kansas
+619,506254,Kansas Christian
+620,327,Kansas St.
+621,506103,Kan. Wesleyan
+622,329,Kean
+623,330,Keene St.
+624,506200,Keiser
+625,1157,Kennesaw St.
+626,331,Kent St.
+627,506423,Kent St.-Tuscarawas
+628,334,Kentucky
+629,502500,Ky. Christian
+630,332,Kentucky St.
+631,333,Ky. Wesleyan
+632,335,Kenyon
+633,1159,Keuka
+634,30047,Keystone
+635,30051,King (TN)
+636,502530,King's (NY)
+637,336,King's (PA)
+638,506500,King's U. (CAN)
+639,337,Knox
+640,339,Kutztown
+641,506435,Kwantlen Tech (CAN)
+642,1163,La Roche
+643,340,La Salle
+644,502567,La Sierra
+645,341,La Verne
+646,342,Lafayette
+647,1162,LaGrange
+648,2746,Lake Erie
+649,344,Lake Forest
+650,345,Lake Superior St.
+651,506152,Lakehead (CAN)
+652,1164,Lakeland
+653,346,Lamar University
+654,506477,Lambton (CAN)
+655,30085,Lancaster Bible
+656,1167,Lander
+657,506491,Landmark Col.
+658,347,Lane
+659,506507,Langara (CAN)
+660,506054,Langston
+661,8486,Lasell
+662,506404,Lawrence Tech
+663,348,Lawrence
+664,349,Le Moyne
+665,351,Lebanon Valley
+666,30013,Lee
+667,13302,Lees-McRae
+668,352,Lehigh
+669,279,Lehman
+670,350,LeMoyne-Owen
+671,1170,Lenoir-Rhyne
+672,24317,Lesley
+673,506429,Lethbridge (CAN)
+674,8490,LeTourneau
+675,22235,Lewis & Clark
+676,354,Lewis
+677,506318,Lewis-Clark St.
+678,355,Liberty
+679,502694,Life (GA)
+680,502695,LIFE Pacific
+681,1174,Limestone
+682,506532,Lincoln (IL)
+683,502715,Lincoln Christian
+684,1176,Lincoln Memorial
+685,356,Lincoln (MO)
+686,357,Lincoln (PA)
+687,506373,Lindenwood (IL)
+688,30136,Lindenwood (MO)
+689,502727,Lindsey Wilson
+690,1179,Linfield
+691,28600,Lipscomb
+692,359,Livingstone
+693,360,Lock Haven
+694,99,Long Beach St.
+695,361,LIU
+696,363,Longwood
+697,364,Loras
+698,1182,Louisiana Col.
+699,365,LSU
+700,506339,LSU-Alexandria
+701,502787,LSU-Shreveport
+702,366,Louisiana Tech
+703,671,Louisiana
+704,498,La.-Monroe
+705,367,Louisville
+706,506385,Lourdes
+707,502812,Loyola (LA)
+708,370,LMU (CA)
+709,371,Loyola Chicago
+710,369,Loyola Maryland
+711,30177,Lubbock Christian
+712,372,Luther
+713,373,Lycoming
+714,374,Lynchburg
+715,20794,Lynn
+716,506408,Lyon
+717,376,Macalester
+718,377,MacMurray
+719,502867,Madonna
+720,502877,Me.-Augusta
+721,502885,Me.-Fort Kent
+722,502890,Me.-Machias
+723,378,Maine Maritime
+724,380,Maine
+725,379,Me.-Farmington
+726,30040,Me.-Presque Isle
+727,30137,Malone
+728,1192,Manchester
+729,381,Manhattan
+730,502922,Manhattan Chrst.
+731,382,Manhattanville
+732,506363,Manitoba (CAN)
+733,384,Mansfield
+734,1194,Maranatha Baptist
+735,502945,Marian (IN)
+736,1196,Marian (WI)
+737,385,Marietta
+738,386,Marist
+739,478,SUNY Maritime
+740,387,Marquette
+741,1199,Mars Hill
+742,388,Marshall
+743,8597,Martin Luther
+744,502981,Martin Methodist
+745,30075,Mary
+746,389,Mary Baldwin
+747,1203,Mary Hardin-Baylor
+748,390,Mary Washington
+749,505182,Marycrest Int'l
+750,393,UMES
+751,391,UMBC
+752,392,Maryland
+753,506383,Marymount (CA)
+754,394,Marymount (VA)
+755,396,Maryville (TN)
+756,395,Maryville (MO)
+757,397,Marywood
+758,486,MCLA
+759,398,MIT
+760,399,Mass. Maritime
+761,400,Massachusetts
+762,401,UMass Boston
+763,656,UMass Dartmouth
+764,368,UMass Lowell
+765,503033,Master's
+766,502225,Mayville St.
+767,773,McDaniel
+768,503037,McGill (CAN)
+769,30138,McKendree
+770,506510,McMaster (CAN)
+771,8530,McMurry
+772,402,McNeese
+773,506039,McPherson
+774,23725,Medaille
+775,403,Medgar Evers
+776,404,Memphis
+777,506392,Menlo
+778,406,Mercer
+779,407,Mercy
+780,408,Mercyhurst
+781,409,Meredith
+782,410,Merrimack
+783,411,Messiah
+784,412,Methodist
+785,413,MSU Denver
+786,415,Miami (FL)
+787,506146,Miami-Hamilton
+788,503122,Miami-Middletown
+789,414,Miami (OH)
+790,418,Michigan
+791,503130,Mich.-Dearborn
+792,416,Michigan St.
+793,417,Michigan Tech
+794,503153,Mid-Amer. Christian
+795,506199,Mid-Atlantic Christ.
+796,506041,MidAmerica Naz.
+797,506486,Middle Ga. St.
+798,419,Middle Tenn.
+799,420,Middlebury
+800,506060,Midland
+801,503175,Midway
+802,1222,Midwestern St.
+803,422,Miles
+804,423,Millersville
+805,503195,Milligan
+806,424,Millikin
+807,425,Mills
+808,426,Millsaps
+809,20220,MSOE
+810,383,Minnesota St.
+811,1240,MSU Moorhead
+812,27854,Minn.-Crookston
+813,427,Minn. Duluth
+814,428,Minnesota
+815,1226,Minn.-Morris
+816,30125,Minot St.
+817,16142,Misericordia
+818,433,Ole Miss
+819,429,Mississippi Col.
+820,430,Mississippi St.
+821,431,MUW
+822,432,Mississippi Val.
+823,503262,Mo. Baptist
+824,435,Missouri S&T
+825,9012,Mo. Southern St.
+826,669,Missouri St.
+827,506068,Missouri Valley
+828,9013,Missouri Western
+829,434,Missouri
+830,2707,Kansas City
+831,436,Mo.-St. Louis
+832,30042,Mitchell
+833,503297,Mobile
+834,506431,Mohawk (CAN)
+835,437,Molloy
+836,438,Monmouth (IL)
+837,439,Monmouth
+838,441,Montana
+839,205,Mont. St. Billings
+840,440,Montana St.
+841,503735,Mont. St.-Northern
+842,506022,Montana Tech
+843,506024,Montana Western
+844,442,Montclair St.
+845,1238,Montevallo
+846,503331,Montreat
+847,503332,Moody Bible
+848,443,Moravian
+849,444,Morehead St.
+850,445,Morehouse
+851,446,Morgan St.
+852,506400,Morningside
+853,503365,Morris
+854,30067,Morrisville St.
+855,30036,Mount Aloysius
+856,449,Mount Holyoke
+857,503374,Mt. Marty
+858,30033,Mount Mary
+859,503377,Mt. Mercy
+860,1245,Mount Olive
+861,506455,Mt. Royal (CAN)
+862,8567,Mt. St. Joseph
+863,451,CMSV
+864,1468,Mt. St. Mary (NY)
+865,450,Mount St. Mary's
+866,452,Mount Union
+867,503405,Mt. Vernon Naz.
+868,453,Muhlenberg
+869,503415,Multnomah
+870,454,Murray St.
+871,455,Muskingum
+872,461,Nazareth
+873,503447,Neb. Christian
+874,464,Omaha
+875,462,Neb. Wesleyan
+876,1156,Neb.-Kearney
+877,463,Nebraska
+878,1254,Neumann
+879,465,UNLV
+880,466,Nevada
+881,1255,U New England
+882,467,New England Col.
+883,469,New Hampshire
+884,470,New Haven
+885,501620,New Hope Christian
+886,319,New Jersey City
+887,471,NJIT
+888,712,TCNJ
+889,473,New Mexico
+890,8577,N.M. Highlands
+891,472,New Mexico St.
+892,474,New Orleans
+893,475,SUNY New Paltz
+894,506480,New School
+895,477,New York Tech
+896,479,NYU
+897,1257,Newberry
+898,30054,Newman
+899,482,Niagara
+900,483,Nicholls St.
+901,484,Nichols
+902,485,Norfolk St.
+903,487,North Ala.
+904,456,UNC Asheville
+905,488,N.C. A&T
+906,489,N.C. Central
+907,490,NC State
+908,491,N.C. Wesleyan
+909,460,UNCW
+910,457,North Carolina
+911,458,Charlotte
+912,459,UNC Greensboro
+913,537,UNC Pembroke
+914,492,North Central (IL)
+915,30039,North Central (MN)
+916,494,North Dakota
+917,493,North Dakota St.
+918,2711,North Florida
+919,30052,North Georgia
+920,9223,North Greenville
+921,496,North Park
+922,497,North Texas
+923,506547,North Texas-Dallas
+924,30065,NVU-Lyndon
+925,12810,Northeastern St.
+926,500,Northeastern
+927,501,Northern Ariz.
+928,506456,Northern B.C. (CAN)
+929,502,Northern Colo.
+930,503,Northern Ill.
+931,504,UNI
+932,505,Northern Ky.
+933,506,Northern Mich.
+934,506343,Northern N.M.
+935,1266,Northern St.
+936,324,NVU-Johnson
+937,1267,Northland
+938,503796,Northwest (WA)
+939,503780,Northwest Chrst.
+940,506481,Northwest Indian
+941,507,Northwest Mo. St.
+942,1274,Northwest Nazarene
+943,506072,Northwestern (IA)
+944,506330,Northwestern Ohio
+945,30178,Northwestern Okla.
+946,508,Northwestern St.
+947,509,Northwestern
+948,30031,Northwestern-St. Paul
+949,510,Northwood
+950,511,Norwich
+951,513,Notre Dame
+952,8600,Notre Dame (MD)
+953,30126,Notre Dame (OH)
+954,30056,Notre Dame de Namur
+955,24639,Nova Southeastern
+956,1277,Nyack
+957,506501,Oak Hills Christian
+958,1278,Oakland City
+959,514,Oakland
+960,506086,Oakwood
+961,515,Oberlin
+962,516,Occidental
+963,2713,Oglethorpe
+964,506333,Ohio Christian
+965,30119,Ohio Dominican
+966,517,Ohio Northern
+967,518,Ohio St.
+968,519,Ohio
+969,15207,Ohio Valley
+970,520,Ohio Wesleyan
+971,503863,Ohio-Chillicothe
+972,503865,Ohio-Eastern
+973,506281,Ohio-Lancaster
+974,506515,Okla. Panhandle
+975,522,Oklahoma
+976,30202,Okla. Baptist
+977,30179,Okla. Christian
+978,503905,Oklahoma City
+979,521,Oklahoma St.
+980,506189,Okla. Wesleyan
+981,523,Old Dominion
+982,524,Old Westbury
+983,525,Olivet
+984,506045,Olivet Nazarene
+985,526,SUNY Oneonta
+986,527,Oral Roberts
+987,529,Oregon
+988,528,Oregon St.
+989,500078,Oregon Tech
+990,530,Oswego St.
+991,506513,Ottawa (AZ)
+992,506046,Ottawa (KS)
+993,531,Otterbein
+994,1289,Ouachita Baptist
+995,503987,Our Lady of the Lake
+996,503990,Ozark Christian
+997,504000,Ozarks (MO)
+998,23008,Ozarks (AR)
+999,533,Pace
+1000,534,Pacific
+1001,1297,Pacific Lutheran
+1002,506090,Pacific Union
+1003,2751,Pacific (OR)
+1004,535,Paine
+1005,30045,Palm Beach Atl.
+1006,506544,Park (AZ)
+1007,504050,Park (MO)
+1008,504055,Paul Quinn
+1009,506239,Paul Smiths
+1010,30190,Penn College
+1011,25719,Penn St.-Altoona
+1012,538,Penn St.-Behrend
+1013,30081,Penn St. Harrisburg
+1014,506540,Penn St.-Shenango
+1015,30044,Penn St.-Berks
+1016,540,Penn
+1017,30114,Penn St.-Abington
+1018,539,Penn St.
+1019,506277,Penn St.-Beaver
+1020,504077,Penn St.-Brandywine
+1021,506280,Penn St.-Du Bois
+1022,506278,Penn St.-Fayette
+1023,506261,Penn St-Gr Allegheny
+1024,506297,Penn St.-Hazleton
+1025,506298,Penn St.-Lehigh Val.
+1026,506331,Penn St.-Mont Alto
+1027,506264,Penn St.-New Kens.
+1028,506302,Penn St.-Schuylkill
+1029,506324,Penn St.-Scranton
+1030,506332,Penn St-Wilkes Barre
+1031,506370,Penn St-Worthington
+1032,506326,Penn St.-York
+1033,504062,Pensacola Christian
+1034,541,Pepperdine
+1035,506008,Peru St.
+1036,542,Pfeiffer
+1037,504115,Philander Smith
+1038,21830,Piedmont
+1039,504130,Piedmont Int'l
+1040,504135,Pikeville
+1041,544,Pine Manor
+1042,1314,Pittsburg St.
+1043,545,Pittsburgh
+1044,1315,Pitt.-Bradford
+1045,11839,Pitt.-Greensburg
+1046,546,Pitt.-Johnstown
+1047,547,Plattsburgh St.
+1048,548,Plymouth St.
+1049,30149,Point Loma
+1050,504175,Point Park
+1051,500270,Point U.
+1052,506464,Polytechnic (P.R.)
+1053,9500,SUNY Poly
+1054,549,Pomona-Pitzer
+1055,551,Portland
+1056,504187,Portland Bible
+1057,550,Portland St.
+1058,1318,Post
+1059,552,SUNY Potsdam
+1060,553,Prairie View
+1061,2715,Pratt
+1062,1320,Presbyterian
+1063,504212,Presentation
+1064,554,Princeton
+1065,555,Principia
+1066,506169,Providence (MT)
+1067,506493,Providence Christian
+1068,556,Providence
+1069,506307,Providence-Manitoba
+1070,2682,P.R.-Bayamon
+1071,24361,P.R.-Mayaguez
+1072,2716,P.R.-Rio Piedras
+1073,504226,P.R.-Arecibo
+1074,506503,P.R.-Carolina
+1075,506419,P.R.-Cayey
+1076,506420,P.R.-Humacao
+1077,504231,P.R.-Ponce
+1078,557,Puget Sound
+1079,30029,Purchase
+1080,308,Purdue Fort Wayne
+1081,559,Purdue
+1082,30222,Purdue Northwest
+1083,560,Queens (NY)
+1084,11504,Queens (NC)
+1085,561,Quincy
+1086,562,Quinnipiac
+1087,563,Radford
+1088,564,Ramapo
+1089,502132,Randall
+1090,566,Randolph
+1091,565,Randolph-Macon
+1092,567,Redlands
+1093,506514,Regent
+1094,506457,Regina (CAN)
+1095,569,Regis (MA)
+1096,568,Regis (CO)
+1097,506141,Reinhardt
+1098,570,Rensselaer
+1099,572,Rhode Island
+1100,571,Rhode Island Col.
+1101,573,Rhodes
+1102,574,Rice
+1103,575,Richmond
+1104,576,Rider
+1105,504350,Rio Grande
+1106,577,Ripon
+1107,18422,Rivier
+1108,578,Roanoke
+1109,579,Robert Morris
+1110,30150,Roberts Wesleyan
+1111,581,Rochester (NY)
+1112,580,RIT
+1113,582,Rockford
+1114,1328,Rockhurst
+1115,506025,Rocky Mountain
+1116,583,Roger Williams
+1117,30180,Rogers St.
+1118,584,Rollins
+1119,504410,Roosevelt
+1120,506377,Roosevelt-Peoria
+1121,585,Rose-Hulman
+1122,15882,Rosemont
+1123,259,Rowan
+1124,506512,Rust
+1125,588,Rutgers-Camden
+1126,589,Rutgers-Newark
+1127,587,Rutgers
+1128,506432,Ryerson (CAN)
+1129,503129,Rochester Univ. (MI)
+1130,506353,S.C. Beaufort
+1131,504446,Sacred Heart (PR)
+1132,590,Sacred Heart
+1133,11036,Sage Colleges
+1134,591,Saginaw Valley
+1135,500153,SAGU American Indian
+1136,506002,St. Ambrose
+1137,506422,St. Andrews
+1138,595,Saint Benedict
+1139,9684,St. Elizabeth
+1140,506180,St. Francis (IL)
+1141,504500,St. Francis (IN)
+1142,605,St. Joseph's (ME)
+1143,506468,St. Katherine
+1144,504578,St. Louis Pharmacy
+1145,506064,St. Mary (KS)
+1146,504607,St. Mary (NE)
+1147,504592,St. Mary-Woods
+1148,506474,St. Thomas (CAN)
+1149,504653,St. Thomas (FL)
+1150,504660,St. Xavier
+1151,506499,SAIT Poly (CAN)
+1152,30041,Salem (NC)
+1153,621,Salem St.
+1154,19117,Salem (WV)
+1155,622,Salisbury
+1156,623,Salve Regina
+1157,624,Sam Houston St.
+1158,625,Samford
+1159,627,San Diego
+1160,502122,San Diego Christian
+1161,626,San Diego St.
+1162,629,San Francisco
+1163,628,San Fran. St.
+1164,630,San Jose St.
+1165,631,Santa Clara
+1166,30163,Sarah Lawrence
+1167,506458,Saskatchewan (CAN)
+1168,632,Savannah St.
+1169,506483,SCAD Atlanta
+1170,506402,SCAD Savannah
+1171,1355,Schreiner
+1172,506082,Science & Arts Okla.
+1173,28594,USciences
+1174,633,Scranton
+1175,634,Seattle Pacific
+1176,1356,Seattle U
+1177,635,Seton Hall
+1178,30063,Seton Hill
+1179,652,Sewanee
+1180,636,Shaw
+1181,504767,Shawnee St.
+1182,637,Shenandoah
+1183,10870,Shepherd
+1184,506099,Sheridan (CAN)
+1185,638,Shippensburg
+1186,30151,Shorter
+1187,639,Siena
+1188,504800,Siena Heights
+1189,506497,Sierra Nevada
+1190,506511,Simmons (KY)
+1191,640,Simmons
+1192,30127,Simon Fraser
+1193,504809,Simpson (CA)
+1194,641,Simpson
+1195,30128,Sioux Falls
+1196,642,Skidmore
+1197,643,Slippery Rock
+1198,644,Smith
+1199,506364,Soka
+1200,645,Sonoma St.
+1201,646,South Alabama
+1202,648,South Carolina
+1203,11276,S.C. Aiken
+1204,647,South Carolina St.
+1205,10411,USC Upstate
+1206,650,South Dakota
+1207,30139,South Dakota Mines
+1208,649,South Dakota St.
+1209,651,South Fla.
+1210,654,Southeast Mo. St.
+1211,506151,Southeastern (FL)
+1212,504906,Southeastern Bapt.
+1213,655,Southeastern La.
+1214,1371,Southeastern Okla.
+1215,1376,Southern Ark.
+1216,657,Southern California
+1217,658,Southern Conn. St.
+1218,659,Southern Ill.
+1219,660,SIUE
+1220,661,Southern Ind.
+1221,662,Southern Me.
+1222,663,SMU
+1223,664,Southern Miss.
+1224,30152,Southern Nazarene
+1225,468,Southern N.H.
+1226,506027,Southern Ore.
+1227,665,Southern U.
+1228,667,Southern Utah
+1229,30164,Southern Va.
+1230,30192,Southern Wesleyan
+1231,504980,Southern-N.O.
+1232,506012,Southwest (NM)
+1233,2755,Southwest Baptist
+1234,8736,Southwest Minn. St.
+1235,506063,Southwestern (KS)
+1236,505028,S'western Adventist
+1237,506149,S'western Assemblies
+1238,506285,Southwestern Christ.
+1239,8744,Southwestern Okla.
+1240,8746,Southwestern (TX)
+1241,23260,Spalding
+1242,505040,Spring Arbor
+1243,30191,Spring Hill
+1244,673,Springfield
+1245,593,St. Anselm
+1246,594,Saint Augustine's
+1247,596,St. Bonaventure
+1248,597,St. Catherine
+1249,598,St. Cloud St.
+1250,1334,St. Edward's
+1251,599,St. Francis Brooklyn
+1252,600,Saint Francis (PA)
+1253,601,St. John Fisher
+1254,603,St. John's (NY)
+1255,602,Saint John's (MN)
+1256,8687,St. Joseph (CT)
+1257,30072,St. Joseph's (Brkln)
+1258,1340,St. Joseph's (L.I.)
+1259,606,Saint Joseph's
+1260,607,St. Lawrence
+1261,608,Saint Leo
+1262,609,Saint Louis
+1263,1343,Saint Martin's
+1264,612,Saint Mary's (MN)
+1265,1346,St. Mary's (TX)
+1266,610,Saint Mary's (CA)
+1267,8688,St. Mary's (IN)
+1268,611,St. Mary's (MD)
+1269,613,Saint Michael's
+1270,614,St. Norbert
+1271,615,St. Olaf
+1272,617,Saint Peter's
+1273,1347,Saint Rose
+1274,618,St. Scholastica
+1275,2810,St. Thomas (TX)
+1276,1348,St. Thomas Aquinas
+1277,620,St. Thomas (MN)
+1278,30064,Saint Vincent
+1279,674,Stanford
+1280,675,Staten Island
+1281,676,SFA
+1282,506407,Stephens College
+1283,506073,Sterling (KS)
+1284,678,Stetson
+1285,679,Stevens
+1286,21852,Stevenson
+1287,506508,Stillman
+1288,681,Stockton
+1289,682,Stonehill
+1290,683,Stony Brook
+1291,684,Suffolk
+1292,1390,Sul Ross St.
+1293,506380,SUNY ESF
+1294,685,Susquehanna
+1295,686,Swarthmore
+1296,687,Sweet Briar
+1297,688,Syracuse
+1298,506050,Tabor
+1299,505160,Talladega
+1300,689,Tampa
+1301,506546,TAMU-San Antonio
+1302,1395,Tarleton St.
+1303,506071,Taylor (IN)
+1304,506394,TBA
+1305,690,Temple
+1306,691,Tennessee St.
+1307,692,Tennessee Tech
+1308,505220,Tenn. Wesleyan
+1309,693,Chattanooga
+1310,694,Tennessee
+1311,695,UT Martin
+1312,697,Texas A&M
+1313,30090,Tex. A&M Int'l
+1314,199,Tex. A&M-Commerce
+1315,26172,A&M-Corpus Christi
+1316,696,Tex. A&M-Kingsville
+1317,506487,Tex. A&M-Texarkana
+1318,702,UT Arlington
+1319,698,TCU
+1320,505260,Texas Col.
+1321,1400,Texas Lutheran
+1322,30088,Tex. Permian Basin
+1323,536,UTRGV
+1324,699,Texas Southern
+1325,670,Texas St.
+1326,700,Texas Tech
+1327,506403,Texas Wesleyan
+1328,701,Texas Woman's
+1329,703,Texas
+1330,23121,Texas-Dallas
+1331,704,UTEP
+1332,706,UTSA
+1333,30028,Texas-Tyler
+1334,707,Thiel
+1335,506315,Thomas (GA)
+1336,2758,Thomas (ME)
+1337,543,Jefferson
+1338,506433,Thompson Rivers (CN)
+1339,1403,Tiffin
+1340,506224,To Be Announced
+1341,505303,Toccoa Falls
+1342,709,Toledo
+1343,506362,Toronto (CAN)
+1344,505310,Tougaloo
+1345,711,Towson
+1346,28749,Transylvania
+1347,30002,Trevecca Nazarene
+1348,30037,Trine
+1349,505352,Trinity (FL)
+1350,505332,Trinity Baptist
+1351,505334,Trinity Bible (ND)
+1352,505350,Trinity Christian
+1353,713,Trinity (CT)
+1354,506107,Trinity Int'l
+1355,715,Trinity (TX)
+1356,23413,Trinity Washington
+1357,506459,Trinity Western (CN)
+1358,716,Troy
+1359,506361,Truett-McConnell
+1360,499,Truman
+1361,717,Tufts
+1362,718,Tulane
+1363,719,Tulsa
+1364,505378,Turabo
+1365,12830,Tusculum
+1366,720,Tuskegee
+1367,506543,Thomas More
+1368,721,Air Force
+1369,722,Coast Guard
+1370,724,Merchant Marine
+1371,725,Army West Point
+1372,726,Navy
+1373,506105,Union (KY)
+1374,505398,Union (NE)
+1375,727,Union (NY)
+1376,30153,Union (TN)
+1377,505410,Unity
+1378,506176,UC Clermont
+1379,728,Upper Iowa
+1380,30104,Urbana
+1381,730,Ursinus
+1382,30140,Ursuline
+1383,732,Utah
+1384,731,Utah St.
+1385,30024,Utah Valley
+1386,733,Utica
+1387,734,Valdosta St.
+1388,506055,Valley City St.
+1389,30166,Valley Forge
+1390,735,Valparaiso
+1391,506434,Vancouver Island
+1392,736,Vanderbilt
+1393,504925,Vanguard
+1394,737,Vassar
+1395,506348,Vaughn
+1396,738,Vermont
+1397,505487,Vermont Tech
+1398,506436,Victoria (CAN)
+1399,505489,Villa Maria
+1400,739,Villanova
+1401,506190,Virgin Islands
+1402,746,Virginia
+1403,30181,UVa-Wise
+1404,740,VCU
+1405,741,VMI
+1406,742,Virginia Tech
+1407,743,Virginia St.
+1408,744,Virginia Union
+1409,745,Va. Wesleyan
+1410,506391,Virginia-Lynchburg
+1411,505533,Viterbo
+1412,505535,Voorhees
+1413,747,Wabash
+1414,748,Wagner
+1415,749,Wake Forest
+1416,506242,Waldorf
+1417,506100,Walla Walla
+1418,30141,Walsh
+1419,505562,Warner
+1420,505560,Warner Pacific
+1421,30236,Warren Wilson
+1422,750,Wartburg
+1423,2814,Washburn
+1424,756,Washington
+1425,752,Wash. & Lee
+1426,506471,Washington Adventist
+1427,751,Wash. & Jeff.
+1428,753,Washington Col.
+1429,754,Washington St.
+1430,755,WashU
+1431,506177,Waterloo (CAN)
+1432,505610,Wayland Baptist
+1433,757,Wayne St. (MI)
+1434,1433,Wayne St. (NE)
+1435,1434,Waynesburg
+1436,505630,Webb Inst.
+1437,505632,Webber Int'l
+1438,758,Weber St.
+1439,759,Webster
+1440,506469,Welch
+1441,760,Wellesley
+1442,761,Wells
+1443,762,Wentworth
+1444,763,Wesley
+1445,764,Wesleyan (CT)
+1446,14718,Wesleyan (GA)
+1447,358,West Ala.
+1448,765,West Chester
+1449,506319,West Coast Baptist
+1450,11740,West Florida
+1451,766,West Ga.
+1452,1438,West Liberty
+1453,767,West Tex. A&M
+1454,1439,West Virginia St.
+1455,506393,West Va. Tech
+1456,768,West Virginia
+1457,9630,West Va. Wesleyan
+1458,506536,Westcliff
+1459,769,Western Caro.
+1460,2759,Western Colo.
+1461,770,Western Conn. St.
+1462,771,Western Ill.
+1463,772,Western Ky.
+1464,774,Western Mich.
+1465,775,Western New Eng.
+1466,1445,Western N.M.
+1467,506443,W'ernw Ontario (CAN)
+1468,1446,Western Ore.
+1469,1448,Western Wash.
+1470,777,Westfield St.
+1471,1450,Westminster (MO)
+1472,1451,Westminster (PA)
+1473,30209,Westminster (UT)
+1474,505775,Westmont
+1475,778,Wheaton (IL)
+1476,779,Wheaton (MA)
+1477,12799,Wheeling
+1478,780,Whitman
+1479,781,Whittier
+1480,1454,Whitworth
+1481,782,Wichita St.
+1482,783,Widener
+1483,505825,Wilberforce
+1484,500077,Wiley
+1485,784,Wilkes
+1486,785,Willamette
+1487,786,William & Mary
+1488,505850,William Carey
+1489,506290,William Jessup
+1490,30120,William Jewell
+1491,787,Wm. Paterson
+1492,17094,William Peace
+1493,506401,William Penn
+1494,30073,William Smith
+1495,506076,William Woods
+1496,505872,Williams Baptist
+1497,789,Williams
+1498,1460,Wilmington (DE)
+1499,1461,Wilmington (OH)
+1500,12973,Wilson
+1501,506389,Windsor (CAN)
+1502,1462,Wingate
+1503,506425,Winnipeg (CAN)
+1504,790,Winona St.
+1505,791,Winston-Salem
+1506,792,Winthrop
+1507,8911,Wis. Lutheran
+1508,793,Wis.-Eau Claire
+1509,794,Green Bay
+1510,795,Wis.-La Crosse
+1511,796,Wisconsin
+1512,797,Milwaukee
+1513,798,Wis.-Oshkosh
+1514,799,Wis.-Parkside
+1515,800,Wis.-Platteville
+1516,801,UW-River Falls
+1517,802,Wis.-Stevens Point
+1518,803,Wis.-Stout
+1519,804,Wis.-Superior
+1520,805,Wis.-Whitewater
+1521,806,Wittenberg
+1522,2915,Wofford
+1523,807,Wooster
+1524,808,WPI
+1525,809,Worcester St.
+1526,506325,Wright St.-Lake
+1527,810,Wright St.
+1528,811,Wyoming
+1529,506000,Xavier (LA)
+1530,812,Xavier
+1531,813,Yale
+1532,506504,Yellowstone Chris.
+1533,814,Yeshiva
+1534,506494,York (CAN)
+1535,500575,York (NE)
+1536,815,York (PA)
+1537,2730,York (NY)
+1538,30154,Young Harris
+1539,817,Youngstown St.
+

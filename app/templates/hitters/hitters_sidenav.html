@@ -4,6 +4,7 @@
     <li><a class="sidenav-item" href="{{ url_for('hitters.hitters_stats') }}">Stats</a></li>
     <li><a class="sidenav-item" href="{{ url_for('hitters.hitters_inactive_roster') }}">Inactive Roster</a></li>
     {% if current_user.admin %}
-        <li><a class="sidenav-item" href="{{ url_for('hitters.hitters_edit') }}">Edit</a></li>
+    <!-- Edit our own stuff from opponents view -->
+        <!-- <li><a class="sidenav-item" href="{{ url_for('hitters.hitters_edit') }}">Edit</a></li> -->
     {% endif %}
 </ul>

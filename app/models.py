@@ -177,6 +177,7 @@ class Season(db.Model):
     semester = db.Column(db.String(8), index=True)
     year = db.Column(db.Integer, index=True)
     current_season = db.Column(db.Boolean, index=True)
+    ncaa_year_id = db.Column(db.Integer, index=True)
     outings = db.relationship('Outing', backref='season', lazy='dynamic')
     videos = db.relationship('Video', backref='season', lazy='dynamic')
     games = db.relationship('Game', backref='season', lazy='dynamic')
@@ -188,11 +189,11 @@ class Season(db.Model):
 class Opponent(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), index=True)
+    mascot = db.Column(db.String(64), index=True)
+    ncaa_team_id = db.Column(db.Integer, index=True)
     outings = db.relationship('Outing', backref='opponent', lazy='dynamic')
-    batters = db.relationship(
-        'Batter', backref='opponent', lazy='dynamic', order_by="Batter.lastname")
-    pitchers = db.relationship(
-        'Pitcher', backref='opponent', lazy='dynamic', order_by="Pitcher.lastname")
+    batters = db.relationship('Batter', backref='opponent', lazy='dynamic', order_by="Batter.lastname")
+    pitchers = db.relationship('Pitcher', backref='opponent', lazy='dynamic', order_by="Pitcher.lastname")
     games = db.relationship('Game', backref='opponent', lazy='dynamic')
 
     def __repr__(self):
