@@ -39,7 +39,7 @@ def getSeasons(pitcher):
     return seasons
 
 
-# ***************-STAFF PAGES-*************** # 
+# ***************-STAFF PAGES-*************** #
 def staffSeasonGoals(pitchers, includeMatchups=True):
     # weighted strike percentage
     strikes = 0
@@ -48,7 +48,7 @@ def staffSeasonGoals(pitchers, includeMatchups=True):
     # weighted FPS
     first_pitch_strikes = 0
     first_pitches = 0
-    fps_percentage = 0 
+    fps_percentage = 0
     # K/BB Ratio
     strikeouts = 0
     walks = 0
@@ -69,7 +69,7 @@ def staffSeasonGoals(pitchers, includeMatchups=True):
                                 for index, p in enumerate(ab.pitches):
                                     total_pitches += 1
                                     if p.pitch_result is not "B":
-                                        strikes += 1 
+                                        strikes += 1
                                     if index is 0:
                                         first_pitches += 1
                                         if p.pitch_result is not "B":
@@ -78,7 +78,7 @@ def staffSeasonGoals(pitchers, includeMatchups=True):
                                         strikeouts += 1
                                     if p.ab_result == "BB":
                                         walks += 1
-                                    if p.pitch_type not in [1,7,"FB","SM"]:
+                                    if p.pitch_type not in [1, 7, "FB", "SM"]:
                                         offspeed_pitches += 1
                                         if p.pitch_result != "B":
                                             offspeed_strikes += 1
@@ -91,7 +91,7 @@ def staffSeasonGoals(pitchers, includeMatchups=True):
                             for index, p in enumerate(ab.pitches):
                                 total_pitches += 1
                                 if p.pitch_result is not "B":
-                                    strikes += 1 
+                                    strikes += 1
                                 if index is 0:
                                     first_pitches += 1
                                     if p.pitch_result is not "B":
@@ -100,32 +100,33 @@ def staffSeasonGoals(pitchers, includeMatchups=True):
                                     strikeouts += 1
                                 if p.ab_result == "BB":
                                     walks += 1
-                                if p.pitch_type not in [1,7,"FB","SM"]:
+                                if p.pitch_type not in [1, 7, "FB", "SM"]:
                                     offspeed_pitches += 1
                                     if p.pitch_result != "B":
                                         offspeed_strikes += 1
-
 
     if total_pitches is 0:
         strike_percentage = "X"
     else:
         strike_percentage = percentage(strikes/total_pitches, 0)
-    
+
     if first_pitch_strikes is 0:
         fps_percentage = "X"
     else:
         fps_percentage = percentage(first_pitch_strikes/first_pitches)
-    
+
     if walks is 0:
         if strikeouts is 0:
             k_to_bb = 0
-        else: 
+        else:
             k_to_bb = "inf"
     else:
         k_to_bb = truncate(strikeouts/walks, 1)
-    
+
     if offspeed_pitches != 0:
         offspeed_strike_pct = percentage(offspeed_strikes/offspeed_pitches)
+    else:
+        offspeed_strike_pct = "X"
 
     return strike_percentage, fps_percentage, k_to_bb, offspeed_strike_pct
 
@@ -194,7 +195,7 @@ def staffSeasonStats(pitchers, afterDate, beforeDate, includeMatchups=True):
         whiffs_swing_and_misses = {"fastball": 0, "offspeed": 0, "total": 0}
         whiffs_pitches_swung_at = {"fastball": 0, "offspeed": 0, "total": 0}
         whiffs_pct = {"fastball": 0, "offspeed": 0, "total": 0}
-        
+
         # to hold the info for swing and miss statistics specific to pitcher
         swing_and_miss_num = {"fastball": 0, "offspeed": 0, "total": 0}
         swing_and_miss_pitches = {"fastball": 0, "offspeed": 0, "total": 0}
@@ -213,7 +214,7 @@ def staffSeasonStats(pitchers, afterDate, beforeDate, includeMatchups=True):
         ab_results_hit_hard = 0
         ab_results_hit_weak = 0
         ab_results_pct = {
-            "ip": 0, "strikeouts": 0, "bb/hbp": 0, "hard_ip": 0, 
+            "ip": 0, "strikeouts": 0, "bb/hbp": 0, "hard_ip": 0,
             "weak_ip": 0, "hard_total": 0, "weak_total": 0
         }
 
@@ -260,7 +261,7 @@ def staffSeasonStats(pitchers, afterDate, beforeDate, includeMatchups=True):
                         if pitch_type in ["FB", "SM"]:
                             pct_num_pitches["fastball"] += 1
                             total_pct_num_pitches["fastball"] += 1
-                        else: 
+                        else:
                             pct_num_pitches["offspeed"] += 1
                             total_pct_num_pitches["offspeed"] += 1
 
@@ -273,7 +274,7 @@ def staffSeasonStats(pitchers, afterDate, beforeDate, includeMatchups=True):
                                 total_pct_num_strikes["fastball"] += 1
                             else:
                                 pct_num_strikes["offspeed"] += 1
-                                total_pct_num_strikes["offspeed"] += 1   
+                                total_pct_num_strikes["offspeed"] += 1
 
                             if new_at_bat:
                                 fps_strikes += 1
@@ -323,7 +324,7 @@ def staffSeasonStats(pitchers, afterDate, beforeDate, includeMatchups=True):
                                 swing_and_miss_num["total"] += 1
                                 total_swing_and_miss_num["offspeed"] += 1
                                 total_swing_and_miss_num["total"] += 1
-                        
+
                         # CSW
                         csw_pitches["total"] += 1
                         total_csw_pitches["total"] += 1
@@ -343,7 +344,7 @@ def staffSeasonStats(pitchers, afterDate, beforeDate, includeMatchups=True):
                                 csw_num["total"] += 1
                                 total_csw_num["offspeed"] += 1
                                 total_csw_num["total"] += 1
-                        
+
                         # AB Results
                         if pitch.ab_result not in [None, ""]:
                             ab_results_total_at_bats += 1
@@ -364,8 +365,8 @@ def staffSeasonStats(pitchers, afterDate, beforeDate, includeMatchups=True):
                                 ab_results_strikeouts += 1
                                 total_ab_results_strikeouts += 1
 
-                        new_at_bat = False         
-                    
+                        new_at_bat = False
+
         # VELOS - totals for pitcher
         for key, val in velo_num_pitches.items():
             if velo_num_pitches[key] != 0:
@@ -377,40 +378,47 @@ def staffSeasonStats(pitchers, afterDate, beforeDate, includeMatchups=True):
             if pct_num_pitches[key] != 0:
                 pct_averages[key] = (
                     int(percentage(pct_num_strikes[key]/pct_num_pitches[key])))
-        
+
         # FPS - totals for pitcher
         if fps_at_bats != 0:
             fps_pct = int(percentage(fps_strikes/fps_at_bats))
-        
+
         # WHIF - totals for pitcher
         for key, val in whiffs_pitches_swung_at.items():
             if whiffs_pitches_swung_at[key] != 0:
                 whiffs_pct[key] = int(percentage(
                     whiffs_swing_and_misses[key]/whiffs_pitches_swung_at[key]))
-        
+
         # SWING & MISS - totals for pitcher
         for key, val in swing_and_miss_pitches.items():
             if swing_and_miss_pitches[key] != 0:
                 swing_and_miss_pct[key] = int(percentage(
                     swing_and_miss_num[key]/swing_and_miss_pitches[key]))
-        
+
         # CSW - totals for pitcher
         for key, val in csw_pct.items():
             if csw_pitches[key] != 0:
                 csw_pct[key] = int(percentage(
                     csw_num[key]/csw_pitches[key]))
-        
+
         # AB RESULTS - totals for pitcher
         if ab_results_total_at_bats != 0:
-            ab_results_pct["ip"] = int(percentage(ab_results_balls_in_play/ab_results_total_at_bats))
-            ab_results_pct["strikeouts"] = int(percentage(ab_results_strikeouts/ab_results_total_at_bats))
-            ab_results_pct["bb/hbp"] = int(percentage(ab_results_free_base/ab_results_total_at_bats))
-            ab_results_pct["hard_total"] = int(percentage(ab_results_hit_hard/ab_results_total_at_bats))
-            ab_results_pct["weak_total"] = int(percentage(ab_results_hit_weak/ab_results_total_at_bats))
+            ab_results_pct["ip"] = int(percentage(
+                ab_results_balls_in_play/ab_results_total_at_bats))
+            ab_results_pct["strikeouts"] = int(percentage(
+                ab_results_strikeouts/ab_results_total_at_bats))
+            ab_results_pct["bb/hbp"] = int(percentage(
+                ab_results_free_base/ab_results_total_at_bats))
+            ab_results_pct["hard_total"] = int(percentage(
+                ab_results_hit_hard/ab_results_total_at_bats))
+            ab_results_pct["weak_total"] = int(percentage(
+                ab_results_hit_weak/ab_results_total_at_bats))
         if ab_results_balls_in_play != 0:
-            ab_results_pct["hard_ip"] = int(percentage(ab_results_hit_hard/ab_results_balls_in_play))
-            ab_results_pct["weak_ip"] = int(percentage(ab_results_hit_weak/ab_results_balls_in_play))
-        
+            ab_results_pct["hard_ip"] = int(percentage(
+                ab_results_hit_hard/ab_results_balls_in_play))
+            ab_results_pct["weak_ip"] = int(percentage(
+                ab_results_hit_weak/ab_results_balls_in_play))
+
         # fill in players array with info from above
         players.append(
             {
@@ -439,39 +447,46 @@ def staffSeasonStats(pitchers, afterDate, beforeDate, includeMatchups=True):
         if total_pct_num_pitches[key] != 0:
             total_pct_averages[key] = (
                 int(percentage(total_pct_num_strikes[key]/total_pct_num_pitches[key])))
-    
+
     # FPS - totals for staff
     if total_fps_at_bats != 0:
         total_fps_pct = int(percentage(total_fps_strikes/total_fps_at_bats))
-    
+
     # WHIF - totals for staff
     for key, val in total_whiffs_pitches_swung_at.items():
         if total_whiffs_pitches_swung_at[key] != 0:
             total_whiffs_pct[key] = int(percentage(
                 total_whiffs_swing_and_misses[key]/total_whiffs_pitches_swung_at[key]))
-        
+
     # SWING & MISS - totals for staff
     for key, val in total_swing_and_miss_pitches.items():
         if total_swing_and_miss_pitches[key] != 0:
             total_swing_and_miss_pct[key] = int(percentage(
                 total_swing_and_miss_num[key]/total_swing_and_miss_pitches[key]))
-    
+
     # CSW - totals for staff
     for key, val in total_csw_pct.items():
-            if total_csw_pitches[key] != 0:
-                total_csw_pct[key] = int(percentage(
-                    total_csw_num[key]/total_csw_pitches[key]))
-    
+        if total_csw_pitches[key] != 0:
+            total_csw_pct[key] = int(percentage(
+                total_csw_num[key]/total_csw_pitches[key]))
+
     # AB RESULTS - totals for pitcher
     if total_ab_results_total_at_bats != 0:
-        total_ab_results_pct["ip"] = int(percentage(total_ab_results_balls_in_play/total_ab_results_total_at_bats))
-        total_ab_results_pct["strikeouts"] = int(percentage(total_ab_results_strikeouts/total_ab_results_total_at_bats))
-        total_ab_results_pct["bb/hbp"] = int(percentage(total_ab_results_free_base/total_ab_results_total_at_bats))
-        total_ab_results_pct["hard_total"] = int(percentage(total_ab_results_hit_hard/total_ab_results_total_at_bats))
-        total_ab_results_pct["weak_total"] = int(percentage(total_ab_results_hit_weak/total_ab_results_total_at_bats))
+        total_ab_results_pct["ip"] = int(percentage(
+            total_ab_results_balls_in_play/total_ab_results_total_at_bats))
+        total_ab_results_pct["strikeouts"] = int(percentage(
+            total_ab_results_strikeouts/total_ab_results_total_at_bats))
+        total_ab_results_pct["bb/hbp"] = int(percentage(
+            total_ab_results_free_base/total_ab_results_total_at_bats))
+        total_ab_results_pct["hard_total"] = int(percentage(
+            total_ab_results_hit_hard/total_ab_results_total_at_bats))
+        total_ab_results_pct["weak_total"] = int(percentage(
+            total_ab_results_hit_weak/total_ab_results_total_at_bats))
     if total_ab_results_balls_in_play != 0:
-        total_ab_results_pct["hard_ip"] = int(percentage(total_ab_results_hit_hard/total_ab_results_balls_in_play))
-        total_ab_results_pct["weak_ip"] = int(percentage(total_ab_results_hit_weak/total_ab_results_balls_in_play))
+        total_ab_results_pct["hard_ip"] = int(percentage(
+            total_ab_results_hit_hard/total_ab_results_balls_in_play))
+        total_ab_results_pct["weak_ip"] = int(percentage(
+            total_ab_results_hit_weak/total_ab_results_balls_in_play))
 
     staff = {}
     staff["velo_averages"] = total_velo_averages
@@ -665,101 +680,101 @@ def pitchUsageByCount(outing):
         "0-0": {
             "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
             "total": 0
-            },
+        },
         "0-1": {
             "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
             "total": 0
-            },
+        },
         "0-2": {
             "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
             "total": 0
-            },
+        },
         "1-0": {
             "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
             "total": 0
-            },
+        },
         "1-1": {
             "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
             "total": 0
-            },
+        },
         "1-2": {
             "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
             "total": 0
-            },
+        },
         "2-0": {
             "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
             "total": 0
-            },
+        },
         "2-1": {
             "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
             "total": 0
-            },
+        },
         "2-2": {
             "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
             "total": 0
-            },
+        },
         "3-0": {
             "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
             "total": 0
-            },
+        },
         "3-1": {
             "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
             "total": 0
-            },
+        },
         "3-2": {
             "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
             "total": 0
-            }
+        }
     }
     counts_percentages = {
         "0-0": {
             "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
             "total": 0
-            },
+        },
         "0-1": {
             "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
             "total": 0
-            },
+        },
         "0-2": {
             "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
             "total": 0
-            },
+        },
         "1-0": {
             "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
             "total": 0
-            },
+        },
         "1-1": {
             "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
             "total": 0
-            },
+        },
         "1-2": {
             "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
             "total": 0
-            },
+        },
         "2-0": {
             "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
             "total": 0
-            },
+        },
         "2-1": {
             "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
             "total": 0
-            },
+        },
         "2-2": {
             "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
             "total": 0
-            },
+        },
         "3-0": {
             "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
             "total": 0
-            },
+        },
         "3-1": {
             "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
             "total": 0
-            },
+        },
         "3-2": {
             "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
             "total": 0
-            }
+        }
     }
 
     for at_bat in outing.at_bats:
@@ -1138,7 +1153,8 @@ def pitchStrikePercentageSeason(pitcher):
                     pitches_strikes['total'] += 1
 
                     # for career totals
-                    pitches_strikes_totals[PitchType(pitch.pitch_type).name] += 1
+                    pitches_strikes_totals[PitchType(
+                        pitch.pitch_type).name] += 1
                     pitches_strikes_totals['total'] += 1
 
                     # for season totals
@@ -1205,7 +1221,8 @@ def pitchUsageSeason(pitcher):
     # storage for career totals
     num_pitches_total = 0
     pitches_total = {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0}
-    pitches_percentages_total = {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0}
+    pitches_percentages_total = {"FB": 0, "CB": 0,
+                                 "SL": 0, "CH": 0, "CT": 0, "SM": 0}
 
     # set up the dictionary to updated based on which season
     seasons = getSeasons(pitcher)
@@ -1225,7 +1242,8 @@ def pitchUsageSeason(pitcher):
         # storage for individual outings
         num_pitches = 0
         pitches = {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0}
-        pitches_percentages = {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0}
+        pitches_percentages = {"FB": 0, "CB": 0,
+                               "SL": 0, "CH": 0, "CT": 0, "SM": 0}
 
         # get the season object and set name variable
         season = Season.query.filter_by(id=outing.season_id).first()
@@ -1249,7 +1267,8 @@ def pitchUsageSeason(pitcher):
         # calculate values for individual outings
         if num_pitches != 0:
             for key, val in pitches.items():
-                pitches_percentages[key] = int(truncate(pitches[key] / num_pitches * 100, 0))
+                pitches_percentages[key] = int(
+                    truncate(pitches[key] / num_pitches * 100, 0))
 
         # storage array for individual outing totals
         outings.append({
@@ -1264,7 +1283,8 @@ def pitchUsageSeason(pitcher):
     # calculate career totals
     if num_pitches_total != 0:
         for key, val in pitches.items():
-            pitches_percentages_total[key] = int(truncate(pitches_total[key] / num_pitches_total * 100, 0))
+            pitches_percentages_total[key] = int(
+                truncate(pitches_total[key] / num_pitches_total * 100, 0))
 
     # storage array for career totals values
     career = {
@@ -1329,7 +1349,8 @@ def veloOverCareer(outings):
         if num_pitches_fastball == 0:
             avg_velo_fastball = "null"
         else:
-            avg_velo_fastball = truncate(total_velo_fastball/num_pitches_fastball, 1)
+            avg_velo_fastball = truncate(
+                total_velo_fastball/num_pitches_fastball, 1)
 
         # check for divide by 0
         if num_pitches_2seam == 0:
@@ -1382,7 +1403,8 @@ def seasonStatLine(pitcher):
                     # stats that result in hit
                     if pitch.ab_result in ["1B", "2B", "3B", "HR"]:
                         stat_line["h"] += 1  # increase hits
-                        stat_line[pitch.ab_result.lower()] += 1  # increase type of hit
+                        # increase type of hit
+                        stat_line[pitch.ab_result.lower()] += 1
 
                     # stats that result in out
                     if pitch.ab_result in ["IP->Out", "K", "KL", "FC", "D3->Out"]:
@@ -1411,7 +1433,8 @@ def seasonStatLine(pitcher):
             stat_line["kp9"] = "inf"
             stat_line["bb9"] = "inf"
         else:
-            stat_line["kp9"] = truncate((stat_line["k"]+stat_line["kl"])/stat_line["ip"] * 9)
+            stat_line["kp9"] = truncate(
+                (stat_line["k"]+stat_line["kl"])/stat_line["ip"] * 9)
             stat_line["bb9"] = truncate(stat_line["bb"]/stat_line["ip"]*9)
 
         # add to outings return arr
@@ -1431,8 +1454,10 @@ def seasonStatLine(pitcher):
     # calc season based summary stats
     stat_line_total["ip"] = truncate(stat_line_total["ip"]/3)
     if(stat_line_total["ip"] > 0):
-        stat_line_total["kp9"] = truncate((stat_line_total["k"]+stat_line_total["kl"])/stat_line_total["ip"] * 9)
-        stat_line_total["bb9"] = truncate(stat_line_total["bb"]/stat_line_total["ip"]*9)
+        stat_line_total["kp9"] = truncate(
+            (stat_line_total["k"]+stat_line_total["kl"])/stat_line_total["ip"] * 9)
+        stat_line_total["bb9"] = truncate(
+            stat_line_total["bb"]/stat_line_total["ip"]*9)
 
     return(stat_line_total, outings)
 
@@ -1473,7 +1498,8 @@ def staffBasicStats(pitchers, seasons=[]):
                             # stats that result in hit
                             if pitch.ab_result in ["1B", "2B", "3B", "HR"]:
                                 stat_line["h"] += 1  # increase hits
-                                stat_line[pitch.ab_result.lower()] += 1  # increase type of hit
+                                # increase type of hit
+                                stat_line[pitch.ab_result.lower()] += 1
 
                             # stats that result in out
                             if pitch.ab_result in ["IP->Out", "K", "KL", "FC", "D3->Out"]:
@@ -1504,7 +1530,8 @@ def staffBasicStats(pitchers, seasons=[]):
             stat_line["kp9"] = "inf"
             stat_line["bb9"] = "inf"
         else:
-            stat_line["kp9"] = truncate((stat_line["k"]+stat_line["kl"])/stat_line["ip"] * 9)
+            stat_line["kp9"] = truncate(
+                (stat_line["k"]+stat_line["kl"])/stat_line["ip"] * 9)
             stat_line["bb9"] = truncate(stat_line["bb"]/stat_line["ip"]*9)
 
         # append to storage array
@@ -1519,8 +1546,10 @@ def staffBasicStats(pitchers, seasons=[]):
     # calculate weighted team stat totals
     stat_line_total["ip"] = truncate(stat_line_total["ip"]/3)
     if(stat_line_total["ip"] > 0):
-        stat_line_total["kp9"] = truncate((stat_line_total["k"]+stat_line_total["kl"])/stat_line_total["ip"] * 9)
-        stat_line_total["bb9"] = truncate(stat_line_total["bb"]/stat_line_total["ip"]*9)
+        stat_line_total["kp9"] = truncate(
+            (stat_line_total["k"]+stat_line_total["kl"])/stat_line_total["ip"] * 9)
+        stat_line_total["bb9"] = truncate(
+            stat_line_total["bb"]/stat_line_total["ip"]*9)
 
     return (stat_line_total, players)
 
@@ -1975,23 +2004,28 @@ def batterSwingWhiffRatebyPitchbyCount(batter, seasons=[]):
         # check to see if at_bat is in the season(s) we want
         if (len(seasons) is 0) or at_bat.get_season().id in seasons or str(at_bat.get_season().id) in seasons:
             for pitch in at_bat.pitches:
-                pitches_per_count[pitch.count][PitchType(pitch.pitch_type).name] += 1
+                pitches_per_count[pitch.count][PitchType(
+                    pitch.pitch_type).name] += 1
 
                 if pitch.pitch_result in ["SS", "F", "IP"]:
-                    swings_per_count[pitch.count][PitchType(pitch.pitch_type).name] += 1
+                    swings_per_count[pitch.count][PitchType(
+                        pitch.pitch_type).name] += 1
                     if pitch.pitch_result in ["SS"]:
-                        whiffs_per_count[pitch.count][PitchType(pitch.pitch_type).name] += 1
+                        whiffs_per_count[pitch.count][PitchType(
+                            pitch.pitch_type).name] += 1
 
     # calculate batter totals
     for count, val in pitches_per_count.items():
         for pitch, num in val.items():
             # calculate swing rate
             if val[pitch] != 0:
-                swing_rate_by_count[count][pitch] = truncate(swings_per_count[count][pitch] / val[pitch])
+                swing_rate_by_count[count][pitch] = truncate(
+                    swings_per_count[count][pitch] / val[pitch])
 
                 # calculate whiff rate
                 if swings_per_count[count][pitch] != 0:
-                    whiff_rate_by_count[count][pitch] = truncate(whiffs_per_count[count][pitch] / swings_per_count[count][pitch])
+                    whiff_rate_by_count[count][pitch] = truncate(
+                        whiffs_per_count[count][pitch] / swings_per_count[count][pitch])
 
     return (swing_rate_by_count, whiff_rate_by_count)
 
@@ -2025,26 +2059,31 @@ def batterSwingWhiffRatebyPitchbyCount2(batter, seasons=[]):
     # iterate through all batter at_bats
     for at_bat in batter.at_bats:
         for pitch in at_bat.pitches:
-            pitches_per_count[PitchType(pitch.pitch_type).name][pitch.count]["usages"] += 1
+            pitches_per_count[PitchType(
+                pitch.pitch_type).name][pitch.count]["usages"] += 1
             pitches_per_count["thrown"][pitch.count] += 1
             pitches_total += 1
 
             # Swing whiff rate
-            swing_whiff_rate_new[PitchType(pitch.pitch_type).name][pitch.count]["thrown"] += 1
+            swing_whiff_rate_new[PitchType(
+                pitch.pitch_type).name][pitch.count]["thrown"] += 1
             if pitch.pitch_result in ["SS", "IP", "F"]:
                 # for swing rate calculation
-                swing_whiff_rate_new[PitchType(pitch.pitch_type).name][pitch.count]["swings"] += 1
+                swing_whiff_rate_new[PitchType(
+                    pitch.pitch_type).name][pitch.count]["swings"] += 1
 
                 # for whiff rate calculateion
                 if pitch.pitch_result in ["SS"]:
-                    swing_whiff_rate_new[PitchType(pitch.pitch_type).name][pitch.count]["whiffs"] += 1
+                    swing_whiff_rate_new[PitchType(
+                        pitch.pitch_type).name][pitch.count]["whiffs"] += 1
 
     # Usage rate calc
     for pitch_type, pitch_vals in pitches_per_count.items():
         if pitch_type != "thrown":
             for count, vals in pitch_vals.items():
                 if pitches_per_count["thrown"][count] > 0:
-                    vals["percent"] = percentage(truncate(vals["usages"] / pitches_per_count["thrown"][count]))
+                    vals["percent"] = percentage(
+                        truncate(vals["usages"] / pitches_per_count["thrown"][count]))
 
     # SWING/WHIFF rate new calc
     for pitch_type, pitch_vals in swing_whiff_rate_new.items():
@@ -2052,10 +2091,12 @@ def batterSwingWhiffRatebyPitchbyCount2(batter, seasons=[]):
             if vals["thrown"] > 0:
                 # whiff rate calc
                 if vals["swings"] > 0:
-                    vals["whiffs"] = percentage(truncate(vals["whiffs"] / vals["swings"]))
+                    vals["whiffs"] = percentage(
+                        truncate(vals["whiffs"] / vals["swings"]))
 
                 # swing rate calc
-                vals["swings"] = percentage(truncate(vals["swings"] / vals["thrown"]))
+                vals["swings"] = percentage(
+                    truncate(vals["swings"] / vals["thrown"]))
 
     return (pitches_per_count, swing_whiff_rate_new)
 
@@ -2127,12 +2168,12 @@ def game_pitching_stats(game, opponent_id):
                             fps += 1
                             game_fps += 1
                         first_pitch = False
-                    
+
                     # update total number of strikes
                     if pitch.pitch_result is not "B":
                         strikes += 1
                         game_strikes += 1
-                    
+
                     # check the ab results and update accordingly
                     if pitch.ab_result in ["1B", "2B", "3B", "HR"]:
                         outing_stats["Hits"] += 1
@@ -2144,7 +2185,7 @@ def game_pitching_stats(game, opponent_id):
                         outing_stats["BB"] += 1
                         game_stats["BB"] += 1
                     if pitch.ab_result == "HBP":
-                        outing_stats["HBP"] += 1  
+                        outing_stats["HBP"] += 1
                         game_stats["HBP"] += 1
 
                     # update pitch velo variables to calc averages
@@ -2164,18 +2205,21 @@ def game_pitching_stats(game, opponent_id):
             if total_fb_pitches == 0:
                 outing_stats["FB Avg"] = 0
             else:
-                outing_stats["FB Avg"] = truncate(total_fb_velo/total_fb_pitches, 1)
+                outing_stats["FB Avg"] = truncate(
+                    total_fb_velo/total_fb_pitches, 1)
 
             if total_2s_pitches == 0:
                 outing_stats["2S Avg"] = 0
             else:
-                outing_stats["2S Avg"] = truncate(total_2s_velo/total_2s_pitches, 1)
+                outing_stats["2S Avg"] = truncate(
+                    total_2s_velo/total_2s_pitches, 1)
 
             # calc FPS and Strike percentages
             if outing_stats["BF"] > 0:
                 outing_stats["FPS"] = percentage(fps/outing_stats["BF"])
             if outing_stats["Pitches"] > 0:
-                outing_stats["SP"] = percentage(strikes/outing_stats["Pitches"])
+                outing_stats["SP"] = percentage(
+                    strikes/outing_stats["Pitches"])
 
             # append to return array
             stats_by_outing.append(outing_stats)
@@ -2184,12 +2228,14 @@ def game_pitching_stats(game, opponent_id):
     if game_total_fb_pitches == 0:
         game_stats["FB Avg"] = 0
     else:
-        game_stats["FB Avg"] = truncate(game_total_fb_velo/game_total_fb_pitches, 1)
+        game_stats["FB Avg"] = truncate(
+            game_total_fb_velo/game_total_fb_pitches, 1)
 
     if game_total_2s_pitches == 0:
         game_stats["2S Avg"] = 0
     else:
-        game_stats["2S Avg"] = truncate(game_total_2s_velo/game_total_2s_pitches, 1)
+        game_stats["2S Avg"] = truncate(
+            game_total_2s_velo/game_total_2s_pitches, 1)
 
     # calc FPS and Strike percentages
     if game_stats["BF"] > 0:
@@ -2263,7 +2309,8 @@ def game_hitting_stats(game, opponent_id):
 
         # calculate swing rate
         if stats["pitches"] != 0:
-            stats["swr"] = percentage(truncate(stats["swr"] / stats["pitches"]))
+            stats["swr"] = percentage(
+                truncate(stats["swr"] / stats["pitches"]))
 
     return batters
 
@@ -2330,19 +2377,23 @@ def stats_opponent_scouting_stats(opponent):
 
                     # USAGE AND USAGE PERCENTAGE
                     # add a pitch to a counts pitch type and total pitches and pitches in a count
-                    pitches_per_count[PitchType(pitch.pitch_type).name][pitch.count]["usages"] += 1
+                    pitches_per_count[PitchType(
+                        pitch.pitch_type).name][pitch.count]["usages"] += 1
                     pitches_per_count["thrown"][pitch.count] += 1
                     pitches_total += 1
 
                     # SWING WHIFF RATE
-                    swing_whiff_rate_new[PitchType(pitch.pitch_type).name][pitch.count]["thrown"] += 1
+                    swing_whiff_rate_new[PitchType(
+                        pitch.pitch_type).name][pitch.count]["thrown"] += 1
                     if pitch.pitch_result in ["SS", "IP", "F"]:
                         # for swing rate calculation
-                        swing_whiff_rate_new[PitchType(pitch.pitch_type).name][pitch.count]["swings"] += 1
+                        swing_whiff_rate_new[PitchType(
+                            pitch.pitch_type).name][pitch.count]["swings"] += 1
 
                         # for whiff rate calculateion
                         if pitch.pitch_result in ["SS"]:
-                            swing_whiff_rate_new[PitchType(pitch.pitch_type).name][pitch.count]["whiffs"] += 1
+                            swing_whiff_rate_new[PitchType(
+                                pitch.pitch_type).name][pitch.count]["whiffs"] += 1
 
     # print(swing_whiff_rate_new)
 
@@ -2351,7 +2402,8 @@ def stats_opponent_scouting_stats(opponent):
         if pitch_type != "thrown":
             for count, vals in pitch_vals.items():
                 if pitches_per_count["thrown"][count] > 0:
-                    vals["percent"] = percentage(truncate(vals["usages"] / pitches_per_count["thrown"][count]))
+                    vals["percent"] = percentage(
+                        truncate(vals["usages"] / pitches_per_count["thrown"][count]))
 
     # SWING/WHIFF rate new calc
     for pitch_type, pitch_vals in swing_whiff_rate_new.items():
@@ -2359,10 +2411,12 @@ def stats_opponent_scouting_stats(opponent):
             if vals["thrown"] > 0:
                 # whiff rate calc
                 if vals["swings"] > 0:
-                    vals["whiffs"] = percentage(truncate(vals["whiffs"] / vals["swings"]))
+                    vals["whiffs"] = percentage(
+                        truncate(vals["whiffs"] / vals["swings"]))
 
                 # swing rate calc
-                vals["swings"] = percentage(truncate(vals["swings"] / vals["thrown"]))
+                vals["swings"] = percentage(
+                    truncate(vals["swings"] / vals["thrown"]))
 
     return (pitches_per_count, swing_whiff_rate_new)
 
@@ -2497,25 +2551,31 @@ def stats_opponent_batters_stat_lines(opponent):
 
                     # USAGE AND USAGE PERCENTAGE
                     # add a pitch to a counts pitch type and total pitches and pitches in a count
-                    pitches_per_count[PitchType(pitch.pitch_type).name][pitch.count]["usages"] += 1
+                    pitches_per_count[PitchType(
+                        pitch.pitch_type).name][pitch.count]["usages"] += 1
                     pitches_per_count["thrown"][pitch.count] += 1
                     pitches_total += 1
 
                     # SWING WHIFF RATE
-                    swing_whiff_rate_new[PitchType(pitch.pitch_type).name][pitch.count]["thrown"] += 1
+                    swing_whiff_rate_new[PitchType(
+                        pitch.pitch_type).name][pitch.count]["thrown"] += 1
                     if pitch.pitch_result in ["SS", "IP", "F"]:
                         # for swing rate calculation
-                        swing_whiff_rate_new[PitchType(pitch.pitch_type).name][pitch.count]["swings"] += 1
+                        swing_whiff_rate_new[PitchType(
+                            pitch.pitch_type).name][pitch.count]["swings"] += 1
 
                         # for whiff rate calculateion
                         if pitch.pitch_result in ["SS"]:
-                            swing_whiff_rate_new[PitchType(pitch.pitch_type).name][pitch.count]["whiffs"] += 1
+                            swing_whiff_rate_new[PitchType(
+                                pitch.pitch_type).name][pitch.count]["whiffs"] += 1
 
             # hard hit calcs
             if temp_hard_hit["num_total"] > 0:
-                temp_hard_hit["percent"] = percentage(truncate(temp_hard_hit["num_hard"] / temp_hard_hit["num_total"]))
+                temp_hard_hit["percent"] = percentage(
+                    truncate(temp_hard_hit["num_hard"] / temp_hard_hit["num_total"]))
             if temp_hard_hit["current_num_total"] > 0:
-                temp_hard_hit["current_percent"] = percentage(truncate(temp_hard_hit["current_num_hard"] / temp_hard_hit["current_num_total"]))
+                temp_hard_hit["current_percent"] = percentage(truncate(
+                    temp_hard_hit["current_num_hard"] / temp_hard_hit["current_num_total"]))
 
             # append stat line and hard hit to storage array
             batter_stat_line.append(temp_stat_line)
@@ -2526,7 +2586,8 @@ def stats_opponent_batters_stat_lines(opponent):
         if pitch_type != "thrown":
             for count, vals in pitch_vals.items():
                 if pitches_per_count["thrown"][count] > 0:
-                    vals["percent"] = percentage(truncate(vals["usages"] / pitches_per_count["thrown"][count]))
+                    vals["percent"] = percentage(
+                        truncate(vals["usages"] / pitches_per_count["thrown"][count]))
 
     # SWING/WHIFF rate new calc
     for pitch_type, pitch_vals in swing_whiff_rate_new.items():
@@ -2534,16 +2595,19 @@ def stats_opponent_batters_stat_lines(opponent):
             if vals["thrown"] > 0:
                 # whiff rate calc
                 if vals["swings"] > 0:
-                    vals["whiffs"] = percentage(truncate(vals["whiffs"] / vals["swings"]))
+                    vals["whiffs"] = percentage(
+                        truncate(vals["whiffs"] / vals["swings"]))
 
                 # swing rate calc
-                vals["swings"] = percentage(truncate(vals["swings"] / vals["thrown"]))
+                vals["swings"] = percentage(
+                    truncate(vals["swings"] / vals["thrown"]))
 
     return (batter_stat_line, batter_hard_hit_line, pitches_per_count, swing_whiff_rate_new)
 
 
 def batter_ball_in_play_stats(batter):
-    ball_in_play = {"h": 0, "1b": 0, "2b": 0, "3b": 0, "hr": 0, "bb": 0, "k": 0}
+    ball_in_play = {"h": 0, "1b": 0, "2b": 0,
+                    "3b": 0, "hr": 0, "bb": 0, "k": 0}
     hard_hit = {"num_hard": 0, "num_total": 0, "percent": 0}
 
     ball_in_play_games = {
@@ -2557,11 +2621,15 @@ def batter_ball_in_play_stats(batter):
     # Each game for batter has blank stat line to start
     for game in batter.get_games():
         if game not in [None, ""]:
-            ball_in_play_games["career"][game] = {"h": 0, "1b": 0, "2b": 0, "3b": 0, "hr": 0, "bb": 0, "k": 0}
-            hard_hit_games["career"][game] = {"num_hard": 0, "num_total": 0, "percent": 0}
+            ball_in_play_games["career"][game] = {
+                "h": 0, "1b": 0, "2b": 0, "3b": 0, "hr": 0, "bb": 0, "k": 0}
+            hard_hit_games["career"][game] = {
+                "num_hard": 0, "num_total": 0, "percent": 0}
             if game.get_season().current_season:
-                ball_in_play_games["current"][game] = {"h": 0, "1b": 0, "2b": 0, "3b": 0, "hr": 0, "bb": 0, "k": 0}
-                hard_hit_games["current"][game] = {"num_hard": 0, "num_total": 0, "percent": 0}
+                ball_in_play_games["current"][game] = {
+                    "h": 0, "1b": 0, "2b": 0, "3b": 0, "hr": 0, "bb": 0, "k": 0}
+                hard_hit_games["current"][game] = {
+                    "num_hard": 0, "num_total": 0, "percent": 0}
 
     # iterate through batter ab's for values
     for at_bat in batter.at_bats:

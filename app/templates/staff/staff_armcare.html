@@ -1,19 +1,22 @@
 {% extends "base.html" %}
 
 {% block styles %}
-    {{ super() }}
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/loader.css') }}">
+{{ super() }}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/loader.css') }}">
 {% endblock %}
 
 {% block app_content %}
-    {% include "staff/staff_sidenav.html" %}
-    <div class="main" style="text-align: center;">
-        {% include "staff/staff_title.html" %}
-        <div>
-            <h1>In-Season Arm Care</h1>
-            <p>Pitchers should complete the Arm Care program 2 times per week, with a recovery day after heaviest throwing day.</p>
-            <p><a href="{{ url_for('api.download_arm_care') }}">Download PDF</a></p>
-            <table class="table">
+{% include "staff/staff_sidenav.html" %}
+<div class="main">
+    {% include "staff/staff_title.html" %}
+    <div>
+        <h1>Bears Pitching Arm Care</h1>
+        <p>
+            We are not currently in season, but this was the arm care for in season which is beneficial
+            to do while playing summer ball or training.
+        </p>
+        <p><a href="{{ url_for('api.download_arm_care') }}">Download PDF</a></p>
+        <!-- <table class="table">
                 <caption><i>Exercises 1-3 Isometric hold. Exercises 4 Movement pattern</i></caption>
                 <col width="376px">
                 <col width="200">
@@ -134,7 +137,7 @@
                     <td class="text-left">External Rotation Towel</td>
                     <td>3x20sec</td>
                 </tr>
-            </table>
-        </div>
+            </table> -->
     </div>
+</div>
 {% endblock %}

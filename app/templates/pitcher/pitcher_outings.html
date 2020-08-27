@@ -1,49 +1,48 @@
 {% extends "base.html" %}
 
 {% block styles %}
-    {{ super() }}
-    <script src="{{ url_for('static', filename='js/sortable_table.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/season_selector.js') }}"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            season_selector('outings-season-selector', 'outings-table', 1)
-        });
-    </script>
+{{ super() }}
+<script src="{{ url_for('static', filename='js/sortable_table.js') }}"></script>
+<script src="{{ url_for('static', filename='js/season_selector.js') }}"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        season_selector('outings-season-selector', 'outings-table', 1)
+    });
+</script>
 {% endblock %}
 
 {% block app_content %}
-    {% include "pitcher/pitcher_sidenav.html" %}
-    <div class="main">
-        {% include "pitcher/pitcher_title.html" %}
-        <h1>
-            {{ pitcher }} - Outings
-        </h1>
-        <p>
-            <h5>Select a Season:</h5>
-            <select name="Outings Season Selector" id="outings-season-selector" onchange="season_selector('outings-season-selector', 'outings-table', 1)">
-                <option value="All Seasons">All Seasons</option>
-                {% for season in seasons %}
-                    <option value="{{ season }}" {% if current_season == season %} selected {% endif %}>{{ season }}</option>
-                {% endfor %}
-            </select>
-        </p>
-        <div>
-            <table class='table sortable_table' id='outings-table'>
-                <tr class="table-headers">
-                    <th onclick="sortTable(0, 0)">Date</th>
-                    <th onclick="sortTable(1, 0)">Season</th>
-                    <th onclick="sortTable(2, 0)">Opponent</th>
-                    <th>View</th>
-                </tr>
-                {% for o in pitcher.outings %}
-                <tr class="data-row">
-                    <td>{{ o.date.month }}/{{ o.date.day }}/{{ o.date.year }}</td>
-                    <td>{{ o.season }}</td>
-                    <td>{{ o.opponent }}</td>
-                    <td><a href="{{ url_for('outing.outing_home', id=o.id) }}">View Me</a></td>
-                </tr>
-                {% endfor %}
-            </table> 
-        </div>
+{% include "pitcher/pitcher_sidenav.html" %}
+<div class="main">
+    {% include "pitcher/pitcher_title.html" %}
+    <h1>
+        {{ pitcher }} - Outings
+    </h1>
+    <p>
+    <h5>Select a Season:</h5>
+    <select name="Outings Season Selector" id="outings-season-selector"
+        onchange="season_selector('outings-season-selector', 'outings-table', 1)">
+        <option value="All Seasons">All Seasons</option>
+        {% for season in seasons %}
+        <option value="{{ season }}" {% if current_season == season %} selected {% endif %}>{{ season }}</option>
+        {% endfor %}
+    </select>
+    </p>
+    <div>
+        <table class='table sortable_table' id='outings-table'>
+            <tr class="table-headers">
+                <th onclick="sortTable(0, 0)">Date</th>
+                <th onclick="sortTable(1, 0)">Season</th>
+                <th onclick="sortTable(2, 0)">Opponent</th>
+            </tr>
+            {% for o in pitcher.outings %}
+            <tr class="data-row">
+                <td>{{ o.date.month }}/{{ o.date.day }}/{{ o.date.year }}</td>
+                <td>{{ o.season }}</td>
+                <td><a href="{{ url_for('outing.outing_home', id=o.id) }}">{{ o.opponent }}</a></td>
+            </tr>
+            {% endfor %}
+        </table>
     </div>
+</div>
 {% endblock %}
