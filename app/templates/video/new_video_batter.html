@@ -1,63 +1,64 @@
 {% extends "base.html" %}
 
 {% block styles %}
-    {{ super() }}
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/forms.css') }}">
+{{ super() }}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/forms.css') }}">
 {% endblock %}
 
 {% block app_content %}
-    <div class="no-sidenav">
-        <div class="form-container">
-            <h1 class="form-title">Post Video</h1>
-            <form method="post">
-                {{ form.hidden_tag() }}
-                <p>
-                    {{ form.opponent.label }}<br>
-                    {{ form.opponent() }}<br>
-                    {% for error in form.opponent.errors %}
-                        <span class="errors">[{{ error }}]</span>
-                    {% endfor %}
-                </p>
-                <p>
-                    {{ form.batter.label }}<br>
-                    {{ form.batter() }}<br>
-                    {% for error in form.batter.errors %}
-                        <span style="color: red;">[{{ error }}]</span>
-                    {% endfor %}
-                </p>
-                <p>
-                    {{ form.title.label }}<br>
-                    {{ form.title() }}<br>
-                    {% for error in form.title.errors %}
-                        <span style="color: red;">[{{ error }}]</span>
-                    {% endfor %}
-                </p>
-                <p>
-                    {{ form.date.label }}<br>
-                    {{ form.date(class='datepicker') }}<br>
-                    If in safari, enter date as YYYY-MM-DD
-                    {% for error in form.date.errors %}
-                        <span style="color: red;">[{{ error }}]</span>
-                    {% endfor %}
-                </p>
-                <p>
-                    {{ form.season.label }}<br>
-                    {{ form.season() }}<br>
-                    {% for error in form.season.errors %}
-                        <span style="color: red;">[{{ error }}]</span>
-                    {% endfor %}
-                </p>
-                <p>
-                    {{ form.link.label }}<br>
-                    {{ form.link() }}<br>
-                    {% for error in form.link.errors %}
-                        <span class="errors">[{{ error }}]</span>
-                    {% endfor %}
-                </p>
-                <br>
-                <p>{{ form.submit() }}</p>
-            </form>
-        </div>
+<div class="no-sidenav">
+    <div class="form-container">
+        <h1 class="form-title">New Video Hitter</h1>
+        <form method="post">
+            {{ form.hidden_tag() }}
+            <p>
+                {{ form.opponent.label }}<br>
+                {{ form.opponent(class="form-control") }}<br>
+                {% for error in form.opponent.errors %}
+                <span class="errors">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.batter.label }}<br>
+                {{ form.batter(class="form-control") }}<br>
+                {% for error in form.batter.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.title.label }}<br>
+                {{ form.title(class="form-control") }}<br>
+                {% for error in form.title.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.date.label }}<br>
+                {{ form.date(class='datepicker form-control') }}<br>
+                If in safari, enter date as YYYY-MM-DD
+                {% for error in form.date.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.season.label }}<br>
+                {{ form.season(class="form-control") }}<br>
+                {% for error in form.season.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.link.label }}<br>
+                {{ form.link(class="form-control") }}<br>
+                {% for error in form.link.errors %}
+                <span class="errors">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.submit(class="btn btn-primary btn-lg btn-block") }}
+            </p>
+        </form>
     </div>
-    <script>{{ js|safe }}</script>
+</div>
+<script>{{ js | safe }}</script>
 {% endblock %}

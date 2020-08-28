@@ -13,28 +13,28 @@
                 {{ form.hidden_tag() }}
                 <p>
                     {{ form.opponent.label }}<br>
-                    {{ form.opponent() }}<br>
+                    {{ form.opponent(class="form-control") }}<br>
                     {% for error in form.opponent.errors %}
                         <span class="errors">[{{ error }}]</span>
                     {% endfor %}
                 </p>
                 <p>
                     {{ form.pitcher.label }}<br>
-                    {{ form.pitcher() }}<br>
+                    {{ form.pitcher(class="form-control") }}<br>
                     {% for error in form.pitcher.errors %}
                         <span class="errors">[{{ error }}]</span>
                     {% endfor %}
                 </p>
                 <p>
                     {{ form.title.label }}<br>
-                    {{ form.title() }}<br>
+                    {{ form.title(class="form-control") }}<br>
                     {% for error in form.title.errors %}
                         <span class="errors">[{{ error }}]</span>
                     {% endfor %}
                 </p>
                 <p>
                     {{ form.date.label }}<br>
-                    {{ form.date(class="datepicker") }}<br>
+                    {{ form.date(class="datepicker form-control") }}<br>
                     If in safari, enter date as YYYY-MM-DD
                     {% for error in form.date.errors %}
                         <span class="errors">[{{ error }}]</span>
@@ -42,27 +42,29 @@
                 </p>
                 <p>
                     {{ form.season.label }}<br>
-                    {{ form.season() }}<br>
+                    {{ form.season(class="form-control") }}<br>
                     {% for error in form.season.errors %}
                         <span class="errors">[{{ error }}]</span>
                     {% endfor %}
                 </p>
                 <p>
                     {{ form.outing.label }}<br>
-                    {{ form.outing() }}<br>
+                    {{ form.outing(class="form-control") }}<br>
                     {% for error in form.outing.errors %}
                         <span class="errors">[{{ error }}]</span>
                     {% endfor %}
                 </p>
                 <p>
                     {{ form.link.label }}<br>
-                    {{ form.link() }}<br>
+                    {{ form.link(class="form-control") }}<br>
                     {% for error in form.link.errors %}
                         <span class="errors">[{{ error }}]</span>
                     {% endfor %}
                 </p>
                 <br>
-                <p>{{ form.submit() }}</p>
+                <p>
+                    {{ form.submit(class="btn btn-primary btn-lg btn-block") }}
+                </p>
             </form>
         </div>
     </div>

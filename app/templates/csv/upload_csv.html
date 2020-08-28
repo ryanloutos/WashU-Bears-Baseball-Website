@@ -1,167 +1,167 @@
 {% extends "base.html" %}
 
 {% block styles %}
-    {{ super() }}
-    <script>
-    document.addEventListener("DOMContentLoaded", function(){
+{{ super() }}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
         let season_selector = document.getElementById("season_selector");
         let game_selector = document.getElementById("game_selector");
 
-        season_selector.onchange = function(){
+        season_selector.onchange = function () {
             season = season_selector.value;
             console.log(season);
 
             fetch(
                 "/api/season/" + season + "/games",
             ).then(res => res.json())
-            .then(function(response){
-                // check to make sure that server stuff happened ok
-                if(response.status == "failure"){
-                    console.log("Request ended in failure");
-                    console.log("Error: " + response.error);
-                } else {
-                    // create element for each item in response
-                    let options = "<option value=''> </option>";
-                    for(let game of response.games){
-                        // create html element string
-                        options += "<option value='" + game.id +"'>" + game.label + "</option>";
+                .then(function (response) {
+                    // check to make sure that server stuff happened ok
+                    if (response.status == "failure") {
+                        console.log("Request ended in failure");
+                        console.log("Error: " + response.error);
+                    } else {
+                        // create element for each item in response
+                        let options = "<option value=''> </option>";
+                        for (let game of response.games) {
+                            // create html element string
+                            options += "<option value='" + game.id + "'>" + game.label + "</option>";
+                        }
+                        // replace current options html with our options html
+                        game_selector.innerHTML = options;
                     }
-                    // replace current options html with our options html
-                    game_selector.innerHTML = options;
-                }
-            });
+                });
         }
     });
-    
-    </script>
+
+</script>
 {% endblock %}
 
 {% block app_content %}
-    <div class="main">
-        <h1>Upload Outing CSV</h1>
-            <div class="container">
-                <p> In order to upload a file, it must have these categories with these names:
-                    <table class="table">
-                        <tr>
-                            <th>Stat</th>
-                            <th>Field name</th>
-                            <th>Inputs allowed</th>
-                        </tr>
-                        <tr>
-                            <td>Batter identifier</td>
-                            <td>batter_id</td>
-                            <td>0-9999 or batter initials</td>
-                        </tr>
-                        <tr>
-                            <td>Side of the plate the batter hits from</td>
-                            <td>batter_hand</td>
-                            <td>RHH or LHH</td>
-                        </tr>
-                        <tr>
-                            <td>Pitch velo</td>
-                            <td>velocity</td>
-                            <td>0-9999</td>
-                        </tr>
-                        <tr>
-                            <td>Location of lead runner</td>
-                            <td>lead_runner</td>
-                            <td>1, 2, 3, or empty</td>
-                        </tr>
-                        <tr>
-                            <td>Time to home</td>
-                            <td>time_to_plate</td>
-                            <td>any 4 digit number including decimal places</td>
-                        </tr>
-                        <tr>
-                            <td>Pitch type</td>
-                            <td>pitch_type</td>
-                            <td>1, 2, 3, 4, 5, or 7</td>
-                        </tr>
-                        <tr>
-                            <td>Pitch result</td>
-                            <td>pitch_result</td>
-                            <td>B, CS, SS, F, or IP</td>
-                        </tr>
-                        <tr>
-                            <td>Pitch hit spot?</td>
-                            <td>hit_spot</td>
-                            <td>Y or N</td>
-                        </tr>
-                        <tr>
-                            <td>Result</td>
-                            <td>result</td>
-                            <td>GB, FB, LD, K, KL, BB, or HBP</td>
-                        </tr>
-                        <tr>
-                            <td>Where the ball was hit</td>
-                            <td>fielder</td>
-                            <td>P, C, 1B, 2B, 3B, SS, LF, CF, RF or empty</td>
-                        </tr>
-                        <tr>
-                            <td>Did batter get a hit</td>
-                            <td>hit</td>
-                            <td>Y or N</td>
-                        </tr>
-                        <tr>
-                            <td>If this player got out, which one was it?</td>
-                            <td>out</td>
-                            <td>1, 2, or 3</td>
-                        </tr>
-                        <tr>
-                            <td>Current inning</td>
-                            <td>inning</td>
-                            <td>0-9999</td>
-                        </tr>
-                    </table>
-                </p>
-            </div>
-            <form method="POST" enctype="multipart/form-data" novalidate>
-                {{ form.hidden_tag() }}
-                <p>
-                    {{ form.pitcher.label }}<br>
-                    {{ form.pitcher }}<br>
-                    {% for error in form.pitcher.errors %}
-                        <span style="color: red;">[{{ error }}]</span>
-                    {% endfor %}
-                </p>
-                <p>
-                    {{ form.date.label }}<br>
-                    {{ form.date(class='datepicker') }}<br>
-                    If in safari, enter date as YYYY-MM-DD
-                    {% for error in form.date.errors %}
-                        <span style="color: red;">[{{ error }}]</span>
-                    {% endfor %}
-                </p>
-                <p>
-                    {{ form.opponent.label }}<br>
-                    {{ form.opponent() }}<br>
-                    {% for error in form.opponent.errors %}
-                        <span style="color: red;">[{{ error }}]</span>
-                    {% endfor %}
-                </p>
-                <p>
-                    {{ form.season.label }}<br>
-                    {{ form.season(id="season_selector") }}<br>
-                    {% for error in form.season.errors %}
-                        <span style="color: red;">[{{ error }}]</span>
-                    {% endfor %}
-                </p>
-                <p>
-                    {{ form.game.label }} <br>
-                    {{ form.game(id="game_selector") }}
-                    {% for error in form.game.errors %}
-                        <span style="color: red;">[{{ error }}]</span>
-                    {% endfor %}
-                </p>
-                <p>
-                    {{ form.file.label }} <br>
-                    {{ form.file }}
-                    {% for error in form.file.errors %}
-                        <span style="color: red;">[{{ error }}] </span>
-                    {% endfor %}
-                </p>
-                <br>
-                <p>{{ form.submit() }}</p>
-            </form>
+<div class="no-sidenav">
+    <h1>Upload Outing CSV</h1>
+    <div class="container">
+        <p> In order to upload a file, it must have these categories with these names:
+        <table class="table">
+            <tr>
+                <th>Stat</th>
+                <th>Field name</th>
+                <th>Inputs allowed</th>
+            </tr>
+            <tr>
+                <td>Batter identifier</td>
+                <td>batter_id</td>
+                <td>0-9999 or batter initials</td>
+            </tr>
+            <tr>
+                <td>Side of the plate the batter hits from</td>
+                <td>batter_hand</td>
+                <td>RHH or LHH</td>
+            </tr>
+            <tr>
+                <td>Pitch velo</td>
+                <td>velocity</td>
+                <td>0-9999</td>
+            </tr>
+            <tr>
+                <td>Location of lead runner</td>
+                <td>lead_runner</td>
+                <td>1, 2, 3, or empty</td>
+            </tr>
+            <tr>
+                <td>Time to home</td>
+                <td>time_to_plate</td>
+                <td>any 4 digit number including decimal places</td>
+            </tr>
+            <tr>
+                <td>Pitch type</td>
+                <td>pitch_type</td>
+                <td>1, 2, 3, 4, 5, or 7</td>
+            </tr>
+            <tr>
+                <td>Pitch result</td>
+                <td>pitch_result</td>
+                <td>B, CS, SS, F, or IP</td>
+            </tr>
+            <tr>
+                <td>Pitch hit spot?</td>
+                <td>hit_spot</td>
+                <td>Y or N</td>
+            </tr>
+            <tr>
+                <td>Result</td>
+                <td>result</td>
+                <td>GB, FB, LD, K, KL, BB, or HBP</td>
+            </tr>
+            <tr>
+                <td>Where the ball was hit</td>
+                <td>fielder</td>
+                <td>P, C, 1B, 2B, 3B, SS, LF, CF, RF or empty</td>
+            </tr>
+            <tr>
+                <td>Did batter get a hit</td>
+                <td>hit</td>
+                <td>Y or N</td>
+            </tr>
+            <tr>
+                <td>If this player got out, which one was it?</td>
+                <td>out</td>
+                <td>1, 2, or 3</td>
+            </tr>
+            <tr>
+                <td>Current inning</td>
+                <td>inning</td>
+                <td>0-9999</td>
+            </tr>
+        </table>
+        </p>
     </div>
+    <form method="POST" enctype="multipart/form-data" novalidate>
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.pitcher.label }}<br>
+            {{ form.pitcher(class="form-control") }}<br>
+            {% for error in form.pitcher.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.date.label }}<br>
+            {{ form.date(class='datepicker form-control') }}<br>
+            If in safari, enter date as YYYY-MM-DD
+            {% for error in form.date.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.opponent.label }}<br>
+            {{ form.opponent(class="form-control") }}<br>
+            {% for error in form.opponent.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.season.label }}<br>
+            {{ form.season(id="season_selector", class="form-control") }}<br>
+            {% for error in form.season.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.game.label }} <br>
+            {{ form.game(id="game_selector", class="form-control") }}
+            {% for error in form.game.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.file.label }} <br>
+            {{ form.file(class="form-control-file") }}
+            {% for error in form.file.errors %}
+            <span style="color: red;">[{{ error }}] </span>
+            {% endfor %}
+        </p>
+        <br>
+        <p>{{ form.submit(class="btn btn-primary") }}</p>
+    </form>
+</div>
 {% endblock %}

@@ -13,56 +13,57 @@
             <h1 class="form-title">New Resource</h1>
             <p>
                 {{ form.category.label }}<br>
-                {{ form.category() }}
+                {{ form.category(class="form-control") }}
                 {% for error in form.category.errors %}
                 <span class="errors">[{{ error }}]</span>
                 {% endfor %}
             </p>
             <p>
                 {{ form.title.label }}<br>
-                {{ form.title(val=previous_title) }}
+                {{ form.title(val=previous_title, class="form-control") }}
                 {% for error in form.title.errors %}
                 <span class="errors">[{{ error }}]</span>
                 {% endfor %}
             </p>
             <p>
                 {{ form.description.label }}<br>
-                {{ form.description(val=previous_description) }}
+                {{ form.description(val=previous_description, class="form-control") }}
                 {% for error in form.description.errors %}
                 <span class="errors">[{{ error }}]</span>
                 {% endfor %}
             </p>
             <p>
                 {{ form.upload_type.label }}<br>
-                {{ form.upload_type() }}
+                {{ form.upload_type(class="form-control") }}
                 {% for error in form.upload_type.errors %}
                 <span class="errors">[{{ error }}]</span>
                 {% endfor %}
             </p>
             <p class="initially-hidden" id="article">
                 {{ form.article_link.label }}<br>
-                {{ form.article_link() }}
+                {{ form.article_link(class="form-control") }}
             </p>
             <p class="initially-hidden" id="video">
                 {{ form.video_link.label }}<br>
-                {{ form.video_link() }}
+                {{ form.video_link(class="form-control") }}
             </p>
             <p class="initially-hidden" id="pdf">
                 {{ form.file.label }}<br>
-                {{ form.file() }}
+                {{ form.file(class="form-control-file") }}
             </p>
             <p><span class="errors" id="input-error"></span></p>
             <p class="initially-hidden" id="submit-p">
-                <input type="checkbox" id="notify-players" style="width: auto">&nbsp;
                 <label>
                     Notify players via email about this resource
-                </label>
-                <br>
-                <input type="checkbox" id="notify-coaches" style="width: auto">&nbsp;
+                </label><br />
+                <input id="notify-players" name="notify-players" type="checkbox" value="y" data-toggle="toggle"
+                    data-on="Yes" data-off="No"><br /><br />
                 <label>
                     Notify coaches via email about this resource
-                </label>
-                {{ form.submit() }}
+                </label><br />
+                <input id="notify-coaches" name="notify-coaches" type="checkbox" value="y" data-toggle="toggle"
+                    data-on="Yes" data-off="No"><br /><br />
+                {{ form.submit(class="btn btn-primary btn-lg btn-block") }}
             </p>
         </form>
     </div>
