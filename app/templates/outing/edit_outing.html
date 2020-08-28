@@ -1,46 +1,49 @@
 {% extends "base.html" %}
 
 {% block styles %}
-    {{ super() }}
+{{ super() }}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/forms.css') }}">
 {% endblock %}
 
 {% block app_content %}
-    <div class="main">
-        <h1>Edit Outing</h1>
+<div class="no-sidenav">
+    <div class="form-container">
+        <h1 class="form-title">Edit Outing</h1>
         <form method="post" novalidate>
             {{ form.hidden_tag() }} {# Preventing CSRF attacks #}
             <p>You can't change the opponent because the batter_id's are based on the opponent</p>
             <p>If you want to change the opponent, you have to delete the outing and start over</p>
             <p>
                 {{ form.pitcher.label }}<br>
-                <select id="pitcher" name="pitcher">
+                <select id="pitcher" name="pitcher" class="form-control">
                     {% for p in all_pitchers %}
-                        <option value="{{p.id}}"" {% if p.id == this_pitcher.id %} selected='selected' {% endif %}>{{p}}</option>
+                    <option value="{{p.id}}"" {% if p.id == this_pitcher.id %} selected='selected' {% endif %}>{{p}}</option>
                     {% endfor %}
                 </select>
                 {% for error in form.pitcher.errors %}
-                <span style="color: red;">[{{ error }}]</span>
-                {% endfor %}
+                <span style=" color: red;">[{{ error }}]</span>
+                        {% endfor %}
             </p>
             <p>
                 {{ form.date.label }}<br>
-                {{ form.date(class='datepicker', value=outing.date) }}<br>
+                {{ form.date(class='datepicker', value=outing.date, class="form-control") }}<br>
                 {% for error in form.date.errors %}
                 <span style="color: red;">[{{ error }}]</span>
                 {% endfor %}
             </p>
             <p style="display: none">
                 {{ form.opponent.label }}<br>
-                {{ form.opponent() }}
+                {{ form.opponent(class="form-control") }}
                 {% for error in form.opponent.errors %}
                 <span style="color: red;">[{{ error }}]</span>
                 {% endfor %}
             </p>
             <p>
                 {{ form.season.label }}<br>
-                <select id="season" name="season">
+                <select id="season" name="season" class="form-control">
                     {% for s in all_seasons %}
-                        <option value="{{ s.id }}" {% if s.id == this_season.id %} selected='selected' {% endif %}>{{s}}</option>
+                    <option value="{{ s.id }}" {% if s.id == this_season.id %} selected='selected' {% endif %}>{{s}}
+                    </option>
                     {% endfor %}
                 </select>
                 {% for error in form.season.errors %}
@@ -49,18 +52,20 @@
             </p>
             <p>
                 {{ form.game.label }} <br>
-                <select name="game" id="game">
+                <select name="game" id="game" class="form-control">
                     <option value=""></option>
                     {% for g in all_games %}
-                        <option value="{{ g.id }}" {% if g.id == this_game.id %} selected='selected' {% endif %}>{{ g }}</option>
+                    <option value="{{ g.id }}" {% if g.id == this_game.id %} selected='selected' {% endif %}>{{ g }}
+                    </option>
                     {% endfor %}
                 </select>
                 {% for error in form.season.errors %}
-                    <span style="color: red;">[{{ error }}]</span>
+                <span style="color: red;">[{{ error }}]</span>
                 {% endfor %}
             </p><br>
-            <p>{{ form.submit() }}</p>
+            <p>{{ form.submit(class="btn btn-primary btn-block") }}</p>
         </form>
-        <a href="{{ url_for('outing.delete_outing', id=outing.id) }}">Delete Outing</a>
+        <!-- <a href="{{ url_for('outing.delete_outing', id=outing.id) }}">Delete Outing</a> -->
     </div>
+</div>
 {% endblock %}

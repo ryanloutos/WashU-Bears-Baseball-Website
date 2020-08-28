@@ -42,6 +42,8 @@ import re
 pitcher = Blueprint("pitcher", __name__)
 
 # ***************-PITCHER HOMEPAGE-*************** # DONE
+
+
 @pitcher.route('/pitcher/<id>', methods=['GET', 'POST'])
 @login_required
 def pitcher_home(id):
@@ -66,7 +68,8 @@ def pitcher_home(id):
         return redirect(url_for('main.index'))
 
     # get the outings associated with that player
-    outings = Outing.query.filter(Outing.pitcher_id == pitcher.id).order_by(Outing.date)
+    outings = Outing.query.filter(
+        Outing.pitcher_id == pitcher.id).order_by(Outing.date)
 
     # get the number of outings they have thrown
     num_outings = 0
@@ -106,6 +109,8 @@ def pitcher_home(id):
                            recent_outings=recent_outings)
 
 # ***************-NEW PITCHER-*************** #
+
+
 @pitcher.route('/new_pitcher', methods=['GET', 'POST'])
 @login_required
 def new_pitcher():
@@ -138,6 +143,8 @@ def new_pitcher():
         form=form)
 
 # ***************-EDIT PITCHER-*************** #
+
+
 @pitcher.route('/edit_pitcher/<id>', methods=['GET', 'POST'])
 @login_required
 def edit_pitcher(id):
@@ -167,7 +174,7 @@ def edit_pitcher(id):
                                     "images",
                                     "pitcher_photos",
                                     f"{file_name}.png")
-            
+
             form.photo.data.save(file_loc)
 
         pitcher.firstname = form.firstname.data
@@ -175,6 +182,7 @@ def edit_pitcher(id):
         pitcher.throws = form.throws.data
         pitcher.grad_year = form.grad_year.data
         pitcher.opponent_id = form.opponent.data
+        pitcher.number = form.number.data
         pitcher.retired = form.retired.data
 
         db.session.commit()
@@ -229,6 +237,8 @@ def pitcher_outings(id):
                            seasons=seasons)
 
 # ***************-PITCHER BASIC STATS-*************** #
+
+
 @pitcher.route('/pitcher/<id>/stats/basic', methods=['GET', 'POST'])
 @login_required
 def pitcher_stats_basic(id):
@@ -273,6 +283,8 @@ def pitcher_stats_basic(id):
                            outing_stat_line=outing_stat_line)
 
 # ***************-PITCHER ADVANCED STATS-*************** #
+
+
 @pitcher.route('/pitcher/<id>/stats/advanced', methods=['GET', 'POST'])
 @login_required
 def pitcher_stats_advanced(id):
@@ -307,9 +319,12 @@ def pitcher_stats_advanced(id):
             seasons.append(outing.season)
 
     # gets stats associated with pitcher
-    avg_pitch_velo_career, avg_pitch_velo_outing, avg_pitch_velo_season = avgPitchVeloPitcher(pitcher)
-    strike_percentage_career, strike_percentage_outing, strike_percentage_season = pitchStrikePercentageSeason(pitcher)
-    pitch_usage_career, pitch_usage_outing, pitch_usage_season = pitchUsageSeason(pitcher)
+    avg_pitch_velo_career, avg_pitch_velo_outing, avg_pitch_velo_season = avgPitchVeloPitcher(
+        pitcher)
+    strike_percentage_career, strike_percentage_outing, strike_percentage_season = pitchStrikePercentageSeason(
+        pitcher)
+    pitch_usage_career, pitch_usage_outing, pitch_usage_season = pitchUsageSeason(
+        pitcher)
 
     return render_template('pitcher/pitcher_stats_advanced.html',
                            title=pitcher,
@@ -341,7 +356,8 @@ def pitcher_videos(id):
 
         # https://gist.github.com/silentsokolov/f5981f314bc006c82a41
         # gets the id from a youtube linke
-        regex = re.compile(r'(https?://)?(www\.)?(youtube|youtu|youtube-nocookie)\.(com|be)/(watch\?v=|embed/|v/|.+\?v=)?(?P<id>[A-Za-z0-9\-=_]{11})')
+        regex = re.compile(
+            r'(https?://)?(www\.)?(youtube|youtu|youtube-nocookie)\.(com|be)/(watch\?v=|embed/|v/|.+\?v=)?(?P<id>[A-Za-z0-9\-=_]{11})')
         match = regex.match(v.link)
         if not match:
             video_ids.append("")

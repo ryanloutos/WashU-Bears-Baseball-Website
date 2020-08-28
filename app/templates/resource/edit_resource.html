@@ -13,7 +13,7 @@
             {{ form.hidden_tag() }}
             <p>
                 {{ form.category.label }}<br>
-                <select id="category" name="category" required>
+                <select id="category" name="category" class="form-control" required>
                     <option value="">[SELECT A CATEGORY]</option>
                     <option value="Pitching" {% if resource.category=='Pitching' %} selected='selected' {% endif %}>
                         Pitching
@@ -36,26 +36,26 @@
             </p>
             <p>
                 {{ form.title.label }}<br>
-                {{ form.title(value=resource.title) }}
+                {{ form.title(value=resource.title, class="form-control") }}
                 {% for error in form.title.errors %}
                 <span class="errors">[{{ error }}]</span>
                 {% endfor %}
             </p>
             <p>
                 {{ form.description.label }}<br>
-                {{ form.description(value=resource.description) }}
+                {{ form.description(value=resource.description, class="form-control") }}
                 {% for error in form.description.errors %}
                 <span class="errors">[{{ error }}]</span>
                 {% endfor %}
             </p>
             <p><span class="errors" id="input-error"></span></p>
             <p id="submit-button">
-                {{ form.submit() }}
+                {{ form.submit(class="btn btn-primary btn-block") }}
             </p>
         </form>
         <p style="text-align: center">
             -OR-
-            <a id="delete-resource"><button style="width: 100%">Delete Resource</button></a>
+            <input id="delete-resource" class="btn btn-danger btn-block" type="button" value="Delete Resource" />
         </p>
     </div>
 </div>
@@ -119,15 +119,17 @@
 
     // Basic delete request
     delete_button.on('click', () => {
-        $.ajax({
-            type: 'DELETE',
-            url: `/resource/{{ resource.id }}`
-        }).done(response => {
-            return window.location.href = '/resource/home';
-        }).fail((xhr, status, error) => {
-            input_error.text(xhr.responseText);
-            return;
-        });
+        if (confirm("Are you sure you want to delete?")) {
+            $.ajax({
+                type: 'DELETE',
+                url: `/resource/{{ resource.id }}`
+            }).done(response => {
+                return window.location.href = '/resource/home';
+            }).fail((xhr, status, error) => {
+                input_error.text(xhr.responseText);
+                return;
+            });
+        }
     });
 
 </script>

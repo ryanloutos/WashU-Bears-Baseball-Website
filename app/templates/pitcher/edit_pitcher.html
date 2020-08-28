@@ -1,87 +1,92 @@
 {% extends "base.html" %}
 
 {% block styles %}
-    {{ super() }}
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/forms.css') }}">
+{{ super() }}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/forms.css') }}">
 {% endblock %}
 
 {% block app_content %}
-    {% include "pitcher/pitcher_sidenav.html" %}
-    <div class="main">
-        {% include "pitcher/pitcher_title.html" %} 
-        <div class="form-container">
-            <form method="post" enctype="multipart/form-data" novalidate>
-                {{ form.hidden_tag() }} {# Preventing CSRF attacks #}
-                <h1 class="form-title">
-                    Edit Pitcher
-                </h1>
-                <p>
-                    {{ form.opponent.label }}<br>
-                    <select id="opponent" name="opponent">
-                        {% for o in opponents %}
-                            <option value="{{o.id}}" {% if pitcher.opponent_id==o.id %} selected {% endif %}>{{ o }}</option>
-                        {% endfor %}
-                    </select>
-                    {% for error in form.opponent.errors %}
-                        <span style="color: red;">[{{ error }}]</span>
+{% include "pitcher/pitcher_sidenav.html" %}
+<div class="main">
+    {% include "pitcher/pitcher_title.html" %}
+    <div class="form-container">
+        <form method="post" enctype="multipart/form-data" novalidate>
+            {{ form.hidden_tag() }} {# Preventing CSRF attacks #}
+            <h1 class="form-title">
+                Edit Pitcher
+            </h1>
+            <p>
+                {{ form.opponent.label }}<br>
+                <select id="opponent" name="opponent" class="form-control">
+                    {% for o in opponents %}
+                    <option value="{{o.id}}" {% if pitcher.opponent_id==o.id %} selected {% endif %}>{{ o }}</option>
                     {% endfor %}
-                </p>
-                <p>
-                    {{ form.firstname.label }}<br>
-                    {{ form.firstname(value = pitcher.firstname) }}
-                    {% for error in form.firstname.errors %}
-                        <span style="color: red;">[{{ error }}]</span>
-                    {% endfor %}
-                </p>
-                <p>
-                    {{ form.lastname.label }}<br>
-                    {{ form.lastname(value = pitcher.lastname) }}
-                    {% for error in form.lastname.errors %}
-                        <span style="color: red;">[{{ error }}]</span>
-                    {% endfor %}
-                </p>
-                <p>
-                    {{ form.number.label }}<br>
-                    {{ form.number(value = pitcher.number, type="number") }}
-                    {% for error in form.number.errors %}
-                        <span style="color: red;">[{{ error }}]</span>
-                    {% endfor %}
-                </p>
-                <p>
-                    {{ form.throws.label }}<br>
-                    <select id="throws" name="throws">
-                        <option value="R" {% if pitcher.throws == 'R' %} selected='selected' {% endif %}>R</option>
-                        <option value="L" {% if pitcher.throws == 'L' %} selected='selected' {% endif %}>L</option>
-                    </select>
-                    {% for error in form.throws.errors %}
-                        <span style="color: red;">[{{ error }}]</span>
-                    {% endfor %}
-                </p>
-                <p>
-                    {{ form.grad_year.label }}<br>
-                    {{ form.grad_year(size=32, value=pitcher.grad_year, type="number") }}
-                    {% for error in form.grad_year.errors %}
-                        <span style="color: red;">[{{ error }}]</span>
-                    {% endfor %}
-                </p>
-                <p>
-                    {{ form.retired.label }}<br>
-                    {{ form.retired() }}
-                    {% for error in form.retired.errors %}
-                        <span style="color: red;">[{{ error }}]</span>
-                    {% endfor %}
-                </p>
-                <p>
-                    {{ form.photo.label }} <br>
-                    {{ form.photo(class="file-input") }}
-                    {% for error in form.photo.errors %}
-                        <span style="color: red;">[{{ error }}] </span>
-                    {% endfor %}
-                </p>
-                <p>
-                    {{ form.submit() }}
-                </p>
-            </form>
-        </div>
+                </select>
+                {% for error in form.opponent.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.firstname.label }}<br>
+                {{ form.firstname(value = pitcher.firstname, class="form-control") }}
+                {% for error in form.firstname.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.lastname.label }}<br>
+                {{ form.lastname(value = pitcher.lastname, class="form-control") }}
+                {% for error in form.lastname.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.number.label }}<br>
+                {{ form.number(value = pitcher.number, type="number", class="form-control") }}
+                {% for error in form.number.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.throws.label }}<br>
+                <select id="throws" name="throws" class="form-control">
+                    <option value="R" {% if pitcher.throws == 'R' %} selected='selected' {% endif %}>R</option>
+                    <option value="L" {% if pitcher.throws == 'L' %} selected='selected' {% endif %}>L</option>
+                </select>
+                {% for error in form.throws.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.grad_year.label }}<br>
+                {{ form.grad_year(size=32, value=pitcher.grad_year, type="number", class="form-control") }}
+                {% for error in form.grad_year.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.retired.label }}<br>
+                <input id="retired" name="retired" type="checkbox" value="y" data-toggle="toggle" data-on="Yes"
+                    data-off="No"><br>
+                {% for error in form.retired.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.photo.label }} <br>
+                {{ form.photo(class="file-input form-control-file") }}
+                {% for error in form.photo.errors %}
+                <span style="color: red;">[{{ error }}] </span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.submit(class="btn btn-primary btn-block") }}
+            </p>
+        </form>
+        <!-- <p style="text-align: center">
+            -OR-
+            <input id="delete-resource" class="btn btn-danger btn-block" type="button" value="Delete Pitcher" />
+        </p> -->
     </div>
+</div>
 {% endblock %}
