@@ -28,11 +28,13 @@ from app.models import Season
 from app.models import Batter
 from app.models import Opponent
 
-from app.stats.stats import batter_summary_game_stats
-from app.stats.stats import batter_ball_in_play_stats
-from app.stats.stats import stats_opponent_batters_stat_lines
-from app.stats.stats import batterSwingWhiffRatebyPitchbyCount
-from app.stats.stats import batterSwingWhiffRatebyPitchbyCount2
+from app.stats.util import zero_division_handler
+
+from app.stats.hitting_stats import batter_summary_game_stats
+from app.stats.hitting_stats import batter_ball_in_play_stats
+from app.stats.hitting_stats import stats_opponent_batters_stat_lines
+from app.stats.hitting_stats import batterSwingWhiffRatebyPitchbyCount
+from app.stats.hitting_stats import batterSwingWhiffRatebyPitchbyCount2
 
 from app.stats.scouting_stats import zone_division_stats_batter
 from app.stats.scouting_stats import batter_dynamic_zone_scouting
@@ -439,7 +441,7 @@ def hitter_spray_chart(batter_id):
 
     # Change density vals to percentages
     for i in range(len(density_vals)):
-        density_vals[i] = density_vals[i] / d_total
+        density_vals[i] = zero_division_handler(density_vals[i], d_total)
 
     return render_template(
         'hitters/hitter/hitter_spray_chart.html',

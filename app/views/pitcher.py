@@ -24,10 +24,11 @@ from flask_login import logout_user
 from flask_login import current_user
 from flask_login import login_required
 
-from app.stats.stats import avgPitchVeloPitcher
-from app.stats.stats import veloOverCareer
-from app.stats.stats import pitchStrikePercentageSeason
-from app.stats.stats import pitchUsageSeason, seasonStatLine
+from app.stats.pitching_stats import veloOverCareer
+from app.stats.pitching_stats import seasonStatLine
+from app.stats.pitching_stats import pitchUsageSeason
+from app.stats.pitching_stats import avgPitchVeloPitcher
+from app.stats.pitching_stats import pitchStrikePercentageSeason
 
 from werkzeug.urls import url_parse
 

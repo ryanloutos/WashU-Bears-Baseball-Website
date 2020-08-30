@@ -4,6 +4,8 @@ import pygal
 
 from app import db
 
+from app.models import Outing
+
 from enum import Enum
 
 
@@ -121,3 +123,21 @@ def get_zone_region(pitch):
         y_coord = 4
 
     return f"{x_coord}{y_coord}"
+
+
+def getPitcherSeasons(pitcher):
+    '''
+    gets all of the seasons the pitcher has thrown in
+
+    PARAM:
+        - pitcher {object}
+
+    RETURN:
+        - seasons {array} which holds the season objects
+    '''
+    outings = Outing.query.filter_by(pitcher_id=pitcher.id).all()
+    seasons = []
+    for outing in outings:
+        if outing.season not in seasons:
+            seasons.append(outing.season)
+    return seasons

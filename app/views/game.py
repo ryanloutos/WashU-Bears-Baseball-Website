@@ -18,8 +18,8 @@ from app.forms import NewGameForm
 
 from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat, Game
 
-from app.stats.stats import game_hitting_stats
-from app.stats.stats import game_pitching_stats
+from app.stats.game_stats import game_hitting_stats
+from app.stats.game_stats import game_pitching_stats
 
 import os
 import csv
