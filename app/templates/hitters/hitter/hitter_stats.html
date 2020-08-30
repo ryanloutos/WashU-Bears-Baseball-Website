@@ -217,6 +217,7 @@
                         <tr class="table-headers">
                             <th class="text-left">Date</th>
                             <th class="text-left">Opponent</th>
+                            <th class="text-left">AB</th>
                             <th class="text-left">H</th>
                             <th class="text-left">1B</th>
                             <th class="text-left">2B</th>
@@ -231,6 +232,7 @@
                             <tr class="data-row">
                                 <td>{{ game.date }}</td>
                                 <td>{{ game.get_opponent() }}</td>
+                                <td>{{ ball_in_play["career"][game]["ab"] }}</td>
                                 <td>{{ ball_in_play["career"][game]["h"] }}</td>
                                 <td>{{ ball_in_play["career"][game]["1b"] }}</td>
                                 <td>{{ ball_in_play["career"][game]["2b"] }}</td>
@@ -342,6 +344,7 @@
                         <tr class="table-headers">
                             <th class="text-left">Date</th>
                             <th class="text-left">Opponent</th>
+                            <th class="text-left">AB</th>
                             <th class="text-left">H</th>
                             <th class="text-left">1B</th>
                             <th class="text-left">2B</th>
@@ -356,6 +359,7 @@
                         <tr class="data-row">
                             <td>{{ game.date }}</td>
                             <td>{{ game.get_opponent() }}</td>
+                            <td>{{ ball_in_play["current"][game]["ab"] }}</td>
                             <td>{{ ball_in_play["current"][game]["h"] }}</td>
                             <td>{{ ball_in_play["current"][game]["1b"] }}</td>
                             <td>{{ ball_in_play["current"][game]["2b"] }}</td>
