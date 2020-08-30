@@ -46,9 +46,9 @@ from app.models import Season
 from app.models import Pitcher
 from app.models import Opponent
 
-from app.stats.stats import veloOverTime
-from app.stats.stats import outingTimeToPlate
-from app.stats.stats import outingPitchStatistics
+from app.stats.pitching_stats import veloOverTime
+from app.stats.pitching_stats import outingTimeToPlate
+from app.stats.pitching_stats import outingPitchStatistics
 
 
 outing = Blueprint("outing", __name__)

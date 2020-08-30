@@ -40,26 +40,8 @@ from flask_login import login_required
 
 from werkzeug.urls import url_parse
 
-from app.stats.stats import veloOverTime
-from app.stats.stats import seasonStatLine
-from app.stats.stats import calcAverageVelo
-from app.stats.stats import staffBasicStats
-from app.stats.stats import pitchUsageSeason
-from app.stats.stats import outingTimeToPlate
-from app.stats.stats import pitchUsageByCount
-from app.stats.stats import calcPitchWhiffRate
-from app.stats.stats import avgPitchVeloPitcher
-from app.stats.stats import calcPitchPercentages
-from app.stats.stats import outingPitchStatistics
-from app.stats.stats import velocityOverTimeLineChart
 from app.stats.stats import batter_summary_game_stats
-from app.stats.stats import calcPitchStrikePercentage
 from app.stats.stats import batter_ball_in_play_stats
-from app.stats.stats import staffPitchStrikePercentage
-from app.stats.stats import pitchUsageByCountLineCharts
-from app.stats.stats import pitchStrikePercentageSeason
-from app.stats.stats import createPitchPercentagePieChart
-from app.stats.stats import pitchStrikePercentageBarChart
 from app.stats.stats import batterSwingWhiffRatebyPitchbyCount
 from app.stats.stats import batterSwingWhiffRatebyPitchbyCount2
 

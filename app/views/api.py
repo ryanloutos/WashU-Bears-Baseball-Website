@@ -4,7 +4,14 @@ from flask import Blueprint, jsonify, request, send_file, url_for, send_from_dir
 from flask_login import login_required
 from app import db
 from app.stats.util import zero_division_handler
-from app.stats.stats import batterSwingWhiffRatebyPitchbyCount, staffSeasonGoals, staffBasicStats, staffSeasonStats, truncate
+from app.stats.util import truncate
+
+from app.stats.stats import batterSwingWhiffRatebyPitchbyCount
+
+from app.stats.pitching_stats import staffSeasonGoals
+from app.stats.pitching_stats import staffSeasonStats
+from app.stats.pitching_stats import staffBasicStats
+
 from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat, Pitcher, Game, Video
 from datetime import datetime
 import os
