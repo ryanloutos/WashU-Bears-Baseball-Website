@@ -6,7 +6,7 @@ from app import db
 from app.stats.util import zero_division_handler
 from app.stats.util import truncate
 
-from app.stats.stats import batterSwingWhiffRatebyPitchbyCount
+from app.stats.hitting_stats import batterSwingWhiffRatebyPitchbyCount
 
 from app.stats.pitching_stats import staffSeasonGoals
 from app.stats.pitching_stats import staffSeasonStats

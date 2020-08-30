@@ -28,11 +28,11 @@ from app.models import Season
 from app.models import Batter
 from app.models import Opponent
 
-from app.stats.stats import batter_summary_game_stats
-from app.stats.stats import batter_ball_in_play_stats
-from app.stats.stats import stats_opponent_batters_stat_lines
-from app.stats.stats import batterSwingWhiffRatebyPitchbyCount
-from app.stats.stats import batterSwingWhiffRatebyPitchbyCount2
+from app.stats.hitting_stats import batter_summary_game_stats
+from app.stats.hitting_stats import batter_ball_in_play_stats
+from app.stats.hitting_stats import stats_opponent_batters_stat_lines
+from app.stats.hitting_stats import batterSwingWhiffRatebyPitchbyCount
+from app.stats.hitting_stats import batterSwingWhiffRatebyPitchbyCount2
 
 from app.stats.scouting_stats import zone_division_stats_batter
 from app.stats.scouting_stats import batter_dynamic_zone_scouting

@@ -125,7 +125,7 @@ def get_zone_region(pitch):
     return f"{x_coord}{y_coord}"
 
 
-def getSeasons(pitcher):
+def getPitcherSeasons(pitcher):
     '''
     gets all of the seasons the pitcher has thrown in
 

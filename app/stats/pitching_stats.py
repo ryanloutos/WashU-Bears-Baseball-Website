@@ -18,7 +18,7 @@ from pygal.style import DarkSolarizedStyle
 from app.stats.util import truncate
 from app.stats.util import PitchType
 from app.stats.util import percentage
-from app.stats.util import getSeasons
+from app.stats.util import getPitcherSeasons
 from app.stats.util import zero_division_handler
 
 
@@ -932,7 +932,7 @@ def avgPitchVeloPitcher(pitcher):
         "CH": 0, "CT": 0, "SM": 0}
 
     # set up the dictionary to updated based on which season
-    seasons = getSeasons(pitcher)
+    seasons = getPitcherSeasons(pitcher)
     season_totals = dict()
     for season in seasons:
         name = f"{season.semester} {season.year}"
@@ -1056,7 +1056,7 @@ def pitchStrikePercentageSeason(pitcher):
         "total": 0}
 
     # set up the dictionary to updated based on which season
-    seasons = getSeasons(pitcher)
+    seasons = getPitcherSeasons(pitcher)
     season_totals = dict()
     for season in seasons:
         name = f"{season.semester} {season.year}"
@@ -1190,7 +1190,7 @@ def pitchUsageSeason(pitcher):
                                  "SL": 0, "CH": 0, "CT": 0, "SM": 0}
 
     # set up the dictionary to updated based on which season
-    seasons = getSeasons(pitcher)
+    seasons = getPitcherSeasons(pitcher)
     season_totals = dict()
     for season in seasons:
         name = f"{season.semester} {season.year}"

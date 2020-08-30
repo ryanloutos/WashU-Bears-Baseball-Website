@@ -40,10 +40,10 @@ from flask_login import login_required
 
 from werkzeug.urls import url_parse
 
-from app.stats.stats import batter_summary_game_stats
-from app.stats.stats import batter_ball_in_play_stats
-from app.stats.stats import batterSwingWhiffRatebyPitchbyCount
-from app.stats.stats import batterSwingWhiffRatebyPitchbyCount2
+from app.stats.hitting_stats import batter_summary_game_stats
+from app.stats.hitting_stats import batter_ball_in_play_stats
+from app.stats.hitting_stats import batterSwingWhiffRatebyPitchbyCount
+from app.stats.hitting_stats import batterSwingWhiffRatebyPitchbyCount2
 
 from app.stats.scouting_stats import zone_division_stats_batter
 from app.stats.scouting_stats import batter_dynamic_zone_scouting
