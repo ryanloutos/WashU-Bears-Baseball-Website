@@ -16,12 +16,27 @@ from pygal.style import DarkSolarizedStyle
 from app.stats.util import truncate
 from app.stats.util import PitchType
 from app.stats.util import percentage
-from app.stats.util import ZONE_CONSTANTS
 from app.stats.util import get_zone_region
+from app.stats.util import ZONE_CONSTANTS
 from app.stats.util import zero_division_handler
 
 
 def zone_division_stats_batter(batter):
+    """ Generates stat information for the desired fixed sub-zones
+    of the strikezone. Stat info includes:
+        - # pitches
+        - Swing %
+        - Whiff %
+    All of these are done on a pitch type basis.
+
+    Args:
+        batter (batter object): batter to generate the stats for
+
+    Returns:
+        [dict]: dictionary containing the stats by pitch for the
+        sub zones. Print it to see the format.
+    """
+
     top_half_pitches = []
     bottom_half_pitches = []
 
@@ -39,19 +54,19 @@ def zone_division_stats_batter(batter):
             y_coord = pitch.loc_y
 
             # Divide pitches into top half and bottom half of zone
-            if y_coord > 2.575:
+            if y_coord > ZONE_CONSTANTS.y_zone_middle:
                 top_half_pitches.append(pitch)
             else:
                 bottom_half_pitches.append(pitch)
 
             # Divide pitches into off plate 3b, inner third, middle third, outer third, off plate 1b
-            if x_coord < -0.866:   # off plate 3b
+            if x_coord < ZONE_CONSTANTS.x_zone_left:   # off plate 3b
                 off_3b_pitches.append(pitch)
-            elif x_coord < -0.277:
+            elif x_coord < ZONE_CONSTANTS.x_zone_left_third:
                 inner_third_pitches.append(pitch)
-            elif x_coord < 0.277:
+            elif x_coord < ZONE_CONSTANTS.x_zone_right_third:
                 middle_third_pitches.append(pitch)
-            elif x_coord < 0.8:
+            elif x_coord < ZONE_CONSTANTS.x_zone_right:
                 outer_third_pitches.append(pitch)
             else:
                 off_1b_pitches.append(pitch)

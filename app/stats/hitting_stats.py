@@ -303,7 +303,7 @@ def stats_opponent_scouting_stats(opponent):
 def stats_opponent_batters_stat_lines(opponent):
     """Designed to handle stat calculations for opponent scouting/stats page. This function calculates a team's
     active member's collective swing and whiff rates, our career pitch usage vs their active hitters, their active member's
-    career and current season stat_line vs out staff, their active member's current and career hard hit ball percentage
+    career and current season stat_line, their active member's current and career hard hit ball percentage
 
     Arguments:
         opponent {opponent object} -- opponent team to be analyzed

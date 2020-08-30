@@ -22,7 +22,7 @@ from app.stats.util import getPitcherSeasons
 from app.stats.util import zero_division_handler
 
 
-# ***************-STAFF PAGES-*************** #
+# ***************-STAFF STAT CALCULATIONS-*************** #
 def staffSeasonGoals(pitchers, includeMatchups=True):
     # weighted strike percentage
     strikes = 0
@@ -483,430 +483,346 @@ def staffSeasonStats(pitchers, afterDate, beforeDate, includeMatchups=True):
     return players, staff
 
 
-def calcPitchWhiffRate(outing):
-    '''
-    Calculates the whiff rate by pitch.
+def staffBasicStats(pitchers, seasons=[]):
+    """Generates basic stat line for group of pitchers passed in
 
-    PARAM:
-        -outing: Data to be parsed into stats. Should be an
-            Outing object
+    Arguments:
+        pitchers {array} -- array of pitcher objects to be analyzed as a staff
 
-    RETURN:
-        -dictionary containing whiff rate by pitch
-    '''
-    pitches_swung_at = {
-        "FB": 0,
-        "CB": 0,
-        "SL": 0,
-        "CH": 0,
-        "CT": 0,
-        "SM": 0,
-        "total": 0}
-    pitches_missed = {
-        "FB": 0,
-        "CB": 0,
-        "SL": 0,
-        "CH": 0,
-        "CT": 0,
-        "SM": 0,
-        "total": 0}
-    pitches_whiff = {
-        "FB": 0,
-        "CB": 0,
-        "SL": 0,
-        "CH": 0,
-        "CT": 0,
-        "SM": 0,
-        "total": 0}
-
-    for at_bat in outing.at_bats:
-        for pitch in at_bat.pitches:
-            if pitch.pitch_result == 'SS':
-                pitches_swung_at[PitchType(pitch.pitch_type).name] += 1
-                pitches_missed[PitchType(pitch.pitch_type).name] += 1
-                pitches_swung_at['total'] += 1
-                pitches_missed['total'] += 1
-            if pitch.pitch_result == 'F' or pitch.pitch_result == 'IP':
-                pitches_swung_at[PitchType(pitch.pitch_type).name] += 1
-                pitches_swung_at['total'] += 1
-    for key, val in pitches_swung_at.items():
-        if (pitches_swung_at[key] != 0):
-            pitches_whiff[key] = (
-                truncate(pitches_missed[key]/pitches_swung_at[key] * 100))
-
-    return (pitches_whiff)
-
-
-def calcPitchStrikePercentage(outing):
-    '''
-    Calculates the strike percentage of each pitch.
-
-    PARAM:
-        -outing: the outing to be parsed for data. Should be an
-            Outing object
-
-    RETURN:
-        -dictionary containing strike percentage by pitch
-    '''
-    pitches = {
-        "FB": 0, "CB": 0, "SL": 0,
-        "CH": 0, "CT": 0, "SM": 0,
-        "total": 0}
-    pitches_strikes = {
-        "FB": 0, "CB": 0, "SL": 0,
-        "CH": 0, "CT": 0, "SM": 0,
-        "total": 0}
-    pitch_strike_percentage = {
-        "FB": 0, "CB": 0, "SL": 0,
-        "CH": 0, "CT": 0, "SM": 0,
-        "total": 0}
-
-    for at_bat in outing.at_bats:
-        for pitch in at_bat.pitches:
-            pitches[PitchType(pitch.pitch_type).name] += 1
-            pitches['total'] += 1
-            if (pitch.pitch_result == 'SS' or pitch.pitch_result == 'CS' or
-                    pitch.pitch_result == 'F' or pitch.pitch_result == 'IP'):
-                pitches_strikes[PitchType(pitch.pitch_type).name] += 1
-                pitches_strikes['total'] += 1
-
-    for key, val in pitches.items():
-        if pitches[key] != 0:
-            pitch_strike_percentage[key] = (
-                truncate(pitches_strikes[key]/pitches[key]*100))
-
-    return (pitch_strike_percentage)
-
-
-def calcAverageVelo(outing):
-    '''
-    Calculates the average velocity of each pitch.
-
-    PARAM:
-        -outing: The data to be parsed. Should be an
-            Outing object.
-
-    RETURN:
-        -dictionary containing decimal average velo by pitch
-    '''
-
-    pitches = {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0}
-    pitches_total_velo = {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0}
-    pitch_avg_velo = {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0}
-
-    for at_bat in outing.at_bats:
-        for pitch in at_bat.pitches:
-            if (pitch.velocity):
-                pitches[PitchType(pitch.pitch_type).name] += 1
-                pitches_total_velo[
-                    PitchType(pitch.pitch_type).name] += pitch.velocity
-
-    for key, val in pitches.items():
-        if pitches[key] != 0:
-            pitch_avg_velo[key] = truncate(
-                pitches_total_velo[key]/pitches[key])
-
-    return (pitch_avg_velo)
-
-
-def calcPitchPercentages(outing):
-    '''
-    Function to calculate percent of time each pitch was thrown.
-
-    PARAM:
-        -outing: The outing to be parsed for data. Should be an
-            Outing object.
-
-    RETURN:
-        -Tuple of (pitches, pitch_percentages).
-            "pitches" is a dictionary containing the integer value of each
-                pitch throw.
-            "pitch_percentages" is a dictionary containing the percent each
-                pitch was thrown.
-    '''
-    num_pitches = 0
-    pitches = {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0}
-
-    for at_bat in outing.at_bats:
-        for pitch in at_bat.pitches:
-            pitches[PitchType(pitch.pitch_type).name] += 1
-            num_pitches += 1
-
-    pitch_percentages = {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0}
-    if num_pitches != 0:
-        for key, val in pitches.items():
-            pitch_percentages[key] = truncate(pitches[key]/num_pitches * 100)
-
-    return (pitches, pitch_percentages)
-    # Will be in form:
-    #       {"FB":0.0, "CB":0.0, "SL":0.0, "CH":0.0, "CT":0.0, "SM":0.0}
-    # With each value being 0<=val<=100
-
-
-def pitchUsageByCount(outing):
-    '''
-    Creates pitch usage by count statistic sheet.
-
-    PARAM:
-        -outing: Outing object to be parsed. Should come from
-            Outing.query.filter(...)
-    RETURN:
-        -tuple object containing (counts, counts_percentages).
-            "counts" is a dictionary representing the number of times a pitch
-                was thrown.
-            "counts_percentages" is a dictionary that represents the
-                percentage of time a pitch was thrown by count
-    '''
-    num_pitches = 0
-    # PLEASE COLLAPSE THIS VARIABLE IT'S DUMB
-    counts = {
-        "0-0": {
-            "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
-            "total": 0
-        },
-        "0-1": {
-            "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
-            "total": 0
-        },
-        "0-2": {
-            "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
-            "total": 0
-        },
-        "1-0": {
-            "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
-            "total": 0
-        },
-        "1-1": {
-            "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
-            "total": 0
-        },
-        "1-2": {
-            "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
-            "total": 0
-        },
-        "2-0": {
-            "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
-            "total": 0
-        },
-        "2-1": {
-            "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
-            "total": 0
-        },
-        "2-2": {
-            "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
-            "total": 0
-        },
-        "3-0": {
-            "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
-            "total": 0
-        },
-        "3-1": {
-            "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
-            "total": 0
-        },
-        "3-2": {
-            "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
-            "total": 0
-        }
-    }
-    counts_percentages = {
-        "0-0": {
-            "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
-            "total": 0
-        },
-        "0-1": {
-            "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
-            "total": 0
-        },
-        "0-2": {
-            "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
-            "total": 0
-        },
-        "1-0": {
-            "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
-            "total": 0
-        },
-        "1-1": {
-            "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
-            "total": 0
-        },
-        "1-2": {
-            "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
-            "total": 0
-        },
-        "2-0": {
-            "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
-            "total": 0
-        },
-        "2-1": {
-            "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
-            "total": 0
-        },
-        "2-2": {
-            "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
-            "total": 0
-        },
-        "3-0": {
-            "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
-            "total": 0
-        },
-        "3-1": {
-            "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
-            "total": 0
-        },
-        "3-2": {
-            "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
-            "total": 0
-        }
+    Returns:
+        [tuple] -- first is a dictionary containing the staff total stat line.
+        The second value is an array containing dicts containing the meta data
+        associated with each pitcher, as well as their stat line.
+    """
+    players = []
+    stat_line_total = {
+        "ip": 0.0, "h": 0, "bb": 0, "hbp": 0, "e": 0, "k": 0, "kl": 0, "1b": 0,
+        "2b": 0, "3b": 0, "hr": 0, "kp9": 0.0, "bb9": 0.0, "p": 0, "bf": 0
     }
 
-    for at_bat in outing.at_bats:
-        for pitch in at_bat.pitches:
-            count = pitch.count
-            pitch_type = PitchType(pitch.pitch_type).name
+    for pitcher in pitchers:
+        stat_line = {
+            "ip": 0.0, "h": 0, "bb": 0, "hbp": 0, "e": 0, "k": 0, "kl": 0, "1b": 0,
+            "2b": 0, "3b": 0, "hr": 0, "kp9": 0.0, "bb9": 0.0, "p": 0, "bf": 0
+        }
+        for outing in pitcher.outings:
+            for at_bat in outing.at_bats:
+                if (len(seasons) is 0) or at_bat.get_season().id in seasons or str(at_bat.get_season().id) in seasons:
+                    for pitch in at_bat.pitches:
+                        stat_line['p'] += 1  # increase pitches
 
-            counts[count]["total"] += 1
-            counts[count]["pitches"][pitch_type] += 1
+                        # check ball in play or out statistics
+                        if pitch.ab_result is not '':
+                            stat_line["bf"] += 1  # increase batters faced
 
-            num_pitches += 1
+                            # stats that result in hit
+                            if pitch.ab_result in ["1B", "2B", "3B", "HR"]:
+                                stat_line["h"] += 1  # increase hits
+                                # increase type of hit
+                                stat_line[pitch.ab_result.lower()] += 1
 
-    # create count percentages
-    for key, value in counts.items():
-        total = value["total"]
-        if total != 0:
-            for pitch in value["pitches"].keys():
-                counts_percentages[key]["pitches"][pitch] = (
-                    truncate(value["pitches"][pitch]/total * 100))
-                counts_percentages[key]["total"] = (
-                    truncate(total/num_pitches * 100))
-        else:  # case in which there were no pitches thrown in a count
-            counts_percentages[key]["pitches"] = counts[key]["pitches"]
-            counts_percentages[key]["total"] = 0
+                            # stats that result in out
+                            if pitch.ab_result in ["IP->Out", "K", "KL", "FC", "D3->Out"]:
+                                stat_line["ip"] += 1
 
-    return (counts, counts_percentages)
+                                # for outs that were strikeouts
+                                if pitch.ab_result in ["K", "KL"]:
+                                    stat_line[pitch.ab_result.lower()] += 1
 
+                            # stats where batter reaches base another way
+                            if pitch.ab_result in ["BB", "HBP", "Error", "CI", "D3->Safe"]:
 
-def createPitchPercentagePieChart(data):
-    '''
-    Function to create pitch percentage pie chart.
+                                if pitch.ab_result in ["Error", "CI", "D3->Safe"]:
+                                    stat_line["e"] += 1
+                                else:
+                                    stat_line[pitch.ab_result.lower()] += 1
 
-    PARAM:
-        -data: Data to be transformed into pie chart. Should be percentage
-            return from calcPitchPercentages(...)
-    RETURN:
-        -pygal pie chart object complete with data
-    '''
-    pie_chart = pygal.Pie(
-        title="Pitch Usage Percentages",
-        style=DarkSolarizedStyle(
-            value_font_family='googlefont:Raleway',
-            value_font_size=30,
-            value_colors=('white')
-        ),
-        height=600,
-        width=600,
-        explicit_size=True
-    )
-    pie_chart.dyanamic_print_values = True
+        # sum up a pitchers work to team total
+        for stat, val in stat_line.items():
+            if stat not in ["kp9", "bb9"]:
+                stat_line_total[stat] += val
 
-    for pitch, value in data.items():
-        insert_value = {"value": value, "label": pitch}
-        pie_chart.add(pitch, value)
+        # fix ip for player
+        stat_line["ip"] = truncate(stat_line["ip"] / 3)
 
-    return pie_chart
-
-
-def velocityOverTimeLineChart(outing):
-    '''
-    Function to create the velocity over time line chart from statistics
-
-    PARAM:
-        -outing: the single outing to be parsed over. Should come from
-            Outing.query.filter()...
-    RETURN:
-        - pygal line chart object complete with data
-    '''
-    num_pitches = 0
-    for at_bat in outing.at_bats:
-        for pitch in at_bat.pitches:
-            num_pitches += 1
-    line_chart = pygal.Line(
-        style=DarkSolarizedStyle,
-        title="Velocity changes over time",
-        show_minor_x_labels=False,
-        truncate_label=3
-    )
-    line_chart.x_labels = map(str, range(1, num_pitches+1))
-    lst = list(range(num_pitches+1))
-    line_chart.x_labels_major = lst[0::10]
-    line_chart.dyanamic_print_values = True
-
-    velocities = {"FB": [], "CB": [], "SL": [], "CH": [], "CT": [], "SM": []}
-    for at_bat in outing.at_bats:
-        for pitch in at_bat.pitches:
-            pitch_type = PitchType(pitch.pitch_type).name
-            for key in velocities.keys():
-                if key is pitch_type:
-                    velocities[key].append(pitch.velocity)
-                else:
-                    velocities[key].append(None)
-
-    for pitch_type, pitch_values in velocities.items():
-        if pitch_type == "SM":
-            line_chart.add("2-SEAM", pitch_values)
+        # calculate ip based stats for pitcher
+        if stat_line["ip"] == 0:
+            stat_line["kp9"] = "inf"
+            stat_line["bb9"] = "inf"
         else:
-            line_chart.add(pitch_type, pitch_values)
+            stat_line["kp9"] = truncate(
+                (stat_line["k"]+stat_line["kl"])/stat_line["ip"] * 9)
+            stat_line["bb9"] = truncate(stat_line["bb"]/stat_line["ip"]*9)
 
-    return line_chart
+        # append to storage array
+        players.append({
+            "details": {
+                "name": f"{pitcher}",
+                "class": pitcher.grad_year,
+                "throws": pitcher.throws},
+            "stat_line": stat_line
+        })
 
+    # calculate weighted team stat totals
+    stat_line_total["ip"] = truncate(stat_line_total["ip"]/3)
+    if(stat_line_total["ip"] > 0):
+        stat_line_total["kp9"] = truncate(
+            (stat_line_total["k"]+stat_line_total["kl"])/stat_line_total["ip"] * 9)
+        stat_line_total["bb9"] = truncate(
+            stat_line_total["bb"]/stat_line_total["ip"]*9)
 
-def pitchStrikePercentageBarChart(data):
-    '''
-    Function to create the pitch by pitch strike percentage bar chart.
-
-    PARAM:
-        -data: Data to be parsed over and turned to chart. Should be
-            return data from calcPitchStrikePercentage(...)
-
-    RETURN:
-        - pygal bar chart object complete with data
-    '''
-    bar_chart = pygal.Bar(
-        title="Stike Percentage by Pitch",
-        style=DarkSolarizedStyle,
-        range=(0, 100)
-    )
-
-    for pitch_type, values in data.items():
-        bar_chart.add(pitch_type, values)
-
-    return bar_chart
+    return (stat_line_total, players)
 
 
-def pitchUsageByCountLineCharts(data):
-    data_reformat = {
-        "FB": {}, "CB": {}, "SL": {}, "CH": {}, "CT": {}, "SM": {}
-    }
-    for count, dat in data.items():
-        for pitch, usage in dat['pitches'].items():
-            data_reformat[pitch][count] = usage
-    # print(data_reformat)
+def staffAdvancedStats(pitchers):
+    """Generate the stats for the Advanced Stats page for the staff
 
-    line_chart = pygal.Line(
-        style=DarkSolarizedStyle,
-        title="Pitch Usage by Count"
-    )
+    Arguments:
+        pitchers {array} -- array of user objects to be analyzed
 
-    line_chart.x_labels = data_reformat["FB"].keys()
-    line_chart.dyanamic_print_values = True
+    Returns:
 
-    for pitch_type, pitch_data in data_reformat.items():
-        line_chart.add(pitch_type, pitch_data.values())
+    """
+    # to hold info for each player
+    players = []
 
-    return line_chart
+    # to hold the info for the avg velo stats
+    total_velo_num_pitches = {"FB": 0, "SM": 0, "total": 0}
+    total_velo_summed_velos = {"FB": 0, "SM": 0, "total": 0}
+    total_velo_averages = {"FB": 0, "SM": 0, "total": 0}
+
+    # to hold the info for the strike percentage stats
+    total_pct_num_pitches = {"fastball": 0, "offspeed": 0, "total": 0}
+    total_pct_num_strikes = {"fastball": 0, "offspeed": 0, "total": 0}
+    total_pct_averages = {"fastball": 0, "offspeed": 0, "total": 0}
+
+    for pitcher in pitchers:
+
+        # to hold the info for the avg velo stats specific to pitcher
+        velo_num_pitches = {"FB": 0, "SM": 0, "total": 0}
+        velo_summed_velos = {"FB": 0, "SM": 0, "total": 0}
+        velo_averages = {"FB": 0, "SM": 0, "total": 0}
+
+        # to hold the info for the strike percentage stats specific to pitcher
+        pct_num_pitches = {"fastball": 0, "offspeed": 0, "total": 0}
+        pct_num_strikes = {"fastball": 0, "offspeed": 0, "total": 0}
+        pct_averages = {"fastball": 0, "offspeed": 0, "total": 0}
+
+        # look through all of pitcher outings
+        for outing in pitcher.outings:
+            if outing.season.current_season:
+                for at_bat in outing.at_bats:
+                    for pitch in at_bat.pitches:
+                        pitch_type = PitchType(pitch.pitch_type).name
+
+                        # VELOS
+                        if pitch.velocity not in [None, ""]:
+
+                            if pitch_type in ["FB", "SM"]:
+
+                                # for pitcher specific
+                                velo_num_pitches[pitch_type] += 1
+                                velo_num_pitches["total"] += 1
+                                velo_summed_velos[pitch_type] += pitch.velocity
+                                velo_summed_velos["total"] += pitch.velocity
+
+                                # for team total stats
+                                total_velo_num_pitches[pitch_type] += 1
+                                total_velo_num_pitches["total"] += 1
+                                total_velo_summed_velos[pitch_type] += pitch.velocity
+                                total_velo_summed_velos["total"] += pitch.velocity
+
+                        # STRIKE PERCENTAGES
+                        pct_num_pitches["total"] += 1
+                        total_pct_num_pitches["total"] += 1
+
+                        # total num pitches
+                        if pitch_type in ["FB", "SM"]:
+                            pct_num_pitches["fastball"] += 1
+                            total_pct_num_pitches["fastball"] += 1
+                        else:
+                            pct_num_pitches["offspeed"] += 1
+                            total_pct_num_pitches["offspeed"] += 1
+
+                        # strikes
+                        if pitch.pitch_result in ["CS", "SS", "F", "IP"]:
+                            pct_num_strikes["total"] += 1
+                            total_pct_num_strikes["total"] += 1
+                            if pitch_type in ["FB", "SM"]:
+                                pct_num_strikes["fastball"] += 1
+                                total_pct_num_strikes["fastball"] += 1
+                            else:
+                                pct_num_strikes["offspeed"] += 1
+                                total_pct_num_strikes["offspeed"] += 1
+
+        # VELOS - totals for pitcher
+        for key, val in velo_num_pitches.items():
+            if velo_num_pitches[key] != 0:
+                velo_averages[key] = truncate(
+                    velo_summed_velos[key]/velo_num_pitches[key], 1)
+
+        # STRIKE PERCENTAGE - totals for pitcher
+        for key, val in pct_num_pitches.items():
+            if pct_num_pitches[key] != 0:
+                pct_averages[key] = (
+                    int(percentage(pct_num_strikes[key]/pct_num_pitches[key])))
+
+        # fill in players array with info from above
+        players.append(
+            {
+                "details": {
+                    "name": f"{pitcher.name}",
+                    "class": pitcher.grad_year,
+                    "throws": pitcher.throws},
+                "velos": velo_averages,
+                "strike_percentages": pct_averages
+            }
+        )
+
+    # VELOS - totals for staff
+    for key, val in total_velo_num_pitches.items():
+        if total_velo_num_pitches[key] != 0:
+            total_velo_averages[key] = truncate(
+                total_velo_summed_velos[key]/total_velo_num_pitches[key], 1)
+
+    # STRIKE PERCENTAGE - totals for staff
+    for key, val in total_pct_num_pitches.items():
+        if total_pct_num_pitches[key] != 0:
+            total_pct_averages[key] = (
+                int(percentage(total_pct_num_strikes[key]/total_pct_num_pitches[key])))
+
+    return (players, total_velo_averages, total_pct_averages)
 
 
-# PITCHER ADVANCED STATISTICS -------------------------------------------------
+def staffPitchStrikePercentage(pitchers):
+
+    # storage array for staff info
+    players_strike_percentage = []
+
+    # storage for team totals
+    pitches_totals = {"fastball": 0, "offspeed": 0, "total": 0}
+    pitches_strikes_totals = {"fastball": 0, "offspeed": 0, "total": 0}
+    pitch_strike_percentage_totals = {"fastball": 0, "offspeed": 0, "total": 0}
+
+    for pitcher in pitchers:
+
+        # storage for pitchers individual stats
+        pitches = {"fastball": 0, "offspeed": 0, "total": 0}
+        pitches_strikes = {"fastball": 0, "offspeed": 0, "total": 0}
+        pitch_strike_percentage = {"fastball": 0, "offspeed": 0, "total": 0}
+
+        for outing in pitcher.outings:
+            season = outing.season
+            if season.current_season:
+                for at_bat in outing.at_bats:
+                    for pitch in at_bat.pitches:
+                        pitch_type = PitchType(pitch.pitch_type).name
+                        pitches["total"] += 1
+                        pitches_totals['total'] += 1
+                        if pitch_type in ["FB", "SM"]:
+                            pitches["fastball"] += 1
+                            pitches_totals["fastball"] += 1
+                        else:
+                            pitches["offspeed"] += 1
+                            pitches_totals["offspeed"] += 1
+
+                        if pitch.pitch_result in ["CS", "SS", "F", "IP"]:
+                            pitches_strikes["total"] += 1
+                            pitches_strikes_totals["total"] += 1
+                            if pitch_type in ["FB", "SM"]:
+                                pitches_strikes["fastball"] += 1
+                                pitches_strikes_totals["fastball"] += 1
+                            else:
+                                pitches_strikes["offspeed"] += 1
+                                pitches_strikes_totals["offspeed"] += 1
+
+        # Calculate pitcher totals
+        for key, val in pitches.items():
+            if pitches[key] != 0:
+                pitch_strike_percentage[key] = (
+                    int(percentage(pitches_strikes[key]/pitches[key])))
+
+        players_strike_percentage.append({
+            "details": {
+                "name": f"{pitcher}",
+                "class": pitcher.grad_year,
+                "throws": pitcher.throws},
+            "percentages": pitch_strike_percentage
+        })
+
+    # calculate weighted team totals
+    for key, val in pitches_totals.items():
+        if pitches_totals[key] != 0:
+            pitch_strike_percentage_totals[key] = (
+                int(percentage(pitches_strikes_totals[key]/pitches_totals[key])))
+
+    # calculate unweighted team totals
+    # for player in players:
+    #     for pitch, val in player["percentages"].items():
+    #         pitch_strike_percentage_totals[pitch] += val
+    # for pitch, val in pitch_strike_percentage_totals.items():
+    #     pitch_strike_percentage_totals[pitch] = truncate(val / len(players))
+
+    return (pitch_strike_percentage_totals, players_strike_percentage)
+
+
+def staffImportantStatsSeason(pitchers):
+    '''CURRENTLY UNUSED'''
+    # weighted strike percentage
+    strikes = 0
+    total_pitches = 0
+    strike_percentage = 0
+    # weighted FPS
+    first_pitch_strikes = 0
+    first_pitches = 0
+    fps_percentage = 0
+    # K/BB Ratio
+    strikeouts = 0
+    walks = 0
+    k_to_bb = 0
+
+    for p in pitchers:
+        for o in p.outings:
+            current_inning = 1
+            season = Season.query.filter_by(id=o.season_id).first()
+            if season.current_season:
+                for ab in o.at_bats:
+                    for index, p in enumerate(ab.pitches):
+                        total_pitches += 1
+                        if p.pitch_result is not "B":
+                            strikes += 1
+                        if index is 0:
+                            first_pitches += 1
+                            if p.pitch_result is not "B":
+                                first_pitch_strikes += 1
+                        if p.ab_result in ["K", "KL"]:
+                            strikeouts += 1
+                        if p.ab_result == "BB":
+                            walks += 1
+
+    if total_pitches is 0:
+        strike_percentage = "X"
+    else:
+        strike_percentage = percentage(strikes/total_pitches, 0)
+
+    if first_pitch_strikes is 0:
+        fps_percentage = "X"
+    else:
+        fps_percentage = percentage(first_pitch_strikes/first_pitches)
+
+    if walks is 0:
+        if strikeouts is 0:
+            k_to_bb = 0
+        else:
+            k_to_bb = "inf"
+    else:
+        k_to_bb = truncate(strikeouts/walks, 1)
+
+    return strike_percentage, fps_percentage, k_to_bb
+
+
+# ***************-PITCHER STAT CALCULATIONS-*************** #
+
 def avgPitchVeloPitcher(pitcher):
     """Calculates pitch velo by outings and season.
 
@@ -1283,13 +1199,13 @@ def pitchUsageSeason(pitcher):
     return (career, outings, season_percentages_usages)
 
 
-def veloOverCareer(outings):
+def veloOverCareer(pitcher_outings):
     velo_over_career = {
         "FB": [],
         "SM": []
     }
     # parse through every outing
-    for outing in outings:
+    for outing in pitcher_outings:
 
         # set up variables to calc average
         total_velo_fastball = 0
@@ -1330,7 +1246,6 @@ def veloOverCareer(outings):
     return velo_over_career
 
 
-# PITCHER BASIC STATISTICS ----------------------------------------------------
 def seasonStatLine(pitcher):
     """Calculates regular stat line for the pitcher desired outing by outing
     and as a career total.
@@ -1427,289 +1342,352 @@ def seasonStatLine(pitcher):
     return(stat_line_total, outings)
 
 
-# STAFF BASIC STATISTICS ------------------------------------------------------
-def staffBasicStats(pitchers, seasons=[]):
-    """Generates basic stat line for group of pitchers passed in
+# ***************-OUTING STAT CALCULATIONS-*************** #
+def calcPitchStrikePercentage(outing):
+    '''
+    Calculates the strike percentage of each pitch.
 
-    Arguments:
-        pitchers {array} -- array of pitcher objects to be analyzed as a staff
+    PARAM:
+        -outing: the outing to be parsed for data. Should be an
+            Outing object
 
-    Returns:
-        [tuple] -- first is a dictionary containing the staff total stat line.
-        The second value is an array containing dicts containing the meta data
-        associated with each pitcher, as well as their stat line.
-    """
-    players = []
-    stat_line_total = {
-        "ip": 0.0, "h": 0, "bb": 0, "hbp": 0, "e": 0, "k": 0, "kl": 0, "1b": 0,
-        "2b": 0, "3b": 0, "hr": 0, "kp9": 0.0, "bb9": 0.0, "p": 0, "bf": 0
+    RETURN:
+        -dictionary containing strike percentage by pitch
+    '''
+    pitches = {
+        "FB": 0, "CB": 0, "SL": 0,
+        "CH": 0, "CT": 0, "SM": 0,
+        "total": 0}
+    pitches_strikes = {
+        "FB": 0, "CB": 0, "SL": 0,
+        "CH": 0, "CT": 0, "SM": 0,
+        "total": 0}
+    pitch_strike_percentage = {
+        "FB": 0, "CB": 0, "SL": 0,
+        "CH": 0, "CT": 0, "SM": 0,
+        "total": 0}
+
+    for at_bat in outing.at_bats:
+        for pitch in at_bat.pitches:
+            pitches[PitchType(pitch.pitch_type).name] += 1
+            pitches['total'] += 1
+            if (pitch.pitch_result == 'SS' or pitch.pitch_result == 'CS' or
+                    pitch.pitch_result == 'F' or pitch.pitch_result == 'IP'):
+                pitches_strikes[PitchType(pitch.pitch_type).name] += 1
+                pitches_strikes['total'] += 1
+
+    for key, val in pitches.items():
+        if pitches[key] != 0:
+            pitch_strike_percentage[key] = (
+                truncate(pitches_strikes[key]/pitches[key]*100))
+
+    return (pitch_strike_percentage)
+
+
+def calcPitchWhiffRate(outing):
+    '''
+    Calculates the whiff rate by pitch.
+
+    PARAM:
+        -outing: Data to be parsed into stats. Should be an
+            Outing object
+
+    RETURN:
+        -dictionary containing whiff rate by pitch
+    '''
+    pitches_swung_at = {
+        "FB": 0,
+        "CB": 0,
+        "SL": 0,
+        "CH": 0,
+        "CT": 0,
+        "SM": 0,
+        "total": 0}
+    pitches_missed = {
+        "FB": 0,
+        "CB": 0,
+        "SL": 0,
+        "CH": 0,
+        "CT": 0,
+        "SM": 0,
+        "total": 0}
+    pitches_whiff = {
+        "FB": 0,
+        "CB": 0,
+        "SL": 0,
+        "CH": 0,
+        "CT": 0,
+        "SM": 0,
+        "total": 0}
+
+    for at_bat in outing.at_bats:
+        for pitch in at_bat.pitches:
+            if pitch.pitch_result == 'SS':
+                pitches_swung_at[PitchType(pitch.pitch_type).name] += 1
+                pitches_missed[PitchType(pitch.pitch_type).name] += 1
+                pitches_swung_at['total'] += 1
+                pitches_missed['total'] += 1
+            if pitch.pitch_result == 'F' or pitch.pitch_result == 'IP':
+                pitches_swung_at[PitchType(pitch.pitch_type).name] += 1
+                pitches_swung_at['total'] += 1
+    for key, val in pitches_swung_at.items():
+        if (pitches_swung_at[key] != 0):
+            pitches_whiff[key] = (
+                truncate(pitches_missed[key]/pitches_swung_at[key] * 100))
+
+    return (pitches_whiff)
+
+
+def calcAverageVelo(outing):
+    '''
+    Calculates the average velocity of each pitch.
+
+    PARAM:
+        -outing: The data to be parsed. Should be an
+            Outing object.
+
+    RETURN:
+        -dictionary containing decimal average velo by pitch
+    '''
+
+    pitches = {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0}
+    pitches_total_velo = {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0}
+    pitch_avg_velo = {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0}
+
+    for at_bat in outing.at_bats:
+        for pitch in at_bat.pitches:
+            if (pitch.velocity):
+                pitches[PitchType(pitch.pitch_type).name] += 1
+                pitches_total_velo[
+                    PitchType(pitch.pitch_type).name] += pitch.velocity
+
+    for key, val in pitches.items():
+        if pitches[key] != 0:
+            pitch_avg_velo[key] = truncate(
+                pitches_total_velo[key]/pitches[key])
+
+    return (pitch_avg_velo)
+
+
+def calcPitchPercentages(outing):
+    '''
+    Function to calculate percent of time each pitch was thrown.
+
+    PARAM:
+        -outing: The outing to be parsed for data. Should be an
+            Outing object.
+
+    RETURN:
+        -Tuple of (pitches, pitch_percentages).
+            "pitches" is a dictionary containing the integer value of each
+                pitch throw.
+            "pitch_percentages" is a dictionary containing the percent each
+                pitch was thrown.
+    '''
+    num_pitches = 0
+    pitches = {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0}
+
+    for at_bat in outing.at_bats:
+        for pitch in at_bat.pitches:
+            pitches[PitchType(pitch.pitch_type).name] += 1
+            num_pitches += 1
+
+    pitch_percentages = {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0}
+    if num_pitches != 0:
+        for key, val in pitches.items():
+            pitch_percentages[key] = truncate(pitches[key]/num_pitches * 100)
+
+    return (pitches, pitch_percentages)
+    # Will be in form:
+    #       {"FB":0.0, "CB":0.0, "SL":0.0, "CH":0.0, "CT":0.0, "SM":0.0}
+    # With each value being 0<=val<=100
+
+
+def pitchUsageByCount(outing):
+    '''
+    Creates pitch usage by count statistic sheet.
+
+    PARAM:
+        -outing: Outing object to be parsed. Should come from
+            Outing.query.filter(...)
+    RETURN:
+        -tuple object containing (counts, counts_percentages).
+            "counts" is a dictionary representing the number of times a pitch
+                was thrown.
+            "counts_percentages" is a dictionary that represents the
+                percentage of time a pitch was thrown by count
+    '''
+    num_pitches = 0
+    # PLEASE COLLAPSE THIS VARIABLE IT'S DUMB
+    counts = {
+        "0-0": {
+            "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
+            "total": 0
+        },
+        "0-1": {
+            "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
+            "total": 0
+        },
+        "0-2": {
+            "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
+            "total": 0
+        },
+        "1-0": {
+            "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
+            "total": 0
+        },
+        "1-1": {
+            "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
+            "total": 0
+        },
+        "1-2": {
+            "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
+            "total": 0
+        },
+        "2-0": {
+            "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
+            "total": 0
+        },
+        "2-1": {
+            "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
+            "total": 0
+        },
+        "2-2": {
+            "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
+            "total": 0
+        },
+        "3-0": {
+            "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
+            "total": 0
+        },
+        "3-1": {
+            "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
+            "total": 0
+        },
+        "3-2": {
+            "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
+            "total": 0
+        }
+    }
+    counts_percentages = {
+        "0-0": {
+            "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
+            "total": 0
+        },
+        "0-1": {
+            "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
+            "total": 0
+        },
+        "0-2": {
+            "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
+            "total": 0
+        },
+        "1-0": {
+            "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
+            "total": 0
+        },
+        "1-1": {
+            "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
+            "total": 0
+        },
+        "1-2": {
+            "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
+            "total": 0
+        },
+        "2-0": {
+            "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
+            "total": 0
+        },
+        "2-1": {
+            "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
+            "total": 0
+        },
+        "2-2": {
+            "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
+            "total": 0
+        },
+        "3-0": {
+            "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
+            "total": 0
+        },
+        "3-1": {
+            "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
+            "total": 0
+        },
+        "3-2": {
+            "pitches": {"FB": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0, "SM": 0},
+            "total": 0
+        }
     }
 
-    for pitcher in pitchers:
-        stat_line = {
-            "ip": 0.0, "h": 0, "bb": 0, "hbp": 0, "e": 0, "k": 0, "kl": 0, "1b": 0,
-            "2b": 0, "3b": 0, "hr": 0, "kp9": 0.0, "bb9": 0.0, "p": 0, "bf": 0
-        }
-        for outing in pitcher.outings:
-            for at_bat in outing.at_bats:
-                if (len(seasons) is 0) or at_bat.get_season().id in seasons or str(at_bat.get_season().id) in seasons:
-                    for pitch in at_bat.pitches:
-                        stat_line['p'] += 1  # increase pitches
+    for at_bat in outing.at_bats:
+        for pitch in at_bat.pitches:
+            count = pitch.count
+            pitch_type = PitchType(pitch.pitch_type).name
 
-                        # check ball in play or out statistics
-                        if pitch.ab_result is not '':
-                            stat_line["bf"] += 1  # increase batters faced
+            counts[count]["total"] += 1
+            counts[count]["pitches"][pitch_type] += 1
 
-                            # stats that result in hit
-                            if pitch.ab_result in ["1B", "2B", "3B", "HR"]:
-                                stat_line["h"] += 1  # increase hits
-                                # increase type of hit
-                                stat_line[pitch.ab_result.lower()] += 1
+            num_pitches += 1
 
-                            # stats that result in out
-                            if pitch.ab_result in ["IP->Out", "K", "KL", "FC", "D3->Out"]:
-                                stat_line["ip"] += 1
+    # create count percentages
+    for key, value in counts.items():
+        total = value["total"]
+        if total != 0:
+            for pitch in value["pitches"].keys():
+                counts_percentages[key]["pitches"][pitch] = (
+                    truncate(value["pitches"][pitch]/total * 100))
+                counts_percentages[key]["total"] = (
+                    truncate(total/num_pitches * 100))
+        else:  # case in which there were no pitches thrown in a count
+            counts_percentages[key]["pitches"] = counts[key]["pitches"]
+            counts_percentages[key]["total"] = 0
 
-                                # for outs that were strikeouts
-                                if pitch.ab_result in ["K", "KL"]:
-                                    stat_line[pitch.ab_result.lower()] += 1
+    return (counts, counts_percentages)
 
-                            # stats where batter reaches base another way
-                            if pitch.ab_result in ["BB", "HBP", "Error", "CI", "D3->Safe"]:
 
-                                if pitch.ab_result in ["Error", "CI", "D3->Safe"]:
-                                    stat_line["e"] += 1
-                                else:
-                                    stat_line[pitch.ab_result.lower()] += 1
+def velocityOverTimeLineChart(outing):
+    '''
+    Function to create the velocity over time line chart from statistics
 
-        # sum up a pitchers work to team total
-        for stat, val in stat_line.items():
-            if stat not in ["kp9", "bb9"]:
-                stat_line_total[stat] += val
+    PARAM:
+        -outing: the single outing to be parsed over. Should come from
+            Outing.query.filter()...
+    RETURN:
+        - pygal line chart object complete with data
+    '''
+    num_pitches = 0
+    for at_bat in outing.at_bats:
+        for pitch in at_bat.pitches:
+            num_pitches += 1
+    line_chart = pygal.Line(
+        style=DarkSolarizedStyle,
+        title="Velocity changes over time",
+        show_minor_x_labels=False,
+        truncate_label=3
+    )
+    line_chart.x_labels = map(str, range(1, num_pitches+1))
+    lst = list(range(num_pitches+1))
+    line_chart.x_labels_major = lst[0::10]
+    line_chart.dyanamic_print_values = True
 
-        # fix ip for player
-        stat_line["ip"] = truncate(stat_line["ip"] / 3)
+    velocities = {"FB": [], "CB": [], "SL": [], "CH": [], "CT": [], "SM": []}
+    for at_bat in outing.at_bats:
+        for pitch in at_bat.pitches:
+            pitch_type = PitchType(pitch.pitch_type).name
+            for key in velocities.keys():
+                if key is pitch_type:
+                    velocities[key].append(pitch.velocity)
+                else:
+                    velocities[key].append(None)
 
-        # calculate ip based stats for pitcher
-        if stat_line["ip"] == 0:
-            stat_line["kp9"] = "inf"
-            stat_line["bb9"] = "inf"
+    for pitch_type, pitch_values in velocities.items():
+        if pitch_type == "SM":
+            line_chart.add("2-SEAM", pitch_values)
         else:
-            stat_line["kp9"] = truncate(
-                (stat_line["k"]+stat_line["kl"])/stat_line["ip"] * 9)
-            stat_line["bb9"] = truncate(stat_line["bb"]/stat_line["ip"]*9)
+            line_chart.add(pitch_type, pitch_values)
 
-        # append to storage array
-        players.append({
-            "details": {
-                "name": f"{pitcher}",
-                "class": pitcher.grad_year,
-                "throws": pitcher.throws},
-            "stat_line": stat_line
-        })
-
-    # calculate weighted team stat totals
-    stat_line_total["ip"] = truncate(stat_line_total["ip"]/3)
-    if(stat_line_total["ip"] > 0):
-        stat_line_total["kp9"] = truncate(
-            (stat_line_total["k"]+stat_line_total["kl"])/stat_line_total["ip"] * 9)
-        stat_line_total["bb9"] = truncate(
-            stat_line_total["bb"]/stat_line_total["ip"]*9)
-
-    return (stat_line_total, players)
-
-
-# STAFF ADVANCED STATISTICS ---------------------------------------------------
-def staffAdvancedStats(pitchers):
-    """Generate the stats for the Advanced Stats page for the staff
-
-    Arguments:
-        pitchers {array} -- array of user objects to be analyzed
-
-    Returns:
-
-    """
-    # to hold info for each player
-    players = []
-
-    # to hold the info for the avg velo stats
-    total_velo_num_pitches = {"FB": 0, "SM": 0, "total": 0}
-    total_velo_summed_velos = {"FB": 0, "SM": 0, "total": 0}
-    total_velo_averages = {"FB": 0, "SM": 0, "total": 0}
-
-    # to hold the info for the strike percentage stats
-    total_pct_num_pitches = {"fastball": 0, "offspeed": 0, "total": 0}
-    total_pct_num_strikes = {"fastball": 0, "offspeed": 0, "total": 0}
-    total_pct_averages = {"fastball": 0, "offspeed": 0, "total": 0}
-
-    for pitcher in pitchers:
-
-        # to hold the info for the avg velo stats specific to pitcher
-        velo_num_pitches = {"FB": 0, "SM": 0, "total": 0}
-        velo_summed_velos = {"FB": 0, "SM": 0, "total": 0}
-        velo_averages = {"FB": 0, "SM": 0, "total": 0}
-
-        # to hold the info for the strike percentage stats specific to pitcher
-        pct_num_pitches = {"fastball": 0, "offspeed": 0, "total": 0}
-        pct_num_strikes = {"fastball": 0, "offspeed": 0, "total": 0}
-        pct_averages = {"fastball": 0, "offspeed": 0, "total": 0}
-
-        # look through all of pitcher outings
-        for outing in pitcher.outings:
-            if outing.season.current_season:
-                for at_bat in outing.at_bats:
-                    for pitch in at_bat.pitches:
-                        pitch_type = PitchType(pitch.pitch_type).name
-
-                        # VELOS
-                        if pitch.velocity not in [None, ""]:
-
-                            if pitch_type in ["FB", "SM"]:
-
-                                # for pitcher specific
-                                velo_num_pitches[pitch_type] += 1
-                                velo_num_pitches["total"] += 1
-                                velo_summed_velos[pitch_type] += pitch.velocity
-                                velo_summed_velos["total"] += pitch.velocity
-
-                                # for team total stats
-                                total_velo_num_pitches[pitch_type] += 1
-                                total_velo_num_pitches["total"] += 1
-                                total_velo_summed_velos[pitch_type] += pitch.velocity
-                                total_velo_summed_velos["total"] += pitch.velocity
-
-                        # STRIKE PERCENTAGES
-                        pct_num_pitches["total"] += 1
-                        total_pct_num_pitches["total"] += 1
-
-                        # total num pitches
-                        if pitch_type in ["FB", "SM"]:
-                            pct_num_pitches["fastball"] += 1
-                            total_pct_num_pitches["fastball"] += 1
-                        else:
-                            pct_num_pitches["offspeed"] += 1
-                            total_pct_num_pitches["offspeed"] += 1
-
-                        # strikes
-                        if pitch.pitch_result in ["CS", "SS", "F", "IP"]:
-                            pct_num_strikes["total"] += 1
-                            total_pct_num_strikes["total"] += 1
-                            if pitch_type in ["FB", "SM"]:
-                                pct_num_strikes["fastball"] += 1
-                                total_pct_num_strikes["fastball"] += 1
-                            else:
-                                pct_num_strikes["offspeed"] += 1
-                                total_pct_num_strikes["offspeed"] += 1
-
-        # VELOS - totals for pitcher
-        for key, val in velo_num_pitches.items():
-            if velo_num_pitches[key] != 0:
-                velo_averages[key] = truncate(
-                    velo_summed_velos[key]/velo_num_pitches[key], 1)
-
-        # STRIKE PERCENTAGE - totals for pitcher
-        for key, val in pct_num_pitches.items():
-            if pct_num_pitches[key] != 0:
-                pct_averages[key] = (
-                    int(percentage(pct_num_strikes[key]/pct_num_pitches[key])))
-
-        # fill in players array with info from above
-        players.append(
-            {
-                "details": {
-                    "name": f"{pitcher.name}",
-                    "class": pitcher.grad_year,
-                    "throws": pitcher.throws},
-                "velos": velo_averages,
-                "strike_percentages": pct_averages
-            }
-        )
-
-    # VELOS - totals for staff
-    for key, val in total_velo_num_pitches.items():
-        if total_velo_num_pitches[key] != 0:
-            total_velo_averages[key] = truncate(
-                total_velo_summed_velos[key]/total_velo_num_pitches[key], 1)
-
-    # STRIKE PERCENTAGE - totals for staff
-    for key, val in total_pct_num_pitches.items():
-        if total_pct_num_pitches[key] != 0:
-            total_pct_averages[key] = (
-                int(percentage(total_pct_num_strikes[key]/total_pct_num_pitches[key])))
-
-    return (players, total_velo_averages, total_pct_averages)
-
-
-def staffPitchStrikePercentage(pitchers):
-
-    # storage array for staff info
-    players_strike_percentage = []
-
-    # storage for team totals
-    pitches_totals = {"fastball": 0, "offspeed": 0, "total": 0}
-    pitches_strikes_totals = {"fastball": 0, "offspeed": 0, "total": 0}
-    pitch_strike_percentage_totals = {"fastball": 0, "offspeed": 0, "total": 0}
-
-    for pitcher in pitchers:
-
-        # storage for pitchers individual stats
-        pitches = {"fastball": 0, "offspeed": 0, "total": 0}
-        pitches_strikes = {"fastball": 0, "offspeed": 0, "total": 0}
-        pitch_strike_percentage = {"fastball": 0, "offspeed": 0, "total": 0}
-
-        for outing in pitcher.outings:
-            season = outing.season
-            if season.current_season:
-                for at_bat in outing.at_bats:
-                    for pitch in at_bat.pitches:
-                        pitch_type = PitchType(pitch.pitch_type).name
-                        pitches["total"] += 1
-                        pitches_totals['total'] += 1
-                        if pitch_type in ["FB", "SM"]:
-                            pitches["fastball"] += 1
-                            pitches_totals["fastball"] += 1
-                        else:
-                            pitches["offspeed"] += 1
-                            pitches_totals["offspeed"] += 1
-
-                        if pitch.pitch_result in ["CS", "SS", "F", "IP"]:
-                            pitches_strikes["total"] += 1
-                            pitches_strikes_totals["total"] += 1
-                            if pitch_type in ["FB", "SM"]:
-                                pitches_strikes["fastball"] += 1
-                                pitches_strikes_totals["fastball"] += 1
-                            else:
-                                pitches_strikes["offspeed"] += 1
-                                pitches_strikes_totals["offspeed"] += 1
-
-        # Calculate pitcher totals
-        for key, val in pitches.items():
-            if pitches[key] != 0:
-                pitch_strike_percentage[key] = (
-                    int(percentage(pitches_strikes[key]/pitches[key])))
-
-        players_strike_percentage.append({
-            "details": {
-                "name": f"{pitcher}",
-                "class": pitcher.grad_year,
-                "throws": pitcher.throws},
-            "percentages": pitch_strike_percentage
-        })
-
-    # calculate weighted team totals
-    for key, val in pitches_totals.items():
-        if pitches_totals[key] != 0:
-            pitch_strike_percentage_totals[key] = (
-                int(percentage(pitches_strikes_totals[key]/pitches_totals[key])))
-
-    # calculate unweighted team totals
-    # for player in players:
-    #     for pitch, val in player["percentages"].items():
-    #         pitch_strike_percentage_totals[pitch] += val
-    # for pitch, val in pitch_strike_percentage_totals.items():
-    #     pitch_strike_percentage_totals[pitch] = truncate(val / len(players))
-
-    return (pitch_strike_percentage_totals, players_strike_percentage)
+    return line_chart
 
 
 def outingPitchStatistics(outing):
@@ -1839,55 +1817,78 @@ def veloOverTime(outing):
     return velos
 
 
-def teamImportantStatsSeason(pitchers):
-    # weighted strike percentage
-    strikes = 0
-    total_pitches = 0
-    strike_percentage = 0
-    # weighted FPS
-    first_pitch_strikes = 0
-    first_pitches = 0
-    fps_percentage = 0
-    # K/BB Ratio
-    strikeouts = 0
-    walks = 0
-    k_to_bb = 0
+# ***************-MISC STAT CALCULATIONS-*************** #
+def createPitchPercentagePieChart(data):
+    '''
+    Function to create pitch percentage pie chart.
 
-    for p in pitchers:
-        for o in p.outings:
-            current_inning = 1
-            season = Season.query.filter_by(id=o.season_id).first()
-            if season.current_season:
-                for ab in o.at_bats:
-                    for index, p in enumerate(ab.pitches):
-                        total_pitches += 1
-                        if p.pitch_result is not "B":
-                            strikes += 1
-                        if index is 0:
-                            first_pitches += 1
-                            if p.pitch_result is not "B":
-                                first_pitch_strikes += 1
-                        if p.ab_result in ["K", "KL"]:
-                            strikeouts += 1
-                        if p.ab_result == "BB":
-                            walks += 1
+    PARAM:
+        -data: Data to be transformed into pie chart. Should be percentage
+            return from calcPitchPercentages(...)
+    RETURN:
+        -pygal pie chart object complete with data
+    '''
+    pie_chart = pygal.Pie(
+        title="Pitch Usage Percentages",
+        style=DarkSolarizedStyle(
+            value_font_family='googlefont:Raleway',
+            value_font_size=30,
+            value_colors=('white')
+        ),
+        height=600,
+        width=600,
+        explicit_size=True
+    )
+    pie_chart.dyanamic_print_values = True
 
-    if total_pitches is 0:
-        strike_percentage = "X"
-    else:
-        strike_percentage = percentage(strikes/total_pitches, 0)
+    for pitch, value in data.items():
+        insert_value = {"value": value, "label": pitch}
+        pie_chart.add(pitch, value)
 
-    if first_pitch_strikes is 0:
-        fps_percentage = "X"
-    else:
-        fps_percentage = percentage(first_pitch_strikes/first_pitches)
+    return pie_chart
 
-    if walks is 0:
-        if strikeouts is 0:
-            k_to_bb = 0
-        else:
-            k_to_bb = "inf"
-    else:
-        k_to_bb = truncate(strikeouts/walks, 1)
 
-    return strike_percentage, fps_percentage, k_to_bb
+def pitchStrikePercentageBarChart(data):
+    '''
+    Function to create the pitch by pitch strike percentage bar chart.
+
+    PARAM:
+        -data: Data to be parsed over and turned to chart. Should be
+            return data from calcPitchStrikePercentage(...)
+
+    RETURN:
+        - pygal bar chart object complete with data
+    '''
+    bar_chart = pygal.Bar(
+        title="Stike Percentage by Pitch",
+        style=DarkSolarizedStyle,
+        range=(0, 100)
+    )
+
+    for pitch_type, values in data.items():
+        bar_chart.add(pitch_type, values)
+
+    return bar_chart
+
+
+def pitchUsageByCountLineCharts(data):
+    data_reformat = {
+        "FB": {}, "CB": {}, "SL": {}, "CH": {}, "CT": {}, "SM": {}
+    }
+    for count, dat in data.items():
+        for pitch, usage in dat['pitches'].items():
+            data_reformat[pitch][count] = usage
+    # print(data_reformat)
+
+    line_chart = pygal.Line(
+        style=DarkSolarizedStyle,
+        title="Pitch Usage by Count"
+    )
+
+    line_chart.x_labels = data_reformat["FB"].keys()
+    line_chart.dyanamic_print_values = True
+
+    for pitch_type, pitch_data in data_reformat.items():
+        line_chart.add(pitch_type, pitch_data.values())
+
+    return line_chart
