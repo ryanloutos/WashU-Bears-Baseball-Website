@@ -7,6 +7,7 @@
         font-size: 25px;
         text-align: center;
     }
+
     .video-div {
         overflow: hidden;
         display: inline-block;
@@ -16,9 +17,9 @@
     }
 </style>
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function () {
         select_season = document.getElementById("season-selector");
-        select_season.addEventListener("change", function() {
+        select_season.addEventListener("change", function () {
             updateVideos();
         });
         updateVideos();
@@ -27,12 +28,13 @@
     function updateVideos() {
         season = select_season.value;
         pitcher = {{ pitcher.id }};
+    };
 
-        fetch(
-            "/api/videos/season/"+season+"/pitcher/"+pitcher,
-        ).then(res => res.json())
-        .then(function(response){
-            if (response.status == "failure"){
+    fetch(
+        "/api/videos/season/" + season + "/pitcher/" + pitcher,
+    ).then(res => res.json())
+        .then(function (response) {
+            if (response.status == "failure") {
                 console.log("Request ended in failure");
                 console.log("Error: " + response.error);
             } else {
@@ -40,7 +42,7 @@
                 video_ids = response.video_ids;
                 video_names = response.video_names;
                 document.getElementById("all-videos").innerHTML = "";
-                for (var i=0; i<video_ids.length; i++) {
+                for (var i = 0; i < video_ids.length; i++) {
                     let div = "<div class='video-div'>";
                     div += "<iframe width='352' height='198' src='https://www.youtube-nocookie.com/embed/";
                     div += video_ids[i];
@@ -59,27 +61,28 @@
 {% endblock %}
 
 {% block app_content %}
-    {% include "pitcher/pitcher_sidenav.html" %}
-    <div class="main">
-        {% include "pitcher/pitcher_title.html" %}
-        <h1>{{ pitcher }} - Videos</h1>
-        <br>
-        <div style="font-size: 20px;">
-            Season:
-            <select id="season-selector">
-                {% for season in seasons %}
-                    <option value="{{ season.id }}">{{ season }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <br>
-        <div id="all-videos">
-            {% for video in videos %}
-                <div class="video-div">
-                    <iframe width="352" height="198" src="https://www.youtube-nocookie.com/embed/{{video}}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
-                    </iframe>
-                    <div class="video-title">{{video_objects[loop.index0]}}</div>
-                </div>
+{% include "pitcher/pitcher_sidenav.html" %}
+<div class="main">
+    {% include "pitcher/pitcher_title.html" %}
+    <h1>{{ pitcher }} - Videos</h1>
+    <br>
+    <div style="font-size: 20px;">
+        Season:
+        <select id="season-selector">
+            {% for season in seasons %}
+            <option value="{{ season.id }}">{{ season }}</option>
             {% endfor %}
+        </select>
+    </div>
+    <br>
+    <div id="all-videos">
+        {% for video in videos %}
+        <div class="video-div">
+            <iframe width="352" height="198" src="https://www.youtube-nocookie.com/embed/{{video}}" frameborder="0"
+                allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+            </iframe>
+            <div class="video-title">{{video_objects[loop.index0]}}</div>
         </div>
-{% endblock %}
+        {% endfor %}
+    </div>
+    {% endblock %}

@@ -22,7 +22,8 @@ def staff_season_goals():
 
     include_matchups = False
 
-    strike_percentage, fps_percentage, k_to_bb, offspeed_strike_pct = staffSeasonGoals(pitchers, include_matchups)
+    strike_percentage, fps_percentage, k_to_bb, offspeed_strike_pct = staffSeasonGoals(
+        pitchers, include_matchups)
 
     return_data = {
         "status": "success",
@@ -36,6 +37,8 @@ def staff_season_goals():
     return jsonify(return_data)
 
 # ***************-STAFF SEASON STATS FILTER-*************** #
+
+
 @api.route("/api/staff/stats/include_matchups", methods=["POST"])
 @login_required
 def staff_include_matchups():
@@ -47,21 +50,23 @@ def staff_include_matchups():
             "status": "failure",
             "error": "Request not processable as JSON."
         })
-    
+
     include_matchups = req_data
     season = Season.query.filter_by(current_season=1).first()
     if include_matchups in [True, "true", 1]:
-        games = Game.query.filter_by(season_id=season.id).order_by(Game.date).all()
+        games = Game.query.filter_by(
+            season_id=season.id).order_by(Game.date).all()
     else:
-        games = Game.query.filter_by(season_id=season.id).filter(Game.opponent_id != 1).order_by(Game.date).all()
-    
+        games = Game.query.filter_by(season_id=season.id).filter(
+            Game.opponent_id != 1).order_by(Game.date).all()
+
     games_arr = []
     for game in games:
         games_arr.append({
             "date": game.id,
             "label": str(game)
         })
-    
+
     return jsonify({
         "status": "success",
         "data": games_arr
@@ -79,7 +84,7 @@ def staff_date_filter():
             "status": "failure",
             "error": "Request not processable as JSON."
         })
-    
+
     first_game = Game.query.filter_by(id=req_data["firstGameId"]).first()
     second_game = Game.query.filter_by(id=req_data["secondGameId"]).first()
     if req_data["includeMatchups"] in [True, "true", 1, "1"]:
@@ -87,9 +92,11 @@ def staff_date_filter():
     else:
         include_matchups = False
 
-    pitchers = Pitcher.query.filter_by(retired=0).filter_by(opponent_id=1).order_by(Pitcher.lastname).all()
+    pitchers = Pitcher.query.filter_by(retired=0).filter_by(
+        opponent_id=1).order_by(Pitcher.lastname).all()
 
-    players, staff = staffSeasonStats(pitchers, first_game.date, second_game.date, include_matchups)
+    players, staff = staffSeasonStats(
+        pitchers, first_game.date, second_game.date, include_matchups)
 
     return jsonify({
         "status": "success",
@@ -130,7 +137,8 @@ def batter_stats_whiffrate():
             return jsonify({"status": "failure", "error": "Invalid batter id given"})
 
         # call to stat calculation
-        swing_rate_by_count, whiff_rate_by_count = batterSwingWhiffRatebyPitchbyCount(batter, seasons=seasons)
+        swing_rate_by_count, whiff_rate_by_count = batterSwingWhiffRatebyPitchbyCount(
+            batter, seasons=seasons)
 
         # prepare return json
         return_value = {
@@ -178,7 +186,8 @@ def staff_basic_stats():
 
     pitchers = Pitcher.query.filter(Pitcher.retired != 1).all()
 
-    staff_stat_summary, players_stat_summary = staffBasicStats(pitchers, seasons=seasons)
+    staff_stat_summary, players_stat_summary = staffBasicStats(
+        pitchers, seasons=seasons)
 
     return jsonify({
         "data": {
@@ -412,7 +421,8 @@ def outings_in_season(season_id, pitcher_id):
             "error": "Pitcher id provided is invalid"
         })
 
-    outings = Outing.query.filter_by(season_id=season.id).filter_by(pitcher_id=pitcher.id).order_by(Outing.date).all()
+    outings = Outing.query.filter_by(season_id=season.id).filter_by(
+        pitcher_id=pitcher.id).order_by(Outing.date).all()
 
     outings_ret = []
     for outing in outings:
@@ -424,82 +434,6 @@ def outings_in_season(season_id, pitcher_id):
     return jsonify({
         "status": "success",
         "outings": outings_ret
-    })
-
-
-@api.route("/api/videos/season/<season_id>/pitcher/<pitcher_id>")
-@login_required
-def videos_in_season_pitcher(season_id, pitcher_id):
-    season = Season.query.filter_by(id=season_id).first()
-    pitcher = Pitcher.query.filter_by(id=pitcher_id).first()
-    if not season:
-        return jsonify({
-            "status": "failure",
-            "error": "Season id provided is invalid"
-        })
-    if not pitcher:
-        return jsonify({
-            "status": "failure",
-            "error": "Pitcher id provided is invalid"
-        })
-
-    videos = Video.query.filter_by(season_id=season.id).filter_by(pitcher_id=pitcher.id).order_by(Video.date).all()
-
-    video_ids = []
-    video_names = []
-
-    for v in videos:
-        regex = re.compile(r'(https?://)?(www\.)?(youtube|youtu|youtube-nocookie)\.(com|be)/(watch\?v=|embed/|v/|.+\?v=)?(?P<id>[A-Za-z0-9\-=_]{11})')
-        match = regex.match(v.link)
-        if not match:
-            video_ids.append("")
-        else:
-            video_ids.append(match.group("id"))
-
-        video_names.append(v.__repr__())
-
-    return jsonify({
-        "status": "success",
-        "video_names": video_names,
-        "video_ids": video_ids
-    })
-
-
-@api.route("/api/videos/season/<season_id>/batter/<batter_id>")
-@login_required
-def videos_in_season_batter(season_id, batter_id):
-    season = Season.query.filter_by(id=season_id).first()
-    batter = Batter.query.filter_by(id=batter_id).first()
-    if not season:
-        return jsonify({
-            "status": "failure",
-            "error": "Season id provided is invalid"
-        })
-    if not batter:
-        return jsonify({
-            "status": "failure",
-            "error": "Batter id provided is invalid"
-        })
-
-    videos = Video.query.filter_by(season_id=season.id).filter_by(batter_id=batter.id).order_by(Video.date).all()
-
-    video_ids = []
-    video_names = []
-
-    for v in videos:
-        regex = re.compile(r'(https?://)?(www\.)?(youtube|youtu|youtube-nocookie)\.(com|be)/(watch\?v=|embed/|v/|.+\?v=)?(?P<id>[A-Za-z0-9\-=_]{11})')
-        match = regex.match(v.link)
-        if not match:
-            video_ids.append("")
-        else:
-            video_ids.append(match.group("id"))
-
-        video_names.append(v.__repr__())
-
-    return jsonify({
-        "status": "success",
-        "video_names": video_names,
-        "video_ids": video_ids
     })
 
 
@@ -528,7 +462,8 @@ def team_get_pitchers(team_id):
             })
 
         # get a team's pitchers
-        pitchers = Pitcher.query.filter_by(opponent_id=opponent.id).order_by(Pitcher.lastname).all()
+        pitchers = Pitcher.query.filter_by(
+            opponent_id=opponent.id).order_by(Pitcher.lastname).all()
 
     pitchers_arr = []
     for pitcher in pitchers:
@@ -601,7 +536,8 @@ def team_get_hitters(team_id):
             })
 
         # get a team's pitchers
-        batters = Batter.query.filter_by(opponent_id=opponent.id).order_by(Batter.lastname).all()
+        batters = Batter.query.filter_by(
+            opponent_id=opponent.id).order_by(Batter.lastname).all()
 
     batter_arr = []
     for batter in batters:
@@ -614,4 +550,3 @@ def team_get_hitters(team_id):
         "status": "success",
         "data": batter_arr
     })
-

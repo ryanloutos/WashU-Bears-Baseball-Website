@@ -1,72 +1,146 @@
 {% extends "base.html" %}
 
 {% block styles %}
-    {{ super() }}
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/forms.css') }}">
+{{ super() }}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/forms.css') }}">
 {% endblock %}
 
 {% block app_content %}
-    <div class="no-sidenav">
-        <div class="form-container">
-            <h1 class="form-title">New Video Pitcher</h1>
-            <form method="post">
-                {{ form.hidden_tag() }}
-                <p>
-                    {{ form.opponent.label }}<br>
-                    {{ form.opponent(class="form-control") }}<br>
-                    {% for error in form.opponent.errors %}
-                        <span class="errors">[{{ error }}]</span>
-                    {% endfor %}
-                </p>
-                <p>
-                    {{ form.pitcher.label }}<br>
-                    {{ form.pitcher(class="form-control") }}<br>
-                    {% for error in form.pitcher.errors %}
-                        <span class="errors">[{{ error }}]</span>
-                    {% endfor %}
-                </p>
-                <p>
-                    {{ form.title.label }}<br>
-                    {{ form.title(class="form-control") }}<br>
-                    {% for error in form.title.errors %}
-                        <span class="errors">[{{ error }}]</span>
-                    {% endfor %}
-                </p>
-                <p>
-                    {{ form.date.label }}<br>
-                    {{ form.date(class="datepicker form-control") }}<br>
-                    If in safari, enter date as YYYY-MM-DD
-                    {% for error in form.date.errors %}
-                        <span class="errors">[{{ error }}]</span>
-                    {% endfor %}
-                </p>
-                <p>
-                    {{ form.season.label }}<br>
-                    {{ form.season(class="form-control") }}<br>
-                    {% for error in form.season.errors %}
-                        <span class="errors">[{{ error }}]</span>
-                    {% endfor %}
-                </p>
-                <p>
-                    {{ form.outing.label }}<br>
-                    {{ form.outing(class="form-control") }}<br>
-                    {% for error in form.outing.errors %}
-                        <span class="errors">[{{ error }}]</span>
-                    {% endfor %}
-                </p>
-                <p>
-                    {{ form.link.label }}<br>
-                    {{ form.link(class="form-control") }}<br>
-                    {% for error in form.link.errors %}
-                        <span class="errors">[{{ error }}]</span>
-                    {% endfor %}
-                </p>
-                <br>
-                <p>
-                    {{ form.submit(class="btn btn-primary btn-lg btn-block") }}
-                </p>
-            </form>
-        </div>
+<div class="no-sidenav">
+    <div class="form-container">
+        <h1 class="form-title">New Video Pitcher</h1>
+        <form method="post">
+            {{ form.hidden_tag() }}
+            <p>
+                {{ form.opponent.label }}<br>
+                {{ form.opponent(class="form-control") }}
+            </p>
+            <p>
+                {{ form.pitcher.label }}<br>
+                {{ form.pitcher(class="form-control") }}
+            </p>
+            <p>
+                {{ form.title.label }} (Optional)<br>
+                {{ form.title(class="form-control") }}
+            </p>
+            <p>
+                {{ form.date.label }} <i>If using Safari, enter date as YYYY-MM-DD</i><br>
+                {{ form.date(class="datepicker form-control") }}
+            </p>
+            <p>
+                {{ form.season.label }}<br>
+                {{ form.season(class="form-control") }}
+            </p>
+            <p>
+                {{ form.outing.label }} (Optional)<br>
+                {{ form.outing(class="form-control") }}
+            </p>
+            <p>
+                {{ form.link.label }}<br>
+                {{ form.link(class="form-control is-invalid") }}
+            </p>
+            <p id="youtube-link-error" class="errors">
+                Please enter a valid YouTube link
+            </p>
+            <br>
+            <p id="submit-button" style="display: none">
+                {{ form.submit(class="btn btn-primary btn-lg btn-block") }}
+            </p>
+        </form>
     </div>
-    <script>{{ js|safe }}</script>
+</div>
+<script>
+    // these are for the default options for team and season options
+    const defaultTeamId = 1;
+    const currentSeasonId = {{ current_season.id }};
+
+    // the different selectors and/or options for the form
+    const teamSelector = $("#opponent");
+    const pitcherSelector = $("#pitcher");
+    const seasonSelector = $("#season");
+    const outingSelector = $("#outing");
+    const linkInput = $("#link");
+    const youtubeLinkError = $("#youtube-link-error");
+    const submitButton = $("#submit-button");
+
+    // AJAX request to get pitchers based on team
+    function getPitcherBasedOnTeam() {
+        fetch(`/api/team/${teamSelector.val()}/get_pitchers`)
+            .then(res => res.json())
+            .then(function (response) {
+                if (response.status != "success") {
+                    console.log("Request ended in failure");
+                    console.log("Error: " + response.error);
+                }
+
+                pitcherSelector.empty();
+                for (let pitcher of response.data) {
+                    pitcherSelector.append(new Option(pitcher.name, pitcher.id));
+                }
+                getOutingsBasedOnPitcherAndSeason();
+            });
+    }
+
+    // AJAX request to get the correct outings
+    function getOutingsBasedOnPitcherAndSeason() {
+        if (pitcherSelector.val() == null) {
+            outingSelector.empty();
+            return;
+        }
+        fetch(`/api/outings/season/${seasonSelector.val()}/pitcher/${pitcherSelector.val()}`)
+            .then(res => res.json())
+            .then(function (response) {
+                if (response.status != "success") {
+                    console.log("Request ended in failure");
+                    console.log("Error: " + response.error);
+                } else {
+                    outingSelector.empty();
+                    outingSelector.append(new Option("", ""));
+                    for (let outing of response.outings) {
+                        outingSelector.append(new Option(outing.label, outing.id));
+                    }
+                }
+            });
+    }
+
+    // https://gist.github.com/jphase/9086823
+    // Returns true if the url param is a youtube video, false otherwise
+    const isYouTubeUrl = url => {
+        const expression = /(http:|https:)?\/\/(www\.)?(youtube.com|youtu.be)\/(watch)?(\?v=)?(\S+)?/;
+        const regex = new RegExp(expression);
+        return url.match(regex);
+    };
+
+    // update the pitchers to choose from when you change teams
+    teamSelector.change(getPitcherBasedOnTeam);
+
+    // update the outings when you change the pitchers
+    pitcherSelector.change(getOutingsBasedOnPitcherAndSeason);
+
+    // update the outings when you change the season
+    seasonSelector.change(getOutingsBasedOnPitcherAndSeason);
+
+    // only show the Submit button when a valid YouTube link is displayed
+    linkInput.keyup(() => {
+        if (isYouTubeUrl(linkInput.val())) {
+            submitButton.css("display", "block");
+            youtubeLinkError.css("display", "none");
+        } else {
+            submitButton.css("display", "none");
+            youtubeLinkError.css("display", "block");
+        }
+    })
+
+    // set the default selector values
+    teamSelector.val(defaultTeamId);
+    seasonSelector.val(currentSeasonId);
+
+    // update the pitchers on load
+    getPitcherBasedOnTeam();
+
+    // to prevent form from being submitted using "enter" or "return" key
+    $("form input").on("keypress", function (e) {
+        return e.which !== 13;
+    });
+</script>
 {% endblock %}

@@ -210,7 +210,10 @@ class BatterNewVideoForm(FlaskForm):
     date = DateField("Date", validators=[DataRequired()], format="%Y-%m-%d")
     opponent = QuerySelectField("Team", query_factory=getOpponents)
     season = QuerySelectField("Season", query_factory=getSeasons)
-    batter = SelectField("Batter", validators=[Optional()])
+    batter = QuerySelectField(query_factory=lambda: Batter.query,
+                              get_pk=lambda b: b.id,
+                              get_label=lambda b: b,
+                              validators=[DataRequired()])
     link = StringField("Link", validators=[DataRequired()])
     submit = SubmitField("Post Video")
 

@@ -8,57 +8,104 @@
 {% block app_content %}
 <div class="no-sidenav">
     <div class="form-container">
-        <h1 class="form-title">New Video Hitter</h1>
+        <h1 class="form-title">New Video Batter</h1>
         <form method="post">
             {{ form.hidden_tag() }}
             <p>
                 {{ form.opponent.label }}<br>
-                {{ form.opponent(class="form-control") }}<br>
-                {% for error in form.opponent.errors %}
-                <span class="errors">[{{ error }}]</span>
-                {% endfor %}
+                {{ form.opponent(class="form-control") }}
             </p>
             <p>
                 {{ form.batter.label }}<br>
-                {{ form.batter(class="form-control") }}<br>
-                {% for error in form.batter.errors %}
-                <span style="color: red;">[{{ error }}]</span>
-                {% endfor %}
+                {{ form.batter(class="form-control") }}
             </p>
             <p>
-                {{ form.title.label }}<br>
-                {{ form.title(class="form-control") }}<br>
-                {% for error in form.title.errors %}
-                <span style="color: red;">[{{ error }}]</span>
-                {% endfor %}
+                {{ form.title.label }} (Optional)<br>
+                {{ form.title(class="form-control") }}
             </p>
             <p>
-                {{ form.date.label }}<br>
-                {{ form.date(class='datepicker form-control') }}<br>
-                If in safari, enter date as YYYY-MM-DD
-                {% for error in form.date.errors %}
-                <span style="color: red;">[{{ error }}]</span>
-                {% endfor %}
+                {{ form.date.label }} <i>If using Safari, enter date as YYYY-MM-DD</i><br>
+                {{ form.date(class="datepicker form-control") }}
             </p>
             <p>
                 {{ form.season.label }}<br>
-                {{ form.season(class="form-control") }}<br>
-                {% for error in form.season.errors %}
-                <span style="color: red;">[{{ error }}]</span>
-                {% endfor %}
+                {{ form.season(class="form-control") }}
             </p>
             <p>
                 {{ form.link.label }}<br>
-                {{ form.link(class="form-control") }}<br>
-                {% for error in form.link.errors %}
-                <span class="errors">[{{ error }}]</span>
-                {% endfor %}
+                {{ form.link(class="form-control") }}
             </p>
-            <p>
+            <p id="youtube-link-error" class="errors">
+                Please enter a valid YouTube link
+            </p>
+            <br>
+            <p id="submit-button" style="display: none">
                 {{ form.submit(class="btn btn-primary btn-lg btn-block") }}
             </p>
         </form>
     </div>
 </div>
-<script>{{ js | safe }}</script>
+<script>
+    // these are for the default options for team and season options
+    var defaultTeamId = 1;
+    var currentSeasonId = {{ current_season.id }};
+
+    // the different selectors and/or options for the form
+    var teamSelector = $("#opponent");
+    var batterSelector = $("#batter");
+    var seasonSelector = $("#season");
+    var linkInput = $("#link");
+    const youtubeLinkError = $("#youtube-link-error");
+    const submitButton = $("#submit-button");
+
+    function getBattersBasedOnTeam() {
+        let teamId = teamSelector.val();
+        let apiUrl = `api/team/${teamId}/get_batters`;
+        $.ajax({
+            url: apiUrl,
+            success: function (response) {
+                if (response.status == "success") {
+                    batterSelector.empty();
+                    for (let batter of response.data) {
+                        batterSelector.append(new Option(batter.name, batter.id));
+                    }
+                } else {
+                    console.log(response);
+                }
+            }
+        })
+    }
+
+    // https://gist.github.com/jphase/9086823
+    // Returns true if the url param is a youtube video, false otherwise
+    const isYouTubeUrl = url => {
+        const expression = /(http:|https:)?\/\/(www\.)?(youtube.com|youtu.be)\/(watch)?(\?v=)?(\S+)?/;
+        const regex = new RegExp(expression);
+        return url.match(regex);
+    };
+
+    teamSelector.change(getBattersBasedOnTeam);
+
+    // only show the Submit button when a valid YouTube link is displayed
+    linkInput.keyup(() => {
+        if (isYouTubeUrl(linkInput.val())) {
+            submitButton.css("display", "block");
+            youtubeLinkError.css("display", "none");
+        } else {
+            submitButton.css("display", "none");
+            youtubeLinkError.css("display", "block");
+        }
+    })
+
+    // set the default selector values
+    teamSelector.val(defaultTeamId);
+    seasonSelector.val(currentSeasonId);
+
+    getBattersBasedOnTeam();
+
+    // to prevent form from being submitted using "enter" or "return" key
+    $("form input").on("keypress", function (e) {
+        return e.which !== 13;
+    });
+</script>
 {% endblock %}
