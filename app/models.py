@@ -45,7 +45,9 @@ class Pitcher(db.Model):
         return self.firstname + " " + self.lastname
 
     def name_and_number(self):
-        return f"{self.number} {self.firstname} {self.lastname}"
+        if not self.number:
+            return f"{self.firstname} {self.lastname}"
+        return f"{self.firstname} {self.lastname} #{self.number} "
 
     def abrev_name(self):
         return f"{self.number} - {self.firstname[0]}{self.lastname[0]}"
@@ -192,8 +194,10 @@ class Opponent(db.Model):
     mascot = db.Column(db.String(64), index=True)
     ncaa_team_id = db.Column(db.Integer, index=True)
     outings = db.relationship('Outing', backref='opponent', lazy='dynamic')
-    batters = db.relationship('Batter', backref='opponent', lazy='dynamic', order_by="Batter.lastname")
-    pitchers = db.relationship('Pitcher', backref='opponent', lazy='dynamic', order_by="Pitcher.lastname")
+    batters = db.relationship(
+        'Batter', backref='opponent', lazy='dynamic', order_by="Batter.lastname")
+    pitchers = db.relationship(
+        'Pitcher', backref='opponent', lazy='dynamic', order_by="Pitcher.lastname")
     games = db.relationship('Game', backref='opponent', lazy='dynamic')
 
     def __repr__(self):
@@ -224,7 +228,9 @@ class Batter(db.Model):
         return f"{self.firstname} {self.lastname}"
 
     def name_and_number(self):
-        return f"{self.number} {self.firstname} {self.lastname}"
+        if not self.number:
+            return f"{self.firstname} {self.lastname}"
+        return f"{self.firstname} {self.lastname} #{self.number}"
 
     def abrev_name(self):
         return f"{self.number} - {self.initials}"
@@ -332,6 +338,21 @@ class Video(db.Model):
     def __repr__(self):
         return f"{self.date.month}/{self.date.day} - {self.title}"
 
+    def to_dict(self):
+        date = self.date.strftime("%m/%d/%Y")
+        return {
+            'id': self.id,
+            'title': self.title,
+            'date': date,
+            'pitcher_id': self.pitcher_id,
+            'batter_id': self.batter_id,
+            'season_id': self.season_id,
+            'game_id': self.game_id,
+            'outing_id': self.outing_id,
+            'atbat_id': self.atbat_id,
+            'link': self.link
+        }
+
 
 class Resource(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -345,9 +366,9 @@ class Resource(db.Model):
 
     def __repr__(self):
         return f'{self.title} -- {self.description}'
-    
+
     def to_dict(self):
-        timestamp = self.timestamp.strftime("%m/%d/%Y")        
+        timestamp = self.timestamp.strftime("%m/%d/%Y")
         return {
             'id': self.id,
             'timestamp': timestamp,

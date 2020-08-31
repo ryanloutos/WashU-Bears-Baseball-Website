@@ -551,7 +551,7 @@ def team_get_hitters(team_id):
         if not batter.retired:
             batter_arr.append({
                 "id": batter.id,
-                "name": batter.new_video_selector_display()
+                "name": batter.name_and_number()
             })
     return jsonify({
         "status": "success",
