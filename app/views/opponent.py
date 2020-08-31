@@ -31,7 +31,7 @@ from flask_login import login_required
 
 from werkzeug.urls import url_parse
 
-from app.stats.stats import stats_opponent_batters_stat_lines
+from app.stats.hitting_stats import stats_opponent_batters_stat_lines
 
 
 opponent = Blueprint("opponent", __name__)

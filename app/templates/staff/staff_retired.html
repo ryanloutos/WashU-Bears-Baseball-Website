@@ -1,31 +1,35 @@
 {% extends "base.html" %}
 
 {% block styles %}
-    {{ super() }}
-    <script src="{{ url_for('static', filename='js/sortable_table.js') }}"></script>
+{{ super() }}
+<script src="{{ url_for('static', filename='js/sortable_table.js') }}"></script>
 {% endblock %}
 
 {% block app_content %}
-    {% include "staff/staff_sidenav.html" %}
-    <div class="main">
-        {% include "staff/staff_title.html" %}
-        <div class="col-xs-12 col-md-12">
-            <h2 style="text-align: center;">Inactive Pitchers</h2>
-            <table style="width: 40%; margin-left: 30%">
-                <tr class="table-headers">
-                    <th style="height: 30px; width: 50%">Name</th>
-                    <th style="height: 30px; width: 25%">Throws</th>
-                    <th style="height: 30px; width: 25%">Year</th>
-                </tr>
-                {% for p in retired_pitchers %}
-                    <tr>
-                        <td><a style="color: #bd231f; height: 30px; width: 50%" href="{{ url_for('pitcher.pitcher_home', id=p.id) }}">{{ p }}</a></td>
-                        <td style="height: 30px; width: 25%">{{ p.throws }}</td>
-                        <td style="height: 30px; width: 25%">{{ p.grad_year }}</td>
-                    </tr>
-                {% endfor %}
-            </table>
-        </div>
+{% include "staff/staff_sidenav.html" %}
+<div class="main">
+    {% include "staff/staff_title.html" %}
+    <div class="col-xs-12 col-md-12">
+        <h2 style="text-align: center;">Inactive Pitchers</h2>
+        <table class="table">
+            <tr class="table-headers">
+                <th style="height: 30px; width: 50%; text-align: left">Name</th>
+                <th style="height: 30px; width: 25%">Throws</th>
+                <th style="height: 30px; width: 25%">Year</th>
+            </tr>
+            {% for p in retired_pitchers %}
+            <tr>
+                <td style="text-align: left">
+                    <a href="{{ url_for('pitcher.pitcher_home', id=p.id) }}">
+                        {{ p }}
+                    </a>
+                </td>
+                <td>{{ p.throws }}</td>
+                <td>{{ p.grad_year }}</td>
+            </tr>
+            {% endfor %}
+        </table>
     </div>
+</div>
 
 {% endblock %}

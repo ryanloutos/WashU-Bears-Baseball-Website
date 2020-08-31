@@ -2,8 +2,15 @@ from flask import Blueprint
 from flask import render_template
 from flask_login import login_required
 from app import db
-from app.models import User, Outing, Pitch, Season, Pitcher
-from app.stats.stats import staffSeasonStats, staffSeasonGoals
+
+from app.models import User
+from app.models import Pitch
+from app.models import Outing
+from app.models import Season
+from app.models import Pitcher
+
+from app.stats.pitching_stats import staffSeasonGoals
+from app.stats.pitching_stats import staffSeasonStats
 
 from datetime import date
 
@@ -15,7 +22,7 @@ staff = Blueprint('staff', __name__)
 @login_required
 def staff_home():
     pitchers = Pitcher.query.filter(Pitcher.retired != 1).filter(Pitcher.opponent_id == 1).order_by(Pitcher.lastname).all()
-    return render_template (
+    return render_template(
         "staff/home/staff_home.html",
         title="Bears Pitching",
         pitchers=pitchers

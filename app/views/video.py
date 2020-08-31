@@ -1,89 +1,40 @@
 from flask import Blueprint
-from flask import render_template, flash, redirect, url_for, request
-from flask_login import login_user, logout_user, current_user, login_required
-from werkzeug.urls import url_parse
+from flask import render_template, flash, redirect, url_for
+from flask import jsonify
+from flask_login import login_required
+from flask_api import status
 from app import db
-from app.forms import LoginForm, RegistrationForm, OutingForm, PitchForm
-from app.forms import NewOutingFromCSV
-from app.forms import OutingPitchForm, NewOutingFromCSVPitches, EditUserForm
-from app.forms import ChangePasswordForm, EditBatterForm, EditOpponentForm
-from app.forms import NewBatterForm, NewGameForm, PitcherNewVideoForm, BatterNewVideoForm
-from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat, Game, Video
-from app.stats.stats import calcPitchPercentages, pitchUsageByCount, calcAverageVelo
-from app.stats.stats import calcPitchStrikePercentage, calcPitchWhiffRate
-from app.stats.stats import createPitchPercentagePieChart, velocityOverTimeLineChart
-from app.stats.stats import pitchStrikePercentageBarChart, avgPitchVeloPitcher
-from app.stats.stats import pitchUsageByCountLineCharts, pitchStrikePercentageSeason
-from app.stats.stats import pitchUsageSeason, seasonStatLine, staffBasicStats
-from app.stats.stats import staffPitchStrikePercentage
-from app.stats.stats import outingPitchStatistics, outingTimeToPlate, veloOverTime
-
-# Handle CSV uploads
-import csv
-import os
-# for file naming duplication problem
-import random
+from app.forms import PitcherNewVideoForm, BatterNewVideoForm
+from app.forms import PitcherEditVideoForm, BatterEditVideoForm
+from app.models import Video, Season, Batter, Pitcher, Opponent
+from flask_login import current_user
 
 video = Blueprint("video", __name__)
 
+
 # ***************-NEW VIDEO PITCHER-*************** #
-@video.route('/new_video_pitcher', methods=['GET', 'POST'])
+@video.route("/new_video_pitcher", methods=["GET", "POST"])
 @login_required
 def new_video_pitcher():
+    if not current_user.admin:
+        flash("Admin feature only")
+        return redirect(url_for('main.index'))
+
     form = PitcherNewVideoForm()
-
-    current_season = Season.query.filter_by(current_season=1).first()
-
     if form.validate_on_submit():
 
-        if form.outing.data is None:
+        # check to make sure an outing was selected (it is optional)
+        if not form.outing.data:
             outing_id = ""
         else:
             outing_id = form.outing.data.id
-
-        video = Video(title=form.title.data,
-                      date=form.date.data,
-                      season_id=form.season.data.id,
-                      outing_id=outing_id,
-                      pitcher_id=form.pitcher.data.id,
-                      link=form.link.data)
-
-        db.session.add(video)
-        db.session.commit()
-
-        flash("Video Posted!")
-        return redirect(url_for("main.index")) 
-    
-    js = render_template("video/new_video_pitcher.js", current_season=current_season)
-
-    return render_template(
-        "video/new_video_pitcher.html",
-        title="Post Video",
-        form=form,
-        current_season=current_season,
-        js=js
-    )
-
-# ***************-NEW VIDEO BATTER-*************** #
-@video.route('/new_video_batter', methods=['GET', 'POST'])
-@login_required
-def new_video_batter():
-    form = BatterNewVideoForm()
-
-    current_season = Season.query.filter_by(current_season=1).first()
-
-    batters = []
-    for b in Batter.query.filter_by(opponent_id=1).filter_by(retired=0).all():
-        batters.append((str(b.id), f"{b.firstname} {b.lastname}"))
-    form.batter.choices = batters
-
-    if form.validate_on_submit():
 
         video = Video(
             title=form.title.data,
             date=form.date.data,
             season_id=form.season.data.id,
-            batter_id=form.batter.data,
+            outing_id=outing_id,
+            pitcher_id=form.pitcher.data.id,
             link=form.link.data
         )
 
@@ -91,14 +42,201 @@ def new_video_batter():
         db.session.commit()
 
         flash("Video Posted!")
-        return redirect(url_for("main.index")) 
-    
-    js = render_template("video/new_video_batter.js", current_season=current_season)
+        return redirect(url_for(
+            "pitcher.pitcher_home",
+            id=form.pitcher.data.id)
+        )
+
+    return render_template(
+        "video/new_video_pitcher.html",
+        title="New Video Pitcher",
+        form=form
+    )
+
+
+# ***************-NEW VIDEO BATTER-*************** #
+@video.route("/new_video_batter", methods=["GET", "POST"])
+@login_required
+def new_video_batter():
+    if not current_user.admin:
+        flash("Admin feature only")
+        return redirect(url_for('main.index'))
+
+    form = BatterNewVideoForm()
+    if form.validate_on_submit():
+
+        video = Video(
+            title=form.title.data,
+            date=form.date.data,
+            season_id=form.season.data.id,
+            batter_id=form.batter.data.id,
+            link=form.link.data
+        )
+
+        db.session.add(video)
+        db.session.commit()
+
+        flash("Video Posted!")
+        return redirect(url_for(
+            "hitter.hitter_home",
+            id=form.batter.data.id)
+        )
 
     return render_template(
         "video/new_video_batter.html",
-        title="Post Video",
-        form=form,
-        current_season=current_season,
-        js=js
+        title="New Video Batter",
+        form=form
     )
+
+# ***************-EDIT VIDEO PITCHER-*************** #
+@video.route("/edit_video_pitcher/<id>", methods=["GET", "POST"])
+@login_required
+def edit_video_pitcher(id):
+    if not current_user.admin:
+        flash("Admin feature only")
+        return redirect(url_for('main.index'))
+
+    video = Video.query.filter_by(id=id).first()
+    if not video:
+        flash("Video doesn't exist")
+        return redirect(url_for('main.index'))
+
+    form = PitcherEditVideoForm()
+    if form.validate_on_submit():
+
+        # check to make sure an outing was selected (it is optional)
+        if not form.outing.data:
+            outing_id = ""
+        else:
+            outing_id = form.outing.data.id
+
+        video.title = form.title.data
+        video.date = form.date.data
+        video.season_id = form.season.data.id
+        video.outing_id = outing_id
+        video.pitcher_id = form.pitcher.data.id
+        video.link = form.link.data
+
+        db.session.commit()
+
+        flash("Video saved!")
+        return redirect(url_for(
+            "pitcher.pitcher_videos",
+            id=form.pitcher.data.id)
+        )
+
+    pitcher = Pitcher.query.filter_by(id=video.pitcher_id).first()
+    seasons = Season.query.all()
+    opponents = Opponent.query.order_by(Opponent.name).all()
+    return render_template(
+        "video/edit_video_pitcher.html",
+        title="Edit Video Pitcher",
+        form=form,
+        video=video,
+        pitcher=pitcher,
+        opponents=opponents,
+        seasons=seasons
+    )
+
+# ***************-EDIT VIDEO BATTER-*************** #
+@video.route("/edit_video_batter/<id>", methods=["GET", "POST"])
+@login_required
+def edit_video_batter(id):
+    if not current_user.admin:
+        flash("Admin feature only")
+        return redirect(url_for('main.index'))
+
+    video = Video.query.filter_by(id=id).first()
+    if not video:
+        flash("Video doesn't exist")
+        return redirect(url_for('main.index'))
+
+    form = BatterEditVideoForm()
+    if form.validate_on_submit():
+        video.title = form.title.data
+        video.date = form.date.data
+        video.season_id = form.season.data.id
+        video.batter_id = form.batter.data.id
+        video.link = form.link.data
+
+        db.session.commit()
+
+        flash("Video saved!")
+        return redirect(url_for(
+            "batter.batter_videos",
+            id=form.batter.data.id)
+        )
+
+    batter = Batter.query.filter_by(id=video.batter_id).first()
+    seasons = Season.query.all()
+    opponents = Opponent.query.order_by(Opponent.name).all()
+    return render_template(
+        "video/edit_video_batter.html",
+        title="Edit Video Batter",
+        form=form,
+        video=video,
+        opponents=opponents,
+        seasons=seasons,
+        batter=batter
+    )
+
+# ***************-DELETE VIDEO-*************** #
+@video.route("/delete_video/<id>", methods=["GET", "POST"])
+@login_required
+def delete_video(id):
+    if not current_user.admin:
+        flash("Admin feature only")
+        return redirect(url_for('main.index'))
+
+    video = Video.query.filter_by(id=id).first()
+    if not video:
+        flash("Video does not exist")
+        return redirect(url_for('main.index'))
+
+    db.session.delete(video)
+    db.session.commit()
+
+    flash("Video deleted!")
+    return redirect(url_for('main.index'))
+
+
+# API endpoint to retrieve all the video links for a pitcher in a season
+@video.route("/videos/pitcher/<pitcher_id>/season/<season_id>", methods=['GET'])
+@login_required
+def videos_in_season_pitcher(season_id, pitcher_id):
+    season = Season.query.filter_by(id=season_id).first()
+    pitcher = Pitcher.query.filter_by(id=pitcher_id).first()
+    if not season:
+        return "season_id invalid", status.HTTP_400_BAD_REQUEST
+    if not pitcher:
+        return "pitcher_id invalid", status.HTTP_400_BAD_REQUEST
+
+    videos = Video.query.filter_by(season_id=season.id).filter_by(
+        pitcher_id=pitcher.id).order_by(Video.date).all()
+
+    return_videos = []
+    for video in videos:
+        return_videos.append(video.to_dict())
+
+    return jsonify(return_videos), status.HTTP_200_OK
+
+# API endpoint to retreive all videos for a batter for a season
+@video.route("/videos/batter/<batter_id>/season/<season_id>")
+@login_required
+def videos_in_season_batter(batter_id, season_id):
+
+    season = Season.query.filter_by(id=season_id).first()
+    batter = Batter.query.filter_by(id=batter_id).first()
+    if not season:
+        return "season_id invalid", status.HTTP_400_BAD_REQUEST
+    if not batter:
+        return "batter_id invalid", status.HTTP_400_BAD_REQUEST
+
+    videos = Video.query.filter_by(season_id=season.id).filter_by(
+        batter_id=batter.id).order_by(Video.date).all()
+
+    return_videos = []
+    for video in videos:
+        return_videos.append(video.to_dict())
+
+    return jsonify(return_videos), status.HTTP_200_OK

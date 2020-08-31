@@ -9,6 +9,8 @@ from app.models import Outing, Pitch, Season, AtBat, Game, Video
 season = Blueprint("season", __name__)
 
 # ***************-SEASON HOMEPAGE-*************** #
+
+
 @season.route("/season/<id>")
 @login_required
 def season_home(id):
@@ -27,6 +29,7 @@ def season_home(id):
         season=season
     )
 
+
 # ***************-NEW SEASON-*************** #
 @season.route("/new_season", methods=["GET", "POST"])
 @login_required
@@ -39,6 +42,13 @@ def new_season():
     # if the form is validated, add season to db
     form = NewSeasonForm()
     if form.validate_on_submit():
+
+        # if this season become the current season
+        if form.current_season.data:
+            seasons = Season.query.all()
+            for s in seasons:
+                s.current_season = False
+
         season = Season(
             semester=form.semester.data,
             year=form.year.data,
@@ -48,13 +58,14 @@ def new_season():
         db.session.commit()
 
         flash("New season created!")
-        return redirect(url_for("season_home", id=season.id))
+        return redirect(url_for("season.season_home", id=season.id))
 
     return render_template(
         "season/new_season.html",
         title="New Season",
         form=form
     )
+
 
 # ***************-EDIT SEASON-*************** #
 @season.route("/edit_season/<id>", methods=["GET", "POST"])
@@ -97,6 +108,7 @@ def edit_season(id):
         form=form
     )
 
+
 # ***************-DELETE SEASON-*************** #
 @season.route("/delete_season/<id>/<everything>", methods=["GET", "POST"])
 @login_required
@@ -107,17 +119,17 @@ def delete_season(id, everything):
         return redirect(url_for("main.index"))
 
     season_to_delete = Season.query.filter_by(id=id).first_or_404()
-    
+
     # means that all videos, outings, and games will be deleted
     if everything == "yes":
         videos = Video.query.filter_by(season_id=id).all()
         for video in videos:
             db.session.delete(video)
-        
+
         games = Game.query.filter_by(season_id=id).all()
         for game in games:
             db.session.delete(game)
-        
+
         outings = Outing.query.filter_by(season_id=id).all()
         for outing in outings:
             for at_bat in outing.at_bats:
@@ -134,20 +146,20 @@ def delete_season(id, everything):
         videos = Video.query.filter_by(season_id=id).all()
         for video in videos:
             video.season_id = None
-        
+
         games = Game.query.filter_by(season_id=id).all()
         for game in games:
             game.season_id = None
-        
+
         outings = Outing.query.filter_by(season_id=id).all()
         for outing in outings:
             outing.season_id = None
 
         db.session.delete(season_to_delete)
         db.session.commit()
-    
+
     # if something else is sent through the url
-    else: 
+    else:
         return redirect(url_for("season.edit_season", id=id))
 
     return redirect(url_for("main.index"))

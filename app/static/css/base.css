@@ -79,7 +79,7 @@
     background-color: white;
 }
 th, td {
-    text-align: center;
+    text-align: left;
 }
 .table-headers {
     background-color: #bd2e1f;

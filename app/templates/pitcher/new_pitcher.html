@@ -1,75 +1,76 @@
 {% extends "base.html" %}
 
 {% block styles %}
-    {{ super() }}
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/forms.css') }}">
-    <script>
-        var defaultTeamId = "1";
-        $(document).ready(function() {
-            $("#opponent").val(defaultTeamId);
-        });
-    </script>
+{{ super() }}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/forms.css') }}">
+<script>
+    var defaultTeamId = "1";
+    $(document).ready(function () {
+        $("#opponent").val(defaultTeamId);
+    });
+</script>
 {% endblock %}
 
 {% block app_content %}
-    <div class="no-sidenav">
-        <div class="form-container">
-            <h1 class="form-title">New Pitcher</h1>
-            <form method="post" novalidate>
-                {{ form.hidden_tag() }} {# Preventing CSRF attacks #}
-                <p>
-                    {{ form.opponent.label }}<br>
-                    {{ form.opponent() }}
-                    {% for error in form.opponent.errors %}
-                        <span style="color: red;">[{{ error }}]</span>
-                    {% endfor %}
-                </p>
-                <p>
-                    {{ form.firstname.label }}<br>
-                    {{ form.firstname(size=32) }}
-                    {% for error in form.firstname.errors %}
-                        <span style="color: red;">[{{ error }}]</span>
-                    {% endfor %}
-                </p>
-                <p>
-                    {{ form.lastname.label }}<br>
-                    {{ form.lastname(size=32) }}
-                    {% for error in form.lastname.errors %}
-                        <span style="color: red;">[{{ error }}]</span>
-                    {% endfor %}
-                </p>
-                <p>
-                    {{ form.number.label }}<br>
-                    {{ form.number(size=32, type='number') }}
-                    {% for error in form.number.errors %}
-                        <span style="color: red;">[{{ error }}]</span>
-                    {% endfor %}
-                </p>
-                <p>
-                    {{ form.throws.label }}<br>
-                    {{ form.throws() }}
-                    {% for error in form.throws.errors %}
-                        <span style="color: red;">[{{ error }}]</span>
-                    {% endfor %}
-                </p>
-                <p>
-                    {{ form.grad_year.label }}<br>
-                    {{ form.grad_year(size=32, type="number") }}
-                    {% for error in form.grad_year.errors %}
-                        <span class="errors">[{{ error }}]</span>
-                    {% endfor %}
-                </p>
-                <p>
-                    {{ form.retired.label }}<br>
-                    {{ form.retired() }}
-                    {% for error in form.retired.errors %}
-                        <span style="color: red;">[{{ error }}]</span>
-                    {% endfor %}
-                </p>
-                <p>
-                    {{ form.submit() }}
-                </p>
-            </form>
-        </div>
+<div class="no-sidenav">
+    <div class="form-container">
+        <h1 class="form-title">New Pitcher</h1>
+        <form method="post" novalidate>
+            {{ form.hidden_tag() }} {# Preventing CSRF attacks #}
+            <p>
+                {{ form.opponent.label }}<br>
+                {{ form.opponent(class="form-control") }}
+                {% for error in form.opponent.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.firstname.label }}<br>
+                {{ form.firstname(size=32, class="form-control") }}
+                {% for error in form.firstname.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.lastname.label }}<br>
+                {{ form.lastname(size=32, class="form-control") }}
+                {% for error in form.lastname.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.number.label }}<br>
+                {{ form.number(size=32, type='number', class="form-control") }}
+                {% for error in form.number.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.throws.label }}<br>
+                {{ form.throws(class="form-control") }}
+                {% for error in form.throws.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.grad_year.label }}<br>
+                {{ form.grad_year(size=32, type="number", class="form-control") }}
+                {% for error in form.grad_year.errors %}
+                <span class="errors">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.retired.label }}<br>
+                <input id="retired" name="retired" type="checkbox" value="y" data-toggle="toggle" data-on="Yes"
+                    data-off="No"><br>
+                {% for error in form.retired.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.submit(class="btn btn-primary btn-lg btn-block") }}
+            </p>
+        </form>
     </div>
+</div>
 {% endblock %}

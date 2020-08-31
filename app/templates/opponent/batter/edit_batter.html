@@ -1,81 +1,93 @@
 {% extends "base.html" %}
 
 {% block styles %}
-    {{ super() }}
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/forms.css') }}">
+{{ super() }}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/forms.css') }}">
 {% endblock %}
 
 {% block app_content %}
-    <div class="no-sidenav">
-        <div class="form-container">
-            <h1 class="form-title">
-                Edit "{{ batter.name() }}"
-            </h1>
+<div class="no-sidenav">
+    <div class="form-container">
+        <h1 class="form-title">
+            Edit "{{ batter.name() }}"
+        </h1>
+        <div style="padding-left: 20px">
             <i class="opponent-title">Team: {{ batter.opponent }}</i>
-            <form method="post" novalidate>
-                {{ form.hidden_tag() }} {# Preventing CSRF attacks #}
-                <p>
-                    {{ form.firstname.label }}<br>
-                    {{ form.firstname(size=32, value=batter.firstname) }}
-                    {% for error in form.firstname.errors %}
-                        <span style="color: red;">[{{ error }}]</span>
-                    {% endfor %}
-                </p>
-                <p>
-                    {{ form.lastname.label }}<br>
-                    {{ form.lastname(size=32, value=batter.lastname) }}
-                    {% for error in form.lastname.errors %}
-                        <span style="color: red;">[{{ error }}]</span>
-                    {% endfor %}
-                </p>
-                <p>
-                    {{ form.initials.label }}<br>
-                    {{ form.initials(size=24, value=batter.initials) }}
-                    {% for error in form.initials.errors %}
-                        <span style="color: red;">[{{ error }}]</span>
-                    {% endfor %}
-                </p>
-                <p>
-                    {{ form.number.label }}<br>
-                    {{ form.number(type='number', value=batter.number) }}
-                    {% for error in form.number.errors %}
-                        <span style="color: red;">[{{ error }}]</span>
-                    {% endfor %}
-                </p>
-                <p>
-                    {{ form.bats.label }}<br>
-                    <select id="bats" name="bats">
-                        <option value="R" {% if batter.bats == 'R' %} selected='selected' {% endif %}>R</option>
-                        <option value="L" {% if batter.bats == 'L' %} selected='selected' {% endif %}>L</option>
-                        <option value="S" {% if batter.bats == 'S' %} selected='selected' {% endif %}>S</option>
-                    </select>
-                    {% for error in form.bats.errors %}
-                        <span style="color: red;">[{{ error }}]</span>
-                    {% endfor %}
-                </p>
-                <p>
-                    {{ form.grad_year.label }}<br>
-                    {{ form.grad_year(size=32, value=batter.grad_year) }}
-                    {% for error in form.grad_year.errors %}
-                        <span style="color: red;">[{{ error }}]</span>
-                    {% endfor %}
-                </p>
-                <p>
-                    {{ form.retired.label }}<br>
-                    {% if batter.retired %}
-                        {{ form.retired(checked='checked') }}
-                    {% else %}
-                        {{ form.retired() }}
-                    {% endif %}
-                    {% for error in form.retired.errors %}
-                        <span style="color: red;">[{{ error }}]</span>
-                    {% endfor %}
-                </p>
-                <p>
-                    {{ form.submit() }}
-                </p>
-            </form>
+        </div><br>
+        <form method="post" novalidate>
+            {{ form.hidden_tag() }} {# Preventing CSRF attacks #}
+            <p>
+                {{ form.firstname.label }}<br>
+                {{ form.firstname(size=32, value=batter.firstname, class="form-control") }}
+                {% for error in form.firstname.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.lastname.label }}<br>
+                {{ form.lastname(size=32, value=batter.lastname, class="form-control") }}
+                {% for error in form.lastname.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.initials.label }}<br>
+                {{ form.initials(size=24, value=batter.initials, class="form-control") }}
+                {% for error in form.initials.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.number.label }}<br>
+                {{ form.number(type='number', value=batter.number, class="form-control") }}
+                {% for error in form.number.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.bats.label }}<br>
+                <select id="bats" name="bats" class="form-control">
+                    <option value="R" {% if batter.bats == 'R' %} selected='selected' {% endif %}>R</option>
+                    <option value="L" {% if batter.bats == 'L' %} selected='selected' {% endif %}>L</option>
+                    <option value="S" {% if batter.bats == 'S' %} selected='selected' {% endif %}>S</option>
+                </select>
+                {% for error in form.bats.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.grad_year.label }}<br>
+                {{ form.grad_year(size=32, value=batter.grad_year, class="form-control") }}
+                {% for error in form.grad_year.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.retired.label }}<br>
+                {% if batter.retired %}
+                <input checked id="retired" name="retired" type="checkbox" value="y" data-toggle="toggle" data-on="Yes"
+                    data-off="No"><br>
+                {% else %}
+                <input id="retired" name="retired" type="checkbox" value="y" data-toggle="toggle" data-on="Yes"
+                    data-off="No"><br>
+                {% endif %}
+                {% for error in form.retired.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.submit(class="btn btn-primary btn-block") }}
+            </p>
+        </form>
+        <!-- <p style="text-align: center">
+            -OR-
+            <input type="button" class="btn btn-danger btn-block" id="delete-batter" onclick="deleteBatter()"
+                value="Delete Batter">
             <button><a href="{{ url_for('batter.delete_batter', id=batter.id) }}">Delete Batter</a></button>
-        </div>
+        </p> -->
     </div>
+</div>
+<script>
+
+</script>
 {% endblock %}

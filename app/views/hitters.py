@@ -28,11 +28,13 @@ from app.models import Season
 from app.models import Batter
 from app.models import Opponent
 
-from app.stats.stats import batter_summary_game_stats
-from app.stats.stats import batter_ball_in_play_stats
-from app.stats.stats import stats_opponent_batters_stat_lines
-from app.stats.stats import batterSwingWhiffRatebyPitchbyCount
-from app.stats.stats import batterSwingWhiffRatebyPitchbyCount2
+from app.stats.util import zero_division_handler
+
+from app.stats.hitting_stats import batter_summary_game_stats
+from app.stats.hitting_stats import batter_ball_in_play_stats
+from app.stats.hitting_stats import stats_opponent_batters_stat_lines
+from app.stats.hitting_stats import batterSwingWhiffRatebyPitchbyCount
+from app.stats.hitting_stats import batterSwingWhiffRatebyPitchbyCount2
 
 from app.stats.scouting_stats import zone_division_stats_batter
 from app.stats.scouting_stats import batter_dynamic_zone_scouting
@@ -69,6 +71,8 @@ def hitters_home():
 @hitters.route("/hitters/games", methods=["GET", "POST"])
 @login_required
 def hitters_games():
+    '''This is a depreciated route. It is not included in the nav, 
+    and has no real value in the site.'''
 
     opponent = Opponent.query.filter_by(id=1).first()
     if not opponent:
@@ -114,7 +118,7 @@ def hitters_stats():
 @hitters.route("/hitters/inactive_roster")
 @login_required
 def hitters_inactive_roster():
-
+    '''Loads the inactive roster of WashU hitters. Ex players and such'''
     # get opponent object
     opponent = Opponent.query.filter_by(id=1).first()
 
@@ -132,7 +136,8 @@ def hitters_inactive_roster():
 @hitters.route('/hitters/edit', methods=['GET', 'POST'])
 @login_required
 def hitters_edit():
-
+    '''This is a depreciated route. It should not ever be used. If washU
+    is to be edited, it needs to be as an opponent.'''
     # if user is not an admin, they can't create a new opponent
     if not current_user.admin:
         flash('You are not an admin and cannot edit an opponent')
@@ -436,7 +441,7 @@ def hitter_spray_chart(batter_id):
 
     # Change density vals to percentages
     for i in range(len(density_vals)):
-        density_vals[i] = density_vals[i] / d_total
+        density_vals[i] = zero_division_handler(density_vals[i], d_total)
 
     return render_template(
         'hitters/hitter/hitter_spray_chart.html',

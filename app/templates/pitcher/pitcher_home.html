@@ -1,103 +1,105 @@
 {% extends "base.html" %}
 
 {% block styles %}
-    {{ super() }}
-    <script src="{{ url_for('static', filename='js/chart.js') }}"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            var ctx = document.getElementById('velo-over-career').getContext('2d');
-            //ctx.canvas.parentNode.style.width = '1000px';
-            var chart = new Chart(ctx, {
-                // The type of chart we want to create
-                type: 'line',
+{{ super() }}
+<script src="{{ url_for('static', filename='js/chart.js') }}"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var ctx = document.getElementById('velo-over-career').getContext('2d');
+        //ctx.canvas.parentNode.style.width = '1000px';
+        var chart = new Chart(ctx, {
+            // The type of chart we want to create
+            type: 'line',
 
-                // The data for our dataset
-                data: {
-                    labels: [
-                        {% for o in outings %}
+            // The data for our dataset
+            data: {
+                labels: [
+                    {% for o in outings %}
                             "{{o.getDate()}}",
                         {% endfor %}
                     ],
-                    datasets: [{
-                        label: 'FB',
-                        borderColor: 'rgb(230, 25, 75)',
-                        backgroundColor: 'rgba(0, 0, 0, 0)',
-                        pointRadius: 2,
-                        lineTension: 0,
-                        data: [
-                            {% for v in velo_over_career['FB'] %}
-                                {{v}},
-                            {% endfor %}
-                        ]
-                    },{
-                        label: 'SM',
-                        borderColor: 'rgb(255, 128, 0)',
-                        backgroundColor: 'rgba(0, 0, 0, 0)',
-                        pointRadius: 2,
-                        lineTension: 0,
-                        data: [
-                            {% for v in velo_over_career['SM'] %}
-                                {{v}},
-                            {% endfor %}
+        datasets: [{
+            label: 'FB',
+            borderColor: 'rgb(230, 25, 75)',
+            backgroundColor: 'rgba(0, 0, 0, 0)',
+            pointRadius: 2,
+            lineTension: 0,
+            data: [
+                {% for v in velo_over_career['FB'] %}
+                                {{ v }},
+        {% endfor %}
+    ]
+                    }, {
+            label: 'SM',
+            borderColor: 'rgb(255, 128, 0)',
+            backgroundColor: 'rgba(0, 0, 0, 0)',
+            pointRadius: 2,
+            lineTension: 0,
+            data: [
+                {% for v in velo_over_career['SM'] %}
+                                {{ v }},
+        {% endfor %}
                         ] 
                     }
                     ]
                 },
 
-                // Configuration options go here
-                options: {
-                    spanGaps: true,
-                    scales: {
-                        xAxes: [{
-                            ticks: {
-                                autoSkip: false,
-                                maxRotation: 90,
-                                minRotation: 45
-                            }
-                        }]
-                    }
+        // Configuration options go here
+        options: {
+        spanGaps: true,
+        scales: {
+            xAxes: [{
+                ticks: {
+                    autoSkip: false,
+                    maxRotation: 90,
+                    minRotation: 45
                 }
+            }]
+        }
+    }
             });
         });
-    </script>
+</script>
 {% endblock %}
 
 {% block app_content %}
-    {% include "pitcher/pitcher_sidenav.html" %}
-    <div class="main">
-        {% include "pitcher/pitcher_title.html" %}
-        <div class="col-xs-12 col-xs-4">
-            {% if pitcher.retired %}
-                STATUS: INACTIVE
-            {% else %}
-                STATUS: ACTIVE
-            {% endif %} <br>
-            Throws: {{ pitcher.throws }} <br>
-            Grad Year: {{ pitcher.grad_year }} <br>
-            Notes: {{ pitcher.notes }}
-        </div>
-        <div class="col-xs-12 col-xs-4" id="recent-outings" style="text-align: center;">
-            <h4>Recent Outings</h4>
-            <table class="table" id="recent-outings" style="width: 70%; margin-left: 15%">
-                <tr class="table-headers">
-                    <th>Date</th>
-                    <th>Opponent</th>
-                </tr>
-                {% for o in recent_outings %}
-                    <tr>
-                        <td>{{ o.date.month }}/{{ o.date.day }}/{{ o.date.year }}</td>
-                        <td><a style="color:#bd231f" href="{{ url_for('outing.outing_home', id=o.id) }}">{{ o.opponent }}</a></td>
-                    </tr>
-                {% endfor %}
-            </table>
-        </div>
-        <div class="col-xs-12 col-xs-4" style="text-align: right;">
-            <img class="pitcher-picture" alt="Picture" src="{{ url_for('static', filename=file_loc) }}" style="border: 5px solid #bd2e1f; max-width: 167px;">
-        </div>
-        <div class="col-xs-12 col-md-12">
-            <h4>Velo Over Career</h4>
-            <canvas id="velo-over-career"></canvas>
-        </div>
-        <br>
+{% include "pitcher/pitcher_sidenav.html" %}
+<div class="main">
+    {% include "pitcher/pitcher_title.html" %}
+    <!-- <div class="col-xs-12 col-xs-4">
+        {% if pitcher.retired %}
+        STATUS: INACTIVE
+        {% else %}
+        STATUS: ACTIVE
+        {% endif %} <br>
+        Throws: {{ pitcher.throws }} <br>
+        Grad Year: {{ pitcher.grad_year }} <br>
+        Notes: {{ pitcher.notes }}
+    </div> -->
+    <div class="col-xs-12 col-xs-6" id="recent-outings">
+        <h4>Recent Outings</h4>
+        <table class="table" id="recent-outings" style="width: 70%;">
+            <tr class="table-headers">
+                <th style="text-align: left">Date</th>
+                <th style="text-align: left">Opponent</th>
+            </tr>
+            {% for o in recent_outings %}
+            <tr>
+                <td style="text-align: left">{{ o.date.month }}/{{ o.date.day }}/{{ o.date.year }}</td>
+                <td style="text-align: left"><a href="{{ url_for('outing.outing_home', id=o.id) }}">{{ o.opponent }}</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
     </div>
+    <div class="col-xs-12 col-xs-6" style="text-align: right;">
+        <img class="pitcher-picture" alt="Picture" src="{{ url_for('static', filename=file_loc) }}"
+            style="border: 5px solid #bd2e1f; max-width: 167px;">
+    </div>
+    <div class="col-xs-12 col-md-12">
+        <h4>Velo Over Career</h4>
+        <canvas id="velo-over-career"></canvas>
+    </div>
+    <br>
+</div>
 {% endblock %}

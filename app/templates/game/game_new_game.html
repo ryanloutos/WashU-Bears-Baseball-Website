@@ -2,36 +2,39 @@
 
 {% block styles %}
 {{ super() }}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/forms.css') }}">
 {% endblock %}
 
 {% block app_content %}
-<div class="main">
-    <h1>Create a new Game</h1>
-    <form method="POST" enctype="multipart/form-data">
-        {{ form.hidden_tag() }}
-        <p>
-            {{ form.date.label }}<br>
-            {{ form.date() }}<br>
-            {% for error in form.date.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.opponent.label }}<br>
-            {{ form.opponent() }}<br>
-            {% for error in form.opponent.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.season.label }}<br>
-            {{ form.season(id="season_selector") }}<br>
-            {% for error in form.season.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <br>
-        <p>{{ form.submit() }}</p>
-    </form>
+<div class="no-sidenav">
+    <div class="form-container">
+        <h1 class="form-title">New Game</h1>
+        <form method="POST" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+            <p>
+                {{ form.date.label }}<br>
+                {{ form.date(class="form-control") }}<br>
+                {% for error in form.date.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.opponent.label }}<br>
+                {{ form.opponent(class="form-control") }}<br>
+                {% for error in form.opponent.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.season.label }}<br>
+                {{ form.season(id="season_selector", class="form-control") }}<br>
+                {% for error in form.season.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <br>
+            <p>{{ form.submit(class="btn btn-primary btn-block") }}</p>
+        </form>
+    </div>
 </div>
 {% endblock %}
