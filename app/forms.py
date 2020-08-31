@@ -25,9 +25,8 @@ def getOpponents():
 def getSeasons():
     return Season.query.order_by(Season.year.desc()).order_by(Season.semester.desc()).all()
 
+
 # ***************-MAIN-*************** #
-
-
 class LoginForm(FlaskForm):
     username = StringField("Username", validators=[DataRequired()])
     password = PasswordField("Password", validators=[DataRequired()])
@@ -262,6 +261,7 @@ class NewPitcherForm(FlaskForm):
     grad_year = IntegerField("Grad Year", validators=[DataRequired()])
     opponent = QuerySelectField("Team", query_factory=getOpponents)
     retired = BooleanField("Retired?")
+    notes = StringField("Notes", validators=[Optional()])
     submit = SubmitField("Add Pitcher")
 
 
@@ -273,16 +273,16 @@ class EditPitcherForm(FlaskForm):
                          choices=[("R", "R"), ("L", "L")],
                          validators=[Optional()])
     grad_year = IntegerField("Grad Year", validators=[Optional()])
-    opponent = SelectField("Team", validators=[Optional()])
+    opponent = QuerySelectField("Team", query_factory=getOpponents)
+    notes = StringField("Notes", validators=[Optional()])
     retired = BooleanField("Retired?")
     photo = FileField("Pitcher Photo",
                       validators=[FileAllowed(["jpg", "png"],
                                               "Use .jpg or .png only!")])
     submit = SubmitField("Save Changes")
 
+
 # ***************-GAME-*************** #
-
-
 class NewGameForm(FlaskForm):
     date = DateField('Date', validators=[Optional()], format='%Y-%m-%d')
     opponent = QuerySelectField(
