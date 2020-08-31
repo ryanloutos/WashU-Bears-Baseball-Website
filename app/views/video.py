@@ -1,13 +1,27 @@
-from flask import Blueprint
-from flask import render_template, flash, redirect, url_for
-from flask import jsonify
-from flask_login import login_required
-from flask_api import status
 from app import db
-from app.forms import PitcherNewVideoForm, BatterNewVideoForm
-from app.forms import PitcherEditVideoForm, BatterEditVideoForm
-from app.models import Video, Season, Batter, Pitcher, Opponent
+
+from flask import Blueprint
+from flask import render_template
+from flask import flash
+from flask import redirect
+from flask import url_for
+from flask import jsonify
+
+from flask_login import login_required
 from flask_login import current_user
+
+from flask_api import status
+
+from app.forms import PitcherNewVideoForm
+from app.forms import BatterNewVideoForm
+from app.forms import PitcherEditVideoForm
+from app.forms import BatterEditVideoForm
+
+from app.models import Video
+from app.models import Season
+from app.models import Batter
+from app.models import Pitcher
+from app.models import Opponent
 
 video = Blueprint("video", __name__)
 
@@ -125,9 +139,11 @@ def edit_video_pitcher(id):
             id=form.pitcher.data.id)
         )
 
+    # these are used to create the select inputs for the form with prev one already selected
     pitcher = Pitcher.query.filter_by(id=video.pitcher_id).first()
     seasons = Season.query.all()
     opponents = Opponent.query.order_by(Opponent.name).all()
+
     return render_template(
         "video/edit_video_pitcher.html",
         title="Edit Video Pitcher",
@@ -167,6 +183,7 @@ def edit_video_batter(id):
             id=form.batter.data.id)
         )
 
+    # these are used to create the select inputs for the form with prev one already selected
     batter = Batter.query.filter_by(id=video.batter_id).first()
     seasons = Season.query.all()
     opponents = Opponent.query.order_by(Opponent.name).all()
@@ -200,7 +217,9 @@ def delete_video(id):
     return redirect(url_for('main.index'))
 
 
-# API endpoint to retrieve all the video links for a pitcher in a season
+# ***************-API ENDPOINTS-*************** #
+
+# Used to get all the videos for a pitcher for a specific season
 @video.route("/videos/pitcher/<pitcher_id>/season/<season_id>", methods=['GET'])
 @login_required
 def videos_in_season_pitcher(season_id, pitcher_id):
@@ -220,11 +239,10 @@ def videos_in_season_pitcher(season_id, pitcher_id):
 
     return jsonify(return_videos), status.HTTP_200_OK
 
-# API endpoint to retreive all videos for a batter for a season
+# Used to retreive all videos for a batter for a specific season
 @video.route("/videos/batter/<batter_id>/season/<season_id>")
 @login_required
 def videos_in_season_batter(batter_id, season_id):
-
     season = Season.query.filter_by(id=season_id).first()
     batter = Batter.query.filter_by(id=batter_id).first()
     if not season:
