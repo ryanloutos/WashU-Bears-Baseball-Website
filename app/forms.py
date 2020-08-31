@@ -205,6 +205,24 @@ class PitcherNewVideoForm(FlaskForm):
     submit = SubmitField("Post Video")
 
 
+class PitcherEditVideoForm(FlaskForm):
+    opponent = QuerySelectField("Team",
+                                query_factory=getOpponents)
+    pitcher = QuerySelectField(query_factory=lambda: Pitcher.query,
+                               get_pk=lambda p: p.id,
+                               get_label=lambda p: p,
+                               validators=[DataRequired()])
+    title = StringField("Title", validators=[Optional()])
+    date = DateField("Date", validators=[DataRequired()], format="%Y-%m-%d")
+    season = QuerySelectField(query_factory=getSeasons)
+    outing = QuerySelectField(query_factory=lambda: Outing.query,
+                              get_pk=lambda o: o.id,
+                              get_label=lambda o: o,
+                              allow_blank=True)
+    link = StringField("Link", validators=[DataRequired()])
+    submit = SubmitField("Save Changes")
+
+
 class BatterNewVideoForm(FlaskForm):
     title = StringField("Title", validators=[Optional()])
     date = DateField("Date", validators=[DataRequired()], format="%Y-%m-%d")
@@ -216,6 +234,19 @@ class BatterNewVideoForm(FlaskForm):
                               validators=[DataRequired()])
     link = StringField("Link", validators=[DataRequired()])
     submit = SubmitField("Post Video")
+
+
+class BatterEditVideoForm(FlaskForm):
+    title = StringField("Title", validators=[Optional()])
+    date = DateField("Date", validators=[DataRequired()], format="%Y-%m-%d")
+    opponent = QuerySelectField("Team", query_factory=getOpponents)
+    season = QuerySelectField("Season", query_factory=getSeasons)
+    batter = QuerySelectField(query_factory=lambda: Batter.query,
+                              get_pk=lambda b: b.id,
+                              get_label=lambda b: b,
+                              validators=[DataRequired()])
+    link = StringField("Link", validators=[DataRequired()])
+    submit = SubmitField("Save Changes")
 
 
 # ***************-PITCHER-*************** #

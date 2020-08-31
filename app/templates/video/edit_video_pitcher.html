@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block styles %}
+{{ super() }}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/forms.css') }}">
+{% endblock %}
+
+{% block app_content %}
+<div class="no-sidenav">
+    <div class="form-container">
+        <h1 class="form-title">Edit Video Pitcher</h1>
+        <form method="post">
+            {{ form.hidden_tag() }}
+            <p>
+                {{ form.opponent.label }}<br>
+                <select class="form-control" id="opponent" name="opponent">
+                    {% for opponent in opponents %}
+                    {% if pitcher.opponent_id == opponent.id %}
+                    <option value="{{ opponent.id }}" selected>{{ opponent }}</option>
+                    {% else %}
+                    <option value="{{ opponent.id }}">{{ opponent }}</option>
+                    {% endif %}
+                    {% endfor %}
+                </select>
+            </p>
+            <p>
+                {{ form.pitcher.label }} <br>
+                {{ form.pitcher(class="form-control") }}
+            </p>
+            <p>
+                {{ form.title.label }} (Optional)<br>
+                {{ form.title(class="form-control", value=video.title) }}
+            </p>
+            <p>
+                {{ form.date.label }} <i>If using Safari, enter date as YYYY-MM-DD</i><br>
+                {{ form.date(class="datepicker form-control", value=video.date) }}
+            </p>
+            <p>
+                {{ form.season.label }}<br>
+                <select class="form-control" id="season" name="season">
+                    {% for s in seasons %}
+                    {% if video.season_id == s.id %}
+                    <option value="{{ s.id }}" selected>{{ s }}</option>
+                    {% else %}
+                    <option value="{{ s.id }}">{{ s }}</option>
+                    {% endif %}
+                    {% endfor %}
+                </select>
+            </p>
+            <p>
+                {{ form.outing.label }} (Optional)<br>
+                {{ form.outing(class="form-control") }}
+            </p>
+            <p>
+                {{ form.link.label }}<br>
+                {{ form.link(class="form-control is-invalid", value=video.link) }}
+            </p>
+            <p id="youtube-link-error" class="errors" style="display: none">
+                Please enter a valid YouTube link
+            </p>
+            <br>
+            <p id="submit-button">
+                {{ form.submit(class="btn btn-primary btn-lg btn-block") }}
+            </p>
+        </form>
+        <p style="text-align: center">
+            -OR-
+            <a href="/delete_video/{{video.id}}" as="button" class="btn btn-danger btn-lg btn-block"
+                onclick="return confirm('Are you sure you want to delete the video?')">Delete Video</a>
+        </p>
+    </div>
+</div>
+<script>
+    {% include 'video/edit_video_pitcher.js' %}
+</script>
+{% endblock %}
