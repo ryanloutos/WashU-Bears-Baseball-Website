@@ -45,6 +45,8 @@ class RegistrationForm(FlaskForm):
                                           EqualTo("password")])
     admin = BooleanField("Admin?", validators=[Optional()])
     retired = BooleanField("Retired?", validators=[Optional()])
+    current_coach = BooleanField("Current Coach?", validators=[Optional()])
+    current_player = BooleanField("Current Player?", validators=[Optional()])
     submit = SubmitField("Register")
 
     # these two functions will run automatically when a new user is trying to
