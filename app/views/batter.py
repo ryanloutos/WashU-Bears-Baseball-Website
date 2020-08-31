@@ -43,7 +43,6 @@ from werkzeug.urls import url_parse
 from app.stats.hitting_stats import batter_summary_game_stats
 from app.stats.hitting_stats import batter_ball_in_play_stats
 from app.stats.hitting_stats import batterSwingWhiffRatebyPitchbyCount
-from app.stats.hitting_stats import batterSwingWhiffRatebyPitchbyCount2
 
 from app.stats.scouting_stats import zone_division_stats_batter
 from app.stats.scouting_stats import batter_dynamic_zone_scouting
@@ -419,7 +418,7 @@ def batter_stats(batter_id):
     seasons = batter.get_seasons()
 
     # Batter stat calculations
-    pitch_usage_count, swing_whiff_rate = batterSwingWhiffRatebyPitchbyCount2(batter)
+    pitch_usage_count, swing_whiff_rate = batterSwingWhiffRatebyPitchbyCount(batter)
     ball_in_play, hard_hit = batter_ball_in_play_stats(batter)
 
     return render_template(
