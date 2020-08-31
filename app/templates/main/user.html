@@ -1,19 +1,21 @@
 {% extends "base.html" %}
 
 {% block styles %}
-    {{ super() }}
+{{ super() }}
 {% endblock %}
 
 {% block app_content %}
 
-    <div class="main">
-        <h1>{{ user }}</h1>
-        <div>
-            Username: {{ user.username }} <br>
-            Email: {{ user.email }} <br> <br>
-            <a href="{{ url_for('main.edit_user', id=user.id) }}">Edit Username/Email</a> <br>
-            <a href="{{ url_for('main.change_password', id=user.id) }}">Change Password</a>
-        </div>
+<div class="no-sidenav">
+    <h1>{{ user }}</h1>
+    <div>
+        Username: {{ user.username }} <br>
+        Email: {{ user.email }} <br> <br>
+        <a as="button" class="btn btn-primary" href="{{ url_for('main.edit_user', id=user.id) }}">Edit
+            Username/Email</a> <br><br>
+        <a as="button" class="btn btn-default" href="{{ url_for('main.change_password', id=user.id) }}">Change
+            Password</a>
     </div>
+</div>
 
 {% endblock %}
