@@ -6,14 +6,14 @@
 {% endblock %}
 
 {% block app_content %}
-<div class="no-sidenav">
+{% include "opponent/batter/batter_sidenav.html" %}
+<div class="main">
+    {% include "opponent/batter/batter_title.html" %}
     <div class="form-container">
         <h1 class="form-title">
             Edit "{{ batter.name() }}"
         </h1>
-        <div style="padding-left: 20px">
-            <i class="opponent-title">Team: {{ batter.opponent }}</i>
-        </div><br>
+        <br>
         <form method="post" novalidate>
             {{ form.hidden_tag() }} {# Preventing CSRF attacks #}
             <p>
@@ -28,6 +28,21 @@
                 {{ form.lastname(size=32, value=batter.lastname, class="form-control") }}
                 {% for error in form.lastname.errors %}
                 <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p {% if can_edit_opponent == False %} style="display: none" {% else %} {% endif %}>
+                {{ form.opponent.label }}<br>
+                <select class="form-control" id="opponent" name="opponent">
+                    {% for o in opponents %}
+                    {% if batter.opponent_id == o.id %}
+                    <option value='{{ o.id }}' selected>{{ o }}</option>
+                    {% else %}
+                    <option value='{{ o.id }}'>{{ o }}</option>
+                    {% endif %}
+                    {% endfor %}
+                </select>
+                {% for error in form.opponent.errors %}
+                <span class="errors">{{ error }}</span>
                 {% endfor %}
             </p>
             <p>

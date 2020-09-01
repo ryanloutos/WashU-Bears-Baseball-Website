@@ -89,6 +89,7 @@ def edit_batter(id):
 
         batter.firstname = form.firstname.data
         batter.lastname = form.lastname.data
+        batter.opponent = form.opponent.data
         batter.initials = f"{form.firstname.data[0]}{form.lastname.data[0]}"
         batter.number = form.number.data
         batter.bats = form.bats.data
@@ -99,13 +100,21 @@ def edit_batter(id):
         db.session.commit()
 
         flash("Batter has been adjusted")
-        return redirect(url_for("opponent.opponent_home", id=batter.opponent_id))
+        return redirect(url_for("batter.batter_home", id=id))
 
+    can_edit_opponent = True
+    at_bats = AtBat.query.filter_by(batter_id=id).all()
+    if len(at_bats) > 0:
+        can_edit_opponent = False
+
+    opponents = Opponent.query.order_by(Opponent.name).all()
     return render_template(
         "opponent/batter/edit_batter.html",
         title="Edit Batter",
         batter=batter,
-        form=form
+        opponents=opponents,
+        form=form,
+        can_edit_opponent=can_edit_opponent
     )
 
 # ***************-DELETE BATTER-*************** #
@@ -124,17 +133,17 @@ def delete_batter(id):
     at_bats = AtBat.query.filter_by(batter_id=id).all()
     if len(at_bats) > 0:
         flash("Can't delete batter because they have at bats associated with them")
-        return redirect(url_for('main.index'))
+        return redirect(url_for('batter.batter_home', id=id))
 
     videos = Video.query.filter_by(batter_id=id).all()
     if len(videos) > 0:
         flash("Can't delete batter because they have videos associated with them")
-        return redirect(url_for('main.index'))
+        return redirect(url_for('batter.batter_home', id=id))
 
     pitches = Pitch.query.filter_by(batter_id=id).all()
     if len(pitches) > 0:
         flash("Can't delete batter because they have pitches associated with them")
-        return redirect(url_for('main.index'))
+        return redirect(url_for('batter.batter_home', id=id))
 
     db.session.delete(batter)
     db.session.commit()

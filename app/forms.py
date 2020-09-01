@@ -105,6 +105,10 @@ class NewBatterForm(FlaskForm):
 
 
 class EditBatterForm(FlaskForm):
+    opponent = QuerySelectField(
+        query_factory=lambda: Opponent.query,
+        get_pk=lambda o: o.id,
+        get_label=lambda o: o)
     firstname = StringField("First Name", validators=[Optional()])
     lastname = StringField("Last Name", validators=[Optional()])
     number = IntegerField("Number", validators=[Optional()])
@@ -284,16 +288,29 @@ class EditPitcherForm(FlaskForm):
 
 # ***************-GAME-*************** #
 class NewGameForm(FlaskForm):
-    date = DateField('Date', validators=[Optional()], format='%Y-%m-%d')
+    date = DateField('Date', validators=[DataRequired()], format='%Y-%m-%d')
     opponent = QuerySelectField(
         query_factory=lambda: Opponent.query,
-        get_pk=lambda o: o,
+        get_pk=lambda o: o.id,
         get_label=lambda o: o)
     season = QuerySelectField(
         query_factory=lambda: Season.query,
         get_pk=lambda s: s.id,
         get_label=lambda s: s)
     submit = SubmitField("Create Game")
+
+
+class EditGameForm(FlaskForm):
+    date = DateField('Date', validators=[DataRequired()], format='%Y-%m-%d')
+    opponent = QuerySelectField(
+        query_factory=lambda: Opponent.query,
+        get_pk=lambda o: o.id,
+        get_label=lambda o: o)
+    season = QuerySelectField(
+        query_factory=lambda: Season.query,
+        get_pk=lambda s: s.id,
+        get_label=lambda s: s)
+    submit = SubmitField("Save Changes")
 
 
 class PitchForm(FlaskForm):
