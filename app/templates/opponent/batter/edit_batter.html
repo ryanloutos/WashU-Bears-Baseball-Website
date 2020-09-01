@@ -31,14 +31,7 @@
                 {% endfor %}
             </p>
             <p>
-                {{ form.initials.label }}<br>
-                {{ form.initials(size=24, value=batter.initials, class="form-control") }}
-                {% for error in form.initials.errors %}
-                <span style="color: red;">[{{ error }}]</span>
-                {% endfor %}
-            </p>
-            <p>
-                {{ form.number.label }}<br>
+                {{ form.number.label }} (Optional)<br>
                 {{ form.number(type='number', value=batter.number, class="form-control") }}
                 {% for error in form.number.errors %}
                 <span style="color: red;">[{{ error }}]</span>
@@ -56,9 +49,24 @@
                 {% endfor %}
             </p>
             <p>
-                {{ form.grad_year.label }}<br>
+                {{ form.grad_year.label }} (Optional)<br>
+                {% if batter.grad_year == None %}
+                {{ form.grad_year(size=32, class="form-control") }}
+                {% else %}
                 {{ form.grad_year(size=32, value=batter.grad_year, class="form-control") }}
+                {% endif %}
                 {% for error in form.grad_year.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.notes.label }} (Optional)<br>
+                {% if batter.notes == 'None' or batter.notes == None %}
+                {{ form.notes(size=32, class="form-control") }}
+                {% else %}
+                {{ form.notes(size=32, value=batter.notes, class="form-control") }}
+                {% endif %}
+                {% for error in form.notes.errors %}
                 <span style="color: red;">[{{ error }}]</span>
                 {% endfor %}
             </p>
@@ -76,15 +84,14 @@
                 {% endfor %}
             </p>
             <p>
-                {{ form.submit(class="btn btn-primary btn-block") }}
+                {{ form.submit(class="btn btn-primary btn-block btn-lg") }}
             </p>
         </form>
-        <!-- <p style="text-align: center">
+        <p style="text-align: center">
             -OR-
-            <input type="button" class="btn btn-danger btn-block" id="delete-batter" onclick="deleteBatter()"
-                value="Delete Batter">
-            <button><a href="{{ url_for('batter.delete_batter', id=batter.id) }}">Delete Batter</a></button>
-        </p> -->
+            <a as="button" class="btn btn-danger btn-lg btn-block" href="/delete_batter/{{batter.id}}"
+                onclick="return confirm('Are you sure you want to delete this batter?')">Delete Batter</a>
+        </p>
     </div>
 </div>
 <script>

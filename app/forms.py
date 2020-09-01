@@ -94,12 +94,12 @@ class NewBatterForm(FlaskForm):
     opponent = QuerySelectField("Opponent", query_factory=getOpponents)
     firstname = StringField("First Name", validators=[DataRequired()])
     lastname = StringField("Last Name", validators=[DataRequired()])
-    initials = StringField("Initials", validators=[Optional()])
     number = IntegerField("Number", validators=[Optional()])
     bats = SelectField("Bats",
                        choices=[("R", "R"), ("L", "L"), ("S", "S")],
                        validators=[Optional()])
     grad_year = IntegerField("Grad Year", validators=[Optional()])
+    notes = StringField("Notes", validators=[Optional()])
     retired = BooleanField("Inactive?")
     submit = SubmitField("Create Batter", validators=[Optional()])
 
@@ -107,12 +107,12 @@ class NewBatterForm(FlaskForm):
 class EditBatterForm(FlaskForm):
     firstname = StringField("First Name", validators=[Optional()])
     lastname = StringField("Last Name", validators=[Optional()])
-    initials = StringField("Initials", validators=[Optional()])
     number = IntegerField("Number", validators=[Optional()])
     bats = SelectField("Bats",
                        choices=[("R", "R"), ("L", "L"), ("S", "S")],
                        validators=[Optional()])
     grad_year = IntegerField("Grad Year", validators=[Optional()])
+    notes = StringField("Notes", validators=[Optional()])
     retired = BooleanField("Inactive?")
     submit = SubmitField("Save Changes", validators=[Optional()])
 
