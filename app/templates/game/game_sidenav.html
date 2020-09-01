@@ -1,8 +1,11 @@
 <ul class="sidenav">
     <li><a class="sidenav-item" href="{{ url_for('game.game_pitching', id=game.id) }}">WashU Pitching</a></li>
     {% if game.opponent_id != 1 %}
-        <li><a class="sidenav-item" href="{{ url_for('game.game_hitting', id=game.id) }}">WashU Hitting</a></li>
-        <li><a class="sidenav-item" href="{{ url_for('game.game_opponent_pitching', id=game.id) }}">{{ game.opponent }} Pitching</a></li>
+    <li><a class="sidenav-item" href="{{ url_for('game.game_hitting', id=game.id) }}">WashU Hitting</a></li>
+    <li><a class="sidenav-item" href="{{ url_for('game.game_opponent_pitching', id=game.id) }}">{{ game.opponent }}
+            Pitching</a></li>
     {% endif %}
-    <li><a class="sidenav-item" href="{{ url_for('game.game_opponent_hitting', id=game.id) }}">{{ game.opponent }} Hitting</a></li>
+    <li><a class="sidenav-item" href="{{ url_for('game.game_opponent_hitting', id=game.id) }}">{{ game.opponent }}
+            Hitting</a></li>
+    <li><a class="sidenav-item" href="{{ url_for('game.edit_game', id=game.id) }}">Edit Game</a></li>
 </ul>
