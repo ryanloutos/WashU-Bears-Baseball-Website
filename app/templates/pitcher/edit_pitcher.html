@@ -92,12 +92,12 @@
                 {% endfor %}
             </p>
             <p>
-                {{ form.submit(class="btn btn-primary btn-block") }}
+                {{ form.submit(class="btn btn-primary btn-lg btn-block") }}
             </p>
         </form>
         <p style="text-align: center">
             -OR-
-            <a class="btn btn-danger btn-block" as="button" href="/delete_pitcher/{{pitcher.id}}"
+            <a class="btn btn-danger btn-lg btn-block" as="button" href="/delete_pitcher/{{pitcher.id}}"
                 onclick="return confirm('Are you sure you want to delete the pitcher?')" />
             Delete Pitcher
             </a>
