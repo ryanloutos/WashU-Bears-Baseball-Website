@@ -6,7 +6,9 @@
 {% endblock %}
 
 {% block app_content %}
-<div class="no-sidenav">
+{% include "opponent/opponent_sidenav.html" %}
+<div class="main">
+    {% include "opponent/opponent_title.html" %}
     <div class="form-container">
         <h1 class="form-title">Edit Opponent</h1>
         <form method="post" enctype="multipart/form-data" novalidate>
@@ -15,20 +17,26 @@
                 {{ form.name.label }}<br>
                 {{ form.name(size=32, value=opponent.name, class="form-control") }}
                 {% for error in form.name.errors %}
-                <span class="errors">[{{ error }}]</span>
+                <span class="errors">{{ error }}</span>
                 {% endfor %}
             </p>
             <p>
                 {{ form.logo.label }}<br>
                 {{ form.logo(class="file-input form-control-file") }}
                 {% for error in form.logo.errors %}
-                <span class="errors">[{{ error }}] </span>
+                <span class="errors">{{ error }}</span>
                 {% endfor %}
             </p>
             <p>
-                {{ form.submit(class="btn btn-primary btn-block") }}
+                {{ form.submit(class="btn btn-primary btn-lg btn-block") }}
             </p>
         </form>
+        <p style="text-align: center">
+            -OR-
+            <a as="button" class="btn btn-lg btn-block btn-danger"
+                href="{{ url_for('opponent.delete_opponent', id=opponent.id) }}"
+                onclick="return confirm('Are you sure you want to delete this opponent?')">Delete Opponent</a>
+        </p>
     </div>
 </div>
 {% endblock %}

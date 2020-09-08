@@ -1,4 +1,3 @@
-# All pages related to individual pitchers
 from app import db
 
 from flask import flash
@@ -139,12 +138,14 @@ def edit_pitcher(id):
     if form.validate_on_submit():
         if form.photo.data:
             file_name = pitcher.id
-            file_loc = os.path.join(os.path.dirname(os.path.realpath(__file__)),
-                                    "..",
-                                    "static",
-                                    "images",
-                                    "pitcher_photos",
-                                    f"{file_name}.png")
+            file_loc = os.path.join(
+                os.path.dirname(os.path.realpath(__file__)),
+                "..",
+                "static",
+                "images",
+                "pitcher_photos",
+                f"{file_name}.png"
+            )
 
             form.photo.data.save(file_loc)
 
@@ -185,20 +186,21 @@ def delete_pitcher(id):
         return redirect(url_for('main.index'))
 
     outings = Outing.query.filter_by(pitcher_id=id).all()
-    videos = Video.query.filter_by(pitcher_id=id).all()
     if len(outings) > 0:
-        flash("""You can't delete this pitcher because they 
-            have outings associated with them """)
+        flash("""You can't delete this pitcher because they
+                have outings associated with them """)
         return redirect(url_for('pitcher.pitcher_home', id=id))
-    elif len(videos) > 0:
+
+    videos = Video.query.filter_by(pitcher_id=id).all()
+    if len(videos) > 0:
         flash("""You can't delete this pitcher because they 
             have videos associated with them """)
         return redirect(url_for('pitcher.pitcher_home', id=id))
-    else:
-        db.session.delete(pitcher)
-        db.session.commit()
-        flash("Pitcher has been deleted")
-        return redirect(url_for('main.index'))
+
+    db.session.delete(pitcher)
+    db.session.commit()
+    flash("Pitcher has been deleted!")
+    return redirect(url_for('main.index'))
 
 
 # ***************-PITCHER OUTINGS-*************** #

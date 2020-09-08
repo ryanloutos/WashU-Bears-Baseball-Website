@@ -16,15 +16,15 @@
                 {% for error in form.username.errors %}
                 <span class="errors">[{{ error }}]</span>
                 {% endfor %}
-            </p><br>
+            </p>
             <p>
                 {{ form.password(size=24, placeholder="Password", class="form-control") }}<br>
                 {% for error in form.password.errors %}
                 <span class="errors">[{{ error }}]</span>
                 {% endfor %}
-            </p><br>
+            </p>
             <p>{{ form.submit(class="btn btn-lg btn-block btn-primary") }}</p>
-        </form> <br>
+        </form>
         <p>
             Forgot Your Password?
             <a href="">Click to Reset It</a>
