@@ -1,10 +1,14 @@
 <script>
 
-var runs_per_game_goal = 8;
+/**
+*   Recommend getting the manual values from the WashU baseball website. 
+*   Setup auto fetch protocol sometime in the future.
+*/
+var runs_per_game_goal = "8";
 var runs_per_game = 0;  // manual
 
 var slugging_pct_goal = 450;
-var sluggint_pct = 0;  // manual
+var slugging_pct = 0;  // manual
 
 var OBP_goal = 415;
 var OBP = 0;  // manual
@@ -18,78 +22,102 @@ var team_k = 0;
 var team_hbp_bb_k_goal = 1;
 var team_hbp_bb_k = 0;
 
-function get_server_info(){
+// Setup selectors for page items
+const html_rpg_current = $('#rpg_current');
+const html_rpg_goal = $('#rpg_goal');
 
+const html_slugging_current = $('#slugging_current');
+const html_slugging_goal = $('#slugging_goal');
+
+const html_obp_current = $('#obp_current');
+const html_obp_goal = $('#obp_goal');
+
+const html_doubles_current = $('#doubles_current');
+const html_doubles_goal = $('#doubles_goal');
+
+const html_bb_hbp_k_current = $('#bb_hbp_k_current');
+const html_bb_hbp_k_goal = $('#bb_hbp_k_goal');
+
+const html_bb_current = $('#bb_current');
+const html_hbp_current = $('#hbp_current');
+const html_ks_current = $('#ks_current');
+
+document.addEventListener("DOMContentLoaded", function(){
+
+    //Run Functions to fill html elements
     setup_goals();
+    get_server_info();
+});
 
-        fetch(
-        "/api/hitters/goals",
-    ).then(res => res.json())
-    .then(function(response){
-        doubles = response.data.doubles;
-        team_bb = response.data.bb;
-        team_hbp = response.data.hbp;
-        team_k = response.data.ks;
-        // OBP = response.data.obp;
+
+
+async function get_server_info(){
+
+    try{
+        const response = await fetch("/api/hitters/goals");
+        const res_data = await response.json();
+        
+        if(res_data.status == "failure") {
+            console.log("Fetch Error: " + res_data.error);
+            return;
+        }
+
+        doubles = res_data.data.doubles;
+        team_bb = res_data.data.bb;
+        team_hbp = res_data.data.hbp;
+        team_k = res_data.data.ks;
         team_hbp_bb_k = ((team_bb + team_hbp) / team_k).toFixed(2);
 
-        setup_goals_current();
-    })
+    } catch (e) {
+        console.log(e);
+    }
+
+    setup_goals_current();
 }
 
 function setup_goals(){
-    document.querySelector("#rpg_goal").innerHTML = runs_per_game_goal;
-    document.querySelector("#slugging_goal").innerHTML = slugging_pct_goal;
-    document.querySelector("#obp_goal").innerHTML = OBP_goal;
-    document.querySelector("#doubles_goal").innerHTML = doubles_goal;
-    document.querySelector("#bb_hbp_k_goal").innerHTML = team_hbp_bb_k_goal;
+    html_rpg_goal.html(runs_per_game_goal);
+    html_slugging_goal.html(slugging_pct_goal);
+    html_obp_goal.html(OBP_goal);
+    html_doubles_goal.html(doubles_goal);
+    html_bb_hbp_k_goal.html(team_hbp_bb_k_goal);
 }
 
 function setup_goals_current(){
 
     //setup runs per game
-    document.querySelector("#rpg_current").innerHTML = runs_per_game;
-    if(runs_per_game >= runs_per_game_goal){
-        document.querySelector("#rpg_current").style.color = "rgb(0,100,0)";
-    } else {
-        document.querySelector("#rpg_current").style.color = "rgb(200,0,0)";
-    }
+    html_rpg_current.html(runs_per_game);
+    html_rpg_current.css('color', set_goal_success_failure_color(runs_per_game_goal, runs_per_game));
 
     //setup slugging %
-    
-    document.querySelector("#slugging_current").innerHTML = sluggint_pct;
-    if(slugging_pct_goal <= sluggint_pct){
-        document.querySelector("#slugging_current").style.color = "rgb(0,100,0)";
-    } else {
-        document.querySelector("#slugging_current").style.color = "rgb(200,0,0)";
-    }
+    html_slugging_current.html(slugging_pct);
+    html_slugging_current.css('color', set_goal_success_failure_color(slugging_pct_goal, slugging_pct));
+
 
     //setup obp
-    document.querySelector("#obp_current").innerHTML = OBP;
-    
-    if(OBP_goal <= OBP){
-        document.querySelector("#obp_current").style.color = "rgb(0,100,0)";
-    } else {
-        document.querySelector("#obp_current").style.color = "rgb(200,0,0)";
-    }
+    html_obp_current.html(OBP);
+    html_obp_current.css('color', set_goal_success_failure_color(OBP_goal, OBP));
 
     //setup doubles
-    document.querySelector("#doubles_current").innerHTML = doubles;
-    if(doubles_goal <= doubles){
-        document.querySelector("#doubles_current").style.color = "rgb(0,100,0)";
-    } else {
-        document.querySelector("#doubles_current").style.color = "rgb(200,0,0)";
-    }
+    html_doubles_current.html(doubles);
+    html_doubles_current.css('color', set_goal_success_failure_color(doubles_goal, doubles)); 
 
     //setup hbp+bb.k
-    document.querySelector("#bb_current").innerHTML = team_bb;
-    document.querySelector("#hbp_current").innerHTML = team_hbp;
-    document.querySelector("#ks_current").innerHTML = team_k;
-    document.querySelector("#bb_hbp_k_current").innerHTML = team_hbp_bb_k;
-    if(team_hbp_bb_k_goal <= team_hbp_bb_k){
-        document.querySelector("#bb_hbp_k_current").style.color = "rgb(0,100,0)";
+    html_bb_current.html(team_bb);
+    html_hbp_current.html(team_hbp);
+    html_ks_current.html(team_k);
+    html_bb_hbp_k_current.html(team_hbp_bb_k);
+    html_bb_hbp_k_current.css('color', set_goal_success_failure_color(team_hbp_bb_k_goal, team_hbp_bb_k));
+
+    console.log("Goals Completed");
+}
+
+function set_goal_success_failure_color(goal, current_value){
+    if(goal <= current_value){
+        return "rgb(0,100,0)"; //Green achieved goal condition
     } else {
-        document.querySelector("#bb_hbp_k_current").style.color = "rgb(200,0,0)";
+        return "rgb(200,0,0)"; // Red failed goal condition
     }
 }
+
 </script>

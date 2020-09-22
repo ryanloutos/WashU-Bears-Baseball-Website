@@ -500,19 +500,18 @@ def hitters_goals():
         for ab in hitter.at_bats:
             if ab.get_season().current_season and ab.get_pitcher().opponent_id is not 1:
                 pa += 1
-                for pitch in ab.pitches:
-                    if pitch.ab_result not in [None, ""]:
-                        if pitch.ab_result in ["2B"]:
-                            doubles += 1
-                        elif pitch.ab_result in ["HBP"]:
-                            hbp += 1
-                        elif pitch.ab_result in ["BB"]:
-                            bb += 1
-                        elif pitch.ab_result in ["K", "KL", "D3->Out", "D3->Safe"]:
-                            ks += 1
+                if ab.ab_result not in ["", None]:
+                    if ab.ab_result in ["2B"]:
+                        doubles += 1
+                    elif ab.ab_result in ["HBP"]:
+                        hbp += 1
+                    elif ab.ab_result in ["BB"]:
+                        bb += 1
+                    elif ab.ab_result in ["K", "KL", "D3->Out", "D3->Safe"]:
+                        ks += 1
 
-                        if pitch.ab_result in ["1B", "2B", "3B", "HR"]:
-                            hits += 1
+                    if ab.ab_result in ["1B", "2B", "3B", "HR"]:
+                        hits += 1
 
     obp = truncate(zero_division_handler((hits + hbp + bb), pa) * 1000)
 
