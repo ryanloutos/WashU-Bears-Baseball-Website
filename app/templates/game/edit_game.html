@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block styles %}
+{{ super() }}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/forms.css') }}">
+{% endblock %}
+
+{% block app_content %}
+{% include "game/game_sidenav.html" %}
+<div class="main">
+    {% include "game/game_title.html" %}
+    <div class="form-container">
+        <h1 class="form-title">Edit Game</h1>
+        <form method="POST" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+            <p>
+                {{ form.date.label }}<br>
+                {{ form.date(class="form-control", value=game.date) }}
+                {% for error in form.date.errors %}
+                <span class="errors">{{ error }}</span>
+                {% endfor %}
+            </p>
+            <p {% if can_edit_opponent == False %} style="display: none" {% else %} {% endif %}>
+                {{ form.opponent.label }}<br>
+                <select class="form-control" id="opponent" name="opponent">
+                    {% for opponent in opponents %}
+                    {% if game.opponent_id == opponent.id %}
+                    <option value={{ opponent.id }} selected>{{ opponent }}</option>
+                    {% else %}
+                    <option value={{ opponent.id }}>{{ opponent }}</option>
+                    {% endif %}
+                    {% endfor %}
+                </select>
+                {% for error in form.opponent.errors %}
+                <span class="errors">{{ error }}</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.season.label }}<br>
+                <select id="season" name="season" class="form-control">
+                    {% for season in seasons %}
+                    {% if season.id == game.season_id %}
+                    <option value='{{ season.id }}' selected>{{ season }}</option>
+                    {% else %}
+                    <option value='{{ season.id }}'>{{ season }}</option>
+                    {% endif %}
+                    {% endfor %}
+                </select>
+                {% for error in form.season.errors %}
+                <span class="errors">{{ error }}</span>
+                {% endfor %}
+            </p>
+            <br>
+            <p>{{ form.submit(class="btn btn-primary btn-block btn-lg") }}</p>
+        </form>
+        <p style="text-align: center">
+            -OR-
+            <a as="button" class="btn btn-danger btn-block btn-lg" href="/delete_game/{{ game.id }}"
+                onclick="return confirm('Are you sure you want to delete the game?')">Delete Game</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

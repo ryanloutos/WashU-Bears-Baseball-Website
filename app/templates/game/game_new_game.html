@@ -13,27 +13,35 @@
             {{ form.hidden_tag() }}
             <p>
                 {{ form.date.label }}<br>
-                {{ form.date(class="form-control") }}<br>
+                {{ form.date(class="form-control") }}
                 {% for error in form.date.errors %}
                 <span style="color: red;">[{{ error }}]</span>
                 {% endfor %}
             </p>
             <p>
                 {{ form.opponent.label }}<br>
-                {{ form.opponent(class="form-control") }}<br>
+                {{ form.opponent(class="form-control") }}
                 {% for error in form.opponent.errors %}
                 <span style="color: red;">[{{ error }}]</span>
                 {% endfor %}
             </p>
             <p>
                 {{ form.season.label }}<br>
-                {{ form.season(id="season_selector", class="form-control") }}<br>
+                <select id="season" name="season" class="form-control">
+                    {% for season in seasons %}
+                    {% if season.id == current_season.id %}
+                    <option value='{{ season.id }}' selected>{{ season }}</option>
+                    {% else %}
+                    <option value='{{ season.id }}'>{{ season }}</option>
+                    {% endif %}
+                    {% endfor %}
+                </select>
                 {% for error in form.season.errors %}
                 <span style="color: red;">[{{ error }}]</span>
                 {% endfor %}
             </p>
             <br>
-            <p>{{ form.submit(class="btn btn-primary btn-block") }}</p>
+            <p>{{ form.submit(class="btn btn-primary btn-block btn-lg") }}</p>
         </form>
     </div>
 </div>

@@ -27,7 +27,7 @@ main = Blueprint('main', __name__)
 @main.route('/index')
 @login_required
 def index():
-    return render_template (
+    return render_template(
         'main/index.html',
         title='WashU Baseball'
     )
@@ -44,22 +44,14 @@ def user(id):
 
     return render_template(
         'main/user.html',
-        user=user)
+        user=user,
+        title="Profile"
+    )
 
-# *************** -CHANGE PASSWORD - *************** #
+# ***************-CHANGE PASSWORD-*************** #
 @main.route('/user/<id>/change_password', methods=['GET', 'POST'])
 @login_required
 def change_password(id):
-    '''
-    CHANGE PASSWORD:
-
-    PARAM:
-        -id: the id of the user
-
-    RETURN:
-        -change_password.html which serves a form to make changes
-    '''
-
     user = User.query.filter_by(id=id).first()
 
     if not user:
@@ -71,7 +63,6 @@ def change_password(id):
         flash("You can only make changes to your own account")
         return redirect(url_for("main.index"))
 
-    # when the 'save changes' button is pressed
     form = ChangePasswordForm()
     if form.validate_on_submit():
 
@@ -79,36 +70,23 @@ def change_password(id):
             flash("Current password entered is incorrect")
             return redirect(url_for("main.change_password", id=user.id))
 
-        # set the new password
         user.set_password(form.password.data)
 
-        # commit the changes
         db.session.commit()
 
-        # redirects to user page
         flash('Password changed!')
         return redirect(url_for('main.user', id=user.id))
 
     return render_template(
         'main/change_password.html',
         title='Change Password',
-        form=form)
+        form=form
+    )
 
-# *************** -EDIT USER - *************** #
+# ***************-EDIT USER-*************** #
 @main.route('/user/<id>/edit', methods=['GET', 'POST'])
 @login_required
 def edit_user(id):
-    '''
-    EDIT USER:
-    Change username/email associated with account
-
-    PARAM:
-        -id: the id of the user
-
-    RETURN:
-        -edit_user.html which serves a form to make changes
-    '''
-
     user = User.query.filter_by(id=id).first()
 
     if not user:
@@ -120,103 +98,86 @@ def edit_user(id):
         flash("You can only make changes to your own account")
         return redirect(url_for("main.index"))
 
-    # when the 'save changes' button is pressed
     form = EditUserForm()
     if form.validate_on_submit():
 
-        # update username and email
         user.username = form.username.data
         user.email = form.email.data
 
-        # commit the changes
         db.session.commit()
 
-        # redirects to user page
         flash('Changes made!')
         return redirect(url_for('main.user', id=current_user.id))
 
-    return render_template('main/edit_user.html',
-                           title='Edit User',
-                           user=user,
-                           form=form)
+    return render_template(
+        'main/edit_user.html',
+        title='Edit User',
+        user=user,
+        form=form
+    )
 
-# ***************-LOGIN-*************** # DONE
+# ***************-LOGIN-*************** #
 @main.route('/login', methods=['GET', 'POST'])
 def login():
-    # if the user is already signed in then send to home page
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
 
     form = LoginForm()
-
-    # when the Login button is pressed
     if form.validate_on_submit():
 
-        # get the user object from the username that was typed in
         user = User.query.filter_by(username=form.username.data).first()
 
-        # if the username doesn't exist or passwords don't match,
-        # redirect back to login page
         if user is None or not user.check_password(form.password.data):
             flash('Invalid username or password')
             return redirect(url_for('main.login'))
 
-        # if the user is retired
-        # if user.retired:
-        #     flash("Retired pitcher, can't log in")
-        #     return redirect(url_for('login'))
-
-        # login the user if nothing failed above
         login_user(user)
 
-        # send user to the page they were trying to get to without logging in
         next_page = request.args.get('next')
         if not next_page or url_parse(next_page).netloc != '':
             next_page = url_for('main.index')
         return redirect(next_page)
 
-    return render_template('main/login.html',
-                           title="Login",
-                           form=form)
+    return render_template(
+        'main/login.html',
+        title="Login",
+        form=form
+    )
 
-# ***************-LOGOUT-*************** # DONE
+# ***************-LOGOUT-*************** #
 @main.route('/logout')
 def logout():
     logout_user()
     return redirect(url_for('main.login'))
 
-# ***************-REGISTER-*************** # 
+# ***************-REGISTER-*************** #
 @main.route("/register", methods=["GET", "POST"])
 @login_required
 def register():
-    # make sure user is an admin
     if not current_user.admin:
-        flash("You are not an admin and cannot create a user")
+        flash("Admin feature only!")
         return redirect(url_for("main.index"))
 
-    # when the 'register' button is pressed
     form = RegistrationForm()
     if form.validate_on_submit():
 
-        # takes in the data from the form and creates a User object (row)
         user = User(
             firstname=form.firstname.data,
             lastname=form.lastname.data,
             username=form.username.data,
             email=form.email.data,
             admin=form.admin.data,
-            retired=form.retired.data
+            retired=form.retired.data,
+            current_coach=form.current_coach.data,
+            current_player=form.current_player.data
         )
 
-        # sets the password based on what was entered
         user.set_password(form.password.data)
 
-        # adds new user to database
         db.session.add(user)
         db.session.commit()
 
-        # redirects to login page
-        flash("Congratulations, you just created a new user!")
+        flash("New user created!")
         return redirect(url_for("main.login"))
 
     return render_template(

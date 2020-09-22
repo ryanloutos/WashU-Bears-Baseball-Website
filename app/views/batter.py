@@ -1,5 +1,3 @@
-import re
-
 from app import db
 
 from flask import flash
@@ -9,19 +7,8 @@ from flask import redirect
 from flask import Blueprint
 from flask import render_template
 
-from app.forms import LoginForm
-from app.forms import PitchForm
-from app.forms import BatterForm
-from app.forms import OutingForm
-from app.forms import EditUserForm
 from app.forms import NewBatterForm
 from app.forms import EditBatterForm
-from app.forms import OutingPitchForm
-from app.forms import EditOpponentForm
-from app.forms import NewOutingFromCSV
-from app.forms import RegistrationForm
-from app.forms import ChangePasswordForm
-from app.forms import NewOutingFromCSVPitches
 
 from app.models import Game
 from app.models import User
@@ -33,12 +20,8 @@ from app.models import Season
 from app.models import Batter
 from app.models import Opponent
 
-from flask_login import login_user
-from flask_login import logout_user
 from flask_login import current_user
 from flask_login import login_required
-
-from werkzeug.urls import url_parse
 
 from app.stats.hitting_stats import batter_summary_game_stats
 from app.stats.hitting_stats import batter_ball_in_play_stats
@@ -51,26 +34,128 @@ from app.stats.scouting_stats import whiff_coords_by_pitch_batter
 
 batter = Blueprint('batter', __name__)
 
+
+# ***************-NEW BATTER-*************** #
+@batter.route("/new_batter", methods=["GET", "POST"])
+@login_required
+def new_batter():
+    if not current_user.admin:
+        flash("You are not an admin and cannot create a season")
+        return redirect(url_for("main.index"))
+
+    form = NewBatterForm()
+    if form.validate_on_submit():
+
+        batter = Batter(
+            firstname=form.firstname.data,
+            lastname=form.lastname.data,
+            initials=f"{form.firstname.data[0]}{form.lastname.data[0]}",
+            number=form.number.data,
+            bats=form.bats.data,
+            grad_year=form.grad_year.data,
+            notes=form.notes.data,
+            opponent_id=form.opponent.data.id,
+            retired=form.retired.data
+        )
+
+        db.session.add(batter)
+        db.session.commit()
+
+        flash("New batter created!")
+        return redirect(url_for("opponent.opponent_home", id=batter.opponent_id))
+
+    return render_template(
+        "opponent/batter/new_batter.html",
+        title="New Batter",
+        form=form
+    )
+
+# ***************-EDIT BATTER-*************** #
+@batter.route("/edit_batter/<id>", methods=["GET", "POST"])
+@login_required
+def edit_batter(id):
+    if not current_user.admin:
+        flash("You are not an admin")
+        return redirect(url_for("main.index"))
+
+    batter = Batter.query.filter_by(id=id).first()
+    if not batter:
+        flash("URL does not exist")
+        return redirect(url_for("main.index"))
+
+    form = EditBatterForm()
+    if form.validate_on_submit():
+
+        batter.firstname = form.firstname.data
+        batter.lastname = form.lastname.data
+        batter.opponent = form.opponent.data
+        batter.initials = f"{form.firstname.data[0]}{form.lastname.data[0]}"
+        batter.number = form.number.data
+        batter.bats = form.bats.data
+        batter.grad_year = form.grad_year.data
+        batter.notes = form.notes.data
+        batter.retired = form.retired.data
+
+        db.session.commit()
+
+        flash("Batter has been adjusted")
+        return redirect(url_for("batter.batter_home", id=id))
+
+    can_edit_opponent = True
+    at_bats = AtBat.query.filter_by(batter_id=id).all()
+    if len(at_bats) > 0:
+        can_edit_opponent = False
+
+    opponents = Opponent.query.order_by(Opponent.name).all()
+    return render_template(
+        "opponent/batter/edit_batter.html",
+        title="Edit Batter",
+        batter=batter,
+        opponents=opponents,
+        form=form,
+        can_edit_opponent=can_edit_opponent
+    )
+
+# ***************-DELETE BATTER-*************** #
+@batter.route("/delete_batter/<id>", methods=["GET", "POST"])
+@login_required
+def delete_batter(id):
+    if not current_user.admin:
+        flash("You are not an admin and cannot delete a batter")
+        return redirect(url_for("main.index"))
+
+    batter = Batter.query.filter_by(id=id).first()
+    if not batter:
+        flash("Can't delete a batter that doesn't exist")
+        return redirect(url_for("main.index"))
+
+    at_bats = AtBat.query.filter_by(batter_id=id).all()
+    if len(at_bats) > 0:
+        flash("Can't delete batter because they have at bats associated with them")
+        return redirect(url_for('batter.batter_home', id=id))
+
+    videos = Video.query.filter_by(batter_id=id).all()
+    if len(videos) > 0:
+        flash("Can't delete batter because they have videos associated with them")
+        return redirect(url_for('batter.batter_home', id=id))
+
+    pitches = Pitch.query.filter_by(batter_id=id).all()
+    if len(pitches) > 0:
+        flash("Can't delete batter because they have pitches associated with them")
+        return redirect(url_for('batter.batter_home', id=id))
+
+    db.session.delete(batter)
+    db.session.commit()
+
+    flash('Batter deleted!')
+    return redirect(url_for("opponent.opponent_home", id=batter.opponent_id))
+
+
 # ***************-BATTER HOMEPAGE-*************** #
 @batter.route('/batter/<id>', methods=['GET', 'POST'])
 @login_required
 def batter_home(id):
-    '''
-    BATTER HOMEPAGE:
-
-    PARAM:
-        -id: The batter id (primary key) for the batter
-            that the user is trying to view
-
-    RETURN:
-        -batter.html which displays the homepage/info page
-            for that batter
-    '''
-
-    # get the Batter object associated with the id passed in
     batter = Batter.query.filter_by(id=id).first()
-
-    # either bug or user trying to view a batter that DNE
     if not batter:
         flash("URL does not exist")
         return redirect(url_for('main.index'))
@@ -79,7 +164,6 @@ def batter_home(id):
 
     game_stats = []
     for game in games:
-
         if game is not None and game.get_season().current_season:
             at_bats, pitches_seen = batter_summary_game_stats(game, batter)
             game_stats.append({
@@ -89,19 +173,19 @@ def batter_home(id):
                     "pitches": pitches_seen
                 }
             })
-    return render_template('opponent/batter/batter.html',
-                           title=batter,
-                           batter=batter,
-                           game_stats=game_stats)
 
+    return render_template(
+        'opponent/batter/batter.html',
+        title=batter,
+        batter=batter,
+        game_stats=game_stats
+    )
 
+# ***************-BATTER AT BATS-*************** #
 @batter.route("/batter/<batter_id>/at_bats", methods=['GET', 'POST'])
 @login_required
 def batter_at_bats(batter_id):
-
     batter = Batter.query.filter_by(id=batter_id).first()
-
-    # either bug or user trying to view a batter that DNE
     if not batter:
         flash("URL does not exist")
         return redirect(url_for('main.index'))
@@ -111,11 +195,10 @@ def batter_at_bats(batter_id):
         batter=batter
     )
 
-
+# ***************-BATTER AT BAT-*************** #
 @batter.route("/batter/<batter_id>/at_bat/<ab_num>", methods=['GET', 'POST'])
 @login_required
 def batter_at_bat(batter_id, ab_num):
-
     batter = Batter.query.filter_by(id=batter_id).first()
     if not batter:
         flash("URL does not exist")
@@ -155,11 +238,10 @@ def batter_at_bat(batter_id, ab_num):
         ab_res=ab_res
     )
 
-
+# ***************-BATTER PITCHES AGAINST-*************** #
 @batter.route("/batter/<batter_id>/pitches_against", methods=['GET', 'POST'])
 @login_required
 def batter_pitches_against(batter_id):
-
     batter = Batter.query.filter_by(id=batter_id).first()
     if not batter:
         flash("URL does not exist")
@@ -171,11 +253,10 @@ def batter_pitches_against(batter_id):
         batter=batter
     )
 
-
+# ***************-BATTER SPRAY CHART-*************** #
 @batter.route("/batter/<batter_id>/spray_chart", methods=['GET', 'POST'])
 @login_required
 def batter_spray_chart(batter_id):
-
     batter = Batter.query.filter_by(id=batter_id).first()
     if not batter:
         flash("URL does not exist")
@@ -232,11 +313,10 @@ def batter_spray_chart(batter_id):
         locs=locs
     )
 
-
+# ***************-BATTER SEQUENCING-*************** #
 @batter.route("/batter/<batter_id>/sequencing", methods=['GET', 'POST'])
 @login_required
 def batter_sequencing(batter_id):
-
     batter = Batter.query.filter_by(id=batter_id).first()
     if not batter:
         flash("URL does not exist")
@@ -248,177 +328,22 @@ def batter_sequencing(batter_id):
         batter=batter
     )
 
-# ***************-DELETE BATTER-*************** #
-@batter.route("/delete_batter/<id>", methods=["GET", "POST"])
-@login_required
-def delete_batter(id):
-    if not current_user.admin:
-        flash("You are not an admin and cannot delete a batter")
-        return redirect(url_for("main.index"))
 
-    batter = Batter.query.filter_by(id=id).first()
-
-    if not batter:
-        flash("Can't delete a batter that doesn't exist")
-        return redirect(url_for("main.index"))
-
-    db.session.delete(batter)
-    db.session.commit()
-
-    return redirect(url_for("opponent.opponent_home", id=batter.opponent_id))
-
-# ***************-EDIT BATTER-*************** #
-@batter.route("/edit_batter/<id>", methods=["GET", "POST"])
-@login_required
-def edit_batter(id):
-    if not current_user.admin:
-        flash("You are not an admin")
-        return redirect(url_for("main.index"))
-
-    form = EditBatterForm()
-    batter = Batter.query.filter_by(id=id).first()
-
-    if not batter:
-        flash("URL does not exist")
-        return redirect(url_for("main.index"))
-
-    if form.validate_on_submit():
-
-        # update info with data from form
-        batter.firstname = form.firstname.data
-        batter.lastname = form.lastname.data
-        batter.number = form.number.data
-        batter.bats = form.bats.data
-        batter.grad_year = form.grad_year.data
-        batter.retired = form.retired.data
-
-        db.session.commit()
-
-        flash("Batter has been adjusted")
-        return redirect(url_for("opponent.opponent_home", id=batter.opponent_id))
-
-    return render_template(
-        "opponent/batter/edit_batter.html",
-        title="Edit Batter",
-        batter=batter,
-        form=form
-    )
-
-# ***************-NEW BATTER-*************** #
-@batter.route("/new_batter", methods=["GET", "POST"])
-@login_required
-def new_batter():
-    if not current_user.admin:
-        flash("You are not an admin and cannot create a season")
-        return redirect(url_for("main.index"))
-
-    form = NewBatterForm()
-
-    if form.validate_on_submit():
-
-        batter = Batter(
-            firstname=form.firstname.data,
-            lastname=form.lastname.data,
-            initials=form.initials.data,
-            number=form.number.data,
-            bats=form.bats.data,
-            grad_year=form.grad_year.data,
-            opponent_id=form.opponent.data.id,
-            retired=form.retired.data
-        )
-
-        db.session.add(batter)
-        db.session.commit()
-
-        flash("New batter created!")
-        return redirect(url_for("opponent.opponent_home", id=batter.opponent_id))
-
-    return render_template(
-        "opponent/batter/new_batter.html",
-        title="New Batter",
-        form=form
-    )
-
-
-# ***************-HELPFUL FUNCTIONS-*************** #
-def getAvailablePitchers():
-    '''
-    Gets all of the string names you are allowed to create outings for
-
-    PARAM:
-        -None
-
-    RETURN:
-        - [array] -- [strings of pitchers names]
-    '''
-
-    # gets all the User objects that are players on the team
-    pitchers_objects = Pitcher.query.all()
-
-    # set the available choices that someone can create an outing for
-    available_pitchers = []
-
-    if current_user.admin:
-        for p in pitchers_objects:
-            available_pitchers.append((f"{p.id}", p))
-
-    return available_pitchers
-
-
-def getAvailableBatters(outing_id):
-    outing = Outing.query.filter_by(id=outing_id).first_or_404()
-    if not outing:
-        flash("URL does not exist")
-        return redirect(url_for('main.index'))
-    opponent = Opponent.query.filter_by(id=outing.opponent_id).first_or_404()
-
-    batters_tuples = []
-    for batter in opponent.batters:
-        batters_tuples.append((batter.id, batter))
-
-    return batters_tuples
-
-
-def updateCount(balls, strikes, pitch_result, ab_result, season):
-    if ab_result is not '':
-        if (season.semester == 'Fall'):
-            balls = 1
-            strikes = 1
-        else:
-            balls = 0
-            strikes = 0
-    else:
-        if pitch_result is 'B':
-            balls += 1
-        else:
-            if strikes is not 2:
-                strikes += 1
-    count = f'{balls}-{strikes}'
-    return (balls, strikes, count)
-
-
-def getCurrentSeason():
-    current_season = Season.query.filter_by(current_season=True).first()
-    return current_season
-
-
-def getOldSeasons():
-    old_seasons = Season.query.filter_by(current_season=False).order_by(Season.year).all()
-    return old_seasons
-
-
+# ***************-BATTER STATS-*************** #
 @batter.route("/batter/<batter_id>/stats")
 @login_required
 def batter_stats(batter_id):
-
     batter = Batter.query.filter_by(id=batter_id).first()
     if not batter:
         flash("URL does not exist")
         return redirect(url_for('main.index'))
+
     seasons = batter.get_seasons()
 
     # Batter stat calculations
+
     pitch_usage_count, swing_whiff_rate = batterSwingWhiffRatebyPitchbyCount(batter)
+
     ball_in_play, hard_hit = batter_ball_in_play_stats(batter)
 
     return render_template(
@@ -430,13 +355,12 @@ def batter_stats(batter_id):
         title=batter,
         batter=batter,
         seasons=seasons
-        )
+    )
 
-
+# ***************-BATTER GAMES-*************** #
 @batter.route("/batter/<batter_id>/games", methods=["GET", "POST"])
 @login_required
 def batter_games(batter_id):
-
     batter = Batter.query.filter_by(id=batter_id).first()
     if not batter:
         flash("URL does not exist")
@@ -468,11 +392,10 @@ def batter_games(batter_id):
         seasons=seasons
     )
 
-
+# ***************-BATTER GAME VIEW-*************** #
 @batter.route("/batter/<batter_id>/game/<game_id>")
 @login_required
 def batter_game_view(batter_id, game_id):
-
     batter = Batter.query.filter_by(id=batter_id).first()
     if not batter:
         flash("URL does not exist")
@@ -523,46 +446,32 @@ def batter_game_view(batter_id, game_id):
         hits=hits
     )
 
-
+# ***************-BATTER VIDEOS-*************** #
 @batter.route('/batter/<id>/videos', methods=["GET", "POST"])
 @login_required
 def batter_videos(id):
-
     batter = Batter.query.filter_by(id=id).first()
     if not batter:
         flash("URL does not exist")
         return redirect(url_for('main.index'))
+
     videos = Video.query.filter_by(batter_id=id).all()
-    video_ids = []
     seasons = []
     for v in videos:
-
         if v.season not in seasons:
             seasons.append(v.season)
-
-        # https://gist.github.com/silentsokolov/f5981f314bc006c82a41
-        # gets the id from a youtube linke
-        regex = re.compile(r'(https?://)?(www\.)?(youtube|youtu|youtube-nocookie)\.(com|be)/(watch\?v=|embed/|v/|.+\?v=)?(?P<id>[A-Za-z0-9\-=_]{11})')
-        match = regex.match(v.link)
-        if not match:
-            video_ids.append("")
-        else:
-            video_ids.append(match.group("id"))
 
     return render_template(
         'opponent/batter/batter_videos.html',
         title=batter,
         batter=batter,
-        seasons=seasons,
-        video_objects=videos,
-        videos=video_ids
+        seasons=seasons
     )
 
-
+# ***************-BATTER SCOUTING-*************** #
 @batter.route("/batter/<batter_id>/scouting")
 @login_required
 def batter_scouting(batter_id):
-
     batter = Batter.query.filter_by(id=batter_id).first()
     if not batter:
         flash("URL does not exist")
@@ -580,7 +489,7 @@ def batter_scouting(batter_id):
         # whiff_coords_by_pitch=whiff_coords_by_pitch
     )
 
-
+# ***************-BATTER TESTING-*************** #
 @batter.route("/batter/<batter_id>/tester")
 @login_required
 def batter_testing(batter_id):
@@ -597,4 +506,3 @@ def batter_testing(batter_id):
         batter=batter,
         data=data
     )
- 

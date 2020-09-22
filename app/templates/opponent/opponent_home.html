@@ -1,70 +1,74 @@
 {% extends "base.html" %}
 
 {% block styles %}
-    {{ super() }}
-    <script src="{{ url_for('static', filename='js/sortable_table.js') }}"></script>
-    <script>
-        //sort tables so that batters are alphabetical
-        document.addEventListener("DOMContentLoaded", function(){
-            //sort roster table by last name
-            // sortTable(1,0);
-        });
-    </script>
+{{ super() }}
+<script src="{{ url_for('static', filename='js/sortable_table.js') }}"></script>
+<script>
+    //sort tables so that batters are alphabetical
+    document.addEventListener("DOMContentLoaded", function () {
+        //sort roster table by last name
+        // sortTable(1,0);
+    });
+</script>
 {% endblock %}
 
 {% block app_content %}
-    {% include "opponent/opponent_sidenav.html" %}
-    <div class="main">
-        {% include "opponent/opponent_title.html" %}
-        <div class="row">
-            <div class="col-xs-12 col-md-6" style="text-align: center;">
-                <h2>Active Hitters</h2>
-                <table class="table sortable_table">
+{% include "opponent/opponent_sidenav.html" %}
+<div class="main">
+    {% include "opponent/opponent_title.html" %}
+    <div class="row">
+        <div class="col-xs-12 col-md-6" style="text-align: center;">
+            <h2>Active Hitters</h2>
+            <table class="table sortable_table">
+                <tr class="table-headers">
+                    <th class="text-left">Name</th>
+                    <th class="text-left">Number</th>
+                    <th class="text-left">Grad Year</th>
+                    <th>Bats</th>
+                    <th>PA's</th>
+                </tr>
+                {% for batter in batters %}
+                {% if batter.retired not in [None, "", "1", 1] %}
+                <tr>
+                    <td class="text-left"><a
+                            href="{{ url_for('batter.batter_home', id=batter.id) }}">{{ batter.name_and_number() }}</a>
+                    </td>
+                    <td class="text-left">{{ batter.number }}</td>
+                    <td class="text-left">{{ batter.grad_year }}</td>
+                    <td>{{ batter.bats }}</td>
+                    <td>{{ batter.num_abs() }}</td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </table>
+        </div>
+        <div class="col-xs-12 col-md-6" style="text-align: center;">
+            <h2>Active Pitchers</h2>
+            <table class="table sortable_table">
+                <thead>
                     <tr class="table-headers">
                         <th class="text-left">Name</th>
                         <th class="text-left">Number</th>
-                        <th class="text-left">Grad Year</th>
-                        <th>Bats</th>
-                        <th>PA's</th>
+                        <th class="text-left">Class</th>
+                        <th class="text-left"># Throws</th>
+                        <th class="text-left"># Outings</th>
                     </tr>
-                    {% for batter in opponent.batters %}
-                        {% if batter.retired not in [None, "", "1", 1] %}
-                            <tr>
-                                <td class="text-left"><a href="{{ url_for('batter.batter_home', id=batter.id) }}">{{ batter.name_and_number() }}</a></td>
-                                <td class="text-left">{{ batter.number }}</td>
-                                <td class="text-left">{{ batter.grad_year }}</td>
-                                <td>{{ batter.bats }}</td>
-                                <td>{{ batter.num_abs() }}</td>
-                            </tr>
-                        {% endif %}
+                </thead>
+                <tbody>
+                    {% for pitcher in pitchers %}
+                    <tr>
+                        <td class="text-left"><a
+                                href="{{ url_for('pitcher.pitcher_home', id=pitcher.id) }}">{{ pitcher.name_and_number() }}</a>
+                        </td>
+                        <td class="text-left">{{ pitcher.number }}</td>
+                        <td class="text-left">{{ pitcher.grad_year }}</td>
+                        <td class="text-left">{{ pitcher.throws }}</td>
+                        <td class="text-left">{{ pitcher.num_outings() }}</td>
+                    </tr>
                     {% endfor %}
-                </table>
-            </div>
-            <div class="col-xs-12 col-md-6" style="text-align: center;">
-                <h2>Active Pitchers</h2>
-                <table class="table sortable_table">
-                    <thead>
-                        <tr class="table-headers">
-                            <th class="text-left">Name</th>
-                            <th class="text-left">Number</th>
-                            <th class="text-left">Class</th>
-                            <th class="text-left"># Throws</th>
-                            <th class="text-left"># Outings</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for pitcher in opponent.pitchers %}
-                            <tr>
-                                <td class="text-left"><a href="{{ url_for('pitcher.pitcher_home', id=pitcher.id) }}">{{ pitcher.name_and_number() }}</a></td>
-                                <td class="text-left">{{ pitcher.number }}</td>
-                                <td class="text-left">{{ pitcher.grad_year }}</td>
-                                <td class="text-left">{{ pitcher.throws }}</td>
-                                <td class="text-left">{{ pitcher.num_outings() }}</td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+                </tbody>
+            </table>
         </div>
     </div>
+</div>
 {% endblock %}
