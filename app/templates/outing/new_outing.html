@@ -21,7 +21,7 @@
             </p>
             <p>
                 {{ form.pitcher.label }}<br>
-                {{ form.pitcher(id='pitcher-selector', class="form-control") }}
+                {{ form.pitcher(class="form-control") }}
                 {% for error in form.pitcher.errors %}
                 <span style="color: red;">{{ error }}</span>
                 {% endfor %}
@@ -42,14 +42,14 @@
             </p>
             <p>
                 {{ form.season.label }}<br>
-                {{ form.season(id="season_selector", class="form-control") }}
+                {{ form.season(class="form-control") }}
                 {% for error in form.season.errors %}
                 <span style="color: red;">{{ error }}</span>
                 {% endfor %}
             </p>
             <p>
                 {{ form.game.label }} <br>
-                {{ form.game(id="game_selector", class="form-control") }}
+                {{ form.game(class="form-control") }}
                 {% for error in form.game.errors %}
                 <span style="color: red;">{{ error }}</span>
                 {% endfor %}
@@ -60,81 +60,7 @@
     </div>
 </div>
 <script>
-    const season_selector = $('#season_selector');
-    const game_selector = $('#game_selector');
-    const team_selector = $("#team-selector");
-    const pitcher_selector = $("#pitcher-selector");
-    const opponent_selector = $("#opponent");
-    const date_selector = $("#date");
-
-    const update_game_choices = async () => {
-        try {
-            const response = await fetch(`/api/season/${season_selector.val()}/games`);
-            const games = await response.json();
-            if (games.status == "failure") {
-                console.log("Error: " + response.error);
-                return;
-            }
-            game_selector.empty();
-            game_selector.append(new Option('', ''))
-            for (let game of games.games) {
-                game_selector.append(new Option(game.label, game.id));
-            }
-        } catch (e) {
-            console.log(e);
-        }
-    };
-
-    const update_pitcher_choices = async () => {
-        try {
-            const response = await fetch(`/api/team/${team_selector.val()}/get_pitchers`);
-            const pitchers = await response.json();
-            if (pitchers.status != "success") {
-                console.log("Error: " + pitchers.error);
-                return;
-            }
-            pitcher_selector.empty();
-            for (let pitcher of pitchers.data) {
-                pitcher_selector.append(new Option(pitcher.name, pitcher.id));
-            }
-        } catch (e) {
-            console.log(e);
-        }
-    };
-
-    const update_selections_based_on_game = async () => {
-        try {
-            const response = await fetch(`/api/game/${game_selector.val()}`)
-            if (!response.ok) {
-                return
-            }
-            const game = await response.json();
-            if (team_selector.val() == 1) {
-                opponent_selector.val(game.opponent_id);
-            } else {
-                opponent_selector.val(1);
-            }
-            date_selector.val(game.date);
-            if (team_selector.val() != game.opponent_id && team_selector.val() != "1") {
-                team_selector.val(1);
-                update_pitcher_choices();
-            }
-        } catch (e) {
-            console.log(e)
-        }
-    };
-
-    const clear_game_selector = () => game_selector.val('')
-
-    season_selector.on('change', update_game_choices);
-    team_selector.on('change', () => {
-        update_pitcher_choices();
-        clear_game_selector();
-    });
-    game_selector.on('change', update_selections_based_on_game);
-    opponent_selector.on('change', clear_game_selector);
-    date_selector.on('change', clear_game_selector);
-
+    {% include "outing/outing_forms.js" %}
     season_selector.val({{ current_season.id }});
     team_selector.val(1);
     opponent_selector.val(1);
