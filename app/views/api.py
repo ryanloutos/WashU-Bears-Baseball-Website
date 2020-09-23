@@ -16,6 +16,8 @@ from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat, Pit
 from datetime import datetime
 import os
 import re
+from flask_api import status
+
 
 api = Blueprint("api", __name__)
 
@@ -557,3 +559,13 @@ def team_get_hitters(team_id):
         "status": "success",
         "data": batter_arr
     })
+
+
+@api.route("/api/game/<game_id>")
+@login_required
+def get_game(game_id):
+    game = Game.query.filter_by(id=game_id).first()
+    if not game:
+        return 'Game not found', status.HTTP_400_BAD_REQUEST
+
+    return game.to_dict()

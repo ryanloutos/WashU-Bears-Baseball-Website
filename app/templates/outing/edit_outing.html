@@ -6,66 +6,198 @@
 {% endblock %}
 
 {% block app_content %}
-<div class="no-sidenav">
+{% include "outing/outing_sidenav.html" %}
+<div class="main">
+    {% include "outing/outing_title.html" %}
     <div class="form-container">
         <h1 class="form-title">Edit Outing</h1>
-        <form method="post" novalidate>
-            {{ form.hidden_tag() }} {# Preventing CSRF attacks #}
-            <p>You can't change the opponent because the batter_id's are based on the opponent</p>
-            <p>If you want to change the opponent, you have to delete the outing and start over</p>
+        <form method="post">
+            {{ form.hidden_tag() }}
+            <p>
+                <label>Team</label><br>
+                <select name="team-selector" id="team-selector" class="form-control">
+                    {% for t in teams %}
+                    <option value="{{t.id}}" {% if t.id == team.id %} selected='selected' {% endif %}>
+                        {{t.name}}</option>
+                    {% endfor %}
+                </select>
+            </p>
             <p>
                 {{ form.pitcher.label }}<br>
                 <select id="pitcher" name="pitcher" class="form-control">
-                    {% for p in all_pitchers %}
-                    <option value="{{p.id}}"" {% if p.id == this_pitcher.id %} selected='selected' {% endif %}>{{p}}</option>
+                    {% for p in pitchers %}
+                    <option value="{{p.id}}" {% if p.id == pitcher.id %} selected='selected' {% endif %}>
+                        {{p.name_and_number()}}</option>
                     {% endfor %}
                 </select>
                 {% for error in form.pitcher.errors %}
-                <span style=" color: red;">[{{ error }}]</span>
-                        {% endfor %}
+                <span class="errors">{{ error }}</span>
+                {% endfor %}
             </p>
             <p>
                 {{ form.date.label }}<br>
-                {{ form.date(class='datepicker', value=outing.date, class="form-control") }}<br>
+                {{ form.date(class='datepicker', value=outing.date, class="form-control") }}
                 {% for error in form.date.errors %}
-                <span style="color: red;">[{{ error }}]</span>
+                <span class="errors">{{ error }}</span>
                 {% endfor %}
             </p>
-            <p style="display: none">
+            <p>
                 {{ form.opponent.label }}<br>
-                {{ form.opponent(class="form-control") }}
+                <select id="opponent" name="opponent" class="form-control">
+                    {% for o in teams %}
+                    <option value="{{o.id}}" {% if o.id == opponent.id %} selected {% endif %}>{{o}}</option>
+                    {% endfor %}
+                </select>
                 {% for error in form.opponent.errors %}
-                <span style="color: red;">[{{ error }}]</span>
+                <span class="errors">{{ error }}</span>
                 {% endfor %}
             </p>
             <p>
                 {{ form.season.label }}<br>
                 <select id="season" name="season" class="form-control">
-                    {% for s in all_seasons %}
-                    <option value="{{ s.id }}" {% if s.id == this_season.id %} selected='selected' {% endif %}>{{s}}
-                    </option>
+                    {% for s in seasons %}
+                    <option value="{{ s.id }}" {% if s.id == season.id %} selected='selected' {% endif %}>{{s}}</option>
                     {% endfor %}
                 </select>
                 {% for error in form.season.errors %}
-                <span style="color: red;">[{{ error }}]</span>
+                <span class="errors">{{ error }}</span>
                 {% endfor %}
             </p>
             <p>
                 {{ form.game.label }} <br>
                 <select name="game" id="game" class="form-control">
                     <option value=""></option>
-                    {% for g in all_games %}
-                    <option value="{{ g.id }}" {% if g.id == this_game.id %} selected='selected' {% endif %}>{{ g }}
-                    </option>
+                    {% for g in games %}
+                    <option value="{{ g.id }}" {% if g.id == game.id %} selected='selected' {% endif %}>{{ g }}</option>
                     {% endfor %}
                 </select>
                 {% for error in form.season.errors %}
-                <span style="color: red;">[{{ error }}]</span>
+                <span class="errors">{{ error }}</span>
                 {% endfor %}
             </p><br>
-            <p>{{ form.submit(class="btn btn-primary btn-block") }}</p>
+            <p>{{ form.submit(class="btn btn-primary btn-block btn-lg") }}</p>
         </form>
-        <!-- <a href="{{ url_for('outing.delete_outing', id=outing.id) }}">Delete Outing</a> -->
+        <p style="text-align: center">
+            -OR-
+            <a as="button" class="btn btn-danger btn-block btn-lg"
+                href="{{ url_for('outing.delete_outing', id=outing.id) }}"
+                onclick="return confirm('Are you sure you want to delete the outing? This will delete all the pitches/at bats thrown for this outing!')">Delete
+                Outing</a>
+        </p>
     </div>
 </div>
+<script>
+    const season_selector = $('#season');
+    const game_selector = $('#game');
+    const team_selector = $("#team-selector");
+    const pitcher_selector = $("#pitcher");
+    const opponent_selector = $("#opponent");
+    const date_selector = $("#date");
+
+    const update_pitcher_choices = async () => {
+        let response = await fetch(`/api/team/${team_selector.val()}/get_pitchers`);
+        const pitchers = await response.json();
+        if (pitchers.status != "success") {
+            console.log("Error: " + pitchers.error);
+            return;
+        }
+        pitcher_selector.empty();
+        for (let pitcher of pitchers.data) {
+            pitcher_selector.append(new Option(pitcher.name, pitcher.id));
+        }
+    };
+
+    const get_game_by_id = async id => {
+        const response = await fetch(`/api/game/${game_selector.val()}`);
+        if (response.ok) {
+            const game = await response.json();
+            return game
+        }
+        return {}
+    }
+
+    team_selector.change(async () => {
+        update_pitcher_choices();
+
+        // make sure opponent selection is ok
+        if (team_selector.val() != 1) {
+            opponent_selector.val(1)
+        }
+
+        // make sure game selection is ok
+        const game = await get_game_by_id(game_selector.val())
+
+        // if pitcher's team isn't WashU or matches game opponent, unselect game
+        if (game.opponent_id != team_selector.val() && team_selector.val() != 1) {
+            game_selector.val('');
+        }
+
+        // if team is not WashU, make opponent Washu
+        if (team_selector.val() != 1) {
+            opponent_selector.val(1);
+        } else { // team is WashU, so just make opponent whatever game opponent is
+            if (game_selector.val() != '') {
+                opponent_selector.val(game.opponent_id);
+            }
+        }
+
+    });
+
+    date_selector.change(() => {
+        game_selector.val('');
+    });
+
+    opponent_selector.change(async () => {
+        // other teams can only pitch against us
+        if (team_selector.val() != 1) {
+            opponent_selector.val(1)
+        }
+
+        // make sure game selection is ok
+        const game = await get_game_by_id(game_selector.val())
+        if (opponent_selector.val() != game.opponent_id && opponent_selector.val() != 1) {
+            game_selector.val('');
+        }
+    })
+
+    season_selector.change(async () => {
+        try {
+            const response = await fetch(`/api/season/${season_selector.val()}/games`);
+            const games = await response.json();
+            if (games.status == "failure") {
+                console.log("Error: " + response.error);
+                return;
+            }
+            game_selector.empty();
+            game_selector.append(new Option('', ''))
+            for (let game of games.games) {
+                game_selector.append(new Option(game.label, game.id));
+            }
+        } catch (e) {
+            console.log(e);
+        }
+    })
+
+    game_selector.change(async () => {
+        const game = await get_game_by_id(game_selector.val())
+
+        // match game and date
+        date_selector.val(game.date);
+
+        if (team_selector.val() == 1) { // if pitch is WashU, opponent is the game opponent
+            opponent_selector.val(game.opponent_id);
+        } else { // if its not, team is opponent of game and they are pitching against WashU
+            opponent_selector.val(1);
+            const prev_team = team_selector.val();
+            team_selector.val(game.opponent_id);
+            if (prev_team != game.opponent_id) {
+                update_pitcher_choices();
+            }
+        }
+
+        if (game.opponent_id == 1) { // if the opponent of the game is WashU, the pitcher is WashU
+            team_selector.val(1);
+        }
+    })
+</script>
 {% endblock %}

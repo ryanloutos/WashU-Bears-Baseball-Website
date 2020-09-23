@@ -1,39 +1,23 @@
-# Handle CSV uploads
-import csv
-import os
-# for file naming duplication problem
-import random
-import re
 import os
 import csv
-import json
 import math
-import random
 
 from app import db
 
 from flask import flash
-from flask import request
 from flask import url_for
 from flask import redirect
 from flask import Blueprint
-from flask import make_response
 from flask import render_template
 
-from datetime import datetime
-
-from app.forms import PitchForm
-from app.forms import OutingForm
+from app.forms import NewOutingForm
+from app.forms import EditOutingForm
 from app.forms import OutingPitchForm
 from app.forms import NewOutingFromCSV
 from app.forms import NewOutingFromCSVPitches
 
-from flask_login import login_user
-from flask_login import logout_user
 from flask_login import current_user
 from flask_login import login_required
-
-from werkzeug.urls import url_parse
 
 from app.models import Game
 from app.models import User
@@ -53,21 +37,140 @@ from app.stats.pitching_stats import outingPitchStatistics
 
 outing = Blueprint("outing", __name__)
 
+# ***************-NEW OUTING-*************** #
+@outing.route('/new_outing', methods=['GET', 'POST'])
+@login_required
+def new_outing():
+    if not current_user.admin:
+        flash('Admin feature only')
+        return redirect(url_for('main.index'))
+
+    form = NewOutingForm()
+    if form.validate_on_submit():
+        # safety check if no game is chosen
+        if form.game.data is None:
+            game_id = ""
+        else:
+            game_id = form.game.data.id
+
+        outing = Outing(
+            date=form.date.data,
+            opponent_id=form.opponent.data.id,
+            season_id=form.season.data.id,
+            pitcher_id=form.pitcher.data.id,
+            game_id=game_id
+        )
+
+        db.session.add(outing)
+        db.session.commit()
+
+        return redirect(url_for('outing.new_outing_pitch_tracker', id=outing.id))
+
+    teams = Opponent.query.order_by(Opponent.name).all()
+    return render_template(
+        'outing/new_outing.html',
+        title='New Outing',
+        form=form,
+        teams=teams
+    )
+
+# ***************-EDIT OUTING-*************** #
+@outing.route('/edit_outing/<outing_id>', methods=['GET', 'POST'])
+@login_required
+def edit_outing(outing_id):
+    if not current_user.admin:
+        flash("Admin feature only")
+        return redirect("main.index")
+
+    outing = Outing.query.filter_by(id=outing_id).first()
+    if not outing:
+        flash("URL does not exist")
+        return redirect(url_for('main.index'))
+
+    # to fill in the form with existing information on the outing
+    teams = Opponent.query.order_by(Opponent.name).all()
+    pitcher = Pitcher.query.filter_by(id=outing.pitcher_id).first()
+    team = Opponent.query.filter_by(id=pitcher.opponent_id).first()
+    pitchers = Pitcher.query.filter_by(opponent_id=pitcher.opponent_id).filter_by(
+        retired=0).order_by(Pitcher.lastname).all()
+    seasons = Season.query.all()
+    season = Season.query.filter_by(id=outing.season_id).first()
+    game = Game.query.filter_by(id=outing.game_id).first()
+    games = Game.query.filter_by(season_id=season.id).all()
+    opponent = Opponent.query.filter_by(id=outing.opponent_id).first()
+
+    form = EditOutingForm()
+    if form.validate_on_submit():
+
+        at_bats = AtBat.query.filter_by(outing_id=outing.id).all()
+        if len(at_bats) != 0 and outing.opponent_id != form.opponent.data.id:
+            flash(
+                'There are pitches thrown for this outing, so you cannot change the opponent')
+            return redirect(url_for('outing.edit_outing', outing_id=outing_id))
+
+        outing.pitcher_id = form.pitcher.data.id
+        outing.date = form.date.data
+        outing.opponent_id = form.opponent.data.id
+        outing.season_id = form.season.data.id
+
+        if form.game.data is None:
+            outing.game_id = ""
+        else:
+            outing.game_id = form.game.data.id
+
+        db.session.commit()
+
+        flash('Changes made!')
+        return redirect(url_for('outing.outing_home', id=outing.id))
+
+    return render_template(
+        'outing/edit_outing.html',
+        title='Edit Outing',
+        form=form,
+        outing=outing,
+        team=team,
+        teams=teams,
+        pitcher=pitcher,
+        pitchers=pitchers,
+        season=season,
+        seasons=seasons,
+        game=game,
+        games=games,
+        opponent=opponent
+    )
+
+# ***************-DELETE OUTING-*************** #
+@outing.route('/delete_outing/<id>', methods=['GET', 'POST'])
+@login_required
+def delete_outing(id):
+    if not current_user.admin:
+        flash("Admin feature only")
+        return redirect(url_for('main.index'))
+
+    outing = Outing.query.filter_by(id=id).first()
+    if not outing:
+        flash("URL does not exist")
+        return redirect(url_for('main.index'))
+
+    pitcher = Pitcher.query.filter_by(id=outing.pitcher_id).first_or_404()
+
+    # deletes the pitches associated with outing
+    for at_bat in outing.at_bats:
+        for p in at_bat.pitches:
+            db.session.delete(p)
+        db.session.delete(at_bat)
+
+    db.session.delete(outing)
+    db.session.commit()
+
+    flash('Outing has been deleted')
+    return redirect(url_for('pitcher.pitcher_home', id=pitcher.id))
+
+
 # ***************-OUTING HOMEPAGE-*************** #
 @outing.route('/outing/<id>', methods=['GET', 'POST'])
 @login_required
 def outing_home(id):
-    '''
-    OUTING HOMEPAGE:
-
-    PARAM:
-        -outing_id: The outing id (primary key) of the outing
-            that is requested to be displayed
-
-    RETURN:
-        -outing_home.html which displays the homepage for
-            the outing
-    '''
     # get the outing object associated by the id in the url
     outing = Outing.query.filter_by(id=id).first()
 
@@ -133,17 +236,6 @@ def outing_home(id):
 @outing.route('/outing/<id>/pbp', methods=['GET', 'POST'])
 @login_required
 def outing_pbp(id):
-    '''
-    OUTING PITCH BY PITCH:
-
-    PARAM:
-        -outing_id: The outing id (primary key) of the outing
-            that is requested to be displayed
-
-    RETURN:
-        -outing.html which displays all of the pitches and
-            at bats from the outing
-    '''
     # get the outing object associated by the id in the url
     outing = Outing.query.filter_by(id=id).first()
     # if bug or outing trying to be viewed DNE
@@ -179,17 +271,6 @@ def outing_pbp(id):
 @outing.route('/outing/<id>/stats/advanced', methods=['GET', 'POST'])
 @login_required
 def outing_stats_advanced(id):
-    '''
-    OUTING ADVANCED STATS:
-
-    PARAM:
-        -outing_id: The outing id (primary key) of the outing
-            that is requested to be displayed
-
-    RETURN:
-        -outing.html which displays some advanced statistics
-            for a specific outing
-    '''
     # get the outing object associated by the id in the url
     outing = Outing.query.filter_by(id=id).first()
     # if bug or outing trying to be viewed DNE
@@ -253,7 +334,8 @@ def outing_videos(id):
 
         # https://gist.github.com/silentsokolov/f5981f314bc006c82a41
         # gets the id from a youtube linke
-        regex = re.compile(r'(https?://)?(www\.)?(youtube|youtu|youtube-nocookie)\.(com|be)/(watch\?v=|embed/|v/|.+\?v=)?(?P<id>[A-Za-z0-9\-=_]{11})')
+        regex = re.compile(
+            r'(https?://)?(www\.)?(youtube|youtu|youtube-nocookie)\.(com|be)/(watch\?v=|embed/|v/|.+\?v=)?(?P<id>[A-Za-z0-9\-=_]{11})')
         match = regex.match(v.link)
         if not match:
             video_ids.append("")
@@ -267,68 +349,6 @@ def outing_videos(id):
         video_objects=videos,
         videos=video_ids
     )
-
-# ***************-NEW OUTING-*************** #
-@outing.route('/new_outing', methods=['GET', 'POST'])
-@login_required
-def new_outing():
-    '''
-    NEW OUTING:
-    Can create a new outing and pitches associated with
-    that outing
-
-    PARAM:
-        -None
-
-    RETURN:
-        -new_outing.html allows user to enter in info for a
-            specific outing and creates the outing object
-            along with all the pitches objects associated
-            with the outing
-    '''
-    form = OutingForm()
-
-    # get list of all opponents so can limit # of pitchers visible
-    teams = Opponent.query.all()
-
-    # set the choices for all available pitchers
-    form.pitcher.choices = getAvailablePitchers()
-
-    # when the 'Create Outing' button is pressed
-    if form.validate_on_submit():
-
-        # gets the user associated the username of the pitcher the outing
-        # is being created for
-        # pitcher = Pitcher.query.filter_by(id=form.pitcher.data).first_or_404()
-
-        # safety check for outing chosen
-        if form.game.data is None:
-            game_id = ""
-        else:
-            game_id = form.game.data.id
-
-        # creates a new outing object based on form data and user
-        outing = Outing(
-            date=form.date.data,
-            opponent_id=form.opponent.data.id,
-            season_id=form.season.data.id,
-            pitcher_id=form.pitcher.data,
-            game_id=game_id
-        )
-
-        # add the new outing to the database before pitches so pitches have a
-        # outing_id associated with them
-        db.session.add(outing)
-        db.session.commit()
-
-        # redirects back to home page after outing was successfully created
-        flash("New Outing Created!")
-        return redirect(url_for('outing.new_outing_pitch_tracker', id=outing.id))
-
-    return render_template('outing/new_outing.html',
-                           title='New Outing',
-                           form=form,
-                           teams=teams)
 
 # ***************-NEW OUTING PITCHES-*************** #
 @outing.route('/new_outing_pitches/<outing_id>', methods=['GET', 'POST'])
@@ -588,125 +608,6 @@ def edit_outing_pitches(outing_id):
                            opponent=opponent,
                            form=form)
 
-# ***************-EDIT OUTING-*************** #
-@outing.route('/edit_outing/<outing_id>', methods=['GET', 'POST'])
-@login_required
-def edit_outing(outing_id):
-
-    # get correct form
-    form = OutingForm()
-
-    # get the available pitchers to choose from
-    form.pitcher.choices = getAvailablePitchers()
-
-    # get objects from database
-    outing = Outing.query.filter_by(id=outing_id).first_or_404()
-    if not outing:  # Safety check
-        flash("URL does not exist")
-        return redirect(url_for('main.index'))
-
-    opponent = Opponent.query.filter_by(id=outing.opponent_id).first_or_404()
-    if outing.season_id in [None, ""]:
-        this_season = None
-    else:
-        this_season = Season.query.filter_by(id=outing.season_id).first_or_404()
-    all_seasons = Season.query.all()
-    this_pitcher = Pitcher.query.filter_by(id=outing.pitcher_id).first_or_404()
-    all_pitchers = Pitcher.query.all()
-    # get the game currently selected and all selectable games
-    if outing.game_id not in [None, ""]:
-        this_game = Game.query.filter_by(id=outing.game_id).first_or_404()
-    else:
-        this_game = ""
-    all_games = Game.query.all()
-
-    # only admins can go back and edit outing data
-    if not current_user.admin:
-        flash("You are not an admin and cannot edit someone else's outing")
-        return redirect(url_for('main.index'))
-
-    # when edit wants to be made
-    if form.validate_on_submit():
-
-        # get the user object from form
-        pitcher = Pitcher.query.filter_by(id=form.pitcher.data).first()
-
-        # update data for outing object
-        outing.pitcher_id = pitcher.id
-        outing.date = form.date.data
-        outing.season_id = form.season.data.id
-
-        # safety check for outing chosen
-        if form.game.data is None:
-            game_id = ""
-        else:
-            game_id = form.game.data.id
-
-        # Update data for outing object game class
-        outing.game_id = game_id
-
-        # commit changes to database
-        db.session.commit()
-
-        # redirect to user page
-        flash('The outing has been adjusted!')
-        return redirect(url_for('pitcher.pitcher_home', id=pitcher.id))
-
-    return render_template('outing/edit_outing.html',
-                           title='Edit Outing',
-                           outing=outing,
-                           opponent=opponent,
-                           this_season=this_season,
-                           all_seasons=all_seasons,
-                           this_pitcher=this_pitcher,
-                           all_pitchers=all_pitchers,
-                           this_game=this_game,
-                           all_games=all_games,
-                           form=form)
-
-# ***************-DELETE OUTING-*************** #
-@outing.route('/delete_outing/<id>', methods=['GET', 'POST'])
-@login_required
-def delete_outing(id):
-    '''
-    DELETE OUTING
-    Can delete an existing outing through this function
-
-    PARAM:
-        -id: the outing id (primary key) in which the user
-            wants to delete
-
-    RETURN:
-        -deletes the outing and redirects to user page which the outing
-            was associated with
-    '''
-
-    # get the outing and user objects associated with this outing
-    outing = Outing.query.filter_by(id=id).first_or_404()
-    if not outing:
-        flash("URL does not exist")
-        return redirect(url_for('main.index'))
-    pitcher = Pitcher.query.filter_by(id=outing.pitcher_id).first_or_404()
-
-    # only admins have permission to delete an outing
-    if not current_user.admin:
-        flash("You are not an admin and cannot edit someone else's outing")
-        return redirect(url_for('main.index'))
-
-    # deletes the pitches associated with outing
-    for at_bat in outing.at_bats:
-        for p in at_bat.pitches:
-            db.session.delete(p)
-        db.session.delete(at_bat)
-
-    # deletes the outing iteself and commits changes to database
-    db.session.delete(outing)
-    db.session.commit()
-
-    # redirects to user page associated with deletion
-    flash('Outing has been deleted')
-    return redirect(url_for('pitcher.pitcher_home', id=pitcher.id))
-
 
 # ***************-NEW OUTING CSV-*************** #
 @outing.route('/new_outing_csv', methods=['GET', 'POST'])
@@ -746,7 +647,8 @@ def new_outing_csv():
 
             # gets the user associated the username of the pitcher the outing
             # is being created for
-            pitcher = Pitcher.query.filter_by(id=form.pitcher.data).first_or_404()
+            pitcher = Pitcher.query.filter_by(
+                id=form.pitcher.data).first_or_404()
 
             # safety check for outing chosen
             if form.game.data is None:
@@ -1030,10 +932,12 @@ def new_outing_pitch_tracker(id):
     # for inning data on chart
     inning_totals = {}
     inning_data_table = {}
-    for i in range(1,10):
-        inning_totals[i] = {"pitches": 0, "pitches_with_velo": 0, "velo_total": 0, "num_strikes": 0}
+    for i in range(1, 10):
+        inning_totals[i] = {
+            "pitches": 0, "pitches_with_velo": 0, "velo_total": 0, "num_strikes": 0}
         inning_data_table[i] = {"pitches": 0, "velo": 0, "strike_pct": 0}
-    inning_totals["Totals"] = {"pitches": 0, "pitches_with_velo": 0, "velo_total": 0, "num_strikes": 0}
+    inning_totals["Totals"] = {
+        "pitches": 0, "pitches_with_velo": 0, "velo_total": 0, "num_strikes": 0}
     inning_data_table["Totals"] = {"pitches": 0, "velo": 0, "strike_pct": 0}
 
     # looks through all pitches and set variables accordingly
@@ -1069,13 +973,13 @@ def new_outing_pitch_tracker(id):
                 "hit_hard": p.hit_hard,
                 "inning": p.inning,
                 "notes": p.notes
-            }   
+            }
             pitches.append(pitch)
 
             # update data for inning data table
             inning_totals[p.inning]["pitches"] += 1
             inning_totals["Totals"]["pitches"] += 1
-            if p.pitch_type in [1,"1",7,"7"]:
+            if p.pitch_type in [1, "1", 7, "7"]:
                 if p.velocity not in ["", None]:
                     inning_totals[p.inning]["pitches_with_velo"] += 1
                     inning_totals["Totals"]["pitches_with_velo"] += 1
@@ -1113,9 +1017,11 @@ def new_outing_pitch_tracker(id):
     for key in inning_totals:
         inning_data_table[key]["pitches"] = inning_totals[key]["pitches"]
         if inning_totals[key]["pitches_with_velo"] != 0:
-            inning_data_table[key]["velo"] = truncate(inning_totals[key]["velo_total"]/inning_totals[key]["pitches_with_velo"])
+            inning_data_table[key]["velo"] = truncate(
+                inning_totals[key]["velo_total"]/inning_totals[key]["pitches_with_velo"])
         if inning_totals[key]["pitches"] != 0:
-            inning_data_table[key]["strike_pct"] = percentage(inning_totals[key]["num_strikes"]/inning_totals[key]["pitches"])
+            inning_data_table[key]["strike_pct"] = percentage(
+                inning_totals[key]["num_strikes"]/inning_totals[key]["pitches"])
 
     # clean up pitch data info for javascript
     for key, val in enumerate(pitches):
@@ -1129,7 +1035,8 @@ def new_outing_pitch_tracker(id):
             pitches[key] = val
 
     # set the batters associated with the opponent
-    batters = Batter.query.filter_by(opponent_id=outing.opponent_id).filter_by(retired = 0).order_by(Batter.number).all()
+    batters = Batter.query.filter_by(opponent_id=outing.opponent_id).filter_by(
+        retired=0).order_by(Batter.number).all()
 
     return render_template(
         "outing/pitch_tracker/new_outing_pitch_tracker.html",
@@ -1293,5 +1200,6 @@ def getCurrentSeason():
 
 
 def getOldSeasons():
-    old_seasons = Season.query.filter_by(current_season=False).order_by(Season.year).all()
+    old_seasons = Season.query.filter_by(
+        current_season=False).order_by(Season.year).all()
     return old_seasons
