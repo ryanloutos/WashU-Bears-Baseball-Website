@@ -94,6 +94,15 @@ class Game(db.Model):
             count += 1
         return count
 
+    def to_dict(self):
+        date = self.date.strftime("%Y-%m-%d")
+        return {
+            'id': self.id,
+            'date': date,
+            'opponent_id': self.opponent_id,
+            'season_id': self.season_id
+        }
+
 
 class Outing(db.Model):
     id = db.Column(db.Integer, primary_key=True)

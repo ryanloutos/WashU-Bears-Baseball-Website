@@ -313,6 +313,55 @@ class EditGameForm(FlaskForm):
     submit = SubmitField("Save Changes")
 
 
+# ***************-OUTING-*************** #
+class NewOutingForm(FlaskForm):
+    pitcher = QuerySelectField(
+        query_factory=lambda: Pitcher.query,
+        get_pk=lambda p: p.id,
+        get_label=lambda p: p
+    )
+    date = DateField('Date', validators=[DataRequired()], format='%Y-%m-%d')
+    opponent = QuerySelectField(
+        query_factory=lambda: Opponent.query.order_by(Opponent.name),
+        get_pk=lambda o: o.id,
+        get_label=lambda o: o)
+    season = QuerySelectField(
+        query_factory=lambda: Season.query.order_by(Season.year),
+        get_pk=lambda s: s.id,
+        get_label=lambda s: s)
+    game = QuerySelectField(
+        query_factory=lambda: Game.query,
+        get_pk=lambda s: s.id,
+        get_label=lambda s: s,
+        allow_blank=True
+    )
+    submit = SubmitField('Create Outing')
+
+
+class EditOutingForm(FlaskForm):
+    pitcher = QuerySelectField(
+        query_factory=lambda: Pitcher.query,
+        get_pk=lambda p: p.id,
+        get_label=lambda p: p
+    )
+    date = DateField('Date', validators=[DataRequired()], format='%Y-%m-%d')
+    opponent = QuerySelectField(
+        query_factory=lambda: Opponent.query,
+        get_pk=lambda o: o.id,
+        get_label=lambda o: o)
+    season = QuerySelectField(
+        query_factory=lambda: Season.query,
+        get_pk=lambda s: s.id,
+        get_label=lambda s: s)
+    game = QuerySelectField(
+        query_factory=lambda: Game.query,
+        get_pk=lambda s: s.id,
+        get_label=lambda s: s,
+        allow_blank=True
+    )
+    submit = SubmitField('Save Changes')
+
+
 class PitchForm(FlaskForm):
     batter_id = SelectField('Batter', validators=[Optional()])
     velocity = IntegerField('Velo', validators=[Optional()])
@@ -398,28 +447,6 @@ class OutingPitchForm(FlaskForm):
         max_entries=150,
         validators=[Optional()])
     submit = SubmitField('Add Pitches')
-
-
-# Creating a new outing
-class OutingForm(FlaskForm):
-    pitcher = SelectField('Pitcher', validators=[Optional()])
-    date = DateField('Date', validators=[Optional()], format='%Y-%m-%d')
-    opponent = QuerySelectField(
-        query_factory=lambda: Opponent.query,
-        get_pk=lambda o: o,
-        get_label=lambda o: o)
-    season = QuerySelectField(
-        query_factory=lambda: Season.query,
-        get_pk=lambda s: s.id,
-        get_label=lambda s: s)
-    game = QuerySelectField(
-        # Have to load all games initially because can only submit with something that was in original form
-        query_factory=lambda: Game.query,
-        get_pk=lambda s: s.id,
-        get_label=lambda s: s,
-        allow_blank=True
-    )
-    submit = SubmitField('Create Outing')
 
 
 # Create a new outing from CSV
