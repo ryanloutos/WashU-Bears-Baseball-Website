@@ -917,8 +917,13 @@ def new_outing_pitch_tracker(id):
 
     # for count and pitch count totals
     num_pitches = 0
-    balls = 0
-    strikes = 0
+    season = Season.query.filter_by(id=outing.season_id).first()
+    if season.semester == "Fall":
+        balls = 1
+        strikes = 1
+    else:
+        balls = 0
+        strikes = 0
 
     inning = 1
 

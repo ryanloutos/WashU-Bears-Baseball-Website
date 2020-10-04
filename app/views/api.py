@@ -242,6 +242,8 @@ def pitch_tracker():
         db.session.add(at_bat_object)
         db.session.commit()
         at_bat = at_bat_object.id
+    else:
+        at_bat_object = AtBat.query.filter_by(id=at_bat)
 
     # cleaning up data
     hit_spot = pitch_data["hit_spot"]
@@ -316,7 +318,7 @@ def pitch_tracker():
     db.session.add(pitch)
 
     # Update atbat objec with relevant info if necessary
-    if pitch_data["ab_result"] not in ["", "null", None, 0]:
+    if pitch_data["ab_result"] not in ["", "null", None, 0]: 
         at_bat_object.ab_result = pitch_data["ab_result"]
         at_bat_object.traj = pitch_data["traj"]
         at_bat_object.fielder = pitch_data["fielder"]
@@ -324,8 +326,6 @@ def pitch_tracker():
         at_bat_object.inning = pitch_data["inning"]
         at_bat_object.spray_x = spray_x
         at_bat_object.spray_y = spray_y
-
-        db.session.add(at_bat_object)
 
     db.session.commit()
 
@@ -344,8 +344,8 @@ def pitch_tracker():
 
     # reset count and at bat variable if at bat over
     if (pitch.ab_result != ""):
-        balls = 0
-        strikes = 0
+        balls = 1
+        strikes = 1
         at_bat = ""
 
     # send back data
