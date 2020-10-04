@@ -41,7 +41,7 @@
                 {% endfor %}
             </p>
             <p>
-                {{ form.number.label }}<br>
+                {{ form.number.label }} (Optional)<br>
                 {{ form.number(value = pitcher.number, type="number", class="form-control") }}
                 {% for error in form.number.errors %}
                 <span style="color: red;">[{{ error }}]</span>
@@ -65,9 +65,21 @@
                 {% endfor %}
             </p>
             <p>
+                {{ form.notes.label }} (Optional)<br>
+                {{ form.notes(size=1024, class="form-control") }}
+                {% for error in form.notes.errors %}
+                <span style="color: red;">{{ error }}</span>
+                {% endfor %}
+            </p>
+            <p>
                 {{ form.retired.label }}<br>
+                {% if pitcher.retired %}
+                <input checked id="retired" name="retired" type="checkbox" value="y" data-toggle="toggle" data-on="Yes"
+                    data-off="No"><br>
+                {% else %}
                 <input id="retired" name="retired" type="checkbox" value="y" data-toggle="toggle" data-on="Yes"
                     data-off="No"><br>
+                {% endif %}
                 {% for error in form.retired.errors %}
                 <span style="color: red;">[{{ error }}]</span>
                 {% endfor %}
@@ -80,13 +92,16 @@
                 {% endfor %}
             </p>
             <p>
-                {{ form.submit(class="btn btn-primary btn-block") }}
+                {{ form.submit(class="btn btn-primary btn-lg btn-block") }}
             </p>
         </form>
-        <!-- <p style="text-align: center">
+        <p style="text-align: center">
             -OR-
-            <input id="delete-resource" class="btn btn-danger btn-block" type="button" value="Delete Pitcher" />
-        </p> -->
+            <a class="btn btn-danger btn-lg btn-block" as="button" href="/delete_pitcher/{{pitcher.id}}"
+                onclick="return confirm('Are you sure you want to delete the pitcher?')" />
+            Delete Pitcher
+            </a>
+        </p>
     </div>
 </div>
 {% endblock %}

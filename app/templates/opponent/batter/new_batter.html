@@ -39,14 +39,7 @@
                 {% endfor %}
             </p>
             <p>
-                {{ form.initials.label }}<br>
-                {{ form.initials(size=8, class="form-control") }}
-                {% for error in form.initials.errors %}
-                <span class="errors">[{{ error }}]</span>
-                {% endfor %}
-            </p>
-            <p>
-                {{ form.number.label }}<br>
+                {{ form.number.label }} (Optional)<br>
                 {{ form.number(type="number", class="form-control") }}
                 {% for error in form.number.errors %}
                 <span class="errors">[{{ error }}]</span>
@@ -60,7 +53,7 @@
                 {% endfor %}
             </p>
             <p>
-                {{ form.grad_year.label }}<br>
+                {{ form.grad_year.label }} (Optional)<br>
                 {{ form.grad_year(size=32, type="number", class="form-control") }}
                 {% for error in form.grad_year.errors %}
                 <span class="errors">[{{ error }}]</span>

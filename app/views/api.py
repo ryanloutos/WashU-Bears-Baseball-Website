@@ -16,6 +16,8 @@ from app.models import User, Outing, Pitch, Season, Opponent, Batter, AtBat, Pit
 from datetime import datetime
 import os
 import re
+from flask_api import status
+
 
 api = Blueprint("api", __name__)
 
@@ -240,6 +242,8 @@ def pitch_tracker():
         db.session.add(at_bat_object)
         db.session.commit()
         at_bat = at_bat_object.id
+    else:
+        at_bat_object = AtBat.query.filter_by(id=at_bat)
 
     # cleaning up data
     hit_spot = pitch_data["hit_spot"]
@@ -314,7 +318,7 @@ def pitch_tracker():
     db.session.add(pitch)
 
     # Update atbat objec with relevant info if necessary
-    if pitch_data["ab_result"] not in ["", "null", None, 0]:
+    if pitch_data["ab_result"] not in ["", "null", None, 0]: 
         at_bat_object.ab_result = pitch_data["ab_result"]
         at_bat_object.traj = pitch_data["traj"]
         at_bat_object.fielder = pitch_data["fielder"]
@@ -322,8 +326,6 @@ def pitch_tracker():
         at_bat_object.inning = pitch_data["inning"]
         at_bat_object.spray_x = spray_x
         at_bat_object.spray_y = spray_y
-
-        db.session.add(at_bat_object)
 
     db.session.commit()
 
@@ -342,8 +344,8 @@ def pitch_tracker():
 
     # reset count and at bat variable if at bat over
     if (pitch.ab_result != ""):
-        balls = 0
-        strikes = 0
+        balls = 1
+        strikes = 1
         at_bat = ""
 
     # send back data
@@ -500,19 +502,18 @@ def hitters_goals():
         for ab in hitter.at_bats:
             if ab.get_season().current_season and ab.get_pitcher().opponent_id is not 1:
                 pa += 1
-                for pitch in ab.pitches:
-                    if pitch.ab_result not in [None, ""]:
-                        if pitch.ab_result in ["2B"]:
-                            doubles += 1
-                        elif pitch.ab_result in ["HBP"]:
-                            hbp += 1
-                        elif pitch.ab_result in ["BB"]:
-                            bb += 1
-                        elif pitch.ab_result in ["K", "KL", "D3->Out", "D3->Safe"]:
-                            ks += 1
+                if ab.ab_result not in ["", None]:
+                    if ab.ab_result in ["2B"]:
+                        doubles += 1
+                    elif ab.ab_result in ["HBP"]:
+                        hbp += 1
+                    elif ab.ab_result in ["BB"]:
+                        bb += 1
+                    elif ab.ab_result in ["K", "KL", "D3->Out", "D3->Safe"]:
+                        ks += 1
 
-                        if pitch.ab_result in ["1B", "2B", "3B", "HR"]:
-                            hits += 1
+                    if ab.ab_result in ["1B", "2B", "3B", "HR"]:
+                        hits += 1
 
     obp = truncate(zero_division_handler((hits + hbp + bb), pa) * 1000)
 
@@ -557,3 +558,13 @@ def team_get_hitters(team_id):
         "status": "success",
         "data": batter_arr
     })
+
+
+@api.route("/api/game/<game_id>")
+@login_required
+def get_game(game_id):
+    game = Game.query.filter_by(id=game_id).first()
+    if not game:
+        return 'Game not found', status.HTTP_400_BAD_REQUEST
+
+    return game.to_dict()

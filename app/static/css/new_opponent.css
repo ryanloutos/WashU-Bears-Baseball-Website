@@ -78,7 +78,8 @@ table {
 }
 
 .short-input, .checkbox-input {
-    width: 15%
+    width: 15%;
+    text-align: center;
 }
 
 .short-input input {

@@ -6,14 +6,14 @@
 {% endblock %}
 
 {% block app_content %}
-<div class="no-sidenav">
+{% include "opponent/batter/batter_sidenav.html" %}
+<div class="main">
+    {% include "opponent/batter/batter_title.html" %}
     <div class="form-container">
         <h1 class="form-title">
             Edit "{{ batter.name() }}"
         </h1>
-        <div style="padding-left: 20px">
-            <i class="opponent-title">Team: {{ batter.opponent }}</i>
-        </div><br>
+        <br>
         <form method="post" novalidate>
             {{ form.hidden_tag() }} {# Preventing CSRF attacks #}
             <p>
@@ -30,15 +30,23 @@
                 <span style="color: red;">[{{ error }}]</span>
                 {% endfor %}
             </p>
-            <p>
-                {{ form.initials.label }}<br>
-                {{ form.initials(size=24, value=batter.initials, class="form-control") }}
-                {% for error in form.initials.errors %}
-                <span style="color: red;">[{{ error }}]</span>
+            <p {% if can_edit_opponent == False %} style="display: none" {% else %} {% endif %}>
+                {{ form.opponent.label }}<br>
+                <select class="form-control" id="opponent" name="opponent">
+                    {% for o in opponents %}
+                    {% if batter.opponent_id == o.id %}
+                    <option value='{{ o.id }}' selected>{{ o }}</option>
+                    {% else %}
+                    <option value='{{ o.id }}'>{{ o }}</option>
+                    {% endif %}
+                    {% endfor %}
+                </select>
+                {% for error in form.opponent.errors %}
+                <span class="errors">{{ error }}</span>
                 {% endfor %}
             </p>
             <p>
-                {{ form.number.label }}<br>
+                {{ form.number.label }} (Optional)<br>
                 {{ form.number(type='number', value=batter.number, class="form-control") }}
                 {% for error in form.number.errors %}
                 <span style="color: red;">[{{ error }}]</span>
@@ -56,9 +64,24 @@
                 {% endfor %}
             </p>
             <p>
-                {{ form.grad_year.label }}<br>
+                {{ form.grad_year.label }} (Optional)<br>
+                {% if batter.grad_year == None %}
+                {{ form.grad_year(size=32, class="form-control") }}
+                {% else %}
                 {{ form.grad_year(size=32, value=batter.grad_year, class="form-control") }}
+                {% endif %}
                 {% for error in form.grad_year.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.notes.label }} (Optional)<br>
+                {% if batter.notes == 'None' or batter.notes == None %}
+                {{ form.notes(size=32, class="form-control") }}
+                {% else %}
+                {{ form.notes(size=32, value=batter.notes, class="form-control") }}
+                {% endif %}
+                {% for error in form.notes.errors %}
                 <span style="color: red;">[{{ error }}]</span>
                 {% endfor %}
             </p>
@@ -76,15 +99,14 @@
                 {% endfor %}
             </p>
             <p>
-                {{ form.submit(class="btn btn-primary btn-block") }}
+                {{ form.submit(class="btn btn-primary btn-block btn-lg") }}
             </p>
         </form>
-        <!-- <p style="text-align: center">
+        <p style="text-align: center">
             -OR-
-            <input type="button" class="btn btn-danger btn-block" id="delete-batter" onclick="deleteBatter()"
-                value="Delete Batter">
-            <button><a href="{{ url_for('batter.delete_batter', id=batter.id) }}">Delete Batter</a></button>
-        </p> -->
+            <a as="button" class="btn btn-danger btn-lg btn-block" href="/delete_batter/{{batter.id}}"
+                onclick="return confirm('Are you sure you want to delete this batter?')">Delete Batter</a>
+        </p>
     </div>
 </div>
 <script>

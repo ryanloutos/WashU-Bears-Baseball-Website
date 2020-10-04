@@ -16,47 +16,54 @@
     <div class="form-container">
         <h1 class="form-title">New Pitcher</h1>
         <form method="post" novalidate>
-            {{ form.hidden_tag() }} {# Preventing CSRF attacks #}
+            {{ form.hidden_tag() }}
             <p>
                 {{ form.opponent.label }}<br>
                 {{ form.opponent(class="form-control") }}
                 {% for error in form.opponent.errors %}
-                <span style="color: red;">[{{ error }}]</span>
+                <span style="color: red;">{{ error }}</span>
                 {% endfor %}
             </p>
             <p>
                 {{ form.firstname.label }}<br>
                 {{ form.firstname(size=32, class="form-control") }}
                 {% for error in form.firstname.errors %}
-                <span style="color: red;">[{{ error }}]</span>
+                <span style="color: red;">{{ error }}</span>
                 {% endfor %}
             </p>
             <p>
                 {{ form.lastname.label }}<br>
                 {{ form.lastname(size=32, class="form-control") }}
                 {% for error in form.lastname.errors %}
-                <span style="color: red;">[{{ error }}]</span>
+                <span style="color: red;">{{ error }}</span>
                 {% endfor %}
             </p>
             <p>
-                {{ form.number.label }}<br>
+                {{ form.number.label }} (Optional)<br>
                 {{ form.number(size=32, type='number', class="form-control") }}
                 {% for error in form.number.errors %}
-                <span style="color: red;">[{{ error }}]</span>
+                <span style="color: red;">{{ error }}</span>
                 {% endfor %}
             </p>
             <p>
                 {{ form.throws.label }}<br>
                 {{ form.throws(class="form-control") }}
                 {% for error in form.throws.errors %}
-                <span style="color: red;">[{{ error }}]</span>
+                <span style="color: red;">{{ error }}</span>
                 {% endfor %}
             </p>
             <p>
                 {{ form.grad_year.label }}<br>
                 {{ form.grad_year(size=32, type="number", class="form-control") }}
                 {% for error in form.grad_year.errors %}
-                <span class="errors">[{{ error }}]</span>
+                <span class="errors">{{ error }}</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.notes.label }} (Optional)<br>
+                {{ form.notes(size=1024, class="form-control") }}
+                {% for error in form.notes.errors %}
+                <span style="color: red;">{{ error }}</span>
                 {% endfor %}
             </p>
             <p>
@@ -64,7 +71,7 @@
                 <input id="retired" name="retired" type="checkbox" value="y" data-toggle="toggle" data-on="Yes"
                     data-off="No"><br>
                 {% for error in form.retired.errors %}
-                <span style="color: red;">[{{ error }}]</span>
+                <span style="color: red;">{{ error }}</span>
                 {% endfor %}
             </p>
             <p>

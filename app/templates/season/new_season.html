@@ -15,14 +15,14 @@
                 {{ form.semester.label }} <br>
                 {{ form.semester(class="form-control") }}
                 {% for error in form.semester.errors %}
-                <span class="errors">[{{ error }}]</span>
+                <br><span class="errors">[{{ error }}]</span>
                 {% endfor %}
             </p>
             <p>
                 {{ form.year.label }} <br>
-                {{ form.year(size=16, placeholder="Year", type="number", class="form-control") }}<br>
+                {{ form.year(size=16, placeholder="Year", type="number", class="form-control") }}
                 {% for error in form.year.errors %}
-                <span class="errors">[{{ error }}]</span>
+                <br><span class="errors">[{{ error }}]</span>
                 {% endfor %}
             </p>
             <p>

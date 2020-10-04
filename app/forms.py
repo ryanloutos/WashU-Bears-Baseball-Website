@@ -25,9 +25,8 @@ def getOpponents():
 def getSeasons():
     return Season.query.order_by(Season.year.desc()).order_by(Season.semester.desc()).all()
 
+
 # ***************-MAIN-*************** #
-
-
 class LoginForm(FlaskForm):
     username = StringField("Username", validators=[DataRequired()])
     password = PasswordField("Password", validators=[DataRequired()])
@@ -45,6 +44,8 @@ class RegistrationForm(FlaskForm):
                                           EqualTo("password")])
     admin = BooleanField("Admin?", validators=[Optional()])
     retired = BooleanField("Retired?", validators=[Optional()])
+    current_coach = BooleanField("Current Coach?", validators=[Optional()])
+    current_player = BooleanField("Current Player?", validators=[Optional()])
     submit = SubmitField("Register")
 
     # these two functions will run automatically when a new user is trying to
@@ -100,25 +101,29 @@ class NewBatterForm(FlaskForm):
     opponent = QuerySelectField("Opponent", query_factory=getOpponents)
     firstname = StringField("First Name", validators=[DataRequired()])
     lastname = StringField("Last Name", validators=[DataRequired()])
-    initials = StringField("Initials", validators=[Optional()])
     number = IntegerField("Number", validators=[Optional()])
     bats = SelectField("Bats",
                        choices=[("R", "R"), ("L", "L"), ("S", "S")],
                        validators=[Optional()])
     grad_year = IntegerField("Grad Year", validators=[Optional()])
+    notes = StringField("Notes", validators=[Optional()])
     retired = BooleanField("Inactive?")
     submit = SubmitField("Create Batter", validators=[Optional()])
 
 
 class EditBatterForm(FlaskForm):
+    opponent = QuerySelectField(
+        query_factory=lambda: Opponent.query,
+        get_pk=lambda o: o.id,
+        get_label=lambda o: o)
     firstname = StringField("First Name", validators=[Optional()])
     lastname = StringField("Last Name", validators=[Optional()])
-    initials = StringField("Initials", validators=[Optional()])
     number = IntegerField("Number", validators=[Optional()])
     bats = SelectField("Bats",
                        choices=[("R", "R"), ("L", "L"), ("S", "S")],
                        validators=[Optional()])
     grad_year = IntegerField("Grad Year", validators=[Optional()])
+    notes = StringField("Notes", validators=[Optional()])
     retired = BooleanField("Inactive?")
     submit = SubmitField("Save Changes", validators=[Optional()])
 
@@ -267,6 +272,7 @@ class NewPitcherForm(FlaskForm):
     grad_year = IntegerField("Grad Year", validators=[DataRequired()])
     opponent = QuerySelectField("Team", query_factory=getOpponents)
     retired = BooleanField("Retired?")
+    notes = StringField("Notes", validators=[Optional()])
     submit = SubmitField("Add Pitcher")
 
 
@@ -278,27 +284,89 @@ class EditPitcherForm(FlaskForm):
                          choices=[("R", "R"), ("L", "L")],
                          validators=[Optional()])
     grad_year = IntegerField("Grad Year", validators=[Optional()])
-    opponent = SelectField("Team", validators=[Optional()])
+    opponent = QuerySelectField("Team", query_factory=getOpponents)
+    notes = StringField("Notes", validators=[Optional()])
     retired = BooleanField("Retired?")
     photo = FileField("Pitcher Photo",
                       validators=[FileAllowed(["jpg", "png"],
                                               "Use .jpg or .png only!")])
     submit = SubmitField("Save Changes")
 
+
 # ***************-GAME-*************** #
-
-
 class NewGameForm(FlaskForm):
-    date = DateField('Date', validators=[Optional()], format='%Y-%m-%d')
+    date = DateField('Date', validators=[DataRequired()], format='%Y-%m-%d')
     opponent = QuerySelectField(
         query_factory=lambda: Opponent.query,
-        get_pk=lambda o: o,
+        get_pk=lambda o: o.id,
         get_label=lambda o: o)
     season = QuerySelectField(
         query_factory=lambda: Season.query,
         get_pk=lambda s: s.id,
         get_label=lambda s: s)
     submit = SubmitField("Create Game")
+
+
+class EditGameForm(FlaskForm):
+    date = DateField('Date', validators=[DataRequired()], format='%Y-%m-%d')
+    opponent = QuerySelectField(
+        query_factory=lambda: Opponent.query,
+        get_pk=lambda o: o.id,
+        get_label=lambda o: o)
+    season = QuerySelectField(
+        query_factory=lambda: Season.query,
+        get_pk=lambda s: s.id,
+        get_label=lambda s: s)
+    submit = SubmitField("Save Changes")
+
+
+# ***************-OUTING-*************** #
+class NewOutingForm(FlaskForm):
+    pitcher = QuerySelectField(
+        query_factory=lambda: Pitcher.query,
+        get_pk=lambda p: p.id,
+        get_label=lambda p: p
+    )
+    date = DateField('Date', validators=[DataRequired()], format='%Y-%m-%d')
+    opponent = QuerySelectField(
+        query_factory=lambda: Opponent.query.order_by(Opponent.name),
+        get_pk=lambda o: o.id,
+        get_label=lambda o: o)
+    season = QuerySelectField(
+        query_factory=lambda: Season.query.order_by(Season.year),
+        get_pk=lambda s: s.id,
+        get_label=lambda s: s)
+    game = QuerySelectField(
+        query_factory=lambda: Game.query,
+        get_pk=lambda s: s.id,
+        get_label=lambda s: s,
+        allow_blank=True
+    )
+    submit = SubmitField('Create Outing')
+
+
+class EditOutingForm(FlaskForm):
+    pitcher = QuerySelectField(
+        query_factory=lambda: Pitcher.query,
+        get_pk=lambda p: p.id,
+        get_label=lambda p: p
+    )
+    date = DateField('Date', validators=[DataRequired()], format='%Y-%m-%d')
+    opponent = QuerySelectField(
+        query_factory=lambda: Opponent.query,
+        get_pk=lambda o: o.id,
+        get_label=lambda o: o)
+    season = QuerySelectField(
+        query_factory=lambda: Season.query,
+        get_pk=lambda s: s.id,
+        get_label=lambda s: s)
+    game = QuerySelectField(
+        query_factory=lambda: Game.query,
+        get_pk=lambda s: s.id,
+        get_label=lambda s: s,
+        allow_blank=True
+    )
+    submit = SubmitField('Save Changes')
 
 
 class PitchForm(FlaskForm):
@@ -386,28 +454,6 @@ class OutingPitchForm(FlaskForm):
         max_entries=150,
         validators=[Optional()])
     submit = SubmitField('Add Pitches')
-
-
-# Creating a new outing
-class OutingForm(FlaskForm):
-    pitcher = SelectField('Pitcher', validators=[Optional()])
-    date = DateField('Date', validators=[Optional()], format='%Y-%m-%d')
-    opponent = QuerySelectField(
-        query_factory=lambda: Opponent.query,
-        get_pk=lambda o: o,
-        get_label=lambda o: o)
-    season = QuerySelectField(
-        query_factory=lambda: Season.query,
-        get_pk=lambda s: s.id,
-        get_label=lambda s: s)
-    game = QuerySelectField(
-        # Have to load all games initially because can only submit with something that was in original form
-        query_factory=lambda: Game.query,
-        get_pk=lambda s: s.id,
-        get_label=lambda s: s,
-        allow_blank=True
-    )
-    submit = SubmitField('Create Outing')
 
 
 # Create a new outing from CSV
