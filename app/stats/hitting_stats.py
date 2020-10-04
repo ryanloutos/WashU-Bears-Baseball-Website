@@ -21,111 +21,15 @@ from app.stats.util import percentage
 from app.stats.util import zero_division_handler
 
 
-def batterSwingWhiffRatebyPitchbyCount(batter, seasons=[]):
-    pitches_per_count = {
-        "0-0": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
-        "0-1": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
-        "0-2": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
-        "1-0": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
-        "1-1": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
-        "1-2": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
-        "2-0": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
-        "2-1": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
-        "2-2": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
-        "3-0": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
-        "3-1": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
-        "3-2": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0}
-    }
-    swings_per_count = {
-        "0-0": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
-        "0-1": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
-        "0-2": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
-        "1-0": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
-        "1-1": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
-        "1-2": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
-        "2-0": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
-        "2-1": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
-        "2-2": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
-        "3-0": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
-        "3-1": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
-        "3-2": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0}
-    }
-    whiffs_per_count = {
-        "0-0": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
-        "0-1": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
-        "0-2": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
-        "1-0": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
-        "1-1": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
-        "1-2": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
-        "2-0": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
-        "2-1": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
-        "2-2": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
-        "3-0": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
-        "3-1": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
-        "3-2": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0}
-    }
-    swing_rate_by_count = {
-        "0-0": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
-        "0-1": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
-        "0-2": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
-        "1-0": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
-        "1-1": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
-        "1-2": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
-        "2-0": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
-        "2-1": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
-        "2-2": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
-        "3-0": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
-        "3-1": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
-        "3-2": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0}
-    }
-    whiff_rate_by_count = {
-        "0-0": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
-        "0-1": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
-        "0-2": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
-        "1-0": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
-        "1-1": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
-        "1-2": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
-        "2-0": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
-        "2-1": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
-        "2-2": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
-        "3-0": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
-        "3-1": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0},
-        "3-2": {"FB": 0, "SM": 0, "CB": 0, "SL": 0, "CH": 0, "CT": 0}
-    }
+def batterSwingWhiffRatebyPitchbyCount(batter):
+    """For a given batter, calculates the pitch usage against, and the swing and whiff rate
+    of the batter against all types of pitches. Both of these are done for each count.
 
-    for at_bat in batter.at_bats:
-        # check to see if at_bat is in the season(s) we want
-        if (len(seasons) is 0) or at_bat.get_season().id in seasons or str(at_bat.get_season().id) in seasons:
-            for pitch in at_bat.pitches:
-                pitches_per_count[pitch.count][PitchType(
-                    pitch.pitch_type).name] += 1
+    Args:
+        batter (batter object): batter to be analyzed
 
-                if pitch.pitch_result in ["SS", "F", "IP"]:
-                    swings_per_count[pitch.count][PitchType(
-                        pitch.pitch_type).name] += 1
-                    if pitch.pitch_result in ["SS"]:
-                        whiffs_per_count[pitch.count][PitchType(
-                            pitch.pitch_type).name] += 1
-
-    # calculate batter totals
-    for count, val in pitches_per_count.items():
-        for pitch, num in val.items():
-            # calculate swing rate
-            if val[pitch] != 0:
-                swing_rate_by_count[count][pitch] = truncate(
-                    swings_per_count[count][pitch] / val[pitch])
-
-                # calculate whiff rate
-                if swings_per_count[count][pitch] != 0:
-                    whiff_rate_by_count[count][pitch] = truncate(
-                        whiffs_per_count[count][pitch] / swings_per_count[count][pitch])
-
-    return (swing_rate_by_count, whiff_rate_by_count)
-
-
-def batterSwingWhiffRatebyPitchbyCount2(batter, seasons=[]):
-    """
-    second version
+    Returns:
+        [tuple]: 2 dictionaries containing pitch usage, and swing/whiff rate for a batter
     """
 
     pitches_per_count = {
@@ -485,9 +389,15 @@ def stats_opponent_batters_stat_lines(opponent):
 
 
 def batter_ball_in_play_stats(batter):
-    ball_in_play = {"h": 0, "1b": 0, "2b": 0,
-                    "3b": 0, "hr": 0, "bb": 0, "k": 0}
-    hard_hit = {"num_hard": 0, "num_total": 0, "percent": 0}
+    """ Calculates ball in play stats and hard hit stats for every game
+    that a batter has participated in.
+
+    Args:
+        batter (batter object): batter to be analyzed
+
+    Returns:
+        tuple: a tuple of 2 complicated dicts
+    """
 
     ball_in_play_games = {
         "career": {},
@@ -501,12 +411,12 @@ def batter_ball_in_play_stats(batter):
     for game in batter.get_games():
         if game not in [None, ""]:
             ball_in_play_games["career"][game] = {
-                "h": 0, "1b": 0, "2b": 0, "3b": 0, "hr": 0, "bb": 0, "k": 0}
+                "ab": 0, "h": 0, "1b": 0, "2b": 0, "3b": 0, "hr": 0, "bb": 0, "k": 0}
             hard_hit_games["career"][game] = {
                 "num_hard": 0, "num_total": 0, "percent": 0}
             if game.get_season().current_season:
                 ball_in_play_games["current"][game] = {
-                    "h": 0, "1b": 0, "2b": 0, "3b": 0, "hr": 0, "bb": 0, "k": 0}
+                    "ab": 0, "h": 0, "1b": 0, "2b": 0, "3b": 0, "hr": 0, "bb": 0, "k": 0}
                 hard_hit_games["current"][game] = {
                     "num_hard": 0, "num_total": 0, "percent": 0}
 
@@ -514,62 +424,62 @@ def batter_ball_in_play_stats(batter):
     for at_bat in batter.at_bats:
         game = at_bat.get_game()
         if game not in [None, ""]:
-            for pitch in at_bat.pitches:
 
-                # Ball in play stats
-                if pitch.ab_result not in [None, ""]:
-                    game = at_bat.get_game()
+            # Ball in play stats
+            if at_bat.ab_result not in [None, ""]:
+                ball_in_play_games["career"][game]["ab"] += 1
 
-                    # career ball in play stats
-                    if pitch.ab_result in ["1b", "1B"]:
-                        ball_in_play_games["career"][game]["h"] += 1
-                        ball_in_play_games["career"][game]["1b"] += 1
-                    elif pitch.ab_result in ["2b", "2B"]:
-                        ball_in_play_games["career"][game]["h"] += 1
-                        ball_in_play_games["career"][game]["2b"] += 1
-                    elif pitch.ab_result in ["3b", "3B"]:
-                        ball_in_play_games["career"][game]["h"] += 1
-                        ball_in_play_games["career"][game]["3b"] += 1
-                    elif pitch.ab_result in ["HR", "hr"]:
-                        ball_in_play_games["career"][game]["h"] += 1
-                        ball_in_play_games["career"][game]["hr"] += 1
-                    elif pitch.ab_result in ["bb", "BB", "hbp", "HBP"]:
-                        ball_in_play_games["career"][game]["bb"] += 1
-                    elif pitch.ab_result in ["k", "kl", "K", "KL"]:
-                        ball_in_play_games["career"][game]["k"] += 1
+                # career ball in play stats
+                if at_bat.ab_result in ["1b", "1B"]:
+                    ball_in_play_games["career"][game]["h"] += 1
+                    ball_in_play_games["career"][game]["1b"] += 1
+                elif at_bat.ab_result in ["2b", "2B"]:
+                    ball_in_play_games["career"][game]["h"] += 1
+                    ball_in_play_games["career"][game]["2b"] += 1
+                elif at_bat.ab_result in ["3b", "3B"]:
+                    ball_in_play_games["career"][game]["h"] += 1
+                    ball_in_play_games["career"][game]["3b"] += 1
+                elif at_bat.ab_result in ["HR", "hr"]:
+                    ball_in_play_games["career"][game]["h"] += 1
+                    ball_in_play_games["career"][game]["hr"] += 1
+                elif at_bat.ab_result in ["bb", "BB", "hbp", "HBP"]:
+                    ball_in_play_games["career"][game]["bb"] += 1
+                elif at_bat.ab_result in ["k", "kl", "K", "KL"]:
+                    ball_in_play_games["career"][game]["k"] += 1
 
-                    # current season ball in play stats
-                    if at_bat.get_season().current_season:
-                        if pitch.ab_result in ["1b", "1B"]:
-                            ball_in_play_games["current"][game]["h"] += 1
-                            ball_in_play_games["current"][game]["1b"] += 1
-                        elif pitch.ab_result in ["2b", "2B"]:
-                            ball_in_play_games["current"][game]["h"] += 1
-                            ball_in_play_games["current"][game]["2b"] += 1
-                        elif pitch.ab_result in ["3b", "3B"]:
-                            ball_in_play_games["current"][game]["h"] += 1
-                            ball_in_play_games["current"][game]["3b"] += 1
-                        elif pitch.ab_result in ["HR", "hr"]:
-                            ball_in_play_games["current"][game]["h"] += 1
-                            ball_in_play_games["current"][game]["hr"] += 1
-                        elif pitch.ab_result in ["bb", "BB", "hbp", "HBP"]:
-                            ball_in_play_games["current"][game]["bb"] += 1
-                        elif pitch.ab_result in ["k", "kl", "K", "KL"]:
-                            ball_in_play_games["current"][game]["k"] += 1
+                # current season ball in play stats
+                if at_bat.get_season().current_season:
+                    ball_in_play_games["current"][game]["ab"] += 1
+                    if at_bat.ab_result in ["1b", "1B"]:
+                        ball_in_play_games["current"][game]["h"] += 1
+                        ball_in_play_games["current"][game]["1b"] += 1
+                    elif at_bat.ab_result in ["2b", "2B"]:
+                        ball_in_play_games["current"][game]["h"] += 1
+                        ball_in_play_games["current"][game]["2b"] += 1
+                    elif at_bat.ab_result in ["3b", "3B"]:
+                        ball_in_play_games["current"][game]["h"] += 1
+                        ball_in_play_games["current"][game]["3b"] += 1
+                    elif at_bat.ab_result in ["HR", "hr"]:
+                        ball_in_play_games["current"][game]["h"] += 1
+                        ball_in_play_games["current"][game]["hr"] += 1
+                    elif at_bat.ab_result in ["bb", "BB", "hbp", "HBP"]:
+                        ball_in_play_games["current"][game]["bb"] += 1
+                    elif at_bat.ab_result in ["k", "kl", "K", "KL"]:
+                        ball_in_play_games["current"][game]["k"] += 1
 
-                # Hard hit stats
-                if pitch.ab_result in ["IP->Out", "1B", "2B", "3B", "HR", "Error", "FC"]:
+            # Hard hit stats
+            if at_bat.ab_result in ["IP->Out", "1B", "2B", "3B", "HR", "Error", "FC"]:
 
-                    # career hard hit stats
-                    hard_hit_games["career"][game]["num_total"] += 1
-                    if pitch.hit_hard:
-                        hard_hit_games["career"][game]["num_hard"] += 1
+                # career hard hit stats
+                hard_hit_games["career"][game]["num_total"] += 1
+                if at_bat.hit_hard:
+                    hard_hit_games["career"][game]["num_hard"] += 1
 
-                    # current season hard hit stats
-                    if at_bat.get_season().current_season:
-                        hard_hit_games["current"][game]["num_total"] += 1
-                        if pitch.hit_hard:
-                            hard_hit_games["current"][game]["num_hard"] += 1
+                # current season hard hit stats
+                if at_bat.get_season().current_season:
+                    hard_hit_games["current"][game]["num_total"] += 1
+                    if at_bat.hit_hard:
+                        hard_hit_games["current"][game]["num_hard"] += 1
 
     # calculations for hard hit
     for game in batter.get_games():

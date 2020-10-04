@@ -15,14 +15,14 @@
                 {{ form.name.label }}<br>
                 {{ form.name(size=64, maxlength=64, class="form-control") }}<br>
                 {% for error in form.name.errors %}
-                <span class="errors">[{{ error }}]</span>
+                <span class="errors">{{ error }}</span>
                 {% endfor %}
             </p>
             <p>
                 {{ form.logo.label }}
                 {{ form.logo(class="form-control-file") }}<br>
                 {% for error in form.logo.errors %}
-                <span class="errors">[{{ error }}]</span>
+                <span class="errors">{{ error }}</span>
                 {% endfor %}
             </p>
             <i>
@@ -45,44 +45,44 @@
                     <td class="long-input">
                         {{ subform.firstname(maxlength="64", class="form-control") }}
                         {% for error in subform.firstname.errors %}
-                        <span class="errors">[{{ error }}]</span>
+                        <span class="errors">{{ error }}</span>
                         {% endfor %}
                     </td>
                     <td class="long-input">
                         {{ subform.lastname(maxlength="64", class="form-control") }}
                         {% for error in subform.lastname.errors %}
-                        <span class="errors">[{{ error }}]</span>
+                        <span class="errors">{{ error }}</span>
                         {% endfor %}
                     </td>
                     <td class="short-input">
                         {{ subform.number(type="number", class="form-control") }}
                         {% for error in subform.number.errors %}
-                        <span class="errors">[{{ error }}]</span>
+                        <span class="errors">{{ error }}</span>
                         {% endfor %}
                     </td>
                     <td class="short-input">
                         {{ subform.bats(class="form-control") }}
                         {% for error in subform.bats.errors %}
-                        <span class="errors">[{{ error }}]</span>
+                        <span class="errors">{{ error }}</span>
                         {% endfor %}
                     </td>
                     <td class="long-input">
                         {{ subform.grad_year(type="number", class="form-control") }}
                         {% for error in subform.grad_year.errors %}
-                        <span class="errors">[{{ error }}]</span>
+                        <span class="errors">{{ error }}</span>
                         {% endfor %}
                     </td>
                     <td class="checkbox-input">
-                        <input id="retired" name="retired" type="checkbox" value="y" data-toggle="toggle" data-on="Yes"
-                            data-off="No"><br>
+                        <input id="batters-{{ loop.index0 }}-retired" name="batters-{{ loop.index0 }}-retired"
+                            type="checkbox" value="y" data-toggle="toggle" data-on="Yes" data-off="No"><br>
                         {% for error in subform.retired.errors %}
-                        <span class="errors">[{{ error }}]</span>
+                        <span class="errors">{{ error }}</span>
                         {% endfor %}
                     </td>
                     <td class="scouting-input">
                         {{ subform.notes(maxlength="1024", class="form-control") }}
                         {% for error in subform.notes.errors %}
-                        <span class="errors">[{{ error }}]</span>
+                        <span class="errors">{{ error }}</span>
                         {% endfor %}
                     </td>
                 </tr>
@@ -104,50 +104,51 @@
                     <td class="long-input">
                         {{ subform.firstname(maxlength="64", class="form-control") }}
                         {% for error in subform.firstname.errors %}
-                        <span class="errors">[{{ error }}]</span>
+                        <span class="errors">{{ error }}</span>
                         {% endfor %}
                     </td>
                     <td class="long-input">
                         {{ subform.lastname(maxlength="64", class="form-control") }}
                         {% for error in subform.lastname.errors %}
-                        <span class="errors">[{{ error }}]</span>
+                        <span class="errors">{{ error }}</span>
                         {% endfor %}
                     </td>
                     <td class="short-input">
                         {{ subform.number(type="number", class="form-control") }}
                         {% for error in subform.number.errors %}
-                        <span class="errors">[{{ error }}]</span>
+                        <span class="errors">{{ error }}</span>
                         {% endfor %}
                     </td>
                     <td class="short-input">
                         {{ subform.throws(class="form-control") }}
                         {% for error in subform.throws.errors %}
-                        <span class="errors">[{{ error }}]</span>
+                        <span class="errors">{{ error }}</span>
                         {% endfor %}
                     </td>
                     <td class="long-input">
                         {{ subform.grad_year(type="number", class="form-control") }}
                         {% for error in subform.grad_year.errors %}
-                        <span class="errors">[{{ error }}]</span>
+                        <span class="errors">{{ error }}</span>
                         {% endfor %}
                     </td>
                     <td class="checkbox-input">
-                        <input id="retired" name="retired" type="checkbox" value="y" data-toggle="toggle" data-on="Yes"
-                            data-off="No"><br> {% for error in subform.retired.errors %}
-                        <span class="errors">[{{ error }}]</span>
+                        <input id="pitchers-{{ loop.index0 }}-retired" name="pitchers-{{ loop.index0 }}-retired"
+                            type="checkbox" value="y" data-toggle="toggle" data-on="Yes" data-off="No"><br>
+                        {% for error in subform.retired.errors %}
+                        <span class="errors">{{ error }}</span>
                         {% endfor %}
                     </td>
                     <td class="scouting-input">
                         {{ subform.notes(maxlength="1024", class="form-control") }}
                         {% for error in subform.notes.errors %}
-                        <span class="errors">[{{ error }}]</span>
+                        <span class="errors">{{ error }}</span>
                         {% endfor %}
                     </td>
                 </tr>
                 {% endfor %}
             </table>
             <p>
-                {{ form.submit() }}
+                {{ form.submit(class="btn btn-lg btn-block btn-primary") }}
             </p>
         </form>
     </div>

@@ -34,7 +34,6 @@ from app.stats.hitting_stats import batter_summary_game_stats
 from app.stats.hitting_stats import batter_ball_in_play_stats
 from app.stats.hitting_stats import stats_opponent_batters_stat_lines
 from app.stats.hitting_stats import batterSwingWhiffRatebyPitchbyCount
-from app.stats.hitting_stats import batterSwingWhiffRatebyPitchbyCount2
 
 from app.stats.scouting_stats import zone_division_stats_batter
 from app.stats.scouting_stats import batter_dynamic_zone_scouting
@@ -102,7 +101,8 @@ def hitters_stats():
         flash("URL does not exist")
         return redurect(url_for('main.index'))
 
-    batters_stat_line, batters_hard_hit, pitch_usage_count, swing_whiff_rate = stats_opponent_batters_stat_lines(opponent)
+    batters_stat_line, batters_hard_hit, pitch_usage_count, swing_whiff_rate = stats_opponent_batters_stat_lines(
+        opponent)
 
     return render_template(
         '/hitters/hitters_stats.html',
@@ -382,7 +382,8 @@ def hitter_videos(id):
 
         # https://gist.github.com/silentsokolov/f5981f314bc006c82a41
         # gets the id from a youtube linke
-        regex = re.compile(r'(https?://)?(www\.)?(youtube|youtu|youtube-nocookie)\.(com|be)/(watch\?v=|embed/|v/|.+\?v=)?(?P<id>[A-Za-z0-9\-=_]{11})')
+        regex = re.compile(
+            r'(https?://)?(www\.)?(youtube|youtu|youtube-nocookie)\.(com|be)/(watch\?v=|embed/|v/|.+\?v=)?(?P<id>[A-Za-z0-9\-=_]{11})')
         match = regex.match(v.link)
         if not match:
             video_ids.append("")
@@ -437,7 +438,8 @@ def hitter_spray_chart(batter_id):
 
             # for pitch locations against
             if p.loc_x not in [None, ""] and p.loc_y not in [None, ""]:
-                locs.append({"x_loc": p.loc_x, "y_loc": p.loc_y, "type": p.pitch_type})
+                locs.append(
+                    {"x_loc": p.loc_x, "y_loc": p.loc_y, "type": p.pitch_type})
 
     # Change density vals to percentages
     for i in range(len(density_vals)):
@@ -465,7 +467,9 @@ def hitter_stats(batter_id):
     seasons = batter.get_seasons()
 
     # Batter stat calculations
-    pitch_usage_count, swing_whiff_rate = batterSwingWhiffRatebyPitchbyCount2(batter)
+
+    pitch_usage_count, swing_whiff_rate = batterSwingWhiffRatebyPitchbyCount(batter)
+
     ball_in_play, hard_hit = batter_ball_in_play_stats(batter)
 
     return render_template(
@@ -477,7 +481,7 @@ def hitter_stats(batter_id):
         title=batter,
         batter=batter,
         seasons=seasons
-        )
+    )
 
 
 @hitter.route('/hitter/<id>/edit', methods=['GET', 'POST'])

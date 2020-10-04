@@ -3,69 +3,6 @@
 {% block styles %}
 {{ super() }}
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/forms.css') }}">
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        let season_selector = document.getElementById("season_selector");
-        let game_selector = document.getElementById("game_selector");
-
-        //changes the available games based on the selected season
-        season_selector.onchange = function () {
-            season = season_selector.value;
-            console.log(season);
-
-            fetch(
-                "/api/season/" + season + "/games",
-            ).then(res => res.json())
-                .then(function (response) {
-                    // check to make sure that server stuff happened ok
-                    if (response.status == "failure") {
-                        console.log("Request ended in failure");
-                        console.log("Error: " + response.error);
-                    } else {
-                        // create element for each item in response
-                        let options = "<option value=''> </option>";
-                        for (let game of response.games) {
-                            // create html element string
-                            options += "<option value='" + game.id + "'>" + game.label + "</option>";
-                        }
-                        // replace current options html with our options html
-                        game_selector.innerHTML = options;
-                    }
-                });
-        }
-
-        //setup player selector limit
-        let team_selector = document.getElementById("team-selector");
-        let pitcher_selector = document.getElementById("pitcher-selector");
-
-        team_selector.onchange = function () {
-            let team_id = team_selector.value;
-            console.log(team_id);
-
-            fetch(
-                "/api/team/" + team_id + "/get_pitchers"
-            ).then(res => res.json())
-                .then(function (response) {
-                    //check if response was good
-                    if (response.status != "success") {
-                        console.log("Request ended in failure");
-                        console.log("Error: " + response.error);
-                    }
-
-                    //put pitchers into selector
-                    let options = "";
-                    for (let pitcher of response.data) {
-                        // create html element string
-                        options += "<option value='" + pitcher.id + "'>" + pitcher.name + "</option>";
-                    }
-
-                    pitcher_selector.innerHTML = options;
-
-                });
-        }
-    });
-
-</script>
 {% endblock %}
 
 {% block app_content %}
@@ -75,10 +12,8 @@
         <form method="post" novalidate>
             {{ form.hidden_tag() }}
             <p>
-                <label>Team</label>
-                <br>
+                <label>Team</label><br>
                 <select name="team-selector" id="team-selector" class="form-control">
-                    <option value="0" selected> </option>
                     {% for team in teams %}
                     <option value="{{team.id}}">{{team.name}}</option>
                     {% endfor %}
@@ -86,43 +21,51 @@
             </p>
             <p>
                 {{ form.pitcher.label }}<br>
-                {{ form.pitcher(id='pitcher-selector', class="form-control") }}
+                {{ form.pitcher(class="form-control") }}
                 {% for error in form.pitcher.errors %}
-                <br><span style="color: red;">[{{ error }}]</span>
+                <span style="color: red;">{{ error }}</span>
                 {% endfor %}
             </p>
             <p>
-                {{ form.date.label }}<br>
-                {{ form.date(class='datepicker', class="form-control") }}
-                If in safari, enter date as YYYY-MM-DD
+                {{ form.date.label }} <i>If in safari, enter date as YYYY-MM-DD</i>
+                {{ form.date(class="form-control") }}
                 {% for error in form.date.errors %}
-                <br><span style="color: red;">[{{ error }}]</span>
+                <span style="color: red;">{{ error }}</span>
                 {% endfor %}
             </p>
             <p>
                 {{ form.opponent.label }}<br>
                 {{ form.opponent(class="form-control") }}
                 {% for error in form.opponent.errors %}
-                <br><span style="color: red;">[{{ error }}]</span>
+                <span style="color: red;">{{ error }}</span>
                 {% endfor %}
             </p>
             <p>
                 {{ form.season.label }}<br>
-                {{ form.season(id="season_selector", class="form-control") }}
+                {{ form.season(class="form-control") }}
                 {% for error in form.season.errors %}
-                <br><span style="color: red;">[{{ error }}]</span>
+                <span style="color: red;">{{ error }}</span>
                 {% endfor %}
             </p>
             <p>
                 {{ form.game.label }} <br>
-                {{ form.game(id="game_selector", class="form-control") }}
+                {{ form.game(class="form-control") }}
                 {% for error in form.game.errors %}
-                <span style="color: red;">[{{ error }}]</span>
+                <span style="color: red;">{{ error }}</span>
                 {% endfor %}
             </p>
             <br>
-            <p>{{ form.submit(class="btn btn-primary btn-block") }}</p>
+            <p>{{ form.submit(class="btn btn-primary btn-block btn-lg") }}</p>
         </form>
     </div>
 </div>
+<script>
+    {% include "outing/outing_forms.js" %}
+    season_selector.val({{ current_season.id }});
+    team_selector.val(1);
+    opponent_selector.val(1);
+
+    update_game_choices();
+    update_pitcher_choices();
+</script>
 {% endblock %}
