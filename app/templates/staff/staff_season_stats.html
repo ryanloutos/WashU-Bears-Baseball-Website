@@ -263,6 +263,7 @@
 
         });
 
+        $('#include-matchups').trigger('click')
     });
 </script>
 {% endblock %}
@@ -275,8 +276,10 @@
     <h1>Advanced Stats For {{current_season}}</h1>
     </p>
     <div class="filter">
-        <label style="font-size: 20px">Filter Stats:</label> <br>
-        Include Matchups &nbsp; <input id="include-matchups" type="checkbox" style="vertical-align: top;">
+        <div>
+            <label style="font-size: 20px">Filter Stats:</label> <br>
+            Include Matchups &nbsp; <input id="include-matchups" type="checkbox" style="vertical-align: top;">
+        </div>
         <div style="font-size: 15px; display: inline-block">
             <br />
             Between &nbsp;
