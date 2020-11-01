@@ -101,15 +101,12 @@ def hitters_stats():
         flash("URL does not exist")
         return redurect(url_for('main.index'))
 
-    batters_stat_line, batters_hard_hit, pitch_usage_count, swing_whiff_rate = stats_opponent_batters_stat_lines(
-        opponent)
+    batters_stat_line, batters_hard_hit = stats_opponent_batters_stat_lines(opponent)
 
     return render_template(
         '/hitters/hitters_stats.html',
         title=opponent,
         opponent=opponent,
-        pitch_usage_count=pitch_usage_count,
-        swing_whiff_rate=swing_whiff_rate,
         batters_stat_line=batters_stat_line,
         batters_hard_hit=batters_hard_hit
     )

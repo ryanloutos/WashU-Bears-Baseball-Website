@@ -216,23 +216,6 @@ def stats_opponent_batters_stat_lines(opponent):
         [tuple] -- a number of very complicated data arrays and dictionary containing values to be placed in web-pages
     """
     # Swing and whiff rate variables
-    pitches_per_count = {
-        "FB": {"0-0": {"usages": 0, "percent": 0}, "0-1": {"usages": 0, "percent": 0}, "0-2": {"usages": 0, "percent": 0}, "1-0": {"usages": 0, "percent": 0}, "1-1": {"usages": 0, "percent": 0}, "1-2": {"usages": 0, "percent": 0}, "2-0": {"usages": 0, "percent": 0}, "2-1": {"usages": 0, "percent": 0}, "2-2": {"usages": 0, "percent": 0}, "3-0": {"usages": 0, "percent": 0}, "3-1": {"usages": 0, "percent": 0}, "3-2": {"usages": 0, "percent": 0}},
-        "SM": {"0-0": {"usages": 0, "percent": 0}, "0-1": {"usages": 0, "percent": 0}, "0-2": {"usages": 0, "percent": 0}, "1-0": {"usages": 0, "percent": 0}, "1-1": {"usages": 0, "percent": 0}, "1-2": {"usages": 0, "percent": 0}, "2-0": {"usages": 0, "percent": 0}, "2-1": {"usages": 0, "percent": 0}, "2-2": {"usages": 0, "percent": 0}, "3-0": {"usages": 0, "percent": 0}, "3-1": {"usages": 0, "percent": 0}, "3-2": {"usages": 0, "percent": 0}},
-        "SL": {"0-0": {"usages": 0, "percent": 0}, "0-1": {"usages": 0, "percent": 0}, "0-2": {"usages": 0, "percent": 0}, "1-0": {"usages": 0, "percent": 0}, "1-1": {"usages": 0, "percent": 0}, "1-2": {"usages": 0, "percent": 0}, "2-0": {"usages": 0, "percent": 0}, "2-1": {"usages": 0, "percent": 0}, "2-2": {"usages": 0, "percent": 0}, "3-0": {"usages": 0, "percent": 0}, "3-1": {"usages": 0, "percent": 0}, "3-2": {"usages": 0, "percent": 0}},
-        "CB": {"0-0": {"usages": 0, "percent": 0}, "0-1": {"usages": 0, "percent": 0}, "0-2": {"usages": 0, "percent": 0}, "1-0": {"usages": 0, "percent": 0}, "1-1": {"usages": 0, "percent": 0}, "1-2": {"usages": 0, "percent": 0}, "2-0": {"usages": 0, "percent": 0}, "2-1": {"usages": 0, "percent": 0}, "2-2": {"usages": 0, "percent": 0}, "3-0": {"usages": 0, "percent": 0}, "3-1": {"usages": 0, "percent": 0}, "3-2": {"usages": 0, "percent": 0}},
-        "CH": {"0-0": {"usages": 0, "percent": 0}, "0-1": {"usages": 0, "percent": 0}, "0-2": {"usages": 0, "percent": 0}, "1-0": {"usages": 0, "percent": 0}, "1-1": {"usages": 0, "percent": 0}, "1-2": {"usages": 0, "percent": 0}, "2-0": {"usages": 0, "percent": 0}, "2-1": {"usages": 0, "percent": 0}, "2-2": {"usages": 0, "percent": 0}, "3-0": {"usages": 0, "percent": 0}, "3-1": {"usages": 0, "percent": 0}, "3-2": {"usages": 0, "percent": 0}},
-        "CT": {"0-0": {"usages": 0, "percent": 0}, "0-1": {"usages": 0, "percent": 0}, "0-2": {"usages": 0, "percent": 0}, "1-0": {"usages": 0, "percent": 0}, "1-1": {"usages": 0, "percent": 0}, "1-2": {"usages": 0, "percent": 0}, "2-0": {"usages": 0, "percent": 0}, "2-1": {"usages": 0, "percent": 0}, "2-2": {"usages": 0, "percent": 0}, "3-0": {"usages": 0, "percent": 0}, "3-1": {"usages": 0, "percent": 0}, "3-2": {"usages": 0, "percent": 0}},
-        "thrown": {"0-0": 0, "0-1": 0, "0-2": 0, "1-0": 0, "1-1": 0, "1-2": 0, "2-0": 0, "2-1": 0, "2-2": 0, "3-0": 0, "3-1": 0, "3-2": 0}
-    }
-    swing_whiff_rate_new = {
-        "FB": {"0-0": {"swings": 0, "whiffs": 0, "thrown": 0}, "0-1": {"swings": 0, "whiffs": 0, "thrown": 0}, "0-2": {"swings": 0, "whiffs": 0, "thrown": 0}, "1-0": {"swings": 0, "whiffs": 0, "thrown": 0}, "1-1": {"swings": 0, "whiffs": 0, "thrown": 0}, "1-2": {"swings": 0, "whiffs": 0, "thrown": 0}, "2-0": {"swings": 0, "whiffs": 0, "thrown": 0}, "2-1": {"swings": 0, "whiffs": 0, "thrown": 0}, "2-2": {"swings": 0, "whiffs": 0, "thrown": 0}, "3-0": {"swings": 0, "whiffs": 0, "thrown": 0}, "3-1": {"swings": 0, "whiffs": 0, "thrown": 0}, "3-2": {"swings": 0, "whiffs": 0, "thrown": 0}},
-        "SM": {"0-0": {"swings": 0, "whiffs": 0, "thrown": 0}, "0-1": {"swings": 0, "whiffs": 0, "thrown": 0}, "0-2": {"swings": 0, "whiffs": 0, "thrown": 0}, "1-0": {"swings": 0, "whiffs": 0, "thrown": 0}, "1-1": {"swings": 0, "whiffs": 0, "thrown": 0}, "1-2": {"swings": 0, "whiffs": 0, "thrown": 0}, "2-0": {"swings": 0, "whiffs": 0, "thrown": 0}, "2-1": {"swings": 0, "whiffs": 0, "thrown": 0}, "2-2": {"swings": 0, "whiffs": 0, "thrown": 0}, "3-0": {"swings": 0, "whiffs": 0, "thrown": 0}, "3-1": {"swings": 0, "whiffs": 0, "thrown": 0}, "3-2": {"swings": 0, "whiffs": 0, "thrown": 0}},
-        "SL": {"0-0": {"swings": 0, "whiffs": 0, "thrown": 0}, "0-1": {"swings": 0, "whiffs": 0, "thrown": 0}, "0-2": {"swings": 0, "whiffs": 0, "thrown": 0}, "1-0": {"swings": 0, "whiffs": 0, "thrown": 0}, "1-1": {"swings": 0, "whiffs": 0, "thrown": 0}, "1-2": {"swings": 0, "whiffs": 0, "thrown": 0}, "2-0": {"swings": 0, "whiffs": 0, "thrown": 0}, "2-1": {"swings": 0, "whiffs": 0, "thrown": 0}, "2-2": {"swings": 0, "whiffs": 0, "thrown": 0}, "3-0": {"swings": 0, "whiffs": 0, "thrown": 0}, "3-1": {"swings": 0, "whiffs": 0, "thrown": 0}, "3-2": {"swings": 0, "whiffs": 0, "thrown": 0}},
-        "CB": {"0-0": {"swings": 0, "whiffs": 0, "thrown": 0}, "0-1": {"swings": 0, "whiffs": 0, "thrown": 0}, "0-2": {"swings": 0, "whiffs": 0, "thrown": 0}, "1-0": {"swings": 0, "whiffs": 0, "thrown": 0}, "1-1": {"swings": 0, "whiffs": 0, "thrown": 0}, "1-2": {"swings": 0, "whiffs": 0, "thrown": 0}, "2-0": {"swings": 0, "whiffs": 0, "thrown": 0}, "2-1": {"swings": 0, "whiffs": 0, "thrown": 0}, "2-2": {"swings": 0, "whiffs": 0, "thrown": 0}, "3-0": {"swings": 0, "whiffs": 0, "thrown": 0}, "3-1": {"swings": 0, "whiffs": 0, "thrown": 0}, "3-2": {"swings": 0, "whiffs": 0, "thrown": 0}},
-        "CH": {"0-0": {"swings": 0, "whiffs": 0, "thrown": 0}, "0-1": {"swings": 0, "whiffs": 0, "thrown": 0}, "0-2": {"swings": 0, "whiffs": 0, "thrown": 0}, "1-0": {"swings": 0, "whiffs": 0, "thrown": 0}, "1-1": {"swings": 0, "whiffs": 0, "thrown": 0}, "1-2": {"swings": 0, "whiffs": 0, "thrown": 0}, "2-0": {"swings": 0, "whiffs": 0, "thrown": 0}, "2-1": {"swings": 0, "whiffs": 0, "thrown": 0}, "2-2": {"swings": 0, "whiffs": 0, "thrown": 0}, "3-0": {"swings": 0, "whiffs": 0, "thrown": 0}, "3-1": {"swings": 0, "whiffs": 0, "thrown": 0}, "3-2": {"swings": 0, "whiffs": 0, "thrown": 0}},
-        "CT": {"0-0": {"swings": 0, "whiffs": 0, "thrown": 0}, "0-1": {"swings": 0, "whiffs": 0, "thrown": 0}, "0-2": {"swings": 0, "whiffs": 0, "thrown": 0}, "1-0": {"swings": 0, "whiffs": 0, "thrown": 0}, "1-1": {"swings": 0, "whiffs": 0, "thrown": 0}, "1-2": {"swings": 0, "whiffs": 0, "thrown": 0}, "2-0": {"swings": 0, "whiffs": 0, "thrown": 0}, "2-1": {"swings": 0, "whiffs": 0, "thrown": 0}, "2-2": {"swings": 0, "whiffs": 0, "thrown": 0}, "3-0": {"swings": 0, "whiffs": 0, "thrown": 0}, "3-1": {"swings": 0, "whiffs": 0, "thrown": 0}, "3-2": {"swings": 0, "whiffs": 0, "thrown": 0}}
-    }
     pitches_total = 0
 
     # Stat line variables
@@ -332,26 +315,6 @@ def stats_opponent_batters_stat_lines(opponent):
                                 if pitch.hit_hard == 1:
                                     temp_hard_hit["current_num_hard"] += 1
 
-                    # USAGE AND USAGE PERCENTAGE
-                    # add a pitch to a counts pitch type and total pitches and pitches in a count
-                    pitches_per_count[PitchType(
-                        pitch.pitch_type).name][pitch.count]["usages"] += 1
-                    pitches_per_count["thrown"][pitch.count] += 1
-                    pitches_total += 1
-
-                    # SWING WHIFF RATE
-                    swing_whiff_rate_new[PitchType(
-                        pitch.pitch_type).name][pitch.count]["thrown"] += 1
-                    if pitch.pitch_result in ["SS", "IP", "F"]:
-                        # for swing rate calculation
-                        swing_whiff_rate_new[PitchType(
-                            pitch.pitch_type).name][pitch.count]["swings"] += 1
-
-                        # for whiff rate calculateion
-                        if pitch.pitch_result in ["SS"]:
-                            swing_whiff_rate_new[PitchType(
-                                pitch.pitch_type).name][pitch.count]["whiffs"] += 1
-
             # hard hit calcs
             if temp_hard_hit["num_total"] > 0:
                 temp_hard_hit["percent"] = percentage(
@@ -364,28 +327,7 @@ def stats_opponent_batters_stat_lines(opponent):
             batter_stat_line.append(temp_stat_line)
             batter_hard_hit_line.append(temp_hard_hit)
 
-    # USAGE RATE CALC
-    for pitch_type, pitch_vals in pitches_per_count.items():
-        if pitch_type != "thrown":
-            for count, vals in pitch_vals.items():
-                if pitches_per_count["thrown"][count] > 0:
-                    vals["percent"] = percentage(
-                        truncate(vals["usages"] / pitches_per_count["thrown"][count]))
-
-    # SWING/WHIFF rate new calc
-    for pitch_type, pitch_vals in swing_whiff_rate_new.items():
-        for count, vals in pitch_vals.items():
-            if vals["thrown"] > 0:
-                # whiff rate calc
-                if vals["swings"] > 0:
-                    vals["whiffs"] = percentage(
-                        truncate(vals["whiffs"] / vals["swings"]))
-
-                # swing rate calc
-                vals["swings"] = percentage(
-                    truncate(vals["swings"] / vals["thrown"]))
-
-    return (batter_stat_line, batter_hard_hit_line, pitches_per_count, swing_whiff_rate_new)
+    return (batter_stat_line, batter_hard_hit_line)
 
 
 def batter_ball_in_play_stats(batter):
