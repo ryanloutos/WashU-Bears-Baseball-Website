@@ -258,62 +258,57 @@ def stats_opponent_batters_stat_lines(opponent):
             }
 
             for at_bat in batter.at_bats:
+
+                # CAREER HIT STATS
                 temp_stat_line["ab"] += 1
+                if at_bat.ab_result in ["1b", "1B"]:
+                    temp_stat_line["h"] += 1
+                    temp_stat_line["1b"] += 1
+                elif at_bat.ab_result in ["2b", "2B"]:
+                    temp_stat_line["h"] += 1
+                    temp_stat_line["2b"] += 1
+                elif at_bat.ab_result in ["3b", "3B"]:
+                    temp_stat_line["h"] += 1
+                    temp_stat_line["3b"] += 1
+                elif at_bat.ab_result in ["HR", "hr"]:
+                    temp_stat_line["h"] += 1
+                    temp_stat_line["hr"] += 1
+                elif at_bat.ab_result in ["bb", "BB", "hbp", "HBP"]:
+                    temp_stat_line["bb"] += 1
+                elif at_bat.ab_result in ["k", "kl", "K", "KL"]:
+                    temp_stat_line["k"] += 1
+
+                # CURRENT SEASON HIT STATS
                 if at_bat.get_season().current_season:
                     temp_stat_line["current_ab"] += 1
-                for pitch in at_bat.pitches:
+                    if at_bat.ab_result in ["1b", "1B"]:
+                        temp_stat_line["current_h"] += 1
+                        temp_stat_line["current_1b"] += 1
+                    elif at_bat.ab_result in ["2b", "2B"]:
+                        temp_stat_line["current_h"] += 1
+                        temp_stat_line["current_2b"] += 1
+                    elif at_bat.ab_result in ["3b", "3B"]:
+                        temp_stat_line["current_h"] += 1
+                        temp_stat_line["current_3b"] += 1
+                    elif at_bat.ab_result in ["HR", "hr"]:
+                        temp_stat_line["current_h"] += 1
+                        temp_stat_line["current_hr"] += 1
+                    elif at_bat.ab_result in ["bb", "BB", "hbp", "HBP"]:
+                        temp_stat_line["current_bb"] += 1
+                    elif at_bat.ab_result in ["k", "kl", "K", "KL"]:
+                        temp_stat_line["current_k"] += 1
 
-                    # if there was an ab_result, do calc for stat line and hard_hit
-                    if pitch.ab_result not in [None, ""]:
+                # HARD HIT STATS
+                if at_bat.ab_result in ["IP->Out", "1B", "2B", "3B", "HR", "Error", "FC"]:
+                    temp_hard_hit["num_total"] += 1
+                    if at_bat.hit_hard == 1:
+                        temp_hard_hit["num_hard"] += 1
 
-                        # hit stats
-                        if pitch.ab_result in ["1b", "1B"]:
-                            temp_stat_line["h"] += 1
-                            temp_stat_line["1b"] += 1
-                        elif pitch.ab_result in ["2b", "2B"]:
-                            temp_stat_line["h"] += 1
-                            temp_stat_line["2b"] += 1
-                        elif pitch.ab_result in ["3b", "3B"]:
-                            temp_stat_line["h"] += 1
-                            temp_stat_line["3b"] += 1
-                        elif pitch.ab_result in ["HR", "hr"]:
-                            temp_stat_line["h"] += 1
-                            temp_stat_line["hr"] += 1
-                        elif pitch.ab_result in ["bb", "BB", "hbp", "HBP"]:
-                            temp_stat_line["bb"] += 1
-                        elif pitch.ab_result in ["k", "kl", "K", "KL"]:
-                            temp_stat_line["k"] += 1
-
-                        # current season hit stats
-                        if at_bat.get_season().current_season:
-                            if pitch.ab_result in ["1b", "1B"]:
-                                temp_stat_line["current_h"] += 1
-                                temp_stat_line["current_1b"] += 1
-                            elif pitch.ab_result in ["2b", "2B"]:
-                                temp_stat_line["current_h"] += 1
-                                temp_stat_line["current_2b"] += 1
-                            elif pitch.ab_result in ["3b", "3B"]:
-                                temp_stat_line["current_h"] += 1
-                                temp_stat_line["current_3b"] += 1
-                            elif pitch.ab_result in ["HR", "hr"]:
-                                temp_stat_line["current_h"] += 1
-                                temp_stat_line["current_hr"] += 1
-                            elif pitch.ab_result in ["bb", "BB", "hbp", "HBP"]:
-                                temp_stat_line["current_bb"] += 1
-                            elif pitch.ab_result in ["k", "kl", "K", "KL"]:
-                                temp_stat_line["current_k"] += 1
-
-                        # Hard hit stats
-                        if pitch.ab_result in ["IP->Out", "1B", "2B", "3B", "HR", "Error", "FC"]:
-                            temp_hard_hit["num_total"] += 1
-                            if pitch.hit_hard == 1:
-                                temp_hard_hit["num_hard"] += 1
-
-                            # current season hard hit stats
-                            if at_bat.get_season().current_season:
-                                temp_hard_hit["current_num_total"] += 1
-                                if pitch.hit_hard == 1:
-                                    temp_hard_hit["current_num_hard"] += 1
+                    # current season hard hit stats
+                    if at_bat.get_season().current_season:
+                        temp_hard_hit["current_num_total"] += 1
+                        if at_bat.hit_hard == 1:
+                            temp_hard_hit["current_num_hard"] += 1
 
             # hard hit calcs
             if temp_hard_hit["num_total"] > 0:
