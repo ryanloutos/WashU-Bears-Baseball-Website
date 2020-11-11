@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block styles %}
+{{ super() }}
+{% endblock %}
+
+{% block app_content %}
+<div class="row">
+    <div class="col-sm-12">
+        <h1 class="text-center">All User Profiles</h1>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-12">
+        <table class="table">
+            <tr class="table-headers">
+                <th>ID</th>
+                <th>username</th>
+                <th>email</th>
+                <th>firstname</th>
+                <th>lastname</th>
+                <th>admin</th>
+                <th>retired</th>
+                <th>current_coach</th>
+                <th>current_player</th>
+            </tr>
+            {% for user in users %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.firstname }}</td>
+                    <td>{{ user.lastname }}</td>
+                    <td>{{ user.admin }}</td>
+                    <td>{{ user.retired }}</td>
+                    <td>{{ user.current_coach }}</td>
+                    <td>{{ user.current_player }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+
+{% endblock %}

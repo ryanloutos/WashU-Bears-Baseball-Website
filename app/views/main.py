@@ -12,6 +12,7 @@ from app.forms import LoginForm
 from app.forms import EditUserForm
 from app.forms import RegistrationForm
 from app.forms import ChangePasswordForm
+from app.forms import AdminForceChangePasswordForm
 
 from flask_login import login_user
 from flask_login import logout_user
@@ -184,4 +185,50 @@ def register():
         "main/register.html",
         title="Register",
         form=form
+    )
+
+
+@main.route("/view_users", methods=["GET", "POST"])
+@login_required
+def view_users():
+
+    if not current_user.admin:
+        flash("Admin privileges Required ")
+        return redirect(url_for("main.index"))
+
+    users = User.query.all()
+    return render_template(
+        "main/view_users.html",
+        title="View Current Users",
+        users=users
+    )
+
+
+@main.route("/admin_password_change/<user_id>", methods=["GET", "POST"])
+@login_required
+def admin_password_change(user_id):
+    if not current_user.admin:
+        flash("Admin privileges Required")
+        return redirect(url_for("main.index"))
+
+    u = User.query.filter_by(id=user_id).first()
+
+    form = AdminForceChangePasswordForm()
+    if form.validate_on_submit():
+
+        # set the new password
+        u.set_password(form.password.data)
+
+        # commit the changes
+        db.session.commit()
+
+        # redirects to user page
+        flash('Password changed!')
+        return redirect(url_for('main.view_users'))
+
+    return render_template(
+        "main/admin_password_change.html",
+        title="Admin Password Change",
+        form=form,
+        user=u
     )

@@ -89,6 +89,13 @@ class ChangePasswordForm(FlaskForm):
     submit = SubmitField("Update Password")
 
 
+class AdminForceChangePasswordForm(FlaskForm):
+    password = PasswordField("Password", validators=[DataRequired()])
+    password2 = PasswordField("Repeat Password", validators=[
+                              DataRequired(), EqualTo("password")])
+    submit = SubmitField("Update Password")
+
+
 # ***************-BATTER-*************** #
 class NewBatterForm(FlaskForm):
     opponent = QuerySelectField("Opponent", query_factory=getOpponents)
