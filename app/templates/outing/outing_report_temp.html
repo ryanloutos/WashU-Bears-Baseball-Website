@@ -1,0 +1,201 @@
+{% extends "bootstrap/base.html" %}
+
+{% block title %}
+	{{ title }}
+{% endblock %}
+
+{% block styles %}
+	{{ super() }}
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/fonts.css') }}">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/base.css') }}">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+{% endblock %}
+
+{% block content %}
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-1">col</div>
+			<div class="col-1">col</div>
+			<div class="col-1">col</div>
+			<div class="col-1">col</div>
+			<div class="col-1">col</div>
+			<div class="col-1">col</div>
+			<div class="col-1">col</div>
+			<div class="col-1">col</div>
+			<div class="col-1">col</div>
+			<div class="col-1">col</div>
+			<div class="col-1">col</div>
+			<div class="col-1">col</div>
+		</div>
+		<div class="row">
+			<div class="col-9">
+				<div class="row"><h3>Velo Over Outing</h3></div>
+				<div class="row" id="velo-over-outing"></div>
+			</div>
+			<div class="col-3" id="tab-1-holder">
+				<div class="row"><h3>Pitch Stats</h3></div>
+				<div class="row">
+					<table class="table">
+						<thead>
+							<tr class="table-headers">
+								<th>Type</th>
+								<th>No.</th>
+								<th>Velo Avg</th>
+								<th>Max </th>
+								<th>Min</th>
+								<th>Usg %</th>
+								<th>Str %</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for pitch in pitch_stats %}
+								{%if pitch.num_thrown != "X"%}
+									<tr>
+										<td>{{pitch.pitch_type}}</td>
+										<td>{{pitch.num_thrown}}</td>
+										<td>{{pitch.velo_avg}}</td>
+										<td>{{pitch.velo_max}}</td>
+										<td>{{pitch.velo_min}}</td>
+										<td>
+											{{pitch.percentage_thrown}}%
+										</td>
+										<td>
+											{{pitch.strike_percentage}}%
+										</td>
+									</tr>
+								{%endif%}
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+				<div class="row"><h3>Time to Plate</h3></div>
+				<div class="row">
+					<table id="time-to-plate" class="table">
+						<tr class="table-headers">
+							<th>Lead RNR</th>
+							<th>No.</th>
+							<th>Avg</th>
+						</tr>
+						{% for runner in time_to_plate %}
+							<tr>
+								<td>{{runner.lead_runner}}</td>
+								<td>{{runner.num_times}}</td>
+								<td>{{runner.avg}}</td>
+							</tr>
+						{% endfor %}
+					</table>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-3">
+				<div class="row"><h3>Pitch Locations</h3></div>
+				<div class="row" id="pitch-locations-legend"></div>
+				<div class="row" id="pitch-locations"></div>
+			</div>
+			<div class="col-3">
+				<div class="row"><h3>Balls in Play</h3></div>
+				<div class="row" id="spray-locations-legend"></div>
+				<div class="row" id="spray-locations"></div>
+			</div>
+			<div class="col-6">
+				<table class="table">
+					<thead>
+						<tr class="table-headers">
+							<th>Pitch Num</th>
+							<th>Pitch</th>
+							<th>Result</th>
+						</tr>
+					</thead>
+					<tbody id="outcomes-body">
+					
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+{% block scripts %}
+	{{ super() }}
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+	<script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
+	<script src="{{ url_for("static", filename="packages/d3/d3.min.js") }}"></script>
+	<script src="{{ url_for("static", filename="js/velo_over_outing.js") }}"></script>
+	<script src="{{ url_for("static", filename="js/d3_strikezone/d3_strikezone-1.0.js") }}"></script>
+	<script src="{{ url_for("static", filename="js/d3_field.js") }}"></script>
+	<script>
+		var colors = {
+			1: {color: 'rgb(230, 25, 75)', type: "FB"},
+			2: {color: 'rgb(0, 130, 200)', type: "CB"},
+			3: {color: 'rgb(0, 200, 0)' , type: "SL"},
+			4: {color: 'rgb(200, 200, 0)', type: "CH"},
+			5: {color: 'rgb(0, 200, 200)', type: "CT"},
+			7: {color: 'rgb(255, 128, 0)', type: "SM"}
+		}
+		let url = "{{ url_for('outing.outing_get_pitches', id=outing.id) }}";
+		let data = $.ajax({
+			dataType: "json",
+			url: url,
+			success: function(response){
+				console.log(response)
+				let data = response.data;
+
+				let velo_over_outing = new velo_over_time("velo-over-outing", $("#tab-1-holder").height(), $("#velo-over-outing").width(), colors)
+				velo_over_outing.set_data(data);
+				velo_over_outing.draw();
+
+				let zone = new strikezone("pitch-locations", width=$("#pitch-locations").width(), height=$("#spray-locations").width())
+				let zone_legend = new strikezone_legend("pitch-locations-legend");
+				let spray_field = new field("spray-locations", width=$("#spray-locations").width(), height=$("#spray-locations").width())
+				let spray_field_legend = new field_legend("spray-locations-legend");
+
+				
+				data.forEach(function(pitch){
+					console.log(pitch)
+					
+					// Add pitches to the base strikezone
+					if (pitch.loc_x != null && pitch.loc_y != null) {
+                        zone.drawCircle(pitch.loc_x, pitch.loc_y, pitch_type=pitch.pitch_type, pitch.pitch_num);
+                    }
+
+					// Add outcomes to the base field
+					if(pitch.spray_x != null && pitch.spray_y != null){
+						spray_field.drawCircle(
+							pitch.spray_x,
+							pitch.spray_y,
+							traj=pitch.traj,
+							hard_hit=pitch.hit_hard
+						)
+					}
+				})
+
+				fill_outcomes_table(data)
+			}
+		});
+
+		function fill_outcomes_table(data){
+			data.forEach(function(pitch){
+				if(pitch.ab_result != ""){
+					var result
+					if(pitch.ab_result == "IP->Out"){
+						result = `${pitch.traj}->${pitch.fielder}, OUT`
+					} else if(["1B", "2B", "3B", "HR"].includes(pitch.ab_result)) {
+						result = `${pitch.traj}->${pitch.fielder}, ${pitch.ab_result}`
+					} else {
+						result = pitch.ab_result
+					}
+					let row = $("<tr></tr>").html(`
+						<td>${pitch.pitch_num}</td>
+						<td>${pitch.pitch_type}</td>
+						<td>${result}</td>
+					`)
+					$("#outcomes-body").append(row);
+				}
+			})
+		}
+	</script>
+{% endblock %} 

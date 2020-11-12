@@ -145,6 +145,14 @@ class Outing(db.Model):
         pitcher = Pitcher.query.filter_by(id=self.pitcher_id).first()
         return pitcher
 
+    def get_pitches_serialized(self):
+        pitches = []
+        for ab in self.at_bats:
+            for p in ab.pitches:
+                pitches.append(p.serialize())
+
+        return pitches
+
 
 class Pitch(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -181,6 +189,33 @@ class Pitch(db.Model):
     def get_date(self):
         at_bat = AtBat.query.filter_by(id=self.atbat_id).first()
         return at_bat.get_date()
+
+    def serialize(self):
+        data = {
+            "atbat_id": self.atbat_id,
+            "pitch_num": self.pitch_num,
+            "batter_id": self.batter_id,
+            "velocity": self.velocity,
+            "lead_runner": self.lead_runner,
+            "time_to_plate": self.time_to_plate,
+            "pitch_type": self.pitch_type,
+            "roll_through": self.roll_through,
+            "short_set": self.short_set,
+            "pitch_result": self.pitch_result,
+            "loc_x": self.loc_x,
+            "loc_y": self.loc_y,
+            "hit_spot": self.hit_spot,
+            "count": self.count,
+            "ab_result": self.ab_result,
+            "traj": self.traj,
+            "fielder": self.fielder,
+            "spray_x": self.spray_x,
+            "spray_y": self.spray_y,
+            "hit_hard": self.hit_hard,
+            "inning": self.inning,
+            "notes": self.notes
+        }
+        return data
 
 
 class Season(db.Model):

@@ -53,10 +53,10 @@ class strikezone {
         //create svg
         this.zone = d3.select("#"+div_id)
             .append("svg")
-                .attr("width", width)
-                .attr("height", height)
+                .attr("width", this.width)
+                .attr("height", this.height)
                 .attr("class", "plot")
-                .attr("id", "strikezone");
+                .attr("id", "strikezone")
         
         //create graphics part of svg
         this.g = this.zone.append("g")
@@ -68,8 +68,8 @@ class strikezone {
             .style('margin', '10px');
 
         //setup strikezone scale variables
-        this.xScale = d3.scaleLinear().range([width, 0]).domain([2, -2]);
-        this.yScale = d3.scaleLinear().range([height, 0]).domain([0, 4]);
+        this.xScale = d3.scaleLinear().range([this.width, 0]).domain([2, -2]);
+        this.yScale = d3.scaleLinear().range([this.height, 0]).domain([0, 4]);
 
         //draw the appearance of the strikezone
         this.g.append('path')
@@ -360,7 +360,7 @@ class strikezone {
 
 class strikezone_legend {
 
-    constructor(div_id){
+    constructor(div_id, width=457, height=70){
         //setup pitch colors array for drawing circles
         this.legend_items = {
             "1": 'rgb(230, 25, 75)',
@@ -375,8 +375,8 @@ class strikezone_legend {
         this.legend = d3.select("#"+div_id)
             .append("svg")
                 .attr("id", "zone-legend")
-                .attr("width", '457')
-                .attr("height", '70')
+                .attr("width", width)
+                .attr("height", height)
                 .attr("align", "center")
                 .attr("class", "chart")
                 .style("margin", "10px");

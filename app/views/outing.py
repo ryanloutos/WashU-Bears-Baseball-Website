@@ -2,14 +2,17 @@ import os
 import re
 import csv
 import math
+import pdfkit
 
 from app import db
 
 from flask import flash
+from flask import jsonify
 from flask import url_for
 from flask import redirect
 from flask import Blueprint
 from flask import render_template
+from flask import make_response
 
 from app.forms import NewOutingForm
 from app.forms import EditOutingForm
@@ -897,6 +900,51 @@ def outing_report(id):
         strike_percentage_polar_labels=strike_percentage_polar_labels,
         strike_percentage_polar_data=strike_percentage_polar_data
     )
+
+
+@outing.route("/outing_rep_temp/<id>", methods=["GET", "POST"])
+@login_required
+def outing_report_temp(id):
+
+    outing = Outing.query.filter_by(id=id).first()
+
+    if not outing:
+        flash("URL does not exits")
+        return redirect(url_for('main.index'))
+
+    opponent = Opponent.query.filter_by(id=outing.opponent_id).first()
+
+    if not opponent:
+        flash("URL does not exits")
+        return redirect(url_for('main.index'))
+
+    pitch_stats = outingPitchStatistics(outing)
+    time_to_plate = outingTimeToPlate(outing)
+
+    return render_template(
+        "outing/outing_report_temp.html",
+        title="Outing Report",
+        outing=outing,
+        pitch_stats=pitch_stats,
+        time_to_plate=time_to_plate
+    )
+
+
+@outing.route("/outing/<id>/get_pitches", methods=["GET", "POST"])
+@login_required
+def outing_get_pitches(id):
+    outing = Outing.query.filter_by(id=id).first()
+
+    if not outing:
+        flash("URL does not exits")
+        return redirect(url_for('main.index'))
+
+    return_data = {
+        "success": True,
+        "data": outing.get_pitches_serialized()
+    }
+
+    return jsonify(return_data)
 
 
 @outing.route('/new_outing_pitch_tracker/<id>', methods=['GET', 'POST'])
