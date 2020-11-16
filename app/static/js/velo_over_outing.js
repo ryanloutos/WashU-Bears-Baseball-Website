@@ -3,7 +3,7 @@ class velo_over_time {
         var self = this;
 
         self.element_id = element;
-        self.margin = {top: 25, bottom: 25, left: 25, right: 25}
+        self.margin = {top: 25, bottom: 25, left: 25, right: 8}
         self.width = width - self.margin.right - self.margin.left
         self.height = height - self.margin.top - self.margin.bottom
 
@@ -26,6 +26,7 @@ class velo_over_time {
 
     set_data(data){
         var self = this;
+        data = data.filter(function(pitch){return pitch.velocity != null})
         self.data = data
 
         self.x_scale = d3.scaleLinear()

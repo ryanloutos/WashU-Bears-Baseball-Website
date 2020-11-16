@@ -1384,6 +1384,33 @@ def calcPitchStrikePercentage(outing):
     return (pitch_strike_percentage)
 
 
+def calcPitchSwingRate(outing):
+    pitches = {
+        "FB": 0,
+        "CB": 0,
+        "SL": 0,
+        "CH": 0,
+        "CT": 0,
+        "SM": 0}
+    pitches_swung_at = {
+        "FB": 0,
+        "CB": 0,
+        "SL": 0,
+        "CH": 0,
+        "CT": 0,
+        "SM": 0}
+    for at_bat in outing.at_bats:
+        for pitch in at_bat.pitches:
+            pitches[PitchType(pitch.pitch_type).name] += 1
+            if pitch.pitch_result in ["SS", "F", "IP"]:
+                pitches_swung_at[PitchType(pitch.pitch_type).name] += 1
+
+    swing_rate = {}
+    for pitch in pitches.keys():
+        swing_rate[pitch] = percentage(zero_division_handler(pitches_swung_at[pitch], pitches[pitch]))
+    return swing_rate
+
+
 def calcPitchWhiffRate(outing):
     '''
     Calculates the whiff rate by pitch.
@@ -1432,8 +1459,7 @@ def calcPitchWhiffRate(outing):
                 pitches_swung_at['total'] += 1
     for key, val in pitches_swung_at.items():
         if (pitches_swung_at[key] != 0):
-            pitches_whiff[key] = (
-                truncate(pitches_missed[key]/pitches_swung_at[key] * 100))
+            pitches_whiff[key] = percentage(zero_division_handler(pitches_missed[key], pitches_swung_at[key]))
 
     return (pitches_whiff)
 

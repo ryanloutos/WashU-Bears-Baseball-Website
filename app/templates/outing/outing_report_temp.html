@@ -1,76 +1,127 @@
-{% extends "bootstrap/base.html" %}
 
-{% block title %}
-	{{ title }}
-{% endblock %}
-
-{% block styles %}
-	{{ super() }}
+<html lang="en">
+<head>
+	<title>{{ title }}</title>
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/fonts.css') }}">
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/base.css') }}">
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	<style>
+		body{
+			width: 25cm;
+		}
 
-{% endblock %}
+		.row {
+			width: 100%;
+			margin: 0 0 0 0;
+		}
 
-{% block content %}
-	<div class="container-fluid">
-		<div class="row">
-			<div class="col-1">col</div>
-			<div class="col-1">col</div>
-			<div class="col-1">col</div>
-			<div class="col-1">col</div>
-			<div class="col-1">col</div>
-			<div class="col-1">col</div>
-			<div class="col-1">col</div>
-			<div class="col-1">col</div>
-			<div class="col-1">col</div>
-			<div class="col-1">col</div>
-			<div class="col-1">col</div>
-			<div class="col-1">col</div>
-		</div>
-		<div class="row">
-			<div class="col-9">
-				<div class="row"><h3>Velo Over Outing</h3></div>
-				<div class="row" id="velo-over-outing"></div>
-			</div>
-			<div class="col-3" id="tab-1-holder">
-				<div class="row"><h3>Pitch Stats</h3></div>
-				<div class="row">
-					<table class="table">
-						<thead>
-							<tr class="table-headers">
-								<th>Type</th>
-								<th>No.</th>
-								<th>Velo Avg</th>
-								<th>Max </th>
-								<th>Min</th>
-								<th>Usg %</th>
-								<th>Str %</th>
-							</tr>
-						</thead>
-						<tbody>
-							{% for pitch in pitch_stats %}
-								{%if pitch.num_thrown != "X"%}
-									<tr>
-										<td>{{pitch.pitch_type}}</td>
-										<td>{{pitch.num_thrown}}</td>
-										<td>{{pitch.velo_avg}}</td>
-										<td>{{pitch.velo_max}}</td>
-										<td>{{pitch.velo_min}}</td>
-										<td>
-											{{pitch.percentage_thrown}}%
-										</td>
-										<td>
-											{{pitch.strike_percentage}}%
-										</td>
-									</tr>
-								{%endif%}
-							{% endfor %}
-						</tbody>
-					</table>
+		.col-1 {
+			width: 8.33%;
+			padding: 0 0 0 0;
+			margin: 0 0 0 0;
+			border: 1px solid green;
+		}
+		.col-2 {
+			width: 16.66%;
+			padding: 0 0 0 0;
+			margin: 0 0 0 0;
+			border: 1px solid green;
+		}
+		.col-3 {
+			width: 25%;
+			padding: 0 0 0 0;
+			margin: 0 0 0 0;
+			border: 1px solid green;
+		}
+		.col-4 {
+			width: 33.33%;
+			padding: 0 0 0 0;
+			margin: 0 0 0 0;
+			border: 1px solid green;
+		}
+		.col-5 {
+			width: 41.66%;
+			padding: 0 0 0 0;
+			margin: 0 0 0 0;
+			border: 1px solid green;
+		}
+		.col-6 {
+			width: 50%;
+			padding: 0 0 0 0;
+			margin: 0 0 0 0;
+			border: 1px solid green;
+		}
+		.col-7 {
+			width: 58.33%;
+			padding: 0 0 0 0;
+			margin: 0 0 0 0;
+			border: 1px solid green;
+		}
+		.col-8 {
+			width: 66.66%;
+			padding: 0 0 0 0;
+			margin: 0 0 0 0;
+			border: 1px solid green;
+		}
+		.col-9 {
+			width: 75%;
+			padding: 0 0 0 0;
+			margin: 0 0 0 0;
+			border: 1px solid green;
+		}
+		.col-10 {
+			width: 83.33%;
+			padding: 0 0 0 0;
+			margin: 0 0 0 0;
+			border: 1px solid green;
+		}
+		.col-11 {
+			width: 91.66%;
+			padding: 0 0 0 0;
+			margin: 0 0 0 0;
+			border: 1px solid green;
+		}
+		.col-12 {
+			width: 100%;
+			padding: 0 0 0 0;
+			margin: 0 0 0 0;
+			border: 1px solid green;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="row">
+		<div class="col-1">col 1</div>
+		<div class="col-1">col 2</div>
+		<div class="col-1">col 3</div>
+		<div class="col-1">col 4</div>
+		<div class="col-1">col 5</div>
+		<div class="col-1">col 6</div>
+		<div class="col-1">col 7</div>
+		<div class="col-1">col 8</div>
+		<div class="col-1">col 9</div>
+		<div class="col-1">col 10</div>
+		<div class="col-1">col 11</div>
+		<div class="col-1">col 12</div>
+	</div>
+	<div class="row">
+		<div class="col-9">
+			<div class="row">
+				<div class="col-12">
+					<h3>Velo Over Outing</h3>
 				</div>
-				<div class="row"><h3>Time to Plate</h3></div>
-				<div class="row">
+			</div>
+			<div class="row"><div class="col-12" id="velo-over-outing"></div></div>
+		</div>
+		<div class="col-3" id="tab-1-holder">
+			<div class="row">
+				<div class="col-12">
+					<h3>Time to Plate</h3>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-12">
 					<table id="time-to-plate" class="table">
 						<tr class="table-headers">
 							<th>Lead RNR</th>
@@ -88,37 +139,79 @@
 				</div>
 			</div>
 		</div>
-		<div class="row">
-			<div class="col-3">
-				<div class="row"><h3>Pitch Locations</h3></div>
-				<div class="row" id="pitch-locations-legend"></div>
-				<div class="row" id="pitch-locations"></div>
+	</div>
+	<div class="row">
+		<div class="col-12">
+			<div class="row">
+				<div class="col-12">
+					<h3>Pitch Stats</h3>
+				</div>
 			</div>
-			<div class="col-3">
-				<div class="row"><h3>Balls in Play</h3></div>
-				<div class="row" id="spray-locations-legend"></div>
-				<div class="row" id="spray-locations"></div>
-			</div>
-			<div class="col-6">
-				<table class="table">
-					<thead>
-						<tr class="table-headers">
-							<th>Pitch Num</th>
-							<th>Pitch</th>
-							<th>Result</th>
-						</tr>
-					</thead>
-					<tbody id="outcomes-body">
-					
-					</tbody>
-				</table>
+			<div class="row">
+				<div class="col-12">
+					<table class="table">
+						<thead>
+							<tr class="table-headers">
+								<th>Type</th>
+								<th>No.</th>
+								<th>Velo Avg</th>
+								<th>Max </th>
+								<th>Min</th>
+								<th>Usage %</th>
+								<th>Strike %</th>
+								<th>Swing %</th>
+								<th>Whiff %</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for pitch in pitch_stats %}
+								{%if pitch.num_thrown != "X"%}
+									<tr>
+										<td>{{pitch.pitch_type}}</td>
+										<td>{{pitch.num_thrown}}</td>
+										<td>{{pitch.velo_avg}}</td>
+										<td>{{pitch.velo_max}}</td>
+										<td>{{pitch.velo_min}}</td>
+										<td>{{pitch.percentage_thrown}}%</td>
+										<td>{{pitch.strike_percentage}}%</td>
+										<td>{{swing_rate[pitch.pitch_type]}}%</td>
+										<td>{{whiff_rate[pitch.pitch_type]}}%</td>
+									</tr>
+								{%endif%}
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
 			</div>
 		</div>
 	</div>
-{% endblock %}
+	<div class="row">
+		<div class="col-4">
+			<div class="row"><div class="col-12"><h3>Pitch Locations</h3></div></div>
+			<div class="row"><div class="col-12" id="pitch-locations-legend"></div></div>
+			<div class="row"><div class="col-12" id="pitch-locations"></div></div>
+		</div>
+		<div class="col-4">
+			<div class="row"><h3>Balls in Play</h3></div>
+			<div class="row" id="spray-locations-legend"></div>
+			<div class="row" id="spray-locations"></div>
+		</div>
+		<div class="col-4">
+			<table class="table">
+				<thead>
+					<tr class="table-headers">
+						<th>Pitch Num</th>
+						<th>Pitch</th>
+						<th>Result</th>
+					</tr>
+				</thead>
+				<tbody id="outcomes-body">
+				
+				</tbody>
+			</table>
+		</div>
+	</div>
 
-{% block scripts %}
-	{{ super() }}
 	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
@@ -198,4 +291,5 @@
 			})
 		}
 	</script>
-{% endblock %} 
+</body>
+</html>

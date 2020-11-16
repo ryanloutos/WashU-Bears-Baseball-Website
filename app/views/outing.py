@@ -2,7 +2,6 @@ import os
 import re
 import csv
 import math
-import pdfkit
 
 from app import db
 
@@ -36,6 +35,8 @@ from app.models import Opponent
 
 from app.stats.pitching_stats import veloOverTime
 from app.stats.pitching_stats import outingTimeToPlate
+from app.stats.pitching_stats import calcPitchWhiffRate
+from app.stats.pitching_stats import calcPitchSwingRate
 from app.stats.pitching_stats import outingPitchStatistics
 
 
@@ -921,12 +922,17 @@ def outing_report_temp(id):
     pitch_stats = outingPitchStatistics(outing)
     time_to_plate = outingTimeToPlate(outing)
 
+    swing_rate = calcPitchSwingRate(outing)
+    whiff_rate = calcPitchWhiffRate(outing)
+
     return render_template(
         "outing/outing_report_temp.html",
         title="Outing Report",
         outing=outing,
         pitch_stats=pitch_stats,
-        time_to_plate=time_to_plate
+        time_to_plate=time_to_plate,
+        swing_rate=swing_rate,
+        whiff_rate=whiff_rate
     )
 
 
