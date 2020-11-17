@@ -145,6 +145,10 @@ class Outing(db.Model):
         pitcher = Pitcher.query.filter_by(id=self.pitcher_id).first()
         return pitcher
 
+    def get_opponent(self):
+        opponent = Opponent.query.filter_by(id=self.opponent_id).first()
+        return opponent
+
     def get_pitches_serialized(self):
         pitches = []
         for ab in self.at_bats:

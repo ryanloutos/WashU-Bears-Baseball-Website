@@ -106,6 +106,26 @@
 		<div class="col-1">col 12</div>
 	</div>
 	<div class="row">
+		<div class="col-2">
+			<img class="img-fluid" src="{{ url_for('static', filename='images/Bear_Head_Color.png') }}">
+		</div>
+		<div class="col-10">
+			<div class="row">
+				<div class="col-12">
+					<h1>WashU Baseball Pitching Report</h1>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-10">
+					<h4>{{ outing.get_pitcher() }} vs {{ outing.get_opponent() }}</h4>
+				</div>
+				<div class="col-2">
+					<span>{{ outing.getFullDate() }}</span>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
 		<div class="col-9">
 			<div class="row">
 				<div class="col-12">
@@ -218,7 +238,7 @@
 	<script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
 	<script src="{{ url_for("static", filename="packages/d3/d3.min.js") }}"></script>
 	<script src="{{ url_for("static", filename="js/velo_over_outing.js") }}"></script>
-	<script src="{{ url_for("static", filename="js/d3_strikezone/d3_strikezone-1.0.js") }}"></script>
+	<script src="{{ url_for("static", filename="js/d3_strikezone/d3_strikezone-2.0.js") }}"></script>
 	<script src="{{ url_for("static", filename="js/d3_field.js") }}"></script>
 	<script>
 		var colors = {
@@ -242,7 +262,7 @@
 				velo_over_outing.draw();
 
 				let zone = new strikezone("pitch-locations", width=$("#pitch-locations").width(), height=$("#spray-locations").width())
-				let zone_legend = new strikezone_legend("pitch-locations-legend");
+				let zone_legend = new strikezone_legend("pitch-locations-legend", width=$("#pitch-locations").width(), 35);
 				let spray_field = new field("spray-locations", width=$("#spray-locations").width(), height=$("#spray-locations").width())
 				let spray_field_legend = new field_legend("spray-locations-legend");
 

@@ -26,8 +26,8 @@ class velo_over_time {
 
     set_data(data){
         var self = this;
-        data = data.filter(function(pitch){return pitch.velocity != null})
-        self.data = data
+        // Remove pitches that dont have velo
+        self.data = data.filter(function(pitch){return pitch.velocity != null})
 
         self.x_scale = d3.scaleLinear()
             .domain(d3.extent(self.data, (d) => +d.pitch_num))
