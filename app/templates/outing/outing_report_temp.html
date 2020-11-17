@@ -6,6 +6,10 @@
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/base.css') }}">
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 	<style>
+
+		:root {
+			--debug-border-color: green;
+		}
 		body{
 			width: 25cm;
 		}
@@ -19,92 +23,78 @@
 			width: 8.33%;
 			padding: 0 0 0 0;
 			margin: 0 0 0 0;
-			border: 1px solid green;
+			border: 1px solid var(--debug-border-color);
 		}
 		.col-2 {
 			width: 16.66%;
 			padding: 0 0 0 0;
 			margin: 0 0 0 0;
-			border: 1px solid green;
+			border: 1px solid var(--debug-border-color);
 		}
 		.col-3 {
 			width: 25%;
 			padding: 0 0 0 0;
 			margin: 0 0 0 0;
-			border: 1px solid green;
+			border: 1px solid var(--debug-border-color);
 		}
 		.col-4 {
 			width: 33.33%;
 			padding: 0 0 0 0;
 			margin: 0 0 0 0;
-			border: 1px solid green;
+			border: 1px solid var(--debug-border-color);
 		}
 		.col-5 {
 			width: 41.66%;
 			padding: 0 0 0 0;
 			margin: 0 0 0 0;
-			border: 1px solid green;
+			border: 1px solid var(--debug-border-color);
 		}
 		.col-6 {
 			width: 50%;
 			padding: 0 0 0 0;
 			margin: 0 0 0 0;
-			border: 1px solid green;
+			border: 1px solid var(--debug-border-color);
 		}
 		.col-7 {
 			width: 58.33%;
 			padding: 0 0 0 0;
 			margin: 0 0 0 0;
-			border: 1px solid green;
+			border: 1px solid var(--debug-border-color);
 		}
 		.col-8 {
 			width: 66.66%;
 			padding: 0 0 0 0;
 			margin: 0 0 0 0;
-			border: 1px solid green;
+			border: 1px solid var(--debug-border-color);
 		}
 		.col-9 {
 			width: 75%;
 			padding: 0 0 0 0;
 			margin: 0 0 0 0;
-			border: 1px solid green;
+			border: 1px solid var(--debug-border-color);
 		}
 		.col-10 {
 			width: 83.33%;
 			padding: 0 0 0 0;
 			margin: 0 0 0 0;
-			border: 1px solid green;
+			border: 1px solid var(--debug-border-color);
 		}
 		.col-11 {
 			width: 91.66%;
 			padding: 0 0 0 0;
 			margin: 0 0 0 0;
-			border: 1px solid green;
+			border: 1px solid var(--debug-border-color);
 		}
 		.col-12 {
 			width: 100%;
 			padding: 0 0 0 0;
 			margin: 0 0 0 0;
-			border: 1px solid green;
+			border: 1px solid var(--debug-border-color);
 		}
 	</style>
 </head>
 
 <body>
-	<div class="row">
-		<div class="col-1">col 1</div>
-		<div class="col-1">col 2</div>
-		<div class="col-1">col 3</div>
-		<div class="col-1">col 4</div>
-		<div class="col-1">col 5</div>
-		<div class="col-1">col 6</div>
-		<div class="col-1">col 7</div>
-		<div class="col-1">col 8</div>
-		<div class="col-1">col 9</div>
-		<div class="col-1">col 10</div>
-		<div class="col-1">col 11</div>
-		<div class="col-1">col 12</div>
-	</div>
 	<div class="row">
 		<div class="col-2">
 			<img class="img-fluid" src="{{ url_for('static', filename='images/Bear_Head_Color.png') }}">
@@ -229,6 +219,12 @@
 				
 				</tbody>
 			</table>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-12">
+			<span>Flow Chart of pitcher's pitches in each count. The very last thing</span>
+			<span>https://baseballsavant.mlb.com/player-scroll?player_id=477132#plinko</span>
 		</div>
 	</div>
 
