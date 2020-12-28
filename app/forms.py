@@ -515,7 +515,8 @@ class NewResourceForm(FlaskForm):
             ('', '[SELECT A TYPE OF UPLOAD]'),
             ('article', 'Article'),
             ('video', 'YouTube Video'),
-            ('pdf', 'PDF')
+            ('pdf', 'PDF'),
+            ('image', 'Image')
         ],
         validators=[DataRequired()]
     )

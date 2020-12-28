@@ -114,6 +114,15 @@
         return file_path.match(regex);
     }
 
+    /**
+    * Returns true if the file path contains .pdf at the end, false otherwise
+    */
+    const is_image = file_path => {
+        const expression = /\.(gif|jpe?g|tiff?|png|webp|bmp)$/i;
+        const regex = new RegExp(expression);
+        return file_path.match(regex);
+    }
+
     // https://gist.github.com/jphase/9086823
     /**
     * Returns true if the url param is a youtube video, false otherwise
@@ -152,6 +161,13 @@
                 input_error.text('Please upload a .pdf file');
                 return false;
             }
+        } else if (upload_type_val === 'image') {
+            article_link.val('');
+            video_link.val('');
+            if (!file.val() || !is_image(file.val())) {
+                input_error.text('Please upload an image file');
+                return false;
+            }
         } else {
             article_link.val('');
             video_link.val('');
@@ -167,6 +183,9 @@
     upload_type.change(() => {
         initially_hidden.css('display', 'none');
         $(`#${upload_type.val()}`).css('display', 'block');
+        if (upload_type.val() === 'image') {
+            $('#pdf').css('display', 'block');
+        }
         show_submit();
     });
 
