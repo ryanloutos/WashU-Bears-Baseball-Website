@@ -12,11 +12,11 @@ app.config.from_object(Config)
 app.config.update(dict(
     DEBUG = True,
     MAIL_SERVER = 'smtp.gmail.com',
-    MAIL_PORT = 587,
-    MAIL_USE_TLS = True,
-    MAIL_USE_SSL = False,
+    MAIL_PORT = 465,
+    MAIL_USE_TLS = False,
+    MAIL_USE_SSL = True,
     MAIL_USERNAME = 'washubearsbaseball@gmail.com',
-    MAIL_PASSWORD = 'BearsBaseball123!',
+    MAIL_PASSWORD = 'pdkndgevjmcbutof',
 ))
 
 db = SQLAlchemy(app)
