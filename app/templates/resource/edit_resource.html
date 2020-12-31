@@ -24,11 +24,19 @@
                     <option value="Defense" {% if resource.category=='Defense' %} selected='selected' {% endif %}>
                         Defense
                     </option>
-                    <option value="Mental Game" {% if resource.category=='Mental Game' %} selected='selected'
-                        {% endif %}>
+                    <option value="Mental Game" {% if resource.category=='Mental Game' %} selected='selected' {% endif
+                        %}>
                         Mental Game</option>
-                    <option value="Miscellaneous" {% if resource.category=='Miscellaneous' %} selected='selected'
-                        {% endif %}>Miscellaneous</option>
+                    <option value="Program Playbook" {% if resource.category=='Program Playbook' %} selected='selected'
+                        {% endif %}>
+                        Program Playbook
+                    </option>
+                    <option value="Plays, Signs, Strategy" {% if resource.category=='Plays, Signs, Strategy' %}
+                        selected='selected' {% endif %}>
+                        Plays, Signs, & Strategy
+                    </option>
+                    <option value="Miscellaneous" {% if resource.category=='Miscellaneous' %} selected='selected' {%
+                        endif %}>Miscellaneous</option>
                 </select>
                 {% for error in form.category.errors %}
                 <span class="errors">[{{ error }}]</span>
@@ -43,7 +51,11 @@
             </p>
             <p>
                 {{ form.description.label }}<br>
+                {% if resource.description == None %}
+                {{ form.description(class="form-control") }}
+                {% else %}
                 {{ form.description(value=resource.description, class="form-control") }}
+                {% endif %}
                 {% for error in form.description.errors %}
                 <span class="errors">[{{ error }}]</span>
                 {% endfor %}

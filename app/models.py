@@ -366,12 +366,12 @@ class Video(db.Model):
 class Resource(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
-    title = db.Column(db.String(32), index=True)
+    category = db.Column(db.String(32), index=True, nullable=False)
+    title = db.Column(db.String(32), index=True, nullable=False)
     description = db.Column(db.String(256), index=True)
-    article_link = db.Column(db.String(256))
-    video_link = db.Column(db.String(256))
+    resource_type = db.Column(db.String(32), index=True, nullable=False)
+    link = db.Column(db.String(256))
     file_path = db.Column(db.String(256))
-    category = db.Column(db.String(32))
 
     def __repr__(self):
         return f'{self.title} -- {self.description}'
@@ -384,8 +384,8 @@ class Resource(db.Model):
             'category': self.category,
             'title': self.title,
             'description': self.description,
-            'article_link': self.article_link,
-            'video_link': self.video_link,
+            'resource_type': self.resource_type,
+            'link': self.link,
             'file_path': self.file_path
         }
 

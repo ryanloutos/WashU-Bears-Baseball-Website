@@ -497,11 +497,12 @@ class NewResourceForm(FlaskForm):
     category = SelectField(
         'Category',
         choices=[
-            ('', '[SELECT A CATEGORY]'),
             ('Pitching', 'Pitching'),
             ('Hitting', 'Hitting'),
             ('Defense', 'Defense'),
             ('Mental Game', 'Mental Game'),
+            ('Program Playbook', 'Program Playbook'),
+            ('Plays, Signs, Strategy', 'Plays, Signs, & Strategy'),
             ('Miscellaneous', 'Miscellaneous')
         ],
         validators=[DataRequired()]
@@ -509,38 +510,30 @@ class NewResourceForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired()])
     description = StringField(
         'Description (Optional)', validators=[Optional()])
-    upload_type = SelectField(
-        'Upload Type',
+    resource_type = SelectField(
+        'Resource Type',
         choices=[
-            ('', '[SELECT A TYPE OF UPLOAD]'),
-            ('article', 'Article'),
+            ('link', 'Link'),
             ('video', 'YouTube Video'),
-            ('pdf', 'PDF'),
-            ('image', 'Image')
+            ('file', 'File')
         ],
         validators=[DataRequired()]
     )
-    article_link = StringField('Link', validators=[Optional()])
-    video_link = StringField('Link', validators=[Optional()])
-    file = FileField(
-        'File Upload',
-        validators=[
-            FileAllowed(["pdf"],
-                        "File must be a .pdf")
-        ]
-    )
-    submit = SubmitField('Upload Resource')
+    link = StringField('Link', validators=[Optional()])
+    file = FileField('File Upload')
+    submit = SubmitField('Create Resource')
 
 
 class EditResourceForm(FlaskForm):
     category = SelectField(
         'Category',
         choices=[
-            ('', '[SELECT A CATEGORY]'),
             ('Pitching', 'Pitching'),
             ('Hitting', 'Hitting'),
             ('Defense', 'Defense'),
             ('Mental Game', 'Mental Game'),
+            ('Program Playbook', 'Program Playbook'),
+            ('Plays, Signs, Strategy', 'Plays, Signs, & Strategy'),
             ('Miscellaneous', 'Miscellaneous')
         ],
         validators=[DataRequired()]

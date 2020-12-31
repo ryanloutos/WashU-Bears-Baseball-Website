@@ -3,7 +3,6 @@
 {% block styles %}
 {{ super() }}
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/forms.css') }}">
-<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/new_resource.css') }}">
 {% endblock %}
 
 {% block app_content %}
@@ -33,37 +32,36 @@
                 {% endfor %}
             </p>
             <p>
-                {{ form.upload_type.label }}<br>
-                {{ form.upload_type(class="form-control") }}
-                {% for error in form.upload_type.errors %}
+                {{ form.resource_type.label }}<br>
+                {{ form.resource_type(class="form-control") }}
+                {% for error in form.resource_type.errors %}
                 <span class="errors">[{{ error }}]</span>
                 {% endfor %}
             </p>
-            <p class="initially-hidden" id="article">
-                {{ form.article_link.label }}<br>
-                {{ form.article_link(class="form-control") }}
+            <p>
+                {{ form.link.label }}<br>
+                {{ form.link(class="form-control") }}
+                {% for error in form.link.errors %}
+                <span class="errors">[{{ error }}]</span>
+                {% endfor %}
             </p>
-            <p class="initially-hidden" id="video">
-                {{ form.video_link.label }}<br>
-                {{ form.video_link(class="form-control") }}
-            </p>
-            <p class="initially-hidden" id="pdf">
+            <p>
                 {{ form.file.label }}<br>
                 {{ form.file(class="form-control-file") }}
             </p>
-            <p><span class="errors" id="input-error"></span></p>
-            <p class="initially-hidden" id="submit-p">
+            <p>
                 <label>
                     Notify players via email about this resource
                 </label><br />
                 <input id="notify-players" name="notify-players" type="checkbox" value="y" data-toggle="toggle"
-                    data-on="Yes" data-off="No"><br /><br />
+                    data-on="Yes" data-off="No" /><br /><br />
                 <label>
                     Notify coaches via email about this resource
                 </label><br />
                 <input id="notify-coaches" name="notify-coaches" type="checkbox" value="y" data-toggle="toggle"
-                    data-on="Yes" data-off="No"><br /><br />
-                {{ form.submit(class="btn btn-primary btn-lg btn-block") }}
+                    data-on="Yes" data-off="No" /><br /><br />
+                <span class="errors" id="input-error"></span>
+                {{ form.submit(class="btn btn-primary btn-lg btn-block", disabled="true") }}
             </p>
         </form>
     </div>
@@ -73,131 +71,57 @@
     const category = $('#category');
     const title = $('#title');
     const description = $('#description');
-    const upload_type = $('#upload_type');
-    const article_link = $('#article_link');
-    const video_link = $('#video_link');
+    const resource_type = $('#resource_type');
+    const link = $('#link');
     const file = $('#file');
-    const submit_p = $('#submit-p');
     const input_error = $('#input-error');
-    const initially_hidden = $('.initially-hidden');
     const submit_button = $('#submit');
     const notify_players = $('#notify-players');
     const notify_coaches = $('#notify-coaches');
 
-    /** 
-    * Determines whether or not to show the submit button based on current
-    * values of the form. Makes it harder for the user to enter invalid information
-    */
     const show_submit = () => {
-        if (validate_form()) {
-            submit_p.css('display', 'block');
-        } else {
-            submit_p.css('display', 'none');
-        }
+        submit_button.prop('disabled', !validate_form());
     };
 
-    /**
-    * Returns true if the parameter is a url, false otherwise
-    */
     const is_url = url => {
         const expression = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
         const regex = new RegExp(expression);
         return url.match(regex);
     };
 
-    /**
-    * Returns true if the file path contains .pdf at the end, false otherwise
-    */
-    const is_pdf = file_path => {
-        const expression = /.pdf$/;
-        const regex = new RegExp(expression);
-        return file_path.match(regex);
-    }
-
-    /**
-    * Returns true if the file path contains .pdf at the end, false otherwise
-    */
-    const is_image = file_path => {
-        const expression = /\.(gif|jpe?g|tiff?|png|webp|bmp)$/i;
-        const regex = new RegExp(expression);
-        return file_path.match(regex);
-    }
-
     // https://gist.github.com/jphase/9086823
-    /**
-    * Returns true if the url param is a youtube video, false otherwise
-    */
     const is_youtube_url = url => {
         const expression = /(http:|https:)?\/\/(www\.)?(youtube.com|youtu.be)\/(watch)?(\?v=)?(\S+)?/;
         const regex = new RegExp(expression);
         return url.match(regex);
     };
 
-    /**
-    * Returns true if the form is in a valid state to submit, false otherwise
-    * Also indicates to the user what they need to fix
-    */
     const validate_form = () => {
-        let upload_type_val = upload_type.val();
         input_error.text('');
-        if (upload_type_val === 'article') {
-            video_link.val('');
-            file.val('');
-            if (!article_link.val() || !is_url(article_link.val())) {
-                input_error.text('Please enter a valid URL to upload');
-                return false;
-            }
-        } else if (upload_type_val === 'video') {
-            article_link.val('');
-            file.val('');
-            if (!video_link.val() || !is_youtube_url(video_link.val())) {
-                input_error.text('Please enter a valid YouTube URL to upload');
-                return false;
-            }
-        } else if (upload_type_val === 'pdf') {
-            article_link.val('');
-            video_link.val('');
-            if (!file.val() || !is_pdf(file.val())) {
-                input_error.text('Please upload a .pdf file');
-                return false;
-            }
-        } else if (upload_type_val === 'image') {
-            article_link.val('');
-            video_link.val('');
-            if (!file.val() || !is_image(file.val())) {
-                input_error.text('Please upload an image file');
-                return false;
-            }
-        } else {
-            article_link.val('');
-            video_link.val('');
-            file.val('');
-            input_error.text('');
+        if (resource_type.val() === 'link' && (!link.val() || !is_url(link.val()))) {
+            input_error.text('Please enter a valid URL to upload');
+            return false;
+        }
+        if (resource_type.val() === 'video' && (!link.val() || !is_youtube_url(link.val()))) {
+            input_error.text('Please enter a valid YouTube URL to upload');
+            return false;
+        }
+        if (resource_type.val() === 'file' && !file.val()) {
+            input_error.text('Please upload a file');
+            return false;
         }
         return true;
     };
 
-    /**
-    * Only shows the field based on the what type of resource is trying to be uploaded
-    */
-    upload_type.change(() => {
-        initially_hidden.css('display', 'none');
-        $(`#${upload_type.val()}`).css('display', 'block');
-        if (upload_type.val() === 'image') {
-            $('#pdf').css('display', 'block');
-        }
-        show_submit();
-    });
-
-    /**
-    * Determine whether or not to show submit button based on what file was uploaded
-    */
     file.change(show_submit);
 
-    /**
-    * Determine whether or not to show submit button based on link inputs
-    */
     $('input').not('#submit').not('#title').not('#description').keyup(show_submit);
+
+    resource_type.change(() => {
+        show_submit();
+        if (resource_type.val() == 'file') link.val('');
+        else file.val('');
+    });
 
     /**
     * Send a http request to have an email sent to notify coaches/players about a new resource
@@ -223,19 +147,17 @@
         return false;
     };
 
-    /**
-    * When the form is submitted, and validated, it will send the form data to the API
-    */
-    submit_button.on('click', () => {
+    submit_button.on('click', async () => {
         if (validate_form()) {
             submit_button.val('Creating Resource....');
-            $.ajax({
-                type: 'POST',
-                url: '/resource',
-                contentType: false,
-                processData: false,
-                data: new FormData($('form')[0])
-            }).done(response => {
+            try {
+                await $.ajax({
+                    type: 'POST',
+                    url: '/resource',
+                    contentType: false,
+                    processData: false,
+                    data: new FormData($('form')[0])
+                });
                 submit_button.val('Success');
                 if (notify_players.prop('checked') || notify_coaches.prop('checked')) {
                     send_new_resource_email(
@@ -246,11 +168,11 @@
                     );
                 }
                 return window.location.href = '/resource/home';
-            }).fail((xhr, status, error) => {
-                input_error.text(xhr.responseText);
-                submit_button.val('Upload Resource');
-                return;
-            });
+            } catch (e) {
+                console.log(e)
+                if (e.responseText != "") input_error.text(e.responseText);
+                submit_button.val('Create Resource');
+            }
         }
     });
 </script>

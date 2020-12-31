@@ -13,19 +13,19 @@
     </h1>
     <div class="row" style="padding-bottom: 20px;">
         <ul class="nav nav-tabs">
-            <li class="active tabs"><a data-toggle="tab" href="#articles">Articles</a></li>
+            <li class="active tabs"><a data-toggle="tab" href="#files">Files</a></li>
+            <li class="tabs"><a data-toggle="tab" href="#articles">Articles</a></li>
             <li class="tabs"><a data-toggle="tab" href="#videos">Videos</a></li>
-            <li class="tabs"><a data-toggle="tab" href="#files">Files</a></li>
         </ul>
     </div>
     <div class="tab-content row">
-        <div class="tab-pane fade in active" id="articles"></div>
+        <div class="tab-pane fade in active" id="files"></div>
+        <div class="tab-pane fade in" id="articles"></div>
         <div class="tab-pane fade in" id="videos"></div>
-        <div class="tab-pane fade in" id="files"></div>
     </div>
 </div>
 <script>
-    const category = 'miscellaneous';
+    const category = 'Miscellaneous';
     {% include "resource/get_resources.js" %}
 </script>
 {% endblock %}

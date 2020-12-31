@@ -24,30 +24,32 @@ $.get(`/resource?recent=true`, resources => {
             thumbnail += "<div class='row'>";
         }
 
+        let description = resources[i].description ? resources[i].description : '';
+
         thumbnail += `
                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
                     <div class="thumbnail">
                         <div class="caption">
                             <h3>${resources[i].title}</h3>
-                                <p>${resources[i].description}</p>`;
+                                <p>${description}</p>`;
 
 
-        if (resources[i].article_link) {
+        if (resources[i].resource_type == 'link') {
             resource_type_div = $('#articles');
-            thumbnail += `<p><a href="${resources[i].article_link}" class="btn btn-primary" role="button" target="_blank">Read Article</a>`;
+            thumbnail += `<p><a href="${resources[i].link}" class="btn btn-primary" role="button" target="_blank">Read Article</a>`;
         }
 
-        if (resources[i].video_link) {
+        if (resources[i].resource_type == 'video') {
             resource_type_div = $('#videos');
-            const video_id = get_youtube_video_id(resources[i].video_link);
+            const video_id = get_youtube_video_id(resources[i].link);
             thumbnail += `
                     <iframe width="275" height="150" src="https://www.youtube-nocookie.com/embed/${video_id}" frameborder="0" 
                         allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
                     </iframe><br>
-                    <p><a href="${resources[i].video_link}" class="btn btn-primary" role="button" target="_blank">Link</a>`;
+                    <p><a href="${resources[i].link}" class="btn btn-primary" role="button" target="_blank">Link</a>`;
         }
 
-        if (resources[i].file_path) {
+        if (resources[i].resource_type == 'file') {
             resource_type_div = $('#files');
             thumbnail += `<p><a href="/resource/download/${resources[i].id}" class="btn btn-primary" role="button" download>Download</a>`;
         }
