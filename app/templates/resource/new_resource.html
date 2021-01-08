@@ -51,10 +51,22 @@
             </p>
             <p>
                 <label>
-                    Notify players via email about this resource
+                    Notify pitchers via email about this resource
                 </label><br />
-                <input id="notify-players" name="notify-players" type="checkbox" value="y" data-toggle="toggle"
+                <input id="notify-pitchers" name="notify-pitchers" type="checkbox" value="y" data-toggle="toggle"
                     data-on="Yes" data-off="No" /><br /><br />
+                <label>
+                <label>
+                    Notify infielders via email about this resource
+                </label><br />
+                <input id="notify-infielders" name="notify-infielders" type="checkbox" value="y" data-toggle="toggle" data-on="Yes"
+                    data-off="No" /><br /><br />
+                <label>
+                <label>
+                    Notify outfielders via email about this resource
+                </label><br />
+                <input id="notify-outfielders" name="notify-outfielders" type="checkbox" value="y" data-toggle="toggle" data-on="Yes"
+                    data-off="No" /><br /><br />
                 <label>
                     Notify coaches via email about this resource
                 </label><br />
@@ -76,7 +88,9 @@
     const file = $('#file');
     const input_error = $('#input-error');
     const submit_button = $('#submit');
-    const notify_players = $('#notify-players');
+    const notify_pitchers = $('#notify-pitchers');
+    const notify_infielders = $('#notify-infielders');
+    const notify_outfielders = $('#notify-outfielders');
     const notify_coaches = $('#notify-coaches');
 
     const show_submit = () => {
@@ -126,15 +140,17 @@
     /**
     * Send a http request to have an email sent to notify coaches/players about a new resource
     */
-    const send_new_resource_email = (players = false, coaches = false, title = '', description = '') => {
+    const send_new_resource_email = (pitchers = false, infielders = false, outfielders = false, coaches = false, title = '', description = '') => {
         // setup GET url
         send_email_url = `/resource/email?title=${title}&`;
-        if (players) send_email_url += 'players=true&';
+        if (pitchers) send_email_url += 'pitchers=true&';
+        if (infielders) send_email_url += 'infielders=true&';
+        if (outfielders) send_email_url += 'outfielders=true&';
         if (coaches) send_email_url += 'coaches=true&';
         if (description) send_email_url += `description=${description}`;
 
         // send request to have email sent
-        if (players || coaches) {
+        if (pitchers || infielders || outfielders || coaches) {
             $.ajax({
                 type: 'GET',
                 url: send_email_url
@@ -159,9 +175,14 @@
                     data: new FormData($('form')[0])
                 });
                 submit_button.val('Success');
-                if (notify_players.prop('checked') || notify_coaches.prop('checked')) {
+                if (notify_pitchers.prop('checked') ||
+                    notify_infielders.prop('checked') || 
+                    notify_outfielders.prop('checked') || 
+                    notify_coaches.prop('checked')) {
                     send_new_resource_email(
-                        notify_players.prop('checked'),
+                        notify_pitchers.prop('checked'),
+                        notify_infielders.prop('checked'),
+                        notify_outfielders.prop('checked'),
                         notify_coaches.prop('checked'),
                         title.val(),
                         description.val()

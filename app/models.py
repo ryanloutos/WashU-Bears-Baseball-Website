@@ -17,6 +17,9 @@ class User(UserMixin, db.Model):
     lastname = db.Column(db.String(64))
     current_player = db.Column(db.Boolean, index=True)
     current_coach = db.Column(db.Boolean, index=True)
+    outfielder = db.Column(db.Boolean, index=True)
+    infielder = db.Column(db.Boolean, index=True)
+    pitcher = db.Column(db.Boolean, index=True)
 
     def __repr__(self):
         return f'{self.firstname} {self.lastname}'

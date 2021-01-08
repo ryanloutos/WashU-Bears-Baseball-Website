@@ -170,14 +170,19 @@ def new_resource_email():
         return redirect(url_for('resource.resource_home'))
 
     # get the query params
-    include_players = request.args.get('players')
+    include_infielders = request.args.get('infielders')
+    include_outfielders = request.args.get('outfielders')
+    include_pitchers = request.args.get('pitchers')
     include_coaches = request.args.get('coaches')
     title = request.args.get('title')
     description = request.args.get('description')
 
     # make sure the email should be sent to either or both coaches and players
     true_list = ['True', 'true', 'TRUE']
-    if include_players not in true_list and include_coaches not in true_list:
+    if (include_infielders not in true_list and
+        include_outfielders not in true_list and
+        include_pitchers not in true_list and
+            include_coaches not in true_list):
         return "Set 'players' or 'coaches' equal to 'true'", status.HTTP_400_BAD_REQUEST
 
     # make sure a title is present to send the email
@@ -185,15 +190,23 @@ def new_resource_email():
         return "Missing 'title' query param for the resource", status.HTTP_400_BAD_REQUEST
 
     # set up the email list of players/coaches
-    email_list = []
-    if include_players:
-        team_players = User.query.filter_by(current_player=1).all()
-        for player in team_players:
-            email_list.append(player.email)
+    email_list = set()
+    if include_infielders:
+        infielders = User.query.filter_by(infielder=1).all()
+        for player in infielders:
+            email_list.add(player.email)
+    if include_outfielders:
+        outfielders = User.query.filter_by(outfielder=1).all()
+        for player in outfielders:
+            email_list.add(player.email)
+    if include_pitchers:
+        pitchers = User.query.filter_by(pitcher=1).all()
+        for player in pitchers:
+            email_list.add(player.email)
     if include_coaches:
         team_coaches = User.query.filter_by(current_coach=1).all()
         for coach in team_coaches:
-            email_list.append(coach.email)
+            email_list.add(coach.email)
 
     # set up basic message requirements
     subject = 'Check out the new resource just uploaded!'
@@ -206,7 +219,7 @@ def new_resource_email():
         message += f'Description: {description}\n\n'
     message += f'\nYou can check it out at bearsbaseball.pythonanywhere.com/resource/home'
 
-    send_email(subject, sender, email_list, message, html)
+    send_email(subject, sender, list(email_list), message, html)
     return 'success', status.HTTP_200_OK
 
 
