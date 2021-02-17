@@ -376,8 +376,8 @@ def new_outing_pitches(outing_id):
             strikes = 1
             count = f'{balls}-{strikes}'
         else:
-            balls = 0
-            strikes = 0
+            balls = 1
+            strikes = 1
             count = f'{balls}-{strikes}'
 
         # Boolean variable to help with adding AtBat objects to the database
@@ -505,12 +505,12 @@ def edit_outing_pitches(outing_id):
                 strikes = 1
                 count = f'{balls}-{strikes}'
             else:
-                balls = 0
-                strikes = 0
+                balls = 1
+                strikes = 1
                 count = f'{balls}-{strikes}'
         else:
-            balls = 0
-            strikes = 0
+            balls = 1
+            strikes = 1
             count = f'{balls}-{strikes}'
 
         # Boolean variable to help with adding AtBat objects to the database
@@ -752,8 +752,8 @@ def new_outing_csv_pitches(file_name, outing_id):
             balls = 1
             strikes = 1
         else:
-            balls = 0
-            strikes = 0
+            balls = 1
+            strikes = 1
         count = f'{balls}-{strikes}'
 
         # Boolean variable to help with adding AtBat objects to the db
@@ -923,8 +923,8 @@ def new_outing_pitch_tracker(id):
         balls = 1
         strikes = 1
     else:
-        balls = 0
-        strikes = 0
+        balls = 1
+        strikes = 1
 
     inning = 1
 
@@ -1013,8 +1013,8 @@ def new_outing_pitch_tracker(id):
 
             # if the at bat was over, alter variables
             if p.ab_result != "":
-                balls = 0
-                strikes = 0
+                balls = 1
+                strikes = 1
                 current_at_bat = ""
                 current_batter = ""
                 lead_runner = ""
