@@ -1179,17 +1179,17 @@ def updateCount(balls, strikes, pitch_result, ab_result, season):
     if ab_result is not '':
         if season is not None:
             if (season.semester == 'Spring' and season.year == "2020"):
-                balls = 0
-                strikes = 0
+                balls = 1
+                strikes = 1
             elif season.semester == 'Fall':
                 balls = 1
                 strikes = 1
             else:
-                balls = 0
-                strikes = 0
+                balls = 1
+                strikes = 1
         else:
-            balls = 0
-            strikes = 0
+            balls = 1
+            strikes = 1
     else:
         if pitch_result is 'B':
             balls += 1
